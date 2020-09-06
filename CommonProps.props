@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros">
+    <RootDir>$(SolutionDir)..</RootDir>
+    <SrcDir>$(RootDir)\Src</SrcDir>
+    <ExternalsDir>$(RootDir)\Externals</ExternalsDir>
+  </PropertyGroup>
+  <ItemGroup>
+    <BuildMacro Include="RootDir">
+      <Value>$(RootDir)</Value>
+    </BuildMacro>
+    <BuildMacro Include="ExternalsDir">
+      <Value>$(ExternalsDir)</Value>
+    </BuildMacro>
+    <BuildMacro Include="SrcDir">
+      <Value>$(SrcDir)</Value>
+    </BuildMacro>
+  </ItemGroup>
+  <PropertyGroup>
+    <TargetName>$(ProjectName)</TargetName>
+    <OutDir>$(RootDir)\_Bin\$(Platform)-$(Configuration)\</OutDir>
+    <IntDir>$(RootDir)\_BinIntermediate\$(Platform)-$(Configuration)\$(ProjectName)\</IntDir>
+
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+    <EnableMicrosoftCodeAnalysis>true</EnableMicrosoftCodeAnalysis>
+    <EnableClangTidyCodeAnalysis>true</EnableClangTidyCodeAnalysis>
+ 
+  </PropertyGroup>
+</Project>

@@ -1,0 +1,14 @@
+bazel
+bazel-out
+_Bin
+_BinIntermediate
+_Tmp
+
+CPTCMakeBuild
+compile_commands
+
+*.sln
+*.vcxproj
+*.filters
+
+

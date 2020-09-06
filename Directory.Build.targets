@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- How this file works: https://docs.microsoft.com/en-us/visualstudio/msbuild/customize-your-build?view=vs-2019 -->
+<Project>
+
+
+  <!-- Continue importing Directory.Build.targets file from upper directories to merge them -->
+  <PropertyGroup>
+    <ParentDirectoryBuildTargetsPath>$([MSBuild]::GetPathOfFileAbove('Directory.Build.targets', '$(MSBuildThisFileDirectory)..\'))</ParentDirectoryBuildTargetsPath>
+  </PropertyGroup>
+  <Import Project="$(ParentDirectoryBuildTargetsPath)" Condition="exists($(ParentDirectoryBuildTargetsPath))" />
+
+</Project>

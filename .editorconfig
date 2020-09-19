@@ -1,0 +1,13 @@
+# Rules in this file were initially inferred by Visual Studio IntelliCode from the F:\_Dev\Projects\PersonalWorks codebase based on best match to current usage at 2020-09-06
+# You can modify the rules from these initially generated values to suit your own policies
+# You can learn more about editorconfig here: https://docs.microsoft.com/en-us/visualstudio/ide/editorconfig-code-style-settings-reference
+
+root = true
+
+[*.cpp]
+
+indent_style = space
+indent_size = 2
+tab_width = 2
+trim_trailing_whitespace = true
+insert_final_newline = true

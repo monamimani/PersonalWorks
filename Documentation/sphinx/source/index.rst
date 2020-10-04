@@ -7,9 +7,10 @@ Welcome to Personal Works's documentation!
    :caption: Contents:
 
    ArchitectureOverview
-   Systems/InputSystem.rst
-   Systems/GraphicsSystem.rst
-   Systems/EngineSystem.rst
+   Application
+   Systems/InputSystem
+   Systems/GraphicsSystem
+   Systems/EngineSystem
 
 
 Indices and tables
@@ -18,3 +19,9 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
+
+
+.. uml::
+
+   Alice -> Bob: Hi!
+   Alice <- Bob: How are you?

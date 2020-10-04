@@ -31,8 +31,13 @@ release = '0.0.1'
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-graphviz_dot=".\..\..\Tools\Graphviz\dot.exe"
-extensions = ['sphinx.ext.graphviz']
+graphviz_dot = ".\\..\\..\\Tools\\Graphviz\\dot.exe"
+plantumlPath = os.path.abspath(
+    "./../../../Tools/PlantUML/plantuml.1.2020.18.jar")
+
+plantuml = 'java -jar %s' % plantumlPath
+plantuml_output_format = 'svg'
+extensions = ['sphinx.ext.graphviz', 'sphinxcontrib.plantuml']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

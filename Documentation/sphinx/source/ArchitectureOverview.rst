@@ -3,6 +3,19 @@ Architecture and Design Overview
 
 .. graphviz::
 
-   digraph foo {
-      "bar" -> "baz";
+   strict digraph {
+     rankdir = BT;
+     
+     Project  [ shape="box" ]
+     App [ shape="box" ]
+     Core [ shape="box" ]
+     InputSystem [ shape="box" ]
+     Gfx  [ shape="box" ]
+     GfxHAL [ shape="box" ]
+     VKRHI [ shape="box" ]
+     
+     {App InputSystem Gfx GfxHAL VKRHI} -> Core
+     App -> InputSystem
+     Project -> App
+     Project -> {Gfx GfxHAL}
    }

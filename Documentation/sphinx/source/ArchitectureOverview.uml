@@ -1,6 +1,6 @@
 
 @startuml
-caption Architecture Overview
+title Architecture Overview
 skinparam packageStyle rectangle
 
 package Core {

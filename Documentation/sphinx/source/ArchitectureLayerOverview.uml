@@ -1,0 +1,21 @@
+@startuml
+title Architecture Layer Overview
+skinparam packageStyle node
+
+package Core {
+}
+
+package Engine {
+}
+
+package Framework {
+}
+
+package Project {
+}
+
+Framework <<-- Project
+Engine <<-- Framework
+Core <<-- Engine
+
+@enduml

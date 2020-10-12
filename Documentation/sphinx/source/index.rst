@@ -19,9 +19,3 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-
-
-.. uml::
-
-   Alice -> Bob: Hi!
-   Alice <- Bob: How are you?

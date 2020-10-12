@@ -13,6 +13,7 @@
 import os
 import sys
 sys.path.insert(0, os.path.abspath('entensions'))
+sys.path.insert(0, os.path.abspath('entensions'))
 
 primary_domain = 'cpp'
 
@@ -31,11 +32,15 @@ release = '0.0.1'
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-graphviz_dot = ".\\..\\..\\Tools\\Graphviz\\dot.exe"
+
+# The graphviz extension use this variable
+graphviz_dot = os.path.abspath(".\\..\\..\\..\\Tools\\Graphviz\\dot.exe")
+os.environ["GRAPHVIZ_DOT"] = graphviz_dot  # This is necessary for plantuml
 plantumlPath = os.path.abspath(
     "./../../../Tools/PlantUML/plantuml.1.2020.18.jar")
 
-plantuml = 'java -jar %s' % plantumlPath
+#plantuml = 'java -jar %s' % plantumlPath
+plantuml = ['java', '-jar', plantumlPath]
 plantuml_output_format = 'svg'
 extensions = ['sphinx.ext.graphviz', 'sphinxcontrib.plantuml']
 

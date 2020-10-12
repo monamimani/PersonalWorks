@@ -19,3 +19,23 @@ Architecture and Design Overview
      Project -> App
      Project -> {Gfx GfxHAL}
    }
+
+.. uml::
+  :caption: Architecture Overview
+
+   package Project {
+   }
+   package App {
+   }
+   package Core {
+   }
+   package InputSystem {
+   }
+   package Gfx {
+   }
+   package GfxHAL {
+   }
+   package VKRHI {
+   }
+
+.. uml:: ArchitectureOverview.uml

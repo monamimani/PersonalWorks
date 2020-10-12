@@ -1,0 +1,42 @@
+
+@startuml
+caption Architecture Overview
+skinparam packageStyle rectangle
+
+package Core {
+}
+
+package InputSystem {
+}
+
+together {
+
+package Gfx {
+}
+package VKRHI {
+}
+package GfxHAL {
+}
+package App {
+}
+
+}
+package Project {
+}
+
+
+Core <-- App
+Core <-- InputSystem
+Core <-- Gfx
+Core <-- GfxHAL
+Core <-- VKRHI
+VKRHI <-- GfxHAL
+Gfx <-- VKRHI
+Gfx <-- GfxHAL
+GfxHAL <-- App
+InputSystem <-- App
+App <-- Project
+Gfx <-- Project
+GfxHAL <-- Project
+
+@enduml

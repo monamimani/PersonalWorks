@@ -4,13 +4,16 @@ Application Design
 Class Overview
 ==========================================
 
-.. graphviz::
+.. uml::
 
-  digraph {
-    rankdir = BT;
+  set namespaceSeparator ::
 
-    App [ shape="box" ]
-    Win32App [ shape="box"]
-    ProjectApp [ shape="box"]
-    ProjectApp -> Win32App -> App
-  }
+  class AppCore::App::App
+  class AppCore::App::Win32::Win32App
+  class AppCore::App::Win32::Win32AppDesc
+
+  class AppCore::Window::Window
+
+  AppCore::App::App <-- AppCore::App::Win32::Win32App
+
+  AppCore::App::Win32::Win32App o- AppCore::Window::Window

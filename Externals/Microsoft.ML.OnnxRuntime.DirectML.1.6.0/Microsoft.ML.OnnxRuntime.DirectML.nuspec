@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>Microsoft.ML.OnnxRuntime.DirectML</id>
+    <version>1.6.0</version>
+    <authors>Microsoft</authors>
+    <owners>Microsoft</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="file">LICENSE.txt</license>
+    <licenseUrl>https://aka.ms/deprecateLicenseUrl</licenseUrl>
+    <projectUrl>https://github.com/Microsoft/onnxruntime</projectUrl>
+    <iconUrl>https://go.microsoft.com/fwlink/?linkid=2049168</iconUrl>
+    <description>This package contains native shared library artifacts for all supported platforms of ONNX Runtime.</description>
+    <releaseNotes>Release Def:
+	Branch: refs/heads/rel-1.6.0
+	Commit: 718ca7f92085bef4b19b1acc71c1e1f3daccde94
+	Build: https://aiinfra.visualstudio.com/Lotus/_build/results?buildId=139446</releaseNotes>
+    <copyright>© Microsoft Corporation. All rights reserved.</copyright>
+    <tags>ONNX Runtime Machine Learning</tags>
+    <repository type="git" url="https://github.com/Microsoft/onnxruntime.git" commit="718ca7f92085bef4b19b1acc71c1e1f3daccde94" />
+    <dependencies>
+      <group targetFramework=".NETCoreApp0.0">
+        <dependency id="Microsoft.ML.OnnxRuntime.Managed" version="1.6.0" />
+        <dependency id="Microsoft.AI.DirectML" version="1.4.0" />
+      </group>
+      <group targetFramework=".NETStandard0.0">
+        <dependency id="Microsoft.ML.OnnxRuntime.Managed" version="1.6.0" />
+        <dependency id="Microsoft.AI.DirectML" version="1.4.0" />
+      </group>
+      <group targetFramework=".NETFramework0.0">
+        <dependency id="Microsoft.ML.OnnxRuntime.Managed" version="1.6.0" />
+        <dependency id="Microsoft.AI.DirectML" version="1.4.0" />
+      </group>
+      <group targetFramework="native0.0">
+        <dependency id="Microsoft.AI.DirectML" version="1.4.0" />
+      </group>
+    </dependencies>
+  </metadata>
+</package>

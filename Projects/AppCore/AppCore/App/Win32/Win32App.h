@@ -27,6 +27,9 @@ namespace App::Win32
   protected:
     HINSTANCE getHInstance() const { return m_appInstance; }
 
+    virtual void update(const AppContext& context) = 0;
+    virtual void render(const AppContext& context) = 0;
+
   private:
     HINSTANCE m_appInstance;
 

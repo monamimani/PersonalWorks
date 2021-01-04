@@ -22,6 +22,12 @@ public:
     Horizontal //!< The horizontal mouse wheel
   };
 
+  struct Position
+  {
+    int x = 0;
+    int y = 0;
+  };
+
 private:
 };
 } // namespace AppCore::Input

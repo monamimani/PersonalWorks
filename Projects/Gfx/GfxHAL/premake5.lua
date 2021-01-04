@@ -17,3 +17,5 @@ project(path.getbasename(os.getcwd()))
   links {
     "Core"
   }
+
+group ""

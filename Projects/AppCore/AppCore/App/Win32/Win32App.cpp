@@ -58,18 +58,21 @@ int Win32App::run()
         break;
       }
 
-      // Application code
-      //m_timer.Tick([this]() {
-      // std::cout << "Timer stats" << std::endl;
-      // std::cout << "GetDeltaTimeInSeconds " << m_timer.GetDeltaTimeInSeconds() << std::endl;
-      // std::cout << "GetFrameCount " << m_timer.GetFrameCount() << std::endl;
-      // std::cout << "GetFramesPerSecond " << m_timer.GetFramesPerSecond() << std::endl;
-      // std::cout << "GetTotalSeconds " << m_timer.GetTotalSeconds() << std::endl;
-      // std::cout << std::endl;
+      AppContext context;
+      context.m_appFrameTimeContext = m_timer.getFrameTimeContext();
 
-      //  update(m_timer);
-      //});
-      //render(m_timer);
+      // Application code
+      m_timer.tick([this, context]() {
+       std::cout << "Timer stats" << std::endl;
+       std::cout << "GetDeltaTimeInSeconds " << m_timer.getDeltaTimeInSeconds() << std::endl;
+       std::cout << "GetFrameCount " << m_timer.getFrameCount() << std::endl;
+       std::cout << "GetFramesPerSecond " << m_timer.getFramesPerSecond() << std::endl;
+       std::cout << "GetTotalSeconds " << m_timer.getTotalSeconds() << std::endl;
+       std::cout << std::endl;
+
+        update(context);
+      });
+      render(context);
     }
   }
   catch (const std::runtime_error& e)

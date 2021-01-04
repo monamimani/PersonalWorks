@@ -27,10 +27,19 @@ public:
   
   }
 
-  void update([[maybe_unused]] const StepTimer& timer) override
+  void init() override
+  {
+
+  }
+
+  void shutdown() override
   {
   }
-  void render([[maybe_unused]] const StepTimer& timer) override
+
+  void update([[maybe_unused]] const AppContext& context) override
+  {
+  }
+  void render([[maybe_unused]] const AppContext& context) override
   {
   }
 };
@@ -50,8 +59,12 @@ int WinMain(HINSTANCE hInstance, [[maybe_unused]] HINSTANCE hPrevInstance, LPSTR
   appDesc.m_cmdShow = nShowCmd;
 
   m_app = std::make_unique<GfxPlaground::GfxPlaygroundApp>(appDesc, createConsole);
-  
+
+  m_app->init();
+
   auto result = m_app->run();
+
+  m_app->shutdown();
 
   return EXIT_SUCCESS;
 }

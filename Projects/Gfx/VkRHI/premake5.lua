@@ -19,3 +19,5 @@ project(path.getbasename(os.getcwd()))
     "Core",
     "GfxHAL"
   }
+
+group ""

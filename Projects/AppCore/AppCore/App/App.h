@@ -1,23 +1,28 @@
 #pragma once
 
-//#include "Utility/Timer.h"
+#include "Core/AppFrameTimer.h"
 
-class StepTimer;
-
+#include <atomic>
 #include <string_view>
 #include <variant>
-#include <atomic>
 
 namespace AppCore::App
 {
 class App
 {
 public:
+
+  struct AppContext
+  {
+    Core::AppFrameTimer::AppFrameTimeContext m_appFrameTimeContext = {};
+  };
+
   explicit App(const std::variant<std::string_view, std::wstring_view>& applicationName);
   virtual ~App() = default;
 
+  virtual void init() {}
   virtual int run() = 0;
-
+  virtual void shutdown() {}
 
 protected:
   virtual void beforeMainLoop() = 0;
@@ -33,14 +38,14 @@ protected:
     return m_running;
   }
 
+    Core::AppFrameTimer m_timer;
+
 private:
-  virtual void update(const StepTimer& timer) = 0;
-  virtual void render(const StepTimer& timer) = 0;
 
   std::string m_applicationName;
   std::atomic<bool> m_running = true;
 
-  //StepTimer m_timer;
+
 };
 
 } // namespace AppCore::App

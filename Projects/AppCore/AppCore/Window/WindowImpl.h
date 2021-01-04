@@ -2,7 +2,7 @@
 
 #include <queue>
 
-#include "AppCore/Utility/NonCopyable.h"
+#include "Core/NonCopyable.h"
 #include "AppCore/Window/Event.h"
 
 namespace AppCore::Window
@@ -25,7 +25,7 @@ struct Size
   Pixel height = 0;
 };
 
-class WindowImpl : Utility::NonCopyable
+class WindowImpl : Core::NonCopyable
 {
 public:
   virtual ~WindowImpl() = default;

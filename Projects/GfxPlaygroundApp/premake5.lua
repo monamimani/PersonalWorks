@@ -21,3 +21,4 @@ project(path.getbasename(os.getcwd()))
     "AppCore",
     "GfxHAL"
   }
+  group ""

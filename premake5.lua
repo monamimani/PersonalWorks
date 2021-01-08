@@ -4,6 +4,16 @@
 require('vstudio')
 require "export-compile-commands"
 
+RootDir = os.realpath(os.getcwd() .. "/");
+SolutionDir = os.realpath(RootDir);
+ExternalsDir = os.realpath(RootDir .. "Externals/");
+ProjectsDir = os.realpath(RootDir .. "Projects/");
+
+OutputDir = RootDir .. "_Bin/%{cfg.architecture}-%{cfg.buildcfg}/"
+
+printf("ProjectsDir: %s", ProjectsDir)
+printf("ExternalsDir: %s", ExternalsDir)
+
 local vs = premake.vstudio.vc2010
 premake.override(vs, "propertySheets", function(base, cfg)
   base(cfg)
@@ -12,13 +22,23 @@ premake.override(vs, "propertySheets", function(base, cfg)
   premake.pop('</ImportGroup>')
 end)
 
-RootDir = os.realpath(os.getcwd() .. "/");
-SolutionDir = os.realpath(RootDir);
-ExternalsDir = os.realpath(RootDir .. "Externals/");
-ProjectsDir = os.realpath(RootDir .. "Projects/");
+function CreatCopyCmd(pathFrom, pathTo)
+  return "{COPY} " .. pathFrom .. " " .. pathTo
+end
 
-printf("ProjectsDir: %s", ProjectsDir)
-printf("ExternalsDir: %s", ExternalsDir)
+function CreateCopyCmdsAppConfigFileToCfgTargertDir()
+  return CreatCopyCmd("%{prj.location}Resources/%{prj.name}.exe.config", "%{cfg.targetdir}")
+end
+
+function CreateCopyCmdsFromExternalsDirToCfgTargertDir(dllToCopy)
+    copyCmds = {}
+    table.foreachi(dllToCopy, function(value) 
+      --table.insert(copyCmds, "{COPY} " .. ExternalsDir .. value .. " " .. "%{cfg.targetdir}")
+      table.insert(copyCmds, CreatCopyCmd(ExternalsDir .. value, "%{cfg.targetdir}"))
+    end)
+
+    return copyCmds
+end
 
 workspace "PersonalWorks"
 
@@ -32,7 +52,15 @@ workspace "PersonalWorks"
   staticruntime "Off"
   characterset "ASCII"
 
-  targetdir (RootDir .. "_Bin/%{cfg.architecture}-%{cfg.buildcfg}/%{prj.name}/")
+
+  -- filter { "kind:*App" }
+  --   targetdir (OutputDir)
+  -- filter { "kind:*Lib" }
+  --   targetdir (OutputDir .."bin/")
+  --   implibdir (OutputDir .."lib/")
+  -- filter {}
+
+  targetdir (OutputDir)
   objdir (RootDir .. "_BinIntermediate/%{cfg.architecture}-%{cfg.buildcfg}/%{prj.name}/")
 
   architecture "x64"
@@ -70,3 +98,11 @@ workspace "PersonalWorks"
     printf("[%s]: %s", key, filePath)
     include(filePath)
   end
+
+  -- if('%{cfg.kind}:endswith("App")') then
+  --   targetdir (RootDir .. "_Bin/%{cfg.architecture}-%{cfg.buildcfg}/")
+  -- elseif('%{cfg.kind}:endswith("lib")') then
+  --   targetdir (RootDir .. "_Bin/%{cfg.architecture}-%{cfg.buildcfg}/Bin")
+  -- else
+  --   targetdir (RootDir .. "_Bin/%{cfg.architecture}-%{cfg.buildcfg}/%{prj.name}/") -- Fallthrough default
+  -- end

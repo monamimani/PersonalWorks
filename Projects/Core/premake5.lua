@@ -8,6 +8,8 @@ project(ProjectName)
   files {
     "%{prj.name}/**.h",
     "%{prj.name}/**.cpp",
+    "fmt/**.h",
+    "fmt/**.cc",
   }
   excludes {
     "%{prj.name}/**.test.h",
@@ -39,7 +41,6 @@ project(ProjectName.. ".Tests")
   }
 
   filter { "configurations:Debug" }
-  
     libdirs { 
       ExternalsDir .. "GoogleTest/lib/Debug"
     }
@@ -49,12 +50,13 @@ project(ProjectName.. ".Tests")
     }
 
     dllToCopy = {"GoogleTest/bin/Debug/gtestd.dll", "GoogleTest/bin/Debug/gtest_maind.dll"}
-    copyCmds = {}
-    table.foreachi(dllToCopy, function(value) 
-      table.insert(copyCmds, "{COPY} " .. ExternalsDir .. value .. " " .. "%{cfg.targetdir}")
-    end)
+    copyCmds = CreateCopyCmdsFromExternalsDirToCfgTargertDir(dllToCopy)
+    -- copyCmds = {}
+    -- table.foreachi(dllToCopy, function(value) 
+    --   table.insert(copyCmds, "{COPY} " .. ExternalsDir .. value .. " " .. "%{cfg.targetdir}")
+    -- end)
 
-    --printf("%s", table.concat(copyCmds,"\n "))
+      --printf("%s", table.concat(copyCmds,"\n "))
     postbuildcommands
     {
       copyCmds

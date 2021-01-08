@@ -1,7 +1,6 @@
 ﻿#pragma once
 
 #include "OnnxRT/DllDefines.h"
-#include "fmt/format.h"
 #include "onnxruntime_cxx_api.h"
 
 #include <cassert>
@@ -36,11 +35,19 @@ private:
   std::unique_ptr<Ort::Env> m_env;
 };
 
-class OrtSession
+enum class ONNXRT_API OrtProviderType
+{
+    CPU,
+    DirectML,
+    Cuda,
+};
+
+class ONNXRT_API OrtSession
 {
 public:
   struct OrtSessionInfo
   {
+    OrtProviderType providerType = OrtProviderType::CPU;
     std::filesystem::path modelPath;
     bool dumpInfo = false;
   };

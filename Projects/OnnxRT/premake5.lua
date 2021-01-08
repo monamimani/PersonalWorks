@@ -8,6 +8,8 @@ project(ProjectName)
   files {
     "%{prj.name}/**.h",
     "%{prj.name}/**.cpp",
+    --"Resources/**.config",
+    --"Resources/**.manifest",
   }
 
   includedirs {
@@ -23,5 +25,17 @@ project(ProjectName)
   links { 
       "Core",
       "onnxruntime" 
+  }
+
+  defines
+  {
+    "ONNXRT_DLL"
+  }
+
+  dllToCopy = {"Microsoft.ML.OnnxRuntime.DirectML.1.6.0/runtimes/win-x64/native/onnxruntime.dll"}
+  copyCmds = CreateCopyCmdsFromExternalsDirToCfgTargertDir(dllToCopy)
+  postbuildcommands
+  {
+    copyCmds
   }
 

@@ -28,12 +28,12 @@ project(path.getbasename(os.getcwd()))
     "onnxruntime" 
   }
 
-  dllToCopy = {"Microsoft.ML.OnnxRuntime.DirectML.1.6.0/runtimes/win-x64/native/onnxruntime.dll"}
-  copyCmds = CreateCopyCmdsFromExternalsDirToCfgTargertDir(dllToCopy)
-  --table.insert(copyCmds, CreateCopyCmdsAppConfigFileToCfgTargertDir())
-  postbuildcommands
-  {
-    copyCmds
-  }
+  -- dllToCopy = {"Microsoft.ML.OnnxRuntime.DirectML.1.6.0/runtimes/win-x64/native/onnxruntime.dll"}
+  -- copyCmds = CreateCopyCmdsFromExternalsDirToOutputDir(dllToCopy)
+  -- table.insert(copyCmds, CreateCopyCmdsAppConfigFileToCfgTargertDir())
+  -- postbuildcommands
+  -- {
+  --   copyCmds
+  -- }
 
 group ""

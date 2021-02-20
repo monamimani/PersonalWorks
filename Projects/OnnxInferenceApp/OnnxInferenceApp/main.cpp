@@ -3,6 +3,9 @@
 #include "Core/PathUtils.h"
 #include "fmt/format.h"
 
+//#pragma comment(linker, "/manifestdependency:\"type='win32' name='Lib.OnnxRT' version='0.0.0.1'\"")
+
+
 int main([[maybe_unused]] int argc, [[maybe_unused]] char* argv[])
 {
   OnnxRT::OrtInstance::createOrtInstance("OnnxInference");

@@ -33,7 +33,7 @@ project(ProjectName)
   }
 
   dllToCopy = {"Microsoft.ML.OnnxRuntime.DirectML.1.6.0/runtimes/win-x64/native/onnxruntime.dll"}
-  copyCmds = CreateCopyCmdsFromExternalsDirToCfgTargertDir(dllToCopy)
+  copyCmds = CreateCopyCmdsFromExternalsDirToOutputDir(dllToCopy)
   postbuildcommands
   {
     copyCmds

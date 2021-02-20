@@ -6,10 +6,10 @@
 #include "Core/Win32/Win32Utility.h"
 #include "fmt/format.h"
 
+#include <iostream>
 #include <optional>
 #include <stdexcept>
 #include <unordered_map>
-#include <iostream>
 #include <windowsx.h>
 
 namespace AppCore::Window::Win32
@@ -146,7 +146,6 @@ AppCore::Window::Win32::Win32Window::Win32Window(const WindowDesc& desc)
       // dwExStyle &=
       //    ~(WS_EX_DLGMODALFRAME | WS_EX_CLIENTEDGE | WS_EX_STATICEDGE);
 
-
       width = (int32_t)m_desc.m_width;
       height = (int32_t)m_desc.m_height;
     }
@@ -172,7 +171,7 @@ AppCore::Window::Win32::Win32Window::Win32Window(const WindowDesc& desc)
     cs.cx = clientRectAdjusted.right - clientRectAdjusted.left; // Window width
     cs.cy = clientRectAdjusted.bottom - clientRectAdjusted.top; // Window height
     cs.hInstance = m_nativeDesc.m_appInstance;                  // Window instance.
-    cs.lpszClass = m_windowClass->windowClassEx.lpszClassName;               // Window class name
+    cs.lpszClass = m_windowClass->windowClassEx.lpszClassName;  // Window class name
     cs.lpszName = m_desc.m_title.c_str();                       // Window title
     cs.style = dwStyle;                                         // Window style
     cs.dwExStyle = dwExStyle;                                   // Window extended style

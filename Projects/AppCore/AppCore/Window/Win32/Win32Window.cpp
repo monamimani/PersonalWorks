@@ -3,10 +3,13 @@
 
 #include "AppCore/Window/Event.h"
 #include "Core/Assert.h"
+#include "Core/Win32/Win32Utility.h"
+#include "fmt/format.h"
 
 #include <optional>
 #include <stdexcept>
 #include <unordered_map>
+#include <iostream>
 #include <windowsx.h>
 
 namespace AppCore::Window::Win32
@@ -44,33 +47,55 @@ std::optional<DEVMODE> findBestDisplayMode(uint32_t width, uint32_t height, uint
   return best;
 }
 
+struct BasicWin32WindowClass
+{
+  BasicWin32WindowClass(HINSTANCE appInstance)
+  {
+    // Setup m_window class attributes.
+    auto intResource = IDI_APPLICATION;
+    windowClassEx.cbSize = sizeof(WNDCLASSEX);
+    windowClassEx.style = CS_HREDRAW | CS_VREDRAW;
+    //windowClassEx.lpfnWndProc = &WindowProc;
+    windowClassEx.lpfnWndProc = &windowProcDispatcher;
+    windowClassEx.cbClsExtra = 0;
+    windowClassEx.cbWndExtra = 0;
+    windowClassEx.hInstance = appInstance;
+    //windowClassEx.hIcon = LoadIcon(windowClassEx.hInstance, intResource);
+    //windowClassEx.hCursor = LoadCursor(NULL, IDC_ARROW);
+    windowClassEx.hbrBackground = static_cast<HBRUSH>(GetStockObject(DKGRAY_BRUSH));
+    //windowClassEx.lpszMenuName = NULL;
+    windowClassEx.lpszClassName = "BasicWin32WindowClassEx";
+    //windowClassEx.hIconSm = LoadIcon(windowClassEx.hInstance, intResource);
+
+    if (!RegisterClassEx(&windowClassEx))
+    {
+      throw(std::runtime_error("Failed to register the window class."));
+    }
+  }
+
+  ~BasicWin32WindowClass()
+  {
+    UnregisterClass(windowClassEx.lpszClassName, windowClassEx.hInstance);
+  }
+
+  WNDCLASSEX windowClassEx{};
+};
+
+static std::shared_ptr<BasicWin32WindowClass> getBasicWin32WindowClass(HINSTANCE appInstance)
+{
+  static auto basicWin32WindowClass = std::make_shared<BasicWin32WindowClass>(appInstance);
+  return basicWin32WindowClass;
+}
+
 AppCore::Window::Win32::Win32Window::Win32Window(const WindowDesc& desc)
-    : m_desc{desc}
-    , m_lastCursor(LoadCursor(NULL, IDC_ARROW))
+: m_desc{desc}
+, m_lastCursor(LoadCursor(NULL, IDC_ARROW))
 {
   try
   {
     m_nativeDesc = std::any_cast<App::Win32::Win32AppDesc&>(m_desc.m_nativeAppDesc);
 
-    // Setup m_window class attributes.
-    auto intResource = IDI_APPLICATION;
-    m_windowClassEx.cbSize = sizeof(WNDCLASSEX);
-    m_windowClassEx.style = CS_HREDRAW | CS_VREDRAW;
-    m_windowClassEx.lpfnWndProc = &windowProcDispatcher;
-    m_windowClassEx.cbClsExtra = 0;
-    m_windowClassEx.cbWndExtra = 0;
-    m_windowClassEx.hInstance = m_nativeDesc.m_appInstance;
-    m_windowClassEx.hIcon = LoadIcon(m_windowClassEx.hInstance, intResource);
-    m_windowClassEx.hCursor = LoadCursor(NULL, IDC_ARROW);
-    m_windowClassEx.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
-    m_windowClassEx.lpszMenuName = NULL;
-    m_windowClassEx.lpszClassName = m_desc.m_id.c_str();
-    m_windowClassEx.hIconSm = LoadIcon(m_windowClassEx.hInstance, intResource);
-
-    if (!RegisterClassEx(&m_windowClassEx))
-    {
-      throw(std::runtime_error("Failed to register the window class."));
-    }
+    m_windowClass = getBasicWin32WindowClass(m_nativeDesc.m_appInstance);
 
     int screenWidth = GetSystemMetrics(SM_CXSCREEN);
     int screenHeight = GetSystemMetrics(SM_CYSCREEN);
@@ -96,14 +121,15 @@ AppCore::Window::Win32::Win32Window::Win32Window(const WindowDesc& desc)
     }
 
     uint32_t dwExStyle = 0;
-    uint32_t dwStyle = 0;
+    int32_t dwStyle = 0;
     int32_t width = 0;
     int32_t height = 0;
     enum class Style : uint32_t
     {
       Windowed = WS_OVERLAPPEDWINDOW,
       Aeroorderless = WS_POPUP | WS_THICKFRAME,
-      BasicBorderless = WS_CAPTION | WS_OVERLAPPED | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX
+      BasicBorderless = WS_CAPTION | WS_OVERLAPPED | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SYSMENU
+
     };
 
     if (m_desc.m_isFullscreen)
@@ -119,7 +145,7 @@ AppCore::Window::Win32::Win32Window::Win32Window(const WindowDesc& desc)
       dwExStyle = WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;
       // dwExStyle &=
       //    ~(WS_EX_DLGMODALFRAME | WS_EX_CLIENTEDGE | WS_EX_STATICEDGE);
-      dwStyle = (uint32_t)Style::BasicBorderless;
+
 
       width = (int32_t)m_desc.m_width;
       height = (int32_t)m_desc.m_height;
@@ -135,6 +161,8 @@ AppCore::Window::Win32::Win32Window::Win32Window(const WindowDesc& desc)
         height};
     AdjustWindowRectEx(&clientRectAdjusted, dwStyle, false, dwExStyle);
 
+    auto windowTitle = m_desc.m_title.c_str();
+
     // Setup m_window initialization attributes.
     CREATESTRUCT cs;
     ZeroMemory(&cs, sizeof(cs));
@@ -144,7 +172,7 @@ AppCore::Window::Win32::Win32Window::Win32Window(const WindowDesc& desc)
     cs.cx = clientRectAdjusted.right - clientRectAdjusted.left; // Window width
     cs.cy = clientRectAdjusted.bottom - clientRectAdjusted.top; // Window height
     cs.hInstance = m_nativeDesc.m_appInstance;                  // Window instance.
-    cs.lpszClass = m_windowClassEx.lpszClassName;               // Window class name
+    cs.lpszClass = m_windowClass->windowClassEx.lpszClassName;               // Window class name
     cs.lpszName = m_desc.m_title.c_str();                       // Window title
     cs.style = dwStyle;                                         // Window style
     cs.dwExStyle = dwExStyle;                                   // Window extended style
@@ -155,7 +183,7 @@ AppCore::Window::Win32::Win32Window::Win32Window(const WindowDesc& desc)
 
     if (!m_window)
     {
-      throw(std::runtime_error("Failed to create the window."));
+      throw(std::runtime_error(fmt::format("Failed to create the window. LastError: {}", Win32Util::GetLastErrorAsString())));
     }
 
     m_previousSize.width = width;
@@ -178,6 +206,13 @@ AppCore::Window::Win32::Win32Window::Win32Window(const WindowDesc& desc)
 
     ::UpdateWindow(m_window);
   }
+  catch (std::exception e)
+  {
+
+    std::cerr << e.what() << std::endl;
+    OutputDebugString(e.what());
+    std::abort();
+  }
   catch (...)
   {
     //TODO: Deal with excpetions
@@ -187,7 +222,6 @@ AppCore::Window::Win32::Win32Window::Win32Window(const WindowDesc& desc)
 
 Win32Window::~Win32Window()
 {
-  UnregisterClass(m_windowClassEx.lpszClassName, m_nativeDesc.m_appInstance);
 }
 
 void Win32Window::setGrabCursor(bool isGrabbed)
@@ -473,8 +507,9 @@ Event::KeyModifierState getKeyModifierState()
   return modifierState;
 }
 
-LRESULT Win32Window::processEvent([[maybe_unused]]HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+LRESULT Win32Window::processEvent([[maybe_unused]] HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
+  return DefWindowProc(hwnd, msg, wParam, lParam);
   //https://docs.microsoft.com/en-us/windows/win32/winmsg/window-notifications
   //https://docs.microsoft.com/en-us/windows/win32/inputdev/keyboard-input-notifications
   LRESULT result = 0;
@@ -926,17 +961,26 @@ LRESULT windowProcDispatcher(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
     {
       CREATESTRUCT* cs = (CREATESTRUCT*)lparam;
       auto window = reinterpret_cast<Win32Window*>(cs->lpCreateParams);
+      window->m_window = hwnd;
       hwndMap.emplace(hwnd, window);
       //SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)window);
-      result = TRUE;
-    }
-    default:
-    {
-      //auto window = reinterpret_cast<Win32Window*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
-      auto pair = hwndMap.find(hwnd);
-      auto window = pair->second;
       result = window->processEvent(hwnd, msg, wparam, lparam);
     }
+    break;
+    default:
+    {
+      if (!hwndMap.empty())
+      {
+        //auto window = reinterpret_cast<Win32Window*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
+        auto pair = hwndMap.find(hwnd);
+        auto window = pair->second;
+        if (window)
+        {
+          result = window->processEvent(hwnd, msg, wparam, lparam);
+        }
+      }
+    }
+    break;
   }
 
   return result;

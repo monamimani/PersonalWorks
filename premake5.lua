@@ -30,11 +30,10 @@ function CreateCopyCmdsAppConfigFileToCfgTargertDir()
   return CreatCopyCmd("%{prj.location}Resources/%{prj.name}.exe.config", "%{cfg.targetdir}")
 end
 
-function CreateCopyCmdsFromExternalsDirToCfgTargertDir(dllToCopy)
+function CreateCopyCmdsFromExternalsDirToOutputDir(dllToCopy)
     copyCmds = {}
     table.foreachi(dllToCopy, function(value) 
-      --table.insert(copyCmds, "{COPY} " .. ExternalsDir .. value .. " " .. "%{cfg.targetdir}")
-      table.insert(copyCmds, CreatCopyCmd(ExternalsDir .. value, "%{cfg.targetdir}"))
+      table.insert(copyCmds, CreatCopyCmd(ExternalsDir .. value, OutputDir))
     end)
 
     return copyCmds
@@ -56,8 +55,9 @@ workspace "PersonalWorks"
   -- filter { "kind:*App" }
   --   targetdir (OutputDir)
   -- filter { "kind:*Lib" }
-  --   targetdir (OutputDir .."bin/")
-  --   implibdir (OutputDir .."lib/")
+  --   targetdir (OutputDir .."%{prj.name}/")
+  --   --targetdir (OutputDir .."Bin/")
+  --   implibdir (OutputDir .."Lib/")
   -- filter {}
 
   targetdir (OutputDir)

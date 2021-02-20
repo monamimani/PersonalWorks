@@ -1,10 +1,10 @@
 #include "AppCore/App/Win32/Win32App.h"
 
+
+#include "AppCore/Window/Window.h"
+
 #include <iostream>
 #include <stdexcept>
-
-#include "AppCore/Window/Win32/Win32Window.h"
-#include "AppCore/Window/Window.h"
 
 namespace AppCore::App::Win32
 {
@@ -12,8 +12,9 @@ namespace AppCore::App::Win32
 Win32App::~Win32App() = default;
 
 Win32App::Win32App(const Win32AppDesc& appDesc, bool createConsole)
-    : App(appDesc.m_applicationName)
-    , m_appInstance{appDesc.m_appInstance}
+: App(appDesc.m_applicationName)
+, m_appInstance{appDesc.m_appInstance}
+, m_win32AppDesc{appDesc}
 {
 
   if (createConsole)
@@ -38,23 +39,18 @@ int Win32App::run()
   MSG systemMsg{};
   try
   {
-    HACCEL hAccelTable = {};
-
     while (isRunning())
     {
       while (::PeekMessage(&systemMsg, nullptr, 0, 0, PM_REMOVE))
       {
-
-        if (!TranslateAccelerator(systemMsg.hwnd, hAccelTable, &systemMsg))
-        {
-          // Handle messages
-          ::TranslateMessage(&systemMsg);
-          ::DispatchMessage(&systemMsg);
-        }
+        // Handle messages
+        ::TranslateMessage(&systemMsg);
+        ::DispatchMessage(&systemMsg);
       }
 
       if (systemMsg.message == WM_QUIT)
       {
+        setRunning(false);
         break;
       }
 
@@ -63,12 +59,12 @@ int Win32App::run()
 
       // Application code
       m_timer.tick([this, context]() {
-       std::cout << "Timer stats" << std::endl;
-       std::cout << "GetDeltaTimeInSeconds " << m_timer.getDeltaTimeInSeconds() << std::endl;
-       std::cout << "GetFrameCount " << m_timer.getFrameCount() << std::endl;
-       std::cout << "GetFramesPerSecond " << m_timer.getFramesPerSecond() << std::endl;
-       std::cout << "GetTotalSeconds " << m_timer.getTotalSeconds() << std::endl;
-       std::cout << std::endl;
+        std::cout << "Timer stats" << std::endl;
+        std::cout << "GetDeltaTimeInSeconds " << m_timer.getDeltaTimeInSeconds() << std::endl;
+        std::cout << "GetFrameCount " << m_timer.getFrameCount() << std::endl;
+        std::cout << "GetFramesPerSecond " << m_timer.getFramesPerSecond() << std::endl;
+        std::cout << "GetTotalSeconds " << m_timer.getTotalSeconds() << std::endl;
+        std::cout << std::endl;
 
         update(context);
       });
@@ -84,4 +80,18 @@ int Win32App::run()
 
   return (int)systemMsg.wParam;
 }
+
+Win32WindowApp::Win32WindowApp(const Win32AppDesc& appDesc, bool createConsole)
+: Win32App(appDesc, createConsole)
+{
+
+}
+
+Win32WindowApp::~Win32WindowApp() = default;
+
+void Win32WindowApp::MakeWindow(const AppCore::Window::WindowDesc& desc)
+{
+  m_mainWindow.push_back(std::make_unique<AppCore::Window::Window>(desc));
+}
+
 } // namespace AppCore::App::Win32

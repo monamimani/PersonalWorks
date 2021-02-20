@@ -50,13 +50,7 @@ project(ProjectName.. ".Tests")
     }
 
     dllToCopy = {"GoogleTest/bin/Debug/gtestd.dll", "GoogleTest/bin/Debug/gtest_maind.dll"}
-    copyCmds = CreateCopyCmdsFromExternalsDirToCfgTargertDir(dllToCopy)
-    -- copyCmds = {}
-    -- table.foreachi(dllToCopy, function(value) 
-    --   table.insert(copyCmds, "{COPY} " .. ExternalsDir .. value .. " " .. "%{cfg.targetdir}")
-    -- end)
-
-      --printf("%s", table.concat(copyCmds,"\n "))
+    copyCmds = CreateCopyCmdsFromExternalsDirToOutputDir(dllToCopy)
     postbuildcommands
     {
       copyCmds

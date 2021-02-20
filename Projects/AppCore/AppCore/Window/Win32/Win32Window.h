@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include "AppCore/App/Win32/Win32AppDesc.h"
 #include "AppCore/Input/Keyboard.h"
 #include "AppCore/Window/WindowDesc.h"
@@ -8,6 +10,8 @@
 
 namespace AppCore::Window::Win32
 {
+struct BasicWin32WindowClass;
+
 
 class Win32Window : public WindowImpl
 {
@@ -46,7 +50,7 @@ private:
   App::Win32::Win32AppDesc m_nativeDesc;
 
   HWND m_window = {};
-  WNDCLASSEX m_windowClassEx = {};
+  std::shared_ptr<BasicWin32WindowClass> m_windowClass;
 
   bool m_keyRepeatEnabled = true; //!< Key-repeat state for keydown evets.
   bool m_cursorGrabbed = false;   //!< Is the mouse cursor grabbed?

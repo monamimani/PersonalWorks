@@ -11,7 +11,6 @@ namespace AppCore::App
 class App
 {
 public:
-
   struct AppContext
   {
     Core::AppFrameTimer::AppFrameTimeContext m_appFrameTimeContext = {};
@@ -38,14 +37,16 @@ protected:
     return m_running;
   }
 
-    Core::AppFrameTimer m_timer;
+  void setRunning(bool running)
+  {
+    m_running = running;
+  }
+
+  Core::AppFrameTimer m_timer;
 
 private:
-
   std::string m_applicationName;
   std::atomic<bool> m_running = true;
-
-
 };
 
 } // namespace AppCore::App

@@ -1,0 +1,9 @@
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg/master/scripts/vcpkg.schema.json",
+  "name": "personal-works",
+  "version-string": "0.1.0-dev",
+  "dependencies": [
+    "benchmark",
+    "gtest"
+  ]
+}

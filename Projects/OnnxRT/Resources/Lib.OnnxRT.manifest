@@ -1,0 +1,4 @@
+<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
+    <assemblyIdentity name="Lib.OnnxRT" version="0.0.0.1"  type="win32"/>
+    <file name="OnnxRT.dll"/>
+</assembly>

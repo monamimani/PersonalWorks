@@ -1,0 +1,154 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 22,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "base",
+      "description": "Base configuration for all environments.",
+      "hidden": true,
+      "generator": "Visual Studio 17 2022",
+      "binaryDir": "${sourceDir}/_Out/build/${presetName}",
+      "installDir": "${sourceDir}/_Out/install/${presetName}",
+      "cacheVariables": {
+        "CMAKE_CXX_STANDARD": "23",
+        "CMAKE_CXX_STANDARD_REQUIRED": "YES",
+        "VCPKG_INSTALLED_DIR": "${sourceDir}/ThirdpartyVcpkg"
+      }
+    },
+    {
+      "name": "windows-base",
+      "description": "Target Windows with the Visual Studio development environment.",
+      "hidden": true,
+      "inherits": "base",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "cl.exe",
+        "CMAKE_CXX_COMPILER": "cl.exe",
+        "CMAKE_CXX_FLAGS": "/DWIN32 /D_WINDOWS /W4 /EHsc /MP /permissive-",
+        "CMAKE_C_FLAGS": "/DWIN32 /D_WINDOWS /W4 /EHsc /MP /permissive-",
+        "CMAKE_TOOLCHAIN_FILE": {
+          "type": "FILEPATH",
+          "value": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+        },
+        "ENABLE_CPPCHECK_DEFAULT": "FALSE",
+        "ENABLE_CLANG_TIDY_DEFAULT": "FALSE",
+        "VCPKG_TARGET_TRIPLET": "x64-windows"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      },
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
+      },
+      "toolset": {
+        "value": "host=x64",
+        "strategy": "external"
+      },
+      "vendor": {
+        "microsoft.com/VisualStudioSettings/CMake/1.0": {
+          "hostOS": [ "Windows" ]
+        }
+      }
+    },
+    {
+      "name": "x64-debug",
+      "displayName": "x64 Debug",
+      "description": "Target Windows (64-bit) with the Visual Studio development environment. (Debug)",
+      "inherits": "windows-base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "USE_ASAN": true
+      }
+    },
+    {
+      "name": "x64-release",
+      "displayName": "x64 Release",
+      "description": "Target Windows (64-bit) with the Visual Studio development environment. (RelWithDebInfo)",
+      "inherits": "x64-debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo"
+      }
+    },
+    {
+      "name": "x64-shipping",
+      "displayName": "x64 Shipping",
+      "description": "Target Windows (64-bit) with the Visual Studio development environment. (Release)",
+      "inherits": "x64-release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    }//,
+    //{
+    //  "name": "linux-base",
+    //  "description": "Linux settings for gcc and clang toolchains",
+    //  "hidden": true,
+    //  "inherits": "base",
+    //  "condition": {
+    //    "type": "equals",
+    //    "lhs": "${hostSystemName}",
+    //    "rhs": "Linux"
+    //  },
+    //  "vendor": {
+    //    "microsoft.com/VisualStudioRemoteSettings/CMake/1.0": {
+    //      "sourceDir": "$env{HOME}/.vs/$ms{projectDirName}"
+    //    }
+    //  }
+    //}
+  ],
+  "buildPresets": [
+    {
+     "name": "x64-debug",
+     "configurePreset": "x64-debug",
+     "configuration": "Debug"
+    },
+    {
+     "name": "x64-release",
+     "configurePreset": "x64-release",
+     "configuration": "RelWithDebInfo"
+    },
+    {
+     "name": "x64-shipping",
+     "configurePreset": "x64-shipping",
+     "configuration": "Release"
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "test-base",
+      "description": "Test CMake settings that apply to all configurations",
+      "hidden": true,
+      "output": {
+        "outputOnFailure": true,
+        "outputLogFile": "Ctest-${presetName}.log"
+      },
+      "execution": {
+        "noTestsAction": "error",
+        "stopOnFailure": true
+      }
+    },
+    {
+      "name": "x64-debug",
+      "displayName": "x64 Debug",
+      "inherits": "test-base",
+      "configurePreset": "x64-debug"
+    },
+    {
+      "name": "x64-release",
+      "displayName": "x64 Release",
+      "inherits": "test-base",
+      "configurePreset": "x64-release"
+    },
+    {
+      "name": "x64-shipping",
+      "displayName": "x64 Shipping",
+      "inherits": "test-base",
+      "configurePreset": "x64-shipping"
+    }
+  ]
+}

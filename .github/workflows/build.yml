@@ -1,0 +1,61 @@
+name: Cmake build
+
+on: [push, pull_request, release]
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+        - {
+            os: windows-latest,
+            buildType: ["Debug, Release, Shipping"],
+            configurePreset: x64-debug
+          }
+        - {
+            os: windows-latest,
+            buildType: ["Debug, Release, Shipping"],
+            configurePreset: x64-release
+          }
+        - {
+            os: windows-latest,
+            buildType: ["Debug, Release, Shipping"],
+            configurePreset: x64-shipping
+          }
+        - {
+            os: ubuntu-latest,
+          }
+        
+
+
+  # include:
+  #   - os: windows-latest
+  #     buildType: Debug
+  #     configurePreset: x64-debug
+  #   - os: windows-latest
+  #     buildType: Release
+  #     configurePreset: x64-release
+  #   - os: windows-latest
+  #     buildType: Shipping
+  #     configurePreset: x64-shipping
+    # name: ${{ matrix.buildType }} build on ${{ matrix.os }}
+    runs-on: ${{ matrix.config.os }}
+
+    steps:
+    - uses: actions/checkout@v3  
+      with:
+        lfs: true
+        submodules: true
+
+    - name: Cmake Configure
+      run: |
+        cmake --preset ${{ matrix.config.configurePreset }}
+
+    - name: Cmake Build
+      run: |
+        cmake --build --preset ${{ matrix.config.configurePreset }}
+
+    - name: CTest
+      run: |
+        ctest --preset ${{ matrix.config.configurePreset }}

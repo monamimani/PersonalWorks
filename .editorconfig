@@ -1,0 +1,14 @@
+# You can learn more about editorconfig here: https://docs.microsoft.com/en-us/visualstudio/ide/editorconfig-code-style-settings-reference
+
+root = true
+
+[*]
+indent_style = space
+indent_size = 2
+charset = utf-8
+
+[*.{h, hpp, ixx, inl, cpp, cxx]
+
+indent_size = 2
+trim_trailing_whitespace = true
+insert_final_newline = true

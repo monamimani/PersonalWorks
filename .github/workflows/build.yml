@@ -10,19 +10,19 @@ jobs:
         config:
         - {
             os: windows-latest,
-            configurePreset: Vs2022,
+            configurePreset: windows-vs2022,
             buildPreset: windows-vs2022-x64-debug,
             testPreset: windows-vs2022-x64-debug
           }
         - {
             os: windows-latest,
-            configurePreset: Vs2022,
+            configurePreset: windows-vs2022,
             buildPreset: windows-vs2022-x64-release,
             testPreset: windows-vs2022-x64-release
           }
         - {
             os: windows-latest,
-            configurePreset: Vs2022,
+            configurePreset: windows-vs2022,
             buildPreset: windows-vs2022-x64-shipping,
             testPreset: windows-vs2022-x64-shipping
           }

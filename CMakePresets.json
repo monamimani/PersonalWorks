@@ -80,17 +80,14 @@
     },
     {
       "name": "windows-vs2022",
-      "displayName": "Vs2022",
       "inherits": [ "base", "Windows-base", "Vs2022" ]
     },
     {
       "name": "windows-vs2022-checkers",
-      "displayName": "Vs2022 Checkers",
       "inherits": [ "base", "checkers", "Windows-base", "Vs2022" ]
     },
     {
       "name": "linux-ninja-multi-config",
-      "displayName": "Vs2022",
       "inherits": [ "base", "linux-base", "ninja-multi-config" ]
     }
     // {
@@ -156,7 +153,6 @@
   "testPresets": [
     {
       "name": "test-base",
-      "description": "Test CMake settings that apply to all configurations",
       "hidden": true,
       "output": {
         "outputOnFailure": true,

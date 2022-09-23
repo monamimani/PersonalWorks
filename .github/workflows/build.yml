@@ -10,21 +10,39 @@ jobs:
         config:
         - {
             os: windows-latest,
-            buildType: ["Debug, Release, Shipping"],
-            configurePreset: x64-debug
+            configurePreset: Vs2022,
+            buildPreset: windows-vs2022-x64-debug,
+            testPreset: windows-vs2022-x64-debug
           }
         - {
             os: windows-latest,
-            buildType: ["Debug, Release, Shipping"],
-            configurePreset: x64-release
+            configurePreset: Vs2022,
+            buildPreset: windows-vs2022-x64-release,
+            testPreset: windows-vs2022-x64-release
           }
         - {
             os: windows-latest,
-            buildType: ["Debug, Release, Shipping"],
-            configurePreset: x64-shipping
+            configurePreset: Vs2022,
+            buildPreset: windows-vs2022-x64-shipping,
+            testPreset: windows-vs2022-x64-shipping
           }
         - {
             os: ubuntu-latest,
+            configurePreset: linux-ninja-multi-config,
+            buildPreset: linux-ninja-multi-config-x64-debug,
+            testPreset: linux-ninja-multi-config-x64-debug
+          }
+        - {
+            os: ubuntu-latest,
+            configurePreset: linux-ninja-multi-config,
+            buildPreset: linux-ninja-multi-config-x64-release,
+            testPreset: linux-ninja-multi-config-x64-release
+          }
+        - {
+            os: ubuntu-latest,
+            configurePreset: linux-ninja-multi-config,
+            buildPreset: linux-ninja-multi-config-x64-shipping,
+            testPreset: linux-ninja-multi-config-x64-shipping
           }
         
 
@@ -54,8 +72,8 @@ jobs:
 
     - name: Cmake Build
       run: |
-        cmake --build --preset ${{ matrix.config.configurePreset }}
+        cmake --build --preset ${{ matrix.config.buildPreset }}
 
     - name: CTest
       run: |
-        ctest --preset ${{ matrix.config.configurePreset }}
+        ctest --preset ${{ matrix.config.testPreset }}

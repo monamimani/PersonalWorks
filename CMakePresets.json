@@ -8,7 +8,6 @@
   "configurePresets": [
     {
       "name": "base",
-      "description": "Base configuration for all environments.",
       "hidden": true,
       "binaryDir": "${sourceDir}/_Out/build/${presetName}",
       "installDir": "${sourceDir}/_Out/install/${presetName}",
@@ -20,7 +19,6 @@
     },
     {
       "name": "checkers",
-      "description": "Checkers configuration.",
       "hidden": true,
       "cacheVariables": {
         "USE_ASAN": true
@@ -28,7 +26,6 @@
     },
     {
       "name": "Windows-base",
-      "description": "Windows base configuration.",
       "hidden": true,
       "cacheVariables": {
         "CMAKE_C_COMPILER": "cl.exe",
@@ -63,29 +60,39 @@
       }
     },
     {
+      "name": "linux-base",
+      "hidden": true,
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      }
+    },
+    {
       "name": "Vs2022",
-      "description": "Target Windows with the Visual Studio development environment.",
       "hidden": true,
       "generator": "Visual Studio 17 2022"
     },
     {
-      "name": "Ninja Multi-Config",
-      "description": "Target Windows with the Ninja Multi-Config development environment.",
+      "name": "ninja-multi-config",
       "hidden": true,
       "generator": "Ninja Multi-Config"
     },
     {
       "name": "windows-vs2022",
       "displayName": "Vs2022",
-      "description": "Target Windows (64-bit) with the Visual Studio development environment. (Debug)",
-      "inherits": ["base", "Windows-base", "Vs2022"]
+      "inherits": [ "base", "Windows-base", "Vs2022" ]
     },
     {
       "name": "windows-vs2022-checkers",
-      "displayName": "Vs2022",
-      "description": "Target Windows (64-bit) with the Visual Studio development environment. (Debug)",
-      "inherits": ["base", "checkers", "Windows-base", "Vs2022"]
+      "displayName": "Vs2022 Checkers",
+      "inherits": [ "base", "checkers", "Windows-base", "Vs2022" ]
     },
+    {
+      "name": "linux-ninja-multi-config",
+      "displayName": "Vs2022",
+      "inherits": [ "base", "linux-base", "ninja-multi-config" ]
+    }
     // {
     //   "name": "x64-debug",
     //   "displayName": "Vs2022",
@@ -112,39 +119,38 @@
     //   "cacheVariables": {
     //     "CMAKE_BUILD_TYPE": "Release"
     //   }
-    // }//,
-    //{
-    //  "name": "linux-base",
-    //  "description": "Linux settings for gcc and clang toolchains",
-    //  "hidden": true,
-    //  "inherits": "base",
-    //  "condition": {
-    //    "type": "equals",
-    //    "lhs": "${hostSystemName}",
-    //    "rhs": "Linux"
-    //  },
-    //  "vendor": {
-    //    "microsoft.com/VisualStudioRemoteSettings/CMake/1.0": {
-    //      "sourceDir": "$env{HOME}/.vs/$ms{projectDirName}"
-    //    }
-    //  }
-    //}
+    // }
   ],
   "buildPresets": [
     {
-     "name": "windows-vs2022-x64-debug",
-     "configurePreset": "windows-vs2022",
-     "configuration": "Debug"
+      "name": "windows-vs2022-x64-debug",
+      "configurePreset": "windows-vs2022",
+      "configuration": "Debug"
     },
     {
-     "name": "windows-vs2022-x64-release",
-     "configurePreset": "windows-vs2022",
-     "configuration": "RelWithDebInfo"
+      "name": "windows-vs2022-x64-release",
+      "configurePreset": "windows-vs2022",
+      "configuration": "RelWithDebInfo"
     },
     {
-     "name": "windows-vs2022-x64-shipping",
-     "configurePreset": "windows-vs2022",
-     "configuration": "Release"
+      "name": "windows-vs2022-x64-shipping",
+      "configurePreset": "windows-vs2022",
+      "configuration": "Release"
+    },
+    {
+      "name": "linux-ninja-multi-config-debug",
+      "configurePreset": "linux-ninja-multi-config",
+      "configuration": "Debug"
+    },
+    {
+      "name": "linux-ninja-multi-config-release",
+      "configurePreset": "linux-ninja-multi-config",
+      "configuration": "RelWithDebInfo"
+    },
+    {
+      "name": "linux-ninja-multi-config-shipping",
+      "configurePreset": "linux-ninja-multi-config",
+      "configuration": "Release"
     }
   ],
   "testPresets": [
@@ -178,6 +184,25 @@
       "inherits": "test-base",
       "configurePreset": "windows-vs2022",
       "configuration": "Release"
+    },
+    {
+      "name": "linux-ninja-multi-config-x64-debug",
+      "inherits": "test-base",
+      "configurePreset": "linux-ninja-multi-config",
+      "configuration": "Debug"
+    },
+    {
+      "name": "linux-ninja-multi-config-x64-release",
+      "inherits": "test-base",
+      "configurePreset": "linux-ninja-multi-config",
+      "configuration": "RelWithDebInfo"
+    },
+    {
+      "name": "linux-ninja-multi-config-x64-shipping",
+      "inherits": "test-base",
+      "configurePreset": "linux-ninja-multi-config",
+      "configuration": "Release"
     }
+
   ]
 }

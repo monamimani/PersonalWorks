@@ -66,6 +66,11 @@ jobs:
         lfs: true
         submodules: true
 
+    - name: Install Ninja-Build
+      if: ${{matrix.config.os}} == "ubuntu-latest"
+      run: |
+        apt install ninja-build
+
     - name: Cmake Configure
       run: |
         cmake --preset ${{ matrix.config.configurePreset }}

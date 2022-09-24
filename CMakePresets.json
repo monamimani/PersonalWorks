@@ -14,7 +14,11 @@
       "cacheVariables": {
         "CMAKE_CXX_STANDARD": "23",
         "CMAKE_CXX_STANDARD_REQUIRED": "YES",
-        "VCPKG_INSTALLED_DIR": "${sourceDir}/ThirdpartyVcpkg"
+        //"VCPKG_INSTALLED_DIR": "${sourceDir}/ThirdpartyVcpkg",
+        "CMAKE_TOOLCHAIN_FILE": {
+          "type": "FILEPATH",
+          "value": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+        }
       }
     },
     {
@@ -32,10 +36,6 @@
         "CMAKE_CXX_COMPILER": "cl.exe",
         "CMAKE_CXX_FLAGS": "/DWIN32 /D_WINDOWS /W4 /EHsc /MP /permissive-",
         "CMAKE_C_FLAGS": "/DWIN32 /D_WINDOWS /W4 /EHsc /MP /permissive-",
-        "CMAKE_TOOLCHAIN_FILE": {
-          "type": "FILEPATH",
-          "value": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
-        },
         "ENABLE_CPPCHECK_DEFAULT": "FALSE",
         "ENABLE_CLANG_TIDY_DEFAULT": "FALSE",
         "VCPKG_TARGET_TRIPLET": "x64-windows"
@@ -62,6 +62,11 @@
     {
       "name": "linux-base",
       "hidden": true,
+      "cacheVariables": {
+        "ENABLE_CPPCHECK_DEFAULT": "FALSE",
+        "ENABLE_CLANG_TIDY_DEFAULT": "FALSE",
+        "VCPKG_TARGET_TRIPLET": "x64-linux"
+      },
       "condition": {
         "type": "equals",
         "lhs": "${hostSystemName}",

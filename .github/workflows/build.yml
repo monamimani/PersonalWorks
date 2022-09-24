@@ -66,6 +66,13 @@ jobs:
         lfs: true
         submodules: true
 
+    - name: Cache vcpkg
+      id: cache-vcpkg
+      uses: actions/cache@v3
+      with:
+        path: _Out/build/${{ matrix.config.configurePreset }}/vcpkg_installed
+        key: ${{ runner.os }}-${{ matrix.config.configurePreset }}-vcpkg
+
     - name: Install Ninja-Build
       if: runner.os == 'Linux'
       run: |

@@ -1,5 +1,8 @@
 name: Cmake build
 
+env:
+  VCPKG_ROOT: $VCPKG_INSTALLATION_ROOT
+
 on: [push, pull_request, release]
 
 jobs:

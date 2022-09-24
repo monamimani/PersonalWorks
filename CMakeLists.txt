@@ -95,4 +95,5 @@ endif()
 
 add_subdirectory(Projects/Core)
 add_subdirectory(Projects/ApplicationCore)
+add_subdirectory(Projects/BasicWindowApp)
 add_subdirectory(Tests)

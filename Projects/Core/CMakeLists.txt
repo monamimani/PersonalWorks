@@ -100,7 +100,7 @@ target_link_libraries(${targetName}
 #  PREFIX "Header Files"
 #  FILES ${HEADER_LIST})
 
-#if(BUILD_TESTING)
+if(BUILD_TESTS)
   set(targetNameTests ${targetName}Tests )
   add_executable(${targetNameTests} 
     ${testFiles}
@@ -109,16 +109,15 @@ target_link_libraries(${targetName}
   target_link_libraries(${targetNameTests}
   PRIVATE 
     ${targetName}
-
     GTest::gmock 
     GTest::gtest
   )
 
   gtest_discover_tests(${targetNameTests}
-    #WORKING_DIRECTORY ${PROJECT_DIR}
-    #PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${PROJECT_DIR}"
+    WORKING_DIRECTORY ${PROJECT_DIR}
+    PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${PROJECT_DIR}"
     DISCOVERY_MODE PRE_TEST
   )
 
   set_target_properties(${targetNameTests} PROPERTIES FOLDER Tests)
-#endif()
+endif()

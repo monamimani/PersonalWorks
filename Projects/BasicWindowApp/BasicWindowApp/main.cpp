@@ -7,6 +7,7 @@
 #include "Core/Config.h"
 #include "Core/Win32/WindowsHeader.h"
 #include <format>
+#include <iostream>
 
 namespace BasicWindowApp
 {
@@ -60,22 +61,57 @@ namespace
 std::unique_ptr<BasicWindowApp::BasicWindowApp> m_app;
 }
 
-int WinMain(HINSTANCE hInstance, [[maybe_unused]] HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
+
+namespace
 {
+  HMODULE getApplicationModuleHandle()
+  {
+    //Returns module handle where this function is running in: EXE or DLL
+    HMODULE hModule{};
+    ::GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT, nullptr, &hModule);
+    return hModule;
+  }
 
-  ApplicationCore::Win32::Win32ApplicationDesc appDesc;
+  HMODULE getThisModuleHandle()
+  {
+    //Returns module handle where this function is running in: EXE or DLL
+    HMODULE hModule{};
+    ::GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT, (LPCTSTR)getThisModuleHandle, &hModule);
 
-  appDesc.m_appInstance = hInstance;
-  appDesc.m_applicationName = "BasicWindowApp";
-  appDesc.m_createConsole = true;
-  appDesc.m_cmdLine = lpCmdLine;
-  appDesc.m_cmdShow = nShowCmd;
+    return hModule;
+  }
 
-  m_app = ApplicationCore::Application::CreateApplication<BasicWindowApp::BasicWindowApp>(appDesc);
+  int ApplicationMain([[maybe_unused]] int argc, [[maybe_unused]] char* argv[])
+  {
+    ApplicationCore::Win32::Win32ApplicationDesc appDesc;
 
-  ApplicationCore::Win32::Win32MessageLoop win32MessageLoop;
-  auto returnValue = ApplicationCore::Win32::Win32ApplicationMainLoop::runMainLoop(*m_app, win32MessageLoop);
+    STARTUPINFO startupInfo{};
+    GetStartupInfo(&startupInfo);
 
-  m_app.reset();
-  return returnValue;
+    appDesc.m_appInstance = getApplicationModuleHandle();
+    appDesc.m_applicationName = "BasicWindowApp";
+    appDesc.m_createConsole = true;
+    appDesc.m_cmdLine = std::vector<std::string>(argv, argv + argc);
+    appDesc.m_cmdShow = startupInfo.wShowWindow;
+
+    m_app = ApplicationCore::Application::CreateApplication<BasicWindowApp::BasicWindowApp>(appDesc);
+
+    ApplicationCore::Win32::Win32MessageLoop win32MessageLoop;
+    auto returnValue = ApplicationCore::Win32::Win32ApplicationMainLoop::runMainLoop(*m_app, win32MessageLoop);
+
+    m_app.reset();
+    return returnValue;
+
+    return EXIT_SUCCESS;
+  }
+} // namespace
+
+int main([[maybe_unused]] int argc, [[maybe_unused]] char* argv[])
+{
+  return ApplicationMain(argc, argv);
+}
+
+int APIENTRY WinMain([[maybe_unused]] HINSTANCE hInstance, [[maybe_unused]] HINSTANCE hPrevInstance, [[maybe_unused]] LPSTR cmdline, [[maybe_unused]] int cmdshow)
+{
+  return ApplicationMain(__argc, __argv);
 }

@@ -142,17 +142,17 @@
       "configuration": "Release"
     },
     {
-      "name": "linux-ninja-multi-config-debug",
+      "name": "linux-ninja-multi-config-x64-debug",
       "configurePreset": "linux-ninja-multi-config",
       "configuration": "Debug"
     },
     {
-      "name": "linux-ninja-multi-config-release",
+      "name": "linux-ninja-multi-config-x64-release",
       "configurePreset": "linux-ninja-multi-config",
       "configuration": "RelWithDebInfo"
     },
     {
-      "name": "linux-ninja-multi-config-shipping",
+      "name": "linux-ninja-multi-config-x64-shipping",
       "configurePreset": "linux-ninja-multi-config",
       "configuration": "Release"
     }

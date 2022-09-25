@@ -65,7 +65,13 @@ jobs:
   #     configurePreset: x64-shipping
     # name: ${{ matrix.buildType }} build on ${{ matrix.os }}
     runs-on: ${{ matrix.config.os }}
+    
     continue-on-error: ${{ matrix.config.experimental }}
+
+    defaults:
+      run:
+        shell: pwsh
+
     steps:
     - uses: actions/checkout@v3  
       with:

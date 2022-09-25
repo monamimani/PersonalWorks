@@ -105,6 +105,7 @@ if(BUILD_TESTS)
   add_executable(${targetNameTests} 
     ${testFiles}
   )
+  set_target_properties(${targetNameTests} PROPERTIES FOLDER Tests)
 
   target_link_libraries(${targetNameTests}
   PRIVATE 
@@ -119,5 +120,15 @@ if(BUILD_TESTS)
     DISCOVERY_MODE PRE_TEST
   )
 
-  set_target_properties(${targetNameTests} PROPERTIES FOLDER Tests)
+
+if(RUN_TESTS_AFTER_BUILD)
+  add_custom_command(TARGET ${targetNameTests}
+    # Run after all other rules within the target have been executed
+    POST_BUILD
+    COMMAND ${targetNameTests}
+    COMMENT "Running Google Test"
+    VERBATIM
+  )
+endif()
+
 endif()

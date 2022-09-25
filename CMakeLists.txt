@@ -22,16 +22,16 @@ if(NOT PROCESSOR_COUNT EQUAL 0)
 endif()
 
 include(CMakeDependentOption)
-include(StaticAnalizers)
-include(ClangFormat)
-include(Sanitizers)
+include(CMake/StaticAnalizers.cmake)
+include(CMake/ClangFormat.cmake)
+include(CMake/Sanitizers.cmake)
 
 # Prevent in-source builds.
 if ( ${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR} )
 message( FATAL_ERROR “In-source builds not allowed! Create a build directory and run CMake from there. ” )
 endif()
 
-include(DefaultProjectSettings)
+include(CMake/DefaultProjectSettings.cmake)
 
 
 option(BUILD_TESTS "Builds the tests" ON)

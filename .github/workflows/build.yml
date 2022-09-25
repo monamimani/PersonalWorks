@@ -1,8 +1,5 @@
 name: Cmake build
 
-env:
-  VCPKG_ROOT: $VCPKG_INSTALLATION_ROOT
-
 on: [push, pull_request, release]
 
 jobs:
@@ -80,6 +77,10 @@ jobs:
       if: runner.os == 'Linux'
       run: |
         sudo apt-get install ninja-build
+
+    - name: "Set environmental variables"
+      run: |
+        echo $VCPKG_INSTALLATION_ROOT >> $VCPKG_ROOT
 
     - name: Cmake Configure
       run: |

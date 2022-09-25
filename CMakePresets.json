@@ -32,8 +32,8 @@
       "name": "Windows-base",
       "hidden": true,
       "cacheVariables": {
-        "CMAKE_C_COMPILER": "cl.exe",
-        "CMAKE_CXX_COMPILER": "cl.exe",
+        "CMAKE_C_COMPILER": "cl",
+        "CMAKE_CXX_COMPILER": "cl",
         "CMAKE_CXX_FLAGS": "/DWIN32 /D_WINDOWS /W4 /EHsc /MP /permissive-",
         "CMAKE_C_FLAGS": "/DWIN32 /D_WINDOWS /W4 /EHsc /MP /permissive-",
         "ENABLE_CPPCHECK_DEFAULT": "FALSE",
@@ -63,6 +63,8 @@
       "name": "linux-base",
       "hidden": true,
       "cacheVariables": {
+        "CMAKE_C_COMPILER": "gcc-11",
+        "CMAKE_CXX_COMPILER": "g++-11",
         "ENABLE_CPPCHECK_DEFAULT": "FALSE",
         "ENABLE_CLANG_TIDY_DEFAULT": "FALSE",
         "VCPKG_TARGET_TRIPLET": "x64-linux"

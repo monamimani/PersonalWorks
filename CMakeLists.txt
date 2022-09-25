@@ -5,8 +5,10 @@ string(REPLACE " " "_" WorkspaceName ${WorkspaceName})
 
 project(${WorkspaceName})
 
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR})
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_BINARY_DIR}")
+
+cmake_print_variables(CMAKE_MODULE_PATH)
 
 include(ProcessorCount)
 ProcessorCount(PROCESSOR_COUNT)

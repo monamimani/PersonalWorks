@@ -65,12 +65,8 @@ jobs:
   #     configurePreset: x64-shipping
     # name: ${{ matrix.buildType }} build on ${{ matrix.os }}
     runs-on: ${{ matrix.config.os }}
-    
-    continue-on-error: ${{ matrix.config.experimental }}
 
-    defaults:
-      run:
-        shell: pwsh
+    continue-on-error: ${{ matrix.config.experimental }}
 
     steps:
     - uses: actions/checkout@v3  
@@ -107,4 +103,5 @@ jobs:
 
     - name: CTest
       run: |
-        ctest --preset ${{ matrix.config.testPreset }}
+        ctest --show-only
+        # ctest --preset ${{ matrix.config.testPreset }}

@@ -19,16 +19,16 @@ endif()
 
 include(CMakeDependentOption)
 include(CMakePrintHelpers)
-include("cmake/StaticAnalizers.cmake")
-include("cmake/ClangFormat.cmake")
-include("cmake/Sanitizers.cmake")
+include("StaticAnalizers.cmake")
+include("ClangFormat.cmake")
+include("Sanitizers.cmake")
 
 # Prevent in-source builds.
 if ( ${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR} )
 message( FATAL_ERROR “In-source builds not allowed! Create a build directory and run CMake from there. ” )
 endif()
 
-include("cmake/DefaultProjectSettings.cmake")
+include("DefaultProjectSettings.cmake")
 
 
 option(BUILD_TESTS "Builds the tests" ON)

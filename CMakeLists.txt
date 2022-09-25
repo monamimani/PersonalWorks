@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.22)
 
+include(CMakePrintHelpers)
+
 get_filename_component(WorkspaceName ${CMAKE_SOURCE_DIR} NAME)
 string(REPLACE " " "_" WorkspaceName ${WorkspaceName})
 
@@ -20,7 +22,6 @@ if(NOT PROCESSOR_COUNT EQUAL 0)
 endif()
 
 include(CMakeDependentOption)
-include(CMakePrintHelpers)
 include(StaticAnalizers)
 include(ClangFormat)
 include(Sanitizers)

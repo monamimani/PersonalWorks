@@ -101,7 +101,17 @@ jobs:
       run: |
         cmake --build --preset ${{ matrix.config.buildPreset }}
 
-    - name: CTest
+    - name: Run Google test (Windows)
+      if: runner.os == 'Windows'
       run: |
-        ctest --show-only
-        # ctest --preset ${{ matrix.config.testPreset }}
+        Get-ChildItem -Recurse | Where-Object { $_.DirectoryName -match 'Release' }
+
+    - name: Run Google test (Linux)
+      if: runner.os == 'Linux'
+      run: |
+        ctest --preset ${{ matrix.config.testPreset }} --show-only
+
+    # - name: CTest
+    #   run: |
+    #     ctest --show-only
+    #     # ctest --preset ${{ matrix.config.testPreset }}

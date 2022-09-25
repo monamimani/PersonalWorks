@@ -96,7 +96,6 @@ jobs:
         cmake --preset ${{ matrix.config.configurePreset }}
 
     - name: Cmake Build
-      continue-on-error: ${{ matrix.config.experimental }}
       run: |
         cmake --build --preset ${{ matrix.config.buildPreset }}
 

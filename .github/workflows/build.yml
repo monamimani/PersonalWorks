@@ -73,7 +73,7 @@ jobs:
         path: _Out/build/${{ matrix.config.configurePreset }}/vcpkg_installed
         key: ${{ runner.os }}-${{ matrix.config.configurePreset }}-vcpkg-${{ hashFiles('**/vcpkg.json') }}
 
-    - name: Install Ninja-Build
+    - name: Install Linux packages
       if: runner.os == 'Linux'
       run: |
         sudo apt update

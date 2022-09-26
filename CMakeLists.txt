@@ -36,6 +36,7 @@ include(CMake/DefaultProjectSettings.cmake)
 
 option(BUILD_TESTS "Builds the tests" ON)
 CMAKE_DEPENDENT_OPTION(BUILD_TESTS_COVERAGE "Build the project with code coverage support for tests" OFF "BUILD_TESTS" OFF)
+CMAKE_DEPENDENT_OPTION(RUN_TESTS_AFTER_BUILD "Run the tests after the build" ON "BUILD_TESTS" OFF)
 
 option(BUILD_DOCUMENTATION "Build the documentation of the Beyond game engine" OFF)
 if (BUILD_DOCUMENTATION)

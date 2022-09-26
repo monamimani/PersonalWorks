@@ -105,7 +105,7 @@ jobs:
     - name: Run Google test (Windows)
       if: runner.os == 'Windows'
       run: |
-        $binDir = ./_Out/build/windows-vs2022/_bin
+        $binDir = "./_Out/build/windows-vs2022/_bin"
         $testExe = (Get-ChildItem -Path $binDir -Recurse | Where-Object Name -like *tests*.exe).FullName
         foreach ($exe in $testExe) {
           Write-Host($exe)

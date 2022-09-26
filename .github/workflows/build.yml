@@ -108,6 +108,7 @@ jobs:
         $testExe | Get-ChildItem -Path ./_Out/build/${{ matrix.config.configurePreset }} -Recurse -Include *.exe 
         foreach ($exe in $testExe) {
           Write-Host($exe)
+          &$exe --gtest_output:json
         }
         #| Where-Object { $_.Filename -match 'tests' }
         #| Where-Object { $_.DirectoryName -match 'Release' }
@@ -121,3 +122,17 @@ jobs:
     #   run: |
     #     ctest --show-only
     #     # ctest --preset ${{ matrix.config.testPreset }}
+    - name: Upload Test Results
+      uses: actions/upload-artifact@v3
+        with:
+          name: TestsResults
+          path: |
+            _Out/build/${{ matrix.config.configurePreset }}/_bin/*.json
+
+    - name: Upload Workflow artifact
+      uses: actions/upload-artifact@v3
+        with:
+          name: binaries
+          path: |
+            _Out/build/${{ matrix.config.configurePreset }}/_bin
+            _Out/build/${{ matrix.config.configurePreset }}/_lib

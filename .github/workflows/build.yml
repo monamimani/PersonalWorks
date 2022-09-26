@@ -105,10 +105,13 @@ jobs:
     - name: Run Google test (Windows)
       if: runner.os == 'Windows'
       run: |
-        $testExe | Get-ChildItem -Path ./_Out/build/${{ matrix.config.configurePreset }} -Recurse -Include *.exe 
+        $binDir = ./_Out/build/windows-vs2022/_bin
+        $testExe = (Get-ChildItem -Path $binDir -Recurse | Where-Object Name -like *tests*.exe).FullName
         foreach ($exe in $testExe) {
           Write-Host($exe)
-          &$exe --gtest_output:json
+          $exeName = Get-ChildItem $exe | Select-Object -ExpandProperty BaseName
+          Write-Host($exeName)
+          &$exe --gtest_output=json:$binDir/
         }
         #| Where-Object { $_.Filename -match 'tests' }
         #| Where-Object { $_.DirectoryName -match 'Release' }

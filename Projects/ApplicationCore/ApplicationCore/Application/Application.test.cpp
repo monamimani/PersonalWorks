@@ -13,5 +13,5 @@
 
 TEST(ApplicationTest, DummyTest)
 {
-  FAIL();
+  EXPECT_TRUE(false);
 }

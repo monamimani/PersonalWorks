@@ -105,7 +105,9 @@ jobs:
     - name: Run Google test (Windows)
       if: runner.os == 'Windows'
       run: |
-        Get-ChildItem -Recurse | Where-Object { $_.DirectoryName -match 'Release' }
+        Get-ChildItem -Path ./_Out/${{ matrix.config.configurePreset }} -Recurse -Include *.exe 
+        #| Where-Object { $_.Filename -match 'tests' }
+        #| Where-Object { $_.DirectoryName -match 'Release' }
 
     - name: Run Google test (Linux)
       if: runner.os == 'Linux'

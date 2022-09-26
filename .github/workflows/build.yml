@@ -129,14 +129,14 @@ jobs:
     - name: Upload Test Results
       uses: actions/upload-artifact@v3
       with:
-        name: PersonalWorks_${{GITHUB_WORKFLOW}}-${{GITHUB_RUN_NUMBER}}_TestsResults
+        name: PersonalWorks_$GITHUB_WORKFLOW-$GITHUB_RUN_NUMBER_TestsResults
         path: |
           _Out/build/${{ matrix.config.configurePreset }}/_bin/*.json
 
     - name: Upload Workflow artifact
       uses: actions/upload-artifact@v3
       with:
-        name: PersonalWorks_${{GITHUB_WORKFLOW}}-${{GITHUB_RUN_NUMBER}}_Bin
+        name: PersonalWorks_$GITHUB_WORKFLOW-$GITHUB_RUN_NUMBER_Bin
         path: |
           _Out/build/${{ matrix.config.configurePreset }}/_bin
           _Out/build/${{ matrix.config.configurePreset }}/_lib

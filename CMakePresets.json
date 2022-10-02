@@ -14,11 +14,7 @@
       "cacheVariables": {
         "CMAKE_CXX_STANDARD": "23",
         "CMAKE_CXX_STANDARD_REQUIRED": "YES",
-        //"VCPKG_INSTALLED_DIR": "${sourceDir}/ThirdpartyVcpkg",
-        "CMAKE_TOOLCHAIN_FILE": {
-          "type": "FILEPATH",
-          "value": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
-        }
+        "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
       }
     },
     {
@@ -73,6 +69,14 @@
         "type": "equals",
         "lhs": "${hostSystemName}",
         "rhs": "Linux"
+      },
+      "vendor": {
+        "microsoft.com/VisualStudioSettings/CMake/1.0": {
+          "hostOS": [ "Linux" ]
+        },
+        "microsoft.com/VisualStudioRemoteSettings/CMake/1.0": {
+          "sourceDir": "$env{HOME}/.vs/$ms{projectDirName}"
+        }
       }
     },
     {
@@ -86,6 +90,11 @@
       "generator": "Ninja Multi-Config"
     },
     {
+      "name": "ninja",
+      "hidden": true,
+      "generator": "Ninja"
+    },
+    {
       "name": "windows-vs2022",
       "inherits": [ "base", "Windows-base", "Vs2022" ]
     },
@@ -96,6 +105,10 @@
     {
       "name": "linux-ninja-multi-config",
       "inherits": [ "base", "linux-base", "ninja-multi-config" ]
+    },
+    {
+      "name": "linux-ninja",
+      "inherits": [ "base", "linux-base", "ninja" ]
     }
     // {
     //   "name": "x64-debug",

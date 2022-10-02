@@ -6,6 +6,7 @@
 bazel
 bazel-out
 
+out
 _Out
 _Bin
 _BinIntermediate

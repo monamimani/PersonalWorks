@@ -5,6 +5,11 @@ include(CMakePrintHelpers)
 get_filename_component(WorkspaceName ${CMAKE_SOURCE_DIR} NAME)
 string(REPLACE " " "_" WorkspaceName ${WorkspaceName})
 
+file(REAL_PATH ${CMAKE_TOOLCHAIN_FILE} CMAKE_TOOLCHAIN_FILE EXPAND_TILDE)
+if(NOT EXISTS  ${CMAKE_TOOLCHAIN_FILE})
+    message(FATAL_ERROR "CMAKE_TOOLCHAIN_FILE does not exist: CMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE}")
+endif()
+
 project(${WorkspaceName})
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake")

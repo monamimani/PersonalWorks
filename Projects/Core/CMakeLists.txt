@@ -1,10 +1,32 @@
-# file(GLOB_RECURSE sources CONFIGURE_DEPENDS "*.cpp" "*.cxx" "*.ixx")
+ # file(GLOB_RECURSE sources CONFIGURE_DEPENDS "*.cpp" "*.cxx" "*.ixx")
 # file(GLOB_RECURSE headers CONFIGURE_DEPENDS "*.h" "*.hpp")
 
 # Optionally glob, but only for CMake 3.12 or later: file(GLOB HEADER_LIST
 # CONFIGURE_DEPENDS "${ModernCMakeExample_SOURCE_DIR}/include/modern/*.hpp")
 
 get_filename_component(targetName ${CMAKE_CURRENT_LIST_DIR} NAME)
+
+if(CMAKE_SYSTEM_NAME STREQUAL Windows)
+
+  set(platform_publicFiles 
+  ${targetName}/Win32/StringUtils.h
+  ${targetName}/Win32/Win32Utility.h
+  ${targetName}/Win32/WindowsHeader.h
+)
+
+set(platform_privateFiles 
+  ${targetName}/Win32/StringUtils.cpp
+)
+
+elseif (CMAKE_SYSTEM_NAME STREQUAL Linux)
+
+  set(platform_publicFiles 
+)
+
+set(platform_privateFiles 
+)
+
+endif()
 
 set(interfaceFiles 
 )
@@ -17,9 +39,6 @@ set(publicFiles
   ${targetName}/Delegates/DelegateStdFunction.h
   ${targetName}/DelegateTypes/EventDispatcher.h
   ${targetName}/DelegateTypes/EventQueue.h
-  ${targetName}/Win32/StringUtils.h
-  ${targetName}/Win32/Win32Utility.h
-  ${targetName}/Win32/WindowsHeader.h
   ${targetName}/AppFrameTimer.h
   ${targetName}/Assert.h
   ${targetName}/Config.h
@@ -28,6 +47,7 @@ set(publicFiles
   ${targetName}/NonCopyable.h
   ${targetName}/PathUtils.h
   ${targetName}/Pimpl.h
+  ${platform_publicFiles}
 )
 
 set(privateFiles 
@@ -36,13 +56,13 @@ set(privateFiles
   ${targetName}/Delegates/DelegateMulticast.ixx
   ${targetName}/DelegateTypes/EventDispatcher.cpp
   ${targetName}/DelegateTypes/EventQueue.cpp
-  ${targetName}/Win32/StringUtils.cpp
   ${targetName}/Core.ixx
   ${targetName}/CoreConcepts.ixx
   ${targetName}/CoreSingleton.ixx
   ${targetName}/CoreUtility.ixx
   ${targetName}/Endian.cpp
   ${targetName}/ErasedStorage.ixx
+  ${platform_privateFiles}
 )
 
 set(testFiles 

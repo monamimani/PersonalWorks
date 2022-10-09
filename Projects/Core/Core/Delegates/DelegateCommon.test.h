@@ -2,7 +2,8 @@
 
 #include <algorithm>
 #include <array>
-#include <format>
+//#include <format>
+#include "fmt/format.h"
 #include <tuple>
 
 #include "Core/GoogleTest.h"
@@ -247,7 +248,7 @@ public:
     auto isLValueStr = isLValue ? "LValue" : "RValue";
     auto isConstStr = isFctConst ? "Const" : "";
     auto bindkindStr = (result != bindkindTuples.end()) ? std::get<1>(*result) : "Unknown";
-    return std::format("{}{}{}", isLValueStr, bindkindStr, isConstStr);
+    return fmt::format("{}{}{}", isLValueStr, bindkindStr, isConstStr);
   }
 
   static auto makeDelegateBindKindParamSet()
@@ -347,7 +348,7 @@ public:
     auto delegateTypeAName = getTestNamePart(isLValueA, isFctConstA, delegateBinderA);
     auto delegateTypeBName = getTestNamePart(isLValueB, isFctConstB, delegateBinderB);
 
-    return std::format("{}_{}", delegateTypeAName, delegateTypeBName);
+    return fmt::format("{}_{}", delegateTypeAName, delegateTypeBName);
   };
 
 protected:

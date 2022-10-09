@@ -112,7 +112,7 @@ public:
     return m_ptr;
   }
 
-  constexpr void swap(ImplPtr& u) noexcept(std::is_nothrow_swappable_v<ImplPtr>)
+  constexpr void swap(ImplPtr& u) noexcept(noexcept(std::declval<pointer>(), std::declval<ImplPtr::pointer>())) //noexcept(std::is_nothrow_swappable_v<ImplPtr>)
   {
     using std::swap;
     swap(m_ptr, u.m_ptr);

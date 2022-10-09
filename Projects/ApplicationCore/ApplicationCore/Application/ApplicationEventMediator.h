@@ -25,23 +25,23 @@ public:
   // std::vector<std::invocable> m_handlers
 };
 
-static bool foo(int)
-{
-  return true;
-}
+//static bool foo(int)
+//{
+//  return true;
+//}
+//
+//struct Bar
+//{
+//  int val = 52;
+//
+//  void Add(int a)
+//  {
+//      val+=a;
+//  }
+//};
 
-struct Bar
-{
-  int val = 52;
-
-  void Add(int a)
-  {
-      val+=a;
-  }
-};
-
-static void test()
-{
+//static void test()
+//{
   //ApplicationEventMediator mediator;
 
   //auto handle1 = mediator.registerEventHandler(&foo);
@@ -51,6 +51,6 @@ static void test()
   //auto handle3 = mediator.registerEventHandler([bar](int a) { bar.val + a; });
   //auto handle4 = mediator.registerEventHandler(std::bind(&Bar::Add, bar, std::placeholders::_1));
   //auto handle5 = mediator.registerEventHandler([bar](int a) mutable { bar.Add(a); });
-}
+//}
 
 } // namespace ApplicationCore

@@ -33,8 +33,8 @@ public:
   struct KeyboardData
   {
     ButtonState keyState = ButtonState::Invalid;
-    Input::Keyboard::Key keyCode;
-    KeyModifierState modifier;
+    Input::Keyboard::Key keyCode{};
+    KeyModifierState modifier{};
   };
 
   struct TextData
@@ -60,20 +60,20 @@ public:
 
   struct MouseWheelData
   {
-    Input::Mouse::Wheel wheelOrientation; //!< Which wheel this event data refer to, when mouse have multiple wheels.
-    float deltaScroll;                    //!< Wheel scroll offset ( positive is up/left, negative is down/right).
-    KeyModifierState modifier;            //!< state of the modifiers key.
-    int32_t x;                            //!< x position of the mouse pointer relative to the left of the owner window.
-    int32_t y;                            //!< y position of the mouse pointer relative to the top of the owner window.
+    Input::Mouse::Wheel wheelOrientation{}; //!< Which wheel this event data refer to, when mouse have multiple wheels.
+    float deltaScroll{};                    //!< Wheel scroll offset ( positive is up/left, negative is down/right).
+    KeyModifierState modifier{};            //!< state of the modifiers key.
+    int32_t x{};                            //!< x position of the mouse pointer relative to the left of the owner window.
+    int32_t y{};                            //!< y position of the mouse pointer relative to the top of the owner window.
   };
 
   struct MouseButtonData
   {
-    Input::Mouse::Button button;                    //!< Which mouse button the data refer to.
+    Input::Mouse::Button button{};                    //!< Which mouse button the data refer to.
     ButtonState buttonState = ButtonState::Invalid; //!< The state of the button, pressed or released.
-    KeyModifierState modifier;                      //!< state of the modifiers key.
-    int32_t x;                                      //!< x position of the mouse pointer relative to the left of the owner window.
-    int32_t y;                                      //!< y position of the mouse pointer relative to the top of the owner window.
+    KeyModifierState modifier{};                      //!< state of the modifiers key.
+    int32_t x{};                                      //!< x position of the mouse pointer relative to the left of the owner window.
+    int32_t y{};                                      //!< y position of the mouse pointer relative to the top of the owner window.
   };
 
   struct MouseLeaveData

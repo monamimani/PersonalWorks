@@ -7,10 +7,10 @@ namespace Test
 
 struct SpecialFunctionCallCounter
 {
-  volatile uint8_t m_nbCallDefaultConstructor = 0;
-  volatile uint8_t m_nbCallCopyConstructor = 0;
-  volatile uint8_t m_nbCallMoveConstructor = 0;
-  volatile uint8_t m_nbCallDestructor = 0;
+  uint8_t m_nbCallDefaultConstructor = 0;
+  uint8_t m_nbCallCopyConstructor = 0;
+  uint8_t m_nbCallMoveConstructor = 0;
+  uint8_t m_nbCallDestructor = 0;
 };
 
 struct TestStruct

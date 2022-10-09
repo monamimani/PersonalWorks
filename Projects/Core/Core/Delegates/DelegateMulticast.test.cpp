@@ -1,9 +1,8 @@
 
-#include <codeanalysis\warnings.h>
-
 #include <algorithm>
 #include <array>
-#include <format>
+//#include <format>
+#include "fmt/format.h"
 #include <ranges>
 #include <tuple>
 #include <type_traits>
@@ -269,7 +268,7 @@ std::string getTestNamePart(IsLValue isLValue, IsFctConst isFctConst, CreateDele
   auto isLValueStr = isLValue ? "LValue" : "RValue";
   auto isConstStr = isFctConst ? "Const" : "";
   auto delegateTypeStr = (result != delegateTypeTuples.end()) ? std::get<1>(*result) : "Unknown";
-  return std::format("{}{}{}", isLValueStr, delegateTypeStr, isConstStr);
+  return fmt::format("{}{}{}", isLValueStr, delegateTypeStr, isConstStr);
 }
 
 using ParamSetType = std::tuple<IsLValue, IsFctConst, CreateDelegateMulticast*>;
@@ -301,7 +300,7 @@ public:
     auto delegateTypeAName = getTestNamePart(isLValueA, isFctConstA, delegateBinderA);
     auto delegateTypeBName = getTestNamePart(isLValueB, isFctConstB, delegateBinderB);
 
-    return std::format("{}{}", delegateTypeAName, delegateTypeBName);
+    return fmt::format("{}{}", delegateTypeAName, delegateTypeBName);
   };
 
 protected:

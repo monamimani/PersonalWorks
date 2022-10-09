@@ -69,8 +69,7 @@ enum class Platform
 
 #ifdef __linux__
 constexpr auto platformStr = std::string_view{"Linux"};
-constexpr auto platform = Platform::Linux
-};
+constexpr auto platform = Platform::Linux;
 #elif __ANDROID__
 constexpr auto platformStr = std::string_view{"Android"};
 constexpr auto platform = Platform::Android;

@@ -1,12 +1,8 @@
 
 #include <string>
 
-#include <codeanalysis\warnings.h>
-#pragma warning( push )
-#pragma warning ( disable : ALL_CODE_ANALYSIS_WARNINGS )
-//#include "benchmark/benchmark.h"
-#include "gtest/gtest.h"
-#pragma warning( pop )
+#include "GoogleTest.h"
+//#include "GoogleBenchmark.h"
 
 
 // Google test sanitizer integration.

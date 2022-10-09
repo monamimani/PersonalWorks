@@ -3,6 +3,7 @@
   "name": "personal-works",
   "version-string": "0.1.0-dev",
   "dependencies": [
+    "fmt",
     "benchmark",
     "gtest"
   ]

@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.22)
 
 include(CMakePrintHelpers)
+# cmake_print_variables(CMAKE_MODULE_PATH)
 
 get_filename_component(WorkspaceName ${CMAKE_SOURCE_DIR} NAME)
 string(REPLACE " " "_" WorkspaceName ${WorkspaceName})
@@ -14,8 +15,6 @@ project(${WorkspaceName})
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_BINARY_DIR}")
-
-cmake_print_variables(CMAKE_MODULE_PATH)
 
 include(ProcessorCount)
 ProcessorCount(PROCESSOR_COUNT)
@@ -48,6 +47,10 @@ if (BUILD_DOCUMENTATION)
   include("doxygen")
 endif()
 
+if (CMAKE_SYSTEM_NAME STREQUAL Linux)
+  add_compile_options( -fmodules-ts )
+  add_link_options( -fmodules-ts )
+endif()
 
 # Docs only available if this is the main app
 #find_package(Doxygen)
@@ -72,6 +75,10 @@ include(FetchContent)
 
 find_package(GTest CONFIG REQUIRED)
 find_package(benchmark CONFIG REQUIRED)
+
+find_package(fmt CONFIG REQUIRED)
+link_libraries(fmt::fmt)
+
 
 # macro(get_dir_list result curdir)
 #     file(GLOB children ${curdir}/*)

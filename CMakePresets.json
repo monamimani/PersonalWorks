@@ -22,6 +22,12 @@
       "hidden": true,
       "cacheVariables": {
         "USE_ASAN": true
+      },
+      "vendor": {
+        "microsoft.com/VisualStudioSettings/CMake/1.0": {
+          "enableClangTidyCodeAnalysis": true,
+          "enableMicrosoftCodeAnalysis": true
+        }
       }
     },
     {
@@ -62,6 +68,8 @@
         "CMAKE_C_COMPILER": "gcc-11",
         "CMAKE_CXX_COMPILER": "g++-11",
         "ENABLE_CPPCHECK_DEFAULT": "FALSE",
+        "CMAKE_CXX_FLAGS": "-Wpedantic -Wall -Wextra",
+        "CMAKE_C_FLAGS": "-Wpedantic -Wall -Wextra",
         "ENABLE_CLANG_TIDY_DEFAULT": "FALSE",
         "VCPKG_TARGET_TRIPLET": "x64-linux"
       },
@@ -72,7 +80,8 @@
       },
       "vendor": {
         "microsoft.com/VisualStudioSettings/CMake/1.0": {
-          "hostOS": [ "Linux" ]
+          "hostOS": [ "Linux" ],
+          "intelliSenseMode": "linux-gcc-x64"
         },
         "microsoft.com/VisualStudioRemoteSettings/CMake/1.0": {
           "sourceDir": "$env{HOME}/.vs/$ms{projectDirName}"

@@ -94,6 +94,8 @@ jobs:
         echo "VCPKG_ROOT=$VCPKG_INSTALLATION_ROOT" >> $GITHUB_ENV
 
     - name: Cmake Configure
+      env: 
+        VCPKG_ROOT: $VCPKG_INSTALLATION_ROOT
       run: |
         cmake --preset ${{ matrix.config.configurePreset }}
 

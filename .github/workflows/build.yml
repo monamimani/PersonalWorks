@@ -91,7 +91,7 @@ jobs:
 
     - name: "Set environmental variables"
       run: |
-        echo $VCPKG_INSTALLATION_ROOT
+        echo "$VCPKG_INSTALLATION_ROOT"
         echo "VCPKG_ROOT=$VCPKG_INSTALLATION_ROOT" >> $GITHUB_ENV
 
     - name: Cmake Configure

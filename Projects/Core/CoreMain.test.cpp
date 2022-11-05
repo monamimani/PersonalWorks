@@ -1,12 +1,8 @@
 
 #include <string>
 
-#include <codeanalysis\warnings.h>
-#pragma warning( push )
-#pragma warning ( disable : ALL_CODE_ANALYSIS_WARNINGS )
-#include "benchmark/benchmark.h"
-#include "gtest/gtest.h"
-#pragma warning( pop )
+#include "TestUtilities/GoogleTest.h"
+//#include "GoogleBenchmark.h"
 
 
 // Google test sanitizer integration.
@@ -46,14 +42,14 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char* argv[])
     return EXIT_FAILURE;
   }
 
-  std::cout << "\n--- Google Benchmark ---\n";
-  ::benchmark::Initialize(&argc, argv);
-  if (::benchmark::ReportUnrecognizedArguments(argc, argv))
-  {
-    return EXIT_FAILURE;
-  }
-  ::benchmark::RunSpecifiedBenchmarks();
-  ::benchmark::Shutdown();
+  //std::cout << "\n--- Google Benchmark ---\n";
+  //::benchmark::Initialize(&argc, argv);
+  //if (::benchmark::ReportUnrecognizedArguments(argc, argv))
+  //{
+  //  return EXIT_FAILURE;
+  //}
+  //::benchmark::RunSpecifiedBenchmarks();
+  //::benchmark::Shutdown();
 
   return EXIT_SUCCESS;
 }

@@ -66,10 +66,6 @@ set(privateFiles
 )
 
 set(testFiles 
-  ${targetName}/CoreMain.test.cpp
-  ${targetName}/TestUtilities/TestStruct.test.cpp
-  ${targetName}/TestUtilities/TestStruct.test.h
-  ${targetName}/GoogleTest.h
   ${targetName}/BuildConfig/BuildConfig.test.cpp
   ${targetName}/Delegates/Delegate.test.cpp
   ${targetName}/Delegates/DelegateCommon.test.h
@@ -83,9 +79,6 @@ set(testFiles
 
 
 set(benchmarkFiles 
-  ${targetName}/TestUtilities/TestStruct.benchmark.cpp
-  ${targetName}/TestUtilities/TestStruct.benchmark.h
-  ${targetName}/GoogleBenchmark.h
   ${targetName}/Core.benchmark.cpp
   ${targetName}/Delegates/Delegate.benchmark.cpp
   ${targetName}/Delegates/DelegateCommon.benchmark.h
@@ -115,40 +108,22 @@ target_link_libraries(${targetName}
   PUBLIC
 )
 
-#source_group(
-#  TREE "${PROJECT_SOURCE_DIR}/include"
-#  PREFIX "Header Files"
-#  FILES ${HEADER_LIST})
-
 if(BUILD_TESTS)
-  set(targetNameTests ${targetName}Tests )
-  add_executable(${targetNameTests} 
-    ${testFiles}
-  )
-  set_target_properties(${targetNameTests} PROPERTIES FOLDER Tests)
-
-  target_link_libraries(${targetNameTests}
-  PRIVATE 
-    ${targetName}
-    GTest::gmock 
-    GTest::gtest
-  )
-
-  gtest_discover_tests(${targetNameTests}
-    WORKING_DIRECTORY ${PROJECT_DIR}
-    PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${PROJECT_DIR}"
-    DISCOVERY_MODE PRE_TEST
-  )
-
-
-if(RUN_TESTS_AFTER_BUILD)
-  add_custom_command(TARGET ${targetNameTests}
-    # Run after all other rules within the target have been executed
-    POST_BUILD
-    COMMAND ${targetNameTests}
-    COMMENT "Running Google Test"
-    VERBATIM
-  )
+  add_test_target(
+    TARGET ${targetName} 
+    TESTFILES ${testFiles}
+    PRIVATEFILES ${privateFiles}
+    PUBLICFILES ${publicFiles}
+    INTERFACEFILES ${interfaceFiles}
+    MAINFILE CoreMain.test.cpp)
 endif()
 
+if(BUILD_BENCHMARKS)
+  add_benchmark_target(
+    TARGET ${targetName} 
+    BENCHMARKFILES ${benchmarkFiles}
+    PRIVATEFILES ${privateFiles}
+    PUBLICFILES ${publicFiles}
+    INTERFACEFILES ${interfaceFiles}
+    MAINFILE CoreMain.benchmark.cpp)
 endif()

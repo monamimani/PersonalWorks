@@ -2,7 +2,7 @@
 #include <utility>
 
 #include "Core/Delegates/DelegateStdFunction.h"
-#include "GoogleBenchmark.h"
+#include "TestUtilities/GoogleBenchmark.h"
 #include "TestUtilities/TestStruct.benchmark.h"
 using namespace Test;
 

@@ -13,7 +13,6 @@ if(CMAKE_SYSTEM_NAME STREQUAL Windows)
   )
 
   set(platform_privateFiles 
-    ${targetName}/main.cpp
   )
 
 elseif (CMAKE_SYSTEM_NAME STREQUAL Linux)
@@ -30,24 +29,26 @@ set(interfaceFiles
 )
 
 set(publicFiles 
+  ${targetName}/BasicWindowApp.h
 )
 
 set(privateFiles 
+    ${targetName}/BasicWindowApp.cpp
 )
 
 set(testFiles 
   ${targetName}/BasicWindowApp.test.cpp
 )
 
-
 set(benchmarkFiles 
 )
 
-add_executable(${targetName}   ${platform_privateFiles})
+add_executable(${targetName} ${platform_privateFiles})
 
 target_sources(${targetName}
   PRIVATE
     ${privateFiles}
+    main.cpp
   PUBLIC
     ${publicFiles}
   INTERFACE
@@ -67,36 +68,21 @@ target_link_libraries(${targetName}
 )
 
 if(BUILD_TESTS)
-  set(targetNameTests ${targetName}Tests )
-  add_executable(${targetNameTests})
+  add_test_target(
+    TARGET ${targetName} 
+    TESTFILES ${testFiles}
+    PRIVATEFILES ${privateFiles}
+    PUBLICFILES ${publicFiles}
+    INTERFACEFILES ${interfaceFiles}
+    MAINFILE BasicWindowAppMain.test.cpp
+)
+endif()
 
-  target_sources(${targetNameTests}
-    PRIVATE
-      ${privateFiles}
-      ${testFiles}
-    PUBLIC
-      ${publicFiles}
-    INTERFACE
-      ${interfaceFiles}
-  )
-
-  target_include_directories(${targetName}
-      PUBLIC
-          "${CMAKE_CURRENT_SOURCE_DIR}"
-  )
-
-  target_link_libraries(${targetNameTests}
-  PRIVATE 
-    GTest::gmock 
-    GTest::gtest
-    GTest::gtest_main
-  )
-
-  gtest_discover_tests(${targetNameTests}
-    WORKING_DIRECTORY ${PROJECT_DIR}
-    PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${PROJECT_DIR}"
-    DISCOVERY_MODE PRE_TEST
-  )
-
-  set_target_properties(${targetNameTests} PROPERTIES FOLDER Tests)
+if(BUILD_BENCHMARKS)
+  add_benchmark_target(
+    TARGET ${targetName} 
+    BENCHMARKFILES ${benchmarkFiles}
+    PRIVATEFILES ${privateFiles}
+    PUBLICFILES ${publicFiles}
+    INTERFACEFILES ${interfaceFiles})
 endif()

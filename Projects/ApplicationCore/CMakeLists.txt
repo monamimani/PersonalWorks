@@ -97,35 +97,21 @@ target_link_libraries(${targetName}
 )
 
 if(BUILD_TESTS)
-  set(targetNameTests ${targetName}Tests )
-  add_executable(${targetNameTests} 
-    ${testFiles}
-  )
-  set_target_properties(${targetNameTests} PROPERTIES FOLDER Tests)
-
-  target_link_libraries(${targetNameTests}
-  PRIVATE 
-    ${targetName}
-    GTest::gmock 
-    GTest::gtest
-    GTest::gtest_main
-  )
-
-  gtest_discover_tests(${targetNameTests}
-    WORKING_DIRECTORY ${PROJECT_DIR}
-    PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${PROJECT_DIR}"
-    DISCOVERY_MODE PRE_TEST
-  )
-
-
-if(RUN_TESTS_AFTER_BUILD)
-  add_custom_command(TARGET ${targetNameTests}
-    # Run after all other rules within the target have been executed
-    POST_BUILD
-    COMMAND ${targetNameTests}
-    COMMENT "Running Google Test"
-    VERBATIM
-  )
+  add_test_target(
+    TARGET ${targetName} 
+    TESTFILES ${testFiles}
+    PRIVATEFILES ${privateFiles}
+    PUBLICFILES ${publicFiles}
+    INTERFACEFILES ${interfaceFiles}
+    LINKLIBS Core)
 endif()
 
+if(BUILD_BENCHMARKS)
+  add_benchmark_target(
+    TARGET ${targetName} 
+    BENCHMARKFILES ${benchmarkFiles}
+    PRIVATEFILES ${privateFiles}
+    PUBLICFILES ${publicFiles}
+    INTERFACEFILES ${interfaceFiles}
+    LINKLIBS Core)
 endif()

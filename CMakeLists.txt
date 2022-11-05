@@ -1,4 +1,6 @@
-cmake_minimum_required(VERSION 3.22)
+cmake_minimum_required(VERSION 3.24)
+
+set(CMAKE_EXPERIMENTAL_CXX_MODULE_CMAKE_API "3c375311-a3c9-4396-a187-3227ef642046")
 
 include(CMakePrintHelpers)
 # cmake_print_variables(CMAKE_MODULE_PATH)
@@ -29,6 +31,8 @@ include(CMakeDependentOption)
 include(CMake/StaticAnalizers.cmake)
 include(CMake/ClangFormat.cmake)
 include(CMake/Sanitizers.cmake)
+include(CMake/TestTarget.cmake)
+include(CMake/BenchmarkTarget.cmake)
 
 # Prevent in-source builds.
 if ( ${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR} )
@@ -40,7 +44,10 @@ include(CMake/DefaultProjectSettings.cmake)
 
 option(BUILD_TESTS "Builds the tests" ON)
 CMAKE_DEPENDENT_OPTION(BUILD_TESTS_COVERAGE "Build the project with code coverage support for tests" OFF "BUILD_TESTS" OFF)
-CMAKE_DEPENDENT_OPTION(RUN_TESTS_AFTER_BUILD "Run the tests after the build" ON "BUILD_TESTS" OFF)
+CMAKE_DEPENDENT_OPTION(RUN_TESTS_AFTER_BUILD "Run the tests after the build" OFF "BUILD_TESTS" OFF)
+#CMAKE_DEPENDENT_OPTION(RUN_TESTS_AFTER_BUILD "Run the tests after the build" ON "BUILD_TESTS" OFF)
+
+option(BUILD_BENCHMARKS "Builds the benchmarks" ON)
 
 option(BUILD_DOCUMENTATION "Build the documentation of the Beyond game engine" OFF)
 if (BUILD_DOCUMENTATION)
@@ -110,6 +117,6 @@ if (BUILD_TESTS)
 endif()
 
 add_subdirectory(Projects/Core)
+add_subdirectory(Projects/TestUtilities)
 add_subdirectory(Projects/ApplicationCore)
 add_subdirectory(Projects/BasicWindowApp)
-add_subdirectory(Tests)

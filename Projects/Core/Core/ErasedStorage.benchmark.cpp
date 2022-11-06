@@ -1,4 +1,4 @@
-#include "GoogleBenchmark.h"
+#include "TestUtilities/GoogleBenchmark.h"
 #include "TestUtilities/TestStruct.test.h"
 using namespace Test;
 

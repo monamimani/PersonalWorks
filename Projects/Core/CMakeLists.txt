@@ -43,7 +43,6 @@ set(publicFiles
   ${targetName}/Assert.h
   ${targetName}/Config.h
   ${targetName}/Endian.h
-  ${targetName}/Expected.hunit.h
   ${targetName}/NonCopyable.h
   ${targetName}/PathUtils.h
   ${targetName}/Pimpl.h

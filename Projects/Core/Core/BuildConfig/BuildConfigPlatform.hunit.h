@@ -16,10 +16,10 @@ enum class Platform
 constexpr auto platformStr = std::string_view{"Linux"};
 constexpr auto platform = Platform::Linux
 };
-#elif __ANDROID__
+#elif defined __ANDROID__
 constexpr auto platformStr = std::string_view{"Android"};
 constexpr auto platform = Platform::Android;
-#elif _WIN32
+#elif defined _WIN32
 constexpr auto platformStr = std::string_view{"Windows"};
 constexpr auto platform = Platform::Windows;
 #else

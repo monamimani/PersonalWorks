@@ -65,8 +65,8 @@ jobs:
   #     configurePreset: x64-shipping
     # name: ${{ matrix.buildType }} build on ${{ matrix.os }}
     runs-on: ${{ matrix.config.os }}
-
     continue-on-error: ${{ matrix.config.experimental }}
+    name: ${{ matrix.config.buildPreset }}
 
     steps:
     - uses: actions/checkout@v3  
@@ -90,6 +90,7 @@ jobs:
         sudo apt-get install ninja-build
 
     - name: "Set environmental variables"
+      shell: bash
       run: |
         echo "VCPKG_ROOT=$VCPKG_INSTALLATION_ROOT" >> $GITHUB_ENV
 

@@ -90,6 +90,7 @@ jobs:
         sudo apt-get install ninja-build
 
     - name: "Set environmental variables"
+      shell: bash
       run: |
         echo "$VCPKG_INSTALLATION_ROOT"
         echo "VCPKG_ROOT=$VCPKG_INSTALLATION_ROOT" >> $GITHUB_ENV

@@ -74,7 +74,7 @@ class ErasedStorage final
 
 public:
   constexpr ErasedStorage() noexcept = default;
-  ~ErasedStorage()
+  constexpr ~ErasedStorage()
   {
     erase();
   }
@@ -112,7 +112,7 @@ public:
     return *this;
   }
 
-  void erase()
+  constexpr void erase()
   {
     if (m_storageFcts.m_destroy)
     {

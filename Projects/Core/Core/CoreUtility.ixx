@@ -1,6 +1,7 @@
 module;
 #include <type_traits>
 #include <utility>
+#include <memory>
 
 export module Core:Utility;
 
@@ -11,11 +12,19 @@ using CopyConstness_t = std::conditional_t<std::is_const_v<std::remove_reference
 
 // Do an assignment but garanteing the strong exception safety
 export template <class C>
-C& strongAssing(C& dest, C src)
+[[nodiscard]] C& strongAssing(C& dest, C src)
 {
   using std::swap;
   swap(dest, src);
   return dest;
+}
+
+export template <class T>
+[[nodiscard]] auto start_lifetime_as(const void* p) noexcept {
+  const auto mp = const_cast<void*>(p);
+  const auto bytes = new(mp) std::byte[sizeof(T)];
+  const auto ptr = reinterpret_cast<const T*>(bytes);
+  return std::launder<const T>(ptr);
 }
 
 } // namespace Core

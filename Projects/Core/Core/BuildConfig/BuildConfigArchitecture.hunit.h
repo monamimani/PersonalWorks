@@ -13,7 +13,7 @@ enum class Architecture
   ARM64
 };
 
-#if __x86_64__ || defined _M_X64
+#if defined __x86_64__ || defined _M_X64
 constexpr auto architectureStr = std::string_view{"AMD x86-64"};
 constexpr auto architecture = Architecture::AMD64;
 #elif defined __X86__ || defined __i386__ || defined _M_IX86

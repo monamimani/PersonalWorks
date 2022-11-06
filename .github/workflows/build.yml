@@ -95,6 +95,7 @@ jobs:
         echo "VCPKG_ROOT=$VCPKG_INSTALLATION_ROOT" >> $GITHUB_ENV
         echo "$GITHUB_ENV"
         echo "${{ toJSON(github) }}"
+        gci env:
 
     - name: Cmake Configure
       run: |

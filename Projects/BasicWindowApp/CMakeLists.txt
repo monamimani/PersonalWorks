@@ -77,12 +77,3 @@ if(BUILD_TESTS)
     MAINFILE BasicWindowAppMain.test.cpp
 )
 endif()
-
-if(BUILD_BENCHMARKS)
-  add_benchmark_target(
-    TARGET ${targetName} 
-    BENCHMARKFILES ${benchmarkFiles}
-    PRIVATEFILES ${privateFiles}
-    PUBLICFILES ${publicFiles}
-    INTERFACEFILES ${interfaceFiles})
-endif()

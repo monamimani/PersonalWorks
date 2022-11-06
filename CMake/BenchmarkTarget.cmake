@@ -41,6 +41,8 @@ function(add_benchmark_target)
     INTERFACE
       ${ADD_BENCHMARK_TARGET_INTERFACEFILES}
   )
+  
+  target_compile_definitions(${targetNameBenchmarks} PUBLIC BENCHMARK_STATIC_DEFINE) # See https://stackoverflow.com/questions/73494386/lnk2001-linker-error-while-linking-google-benchmark-lib
 
   target_link_libraries(${targetNameBenchmarks}
     PRIVATE 

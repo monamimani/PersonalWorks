@@ -105,13 +105,3 @@ if(BUILD_TESTS)
     INTERFACEFILES ${interfaceFiles}
     LINKLIBS Core)
 endif()
-
-if(BUILD_BENCHMARKS)
-  add_benchmark_target(
-    TARGET ${targetName} 
-    BENCHMARKFILES ${benchmarkFiles}
-    PRIVATEFILES ${privateFiles}
-    PUBLICFILES ${publicFiles}
-    INTERFACEFILES ${interfaceFiles}
-    LINKLIBS Core)
-endif()

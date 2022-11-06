@@ -94,6 +94,7 @@ jobs:
         echo "$VCPKG_INSTALLATION_ROOT"
         echo "VCPKG_ROOT=$VCPKG_INSTALLATION_ROOT" >> $GITHUB_ENV
         echo "$GITHUB_ENV"
+        echo "$GITHUB_CONTEXT"
 
     - name: Cmake Configure
       run: |

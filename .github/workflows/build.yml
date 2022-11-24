@@ -150,7 +150,7 @@ jobs:
 
     - name: OpenCppCoverage
       run: |
-        OpenCppCoverage --=working_dir""./_Out/build/windows-vs2022/_bin"" --export_type cobertura:coverage.xml --modules "*.exe" --cover_children Core.test.exe
+        OpenCppCoverage --=working_dir"./_Out/build/windows-vs2022/_bin" --export_type cobertura:coverage.xml --modules "*.exe" --cover_children Core.test.exe
 
     - name: Codecov
       uses: codecov/codecov-action@v3.1.1

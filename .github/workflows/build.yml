@@ -76,7 +76,7 @@ jobs:
 
     env:
       binDir: "_Out/build/${{ matrix.config.configurePreset }}/_bin"
-      fullBinDir: "${{ github.workspace }}/${{env.binDir}}/${{ matrix.config.buildConfig }}"
+      fullBinDir: "${{ github.workspace }}/"_Out/build/${{ matrix.config.configurePreset }}/_bin"
       libDir: "_Out/build/${{ matrix.config.configurePreset }}/_lib"
 
     steps:

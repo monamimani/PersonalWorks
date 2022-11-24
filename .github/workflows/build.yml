@@ -169,13 +169,10 @@ jobs:
           _Out/build/${{ matrix.config.configurePreset }}/_bin
           _Out/build/${{ matrix.config.configurePreset }}/_lib
 
-    - name: TEst
-      run: |
-        ls -r ${{env.binDir}}
-
     - name: OpenCppCoverage
+      working-directory: ./_Out
       run: |
-        OpenCppCoverage --config_file=OpenCppCoverage.config.txt arg= ${{ env.binDir }}/${{ matrix.config.buildConfig }}/CoreTests.exe
+        OpenCppCoverage --config_file=OpenCppCoverage.config.txt arg= ../${{ env.binDir }}/${{ matrix.config.buildConfig }}/CoreTests.exe
 
     - name: Codecov
       uses: codecov/codecov-action@v3.1.1

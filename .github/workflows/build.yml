@@ -157,7 +157,7 @@ jobs:
     - name: OpenCppCoverage
       working-directory: ./_Out
       run: |
-        OpenCppCoverage --config_file=../OpenCppCoverage.config.txt ../${{ env.binDir }}/${{ matrix.config.buildConfig }}/CoreTests.exe
+        OpenCppCoverage --config_file=../OpenCppCoverage.config.txt --modules="build/${{ matrix.config.configurePreset }}/_bin/${{ matrix.config.buildConfig }}" --excluded_sources="build/${{ matrix.config.configurePreset }}/vcpkg_installed"  ../${{ env.binDir }}/${{ matrix.config.buildConfig }}/CoreTests.exe
 
     - name: Codecov
       uses: codecov/codecov-action@v3.1.1
@@ -171,11 +171,13 @@ jobs:
         name: PersonalWorks_${{github.workflow}}-${{github.job}}_TestsResults
         path: |
           _Out/build/${{ matrix.config.configurePreset }}/_bin/*.json
+          _Out/coverage.xml
 
     - name: Upload Workflow artifact
       uses: actions/upload-artifact@v3
       with:
-        name: PersonalWorks_${{github.workflow}}-${{github.job}}_Bin
+        name: PersonalWorks_${{github.workflow}}-${{github.job}}_Out
         path: |
           _Out/build/${{ matrix.config.configurePreset }}/_bin
           _Out/build/${{ matrix.config.configurePreset }}/_lib
+          _Out/coverage.xml

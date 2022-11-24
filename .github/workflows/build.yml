@@ -141,3 +141,6 @@ jobs:
         path: |
           _Out/build/${{ matrix.config.configurePreset }}/_bin
           _Out/build/${{ matrix.config.configurePreset }}/_lib
+
+    - name: Codecov
+      uses: codecov/codecov-action@v3.1.1

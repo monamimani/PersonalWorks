@@ -117,6 +117,7 @@ jobs:
     - name: "Set environmental variables"
       shell: bash
       run: |
+        # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#adding-a-system-path
         echo "VCPKG_ROOT=$VCPKG_INSTALLATION_ROOT" >> $GITHUB_ENV
         echo "C:\Program Files\OpenCppCoverage" >> $GITHUB_PATH
 
@@ -174,7 +175,7 @@ jobs:
 
     - name: OpenCppCoverage
       run: |
-        OpenCppCoverage --export_type cobertura:coverage.xml  _Out/build/${{ matrix.config.configurePreset }}/_bin/${{ matrix.config.buildConfig }}/CoreTests.exe
+        OpenCppCoverage --config_file=OpenCppCoverage.config.txt arg= ${{ env.binDir }}/${{ matrix.config.buildConfig }}/CoreTests.exe
 
     - name: Codecov
       uses: codecov/codecov-action@v3.1.1

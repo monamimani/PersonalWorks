@@ -1,0 +1,8 @@
+export_type=cobertura:coverage.xml
+modules="_Out\build\windows-vs2022\_bin\Debug" 
+sources="Projects" 
+excluded_sources="_Out\build\windows-vs2022\vcpkg_installed" 
+excluded_line_regex "\s*else.*" 
+excluded_line_regex "\s*\}.*" 
+excluded_line_regex ".*@NOCOVERAGE.*" 
+excluded_line_regex ".*std::unreachable.*"

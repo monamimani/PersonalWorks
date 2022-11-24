@@ -136,21 +136,21 @@ jobs:
     - name: Upload Test Results
       uses: actions/upload-artifact@v3
       with:
-        name: PersonalWorks_$GITHUB_WORKFLOW-$GITHUB_RUN_NUMBER_TestsResults
+        name: PersonalWorks_${{GITHUB_WORKFLOW}}-${{GITHUB_RUN_NUMBER}}_TestsResults
         path: |
           _Out/build/${{ matrix.config.configurePreset }}/_bin/*.json
 
     - name: Upload Workflow artifact
       uses: actions/upload-artifact@v3
       with:
-        name: PersonalWorks_$GITHUB_WORKFLOW-$GITHUB_RUN_NUMBER_Bin
+        name: PersonalWorks_${{GITHUB_WORKFLOW}}-${{GITHUB_RUN_NUMBER}}_Bin
         path: |
           _Out/build/${{ matrix.config.configurePreset }}/_bin
           _Out/build/${{ matrix.config.configurePreset }}/_lib
 
     - name: OpenCppCoverage
       run: |
-        OpenCppCoverage --export_type cobertura:coverage.xml --modules "*.exe" --cover_children --output-on-failure
+        OpenCppCoverage --export_type cobertura:coverage.xml --modules "*.exe" --cover_children
 
     - name: Codecov
       uses: codecov/codecov-action@v3.1.1

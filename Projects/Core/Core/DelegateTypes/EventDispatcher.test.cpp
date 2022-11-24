@@ -1,8 +1,5 @@
-// clang-format off
-// Cheeky but need to be before the headers so that classes can use FRIEND_TEST without including gtest_prod.h
-// and that the whole universe depends on gtest.
-#include "gtest/gtest.h"
-// clang-format on
+
+#include "TestUtilities/GoogleTest.h"
 
 #include "Core/DelegateTypes/EventDispatcher.h"
 
@@ -10,7 +7,7 @@ namespace Core
 {
     constexpr uint32_t TEST_INT = 42;
 
-enum class Event_Types
+enum class EventTypes
 {
   TestEventKind,
 };
@@ -32,7 +29,7 @@ constexpr auto lambdaTest = [](const EventTest&) {};
 //class CoreEventDispatcherTest : public ::testing::Test
 //{
 //protected:
-//  using EventDispatcherType = Core::EventDispatcher<Event_Types, void(const EventTest&)>;
+//  using EventDispatcherType = Core::EventDispatcher<EventTypes, void(const EventTest&)>;
 //
 //  void SetUp() override {}
 //
@@ -43,16 +40,16 @@ constexpr auto lambdaTest = [](const EventTest&) {};
 //    return dispatcher.m_eventDelegateMap;
 //  }
 //
-//  EventDispatcherType eventDispatcher;
+//  EventDispatcherType m_eventDispatcher;
 //};
 //
 //TEST_F(CoreEventDispatcherTest, DefaultConstructorDestructor)
 //{
 //
-//  ASSERT_TRUE(eventDispatcher.isEmpty());
+//  ASSERT_TRUE(m_eventDispatcher.isEmpty());
 //  ASSERT_EQ(getEventMap(eventDispatcher).size(), 0);
 //}
-//
+
 //TEST_F(CoreEventDispatcherTest, CopyConstructorDestructor)
 //{
 //  auto handleRAII = eventDispatcher.append(Event_Types::TestEventKind, &foo);

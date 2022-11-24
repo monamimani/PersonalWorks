@@ -3,7 +3,7 @@ module;
 
 export module DelegateMulticast;
 
-import Core.Concepts;
+import CoreConcepts;
 import Delegate;
 
 namespace Delegate
@@ -58,9 +58,15 @@ class DelegateMulticast<Ret(Args...)> final
 {
   static_assert(std::is_same_v<Ret, void>, "Delegate return values other than void are not supported.");
 
+  template <typename Instance_T, typename DelegateMulticast_T>
+  class ObjectMemFnBinder;
+
 public:
   using Function_Sig = Ret(Args...);
   using Delegate_T = Delegate<Function_Sig>;
+
+  struct DelegateRAII;
+  friend struct DelegateRAII;
 
   //  MulticastDelegate(const MulticastDelegate& other)
   //{
@@ -85,7 +91,7 @@ public:
   {
     auto& delegate = m_delegateList.emplace_back();
     auto handleRAII = delegate.bind<function>();
-    return handleRAII;
+    return DelegateRAII{std::move(handleRAII)};
   }
 
   template <Core::FunctorAndReturn<Ret, Args...> Instance_T>
@@ -93,7 +99,7 @@ public:
   {
     auto& delegate = m_delegateList.emplace_back();
     auto handleRAII = delegate.bind(std::forward<Instance_T>(functor));
-    return handleRAII;
+    return DelegateRAII{std::move(handleRAII)};
   }
 
   template <auto function, typename Instance_T>
@@ -102,16 +108,15 @@ public:
   {
     auto& delegate = m_delegateList.emplace_back();
     auto handleRAII = delegate.bind<function>(std::forward<Instance_T>(instance));
-    return handleRAII;
+    return DelegateRAII{std::move(handleRAII)};
   }
 
   template <typename Instance_T>
-  inline constexpr decltype(auto) bindObject(Instance_T&& instance)
+  inline constexpr [[nodiscard]] decltype(auto) bindObject(Instance_T&& instance)
   {
     auto& delegate = m_delegateList.emplace_back();
-    auto handleRAII = delegate.bindObject(std::forward<Instance_T>(instance));
-
-    return Delegate_T::template ObjectMemFnBinder<Instance_T>(&delegate, std::forward<Instance_T>(instance));
+    delegate.constructStorage(std::forward<Instance_T>(instance));
+    return ObjectMemFnBinder<Instance_T&&, DelegateMulticast<Ret(Args...)>>{&m_delegateList.back()};
   }
 
   void operator()(const Args&&... args)
@@ -138,7 +143,6 @@ public:
     return !isEmpty();
   }
 
-  // or reset
   void unbindAll()
   {
     m_delegateList.clear();
@@ -148,6 +152,66 @@ public:
 
 private:
   std::vector<Delegate_T> m_delegateList;
+};
+
+template <typename Ret, typename... Args>
+struct [[nodiscard]] DelegateMulticast<Ret(Args...)>::DelegateRAII
+{
+  using DelegateMulticast_T = DelegateMulticast<Ret(Args...)>;
+  using DelegateHandleRAII_T = DelegateMulticast_T::Delegate_T::DelegateRAII;
+
+  DelegateHandleRAII_T m_delegateHandle;
+
+public:
+
+  DelegateRAII() = default;
+
+  explicit DelegateRAII(DelegateHandleRAII_T&& delegateHandle)
+  : m_delegateHandle{std::move(delegateHandle)}
+  {
+  }
+
+  void unbind() noexcept
+  {
+    m_delegateHandle->unbind();
+  }
+};
+
+template <typename Ret, typename... Args>
+template <typename Instance_T, typename DelegateMulticast_T>
+class DelegateMulticast<Ret(Args...)>::ObjectMemFnBinder
+{
+  using Delegate_T = DelegateMulticast_T::Delegate_T;
+  using MemFct_Ptr = Delegate_T::template MemberFunction_Ptr<Instance_T>;
+  using MemFctConst_Ptr = Delegate_T::template MemberFunctionConst_Ptr<Instance_T>;
+  using DelegateMulticastHandleRAII_T = DelegateMulticast_T::DelegateRAII;
+
+  friend typename DelegateMulticast_T;
+
+  /// @brief Constructor is private so that only Delegate_T can construct it.
+  ObjectMemFnBinder(Delegate_T* delegate)
+  : m_delegate{delegate}
+  {
+  }
+
+public:
+  template <MemFct_Ptr function>
+  [[nodiscard]] decltype(auto) memFn() &&
+  {
+    auto handleRAII = m_delegate->template setTrampolineFct<Instance_T&&, function>();
+
+    return DelegateMulticastHandleRAII_T{std::move(handleRAII)};
+  }
+
+  template <MemFctConst_Ptr function>
+  [[nodiscard]] decltype(auto) memFnConst() &&
+  {
+    auto handleRAII = m_delegate->template setTrampolineFct<Instance_T&&, function>();
+
+    return DelegateMulticastHandleRAII_T{std::move(handleRAII)};
+  }
+
+  Delegate_T* m_delegate = {};
 };
 
 } // namespace Delegate

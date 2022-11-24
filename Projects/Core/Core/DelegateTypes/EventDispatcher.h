@@ -3,6 +3,8 @@
 #include <concepts>
 #include <unordered_map>
 
+import DelegateMulticast;
+
 namespace Core
 {
 // clang-format off
@@ -158,7 +160,7 @@ private:
   friend class CoreEventDispatcherTest;
   // FRIEND_TEST(CoreEventDispatcherTest, AppendFreeFunction);
 #endif
-  */
+*/
 };
 
 } // namespace Core

@@ -169,7 +169,7 @@ jobs:
 
     - name: TEst
       run: |
-        ls -r ${{ BINARY_DIR }}
+        ls -r ${{env.binDir}}
 
     - name: OpenCppCoverage
       run: |

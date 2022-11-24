@@ -98,7 +98,7 @@ jobs:
       shell: bash
       run: |
         echo "VCPKG_ROOT=$VCPKG_INSTALLATION_ROOT" >> $GITHUB_ENV
-        echo "PATH=C:\Program Files\OpenCppCoverage;%PATH%" >> $GITHUB_ENV
+        # echo "PATH=C:\Program Files\OpenCppCoverage;%PATH%" >> $GITHUB_ENV
 
     - name: Cmake Configure
       run: |

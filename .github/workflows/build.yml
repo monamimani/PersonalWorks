@@ -155,14 +155,14 @@ jobs:
     #     # ctest --preset ${{ matrix.config.testPreset }}
 
     - name: OpenCppCoverage
-      working-directory: ./_Out
       run: |
-        OpenCppCoverage --config_file=../OpenCppCoverage.config.txt --modules="build/${{ matrix.config.configurePreset }}/_bin/${{ matrix.config.buildConfig }}" --excluded_sources="build/${{ matrix.config.configurePreset }}/vcpkg_installed"  ../${{ env.binDir }}/${{ matrix.config.buildConfig }}/CoreTests.exe
+        $dir = "${{ env.binDir }}/${{ matrix.config.buildConfig }}"
+        OpenCppCoverage --config_file=../OpenCppCoverage.config.txt --export_type=cobertura:$dir/coverage.xml --modules=$dir --excluded_sources="vcpkg_installed"  $dir/CoreTests.exe
 
     - name: Codecov
       uses: codecov/codecov-action@v3.1.1
       with:
-        directory: _Out/
+        directory: ${{ env.binDir }}/${{ matrix.config.buildConfig }}
         files: ./coverage.xml 
 
     - name: Upload Test Results

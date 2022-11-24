@@ -1,4 +1,3 @@
-export_type=cobertura:coverage.xml
 sources="Projects" 
 excluded_line_regex="\s*else.*" 
 excluded_line_regex="\s*\}.*" 

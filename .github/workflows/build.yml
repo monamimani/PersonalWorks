@@ -89,10 +89,16 @@ jobs:
         sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 110 --slave /usr/bin/g++ g++ /usr/bin/g++-11 --slave /usr/bin/gcov gcov /usr/bin/gcov-11
         sudo apt-get install ninja-build
 
+    - name: Install Windows packages
+      if: runner.os == 'Windows'
+      run: |
+        choco install opencppcoverage
+
     - name: "Set environmental variables"
       shell: bash
       run: |
         echo "VCPKG_ROOT=$VCPKG_INSTALLATION_ROOT" >> $GITHUB_ENV
+        echo "PATH=C:\Program Files\OpenCppCoverage;%PATH%" >> $GITHUB_ENV
 
     - name: Cmake Configure
       run: |
@@ -141,6 +147,10 @@ jobs:
         path: |
           _Out/build/${{ matrix.config.configurePreset }}/_bin
           _Out/build/${{ matrix.config.configurePreset }}/_lib
+
+    - name: OpenCppCoverage
+      run: |
+        OpenCppCoverage --export_type cobertura:coverage.xml --modules "*.exe" --cover_children --ctest -C %configuration% --output-on-failure
 
     - name: Codecov
       uses: codecov/codecov-action@v3.1.1

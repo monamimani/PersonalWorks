@@ -174,7 +174,7 @@ jobs:
 
     - name: OpenCppCoverage
       run: |
-        OpenCppCoverage --module ${{ github.workspace }} --export_type cobertura:coverage.xml --  _Out\\build\\${{ matrix.config.configurePreset }}\\_bin\\${{ matrix.config.buildConfig }}\\Core.test.exe
+        OpenCppCoverage --export_type cobertura:coverage.xml  _Outbuild/${{ matrix.config.configurePreset }}/_bin/${{ matrix.config.buildConfig }}/Core.test.exe
 
     - name: Codecov
       uses: codecov/codecov-action@v3.1.1

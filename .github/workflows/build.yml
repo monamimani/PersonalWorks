@@ -10,6 +10,7 @@ jobs:
         config:
         - {
             os: windows-latest,
+            buildConfig: debug,
             configurePreset: windows-vs2022,
             buildPreset: windows-vs2022-x64-debug,
             testPreset: windows-vs2022-x64-debug,
@@ -17,6 +18,7 @@ jobs:
           }
         - {
             os: windows-latest,
+            buildConfig: relWithDebInfo,
             configurePreset: windows-vs2022,
             buildPreset: windows-vs2022-x64-release,
             testPreset: windows-vs2022-x64-release,
@@ -24,6 +26,7 @@ jobs:
           }
         - {
             os: windows-latest,
+            buildConfig: release,
             configurePreset: windows-vs2022,
             buildPreset: windows-vs2022-x64-shipping,
             testPreset: windows-vs2022-x64-shipping,
@@ -31,6 +34,7 @@ jobs:
           }
         - {
             os: ubuntu-latest,
+            buildConfig: debug,
             configurePreset: linux-ninja-multi-config,
             buildPreset: linux-ninja-multi-config-x64-debug,
             testPreset: linux-ninja-multi-config-x64-debug,
@@ -38,6 +42,7 @@ jobs:
           }
         - {
             os: ubuntu-latest,
+            buildConfig: relWithDebInfo,
             configurePreset: linux-ninja-multi-config,
             buildPreset: linux-ninja-multi-config-x64-release,
             testPreset: linux-ninja-multi-config-x64-release,
@@ -45,6 +50,7 @@ jobs:
           }
         - {
             os: ubuntu-latest,
+            buildConfig: release,
             configurePreset: linux-ninja-multi-config,
             buildPreset: linux-ninja-multi-config-x64-shipping,
             testPreset: linux-ninja-multi-config-x64-shipping,
@@ -112,7 +118,7 @@ jobs:
     - name: Run Google test (Windows)
       if: runner.os == 'Windows'
       run: |
-        $binDir = "./_Out/build/windows-vs2022/_bin"
+        $binDir = "./_Out/build/${{ matrix.config.configurePreset }}/_bin"
         $testExe = (Get-ChildItem -Path $binDir -Recurse | Where-Object Name -like *tests*.exe).FullName
         foreach ($exe in $testExe) {
           Write-Host($exe)
@@ -150,7 +156,7 @@ jobs:
 
     - name: OpenCppCoverage
       run: |
-        OpenCppCoverage --working_dir="_Out/build/windows-vs2022/_bin" --export_type cobertura:coverage.xml --modules "*.exe" --cover_children Core.test.exe
+        OpenCppCoverage --working_dir="_Out/build/${{ matrix.config.configurePreset }}/_bin/${{ matrix.config.buildConfig }}" --export_type cobertura:coverage.xml --modules "*.exe" --cover_children Core.test.exe
 
     - name: Codecov
       uses: codecov/codecov-action@v3.1.1

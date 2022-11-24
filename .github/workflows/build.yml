@@ -75,8 +75,8 @@ jobs:
     name: ${{ matrix.config.buildPreset }}
 
     env:
-      BINARY_DIR: "./_Out/build/${{ matrix.config.configurePreset }}/_bin"
-      LIB_DIR: "./_Out/build/${{ matrix.config.configurePreset }}/_bin"
+      binDir: "./_Out/build/${{ matrix.config.configurePreset }}/_bin"
+      libDir: "./_Out/build/${{ matrix.config.configurePreset }}/_lib"
 
     steps:
     - uses: actions/checkout@v3  
@@ -131,7 +131,7 @@ jobs:
     - name: Run Google test (Windows)
       if: runner.os == 'Windows'
       run: |
-        $binDir = "${{ BINARY_DIR }}"
+        $binDir = "${{ env.binDir }}"
         $testExe = (Get-ChildItem -Path $binDir -Recurse | Where-Object Name -like *tests*.exe).FullName
         foreach ($exe in $testExe) {
           Write-Host($exe)
@@ -173,7 +173,7 @@ jobs:
 
     - name: OpenCppCoverage
       run: |
-        OpenCppCoverage --working_dir="./_Out/build/${{ matrix.config.configurePreset }}/_bin/${{ matrix.config.buildConfig }}" --export_type cobertura:coverage.xml -- Core.test.exe
+        OpenCppCoverage --export_type cobertura:coverage.xml -- ${{env.binDir}}/${{ matrix.config.buildConfig }}/Core.test.exe
 
     - name: Codecov
       uses: codecov/codecov-action@v3.1.1

@@ -2,7 +2,7 @@
 //import "BuildConfig.hunit.h";
 import BuildConfig;
 
-#include "Core/GoogleTest.h"
+#include "TestUtilities/GoogleTest.h"
 
 namespace BuildConfigTest
 {

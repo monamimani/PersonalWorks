@@ -1,7 +1,7 @@
 module;
 #include <concepts>
 
-export module Core.Concepts;
+export module CoreConcepts;
 
 export namespace Core
 {
@@ -18,7 +18,7 @@ struct NonCopyable
 };
 
 template <typename T>
-concept NonCopyable = !std::copy_constructible<T> && !std::assignable_from<T&, T&> && !std::assignable_from<T&, const T&> && !std::assignable_from<T&, const T>;
+concept NonCopyable_C = !std::copy_constructible<T> && !std::assignable_from<T&, T&> && !std::assignable_from<T&, const T&> && !std::assignable_from<T&, const T>;
 
 template <typename F, typename R, typename... Args>
 concept InvocableAndReturn = (std::invocable<F, Args...> && std::convertible_to<std::invoke_result_t<F&, Args...>, R>);

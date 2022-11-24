@@ -6,7 +6,7 @@ Standard: c++20
 
 UseTab: Never
 IndentWidth: 2
-ColumnLimit: 196
+ColumnLimit: 256
 MaxEmptyLinesToKeep: 1
 
 SortIncludes: CaseInsensitive
@@ -45,8 +45,9 @@ AlwaysBreakTemplateDeclarations: Yes
 BreakBeforeBraces: Allman
 BreakConstructorInitializers : BeforeComma
 EmptyLineBeforeAccessModifier: LogicalBlock
-BreakBeforeConceptDeclarations: True #Always
-# RequiresClausePosition: OwnLine #requires clang-format 15.0
+BreakBeforeConceptDeclarations: Always
+RequiresClausePosition: OwnLine #requires clang-format 15.0
+# RequiresExpressionIndentation: OuterScope #requires clang-format 16.0
 
 ConstructorInitializerIndentWidth: 0
 Cpp11BracedListStyle: True

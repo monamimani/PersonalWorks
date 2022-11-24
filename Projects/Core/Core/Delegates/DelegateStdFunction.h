@@ -3,7 +3,7 @@
 #include <concepts>
 #include <functional>
 
-import Core.Concepts;
+import CoreConcepts;
 
 namespace Delegate
 {
@@ -102,16 +102,8 @@ public:
     return DelegateRAII{};
   }
 
-  // template <typename Instance_T, MemberFunctionConstOrNot_Ptr<Instance_T> fct>
-  // inline constexpr [[nodiscard]] auto bind(Instance_T&& instance)
-  //{
-  //   bind<fct>(std::forward<Instance_T>(instance));
-
-  //  return DelegateRAII{};
-  //}
-
   template <typename Instance_T>
-  constexpr decltype(auto) bindObject(Instance_T&& instance)
+  [[nodiscard]] constexpr decltype(auto) bindObject(Instance_T&& instance)
   {
     return ObjectMemFnBinder<Instance_T>{this, std::forward<Instance_T>(instance)};
   }
@@ -156,41 +148,14 @@ public:
   bool operator==(const DelegateStdFunction&) const = default;
 
 private:
+
+
   template <typename Instance_T>
   class ObjectMemFnBinder
   {
     using Type = std::remove_reference_t<Instance_T>;
     using MemFct_Ptr = MemberFunction_Ptr<Instance_T>;
     using MemFctConst_Ptr = MemberFunctionConst_Ptr<Instance_T>;
-
-  public:
-    template <auto function>
-    requires Core::InvocableAndReturnNTTP<function, R, Instance_T, Args...>
-    [[nodiscard]] auto memFn()
-    {
-      setTrampolineFct<function>();
-
-      // return DelegateRAII{&m_delegate};
-      return DelegateRAII{};
-    }
-
-    template <MemFct_Ptr function>
-    [[nodiscard]] auto memFn()
-    {
-      setTrampolineFct<function>();
-
-      // return DelegateRAII{&m_delegate};
-      return DelegateRAII{};
-    }
-
-    template <MemFctConst_Ptr function>
-    [[nodiscard]] auto memFnConst()
-    {
-      setTrampolineFct<function>();
-
-      // return DelegateRAII{&m_delegate};
-      return DelegateRAII{};
-    }
 
     template <auto function>
     void setTrampolineFct()
@@ -209,6 +174,26 @@ private:
           return std::invoke(function, instance_, std::forward<Args>(args)...);
         };
       }
+    }
+
+  public:
+
+    template <MemFct_Ptr function>
+    [[nodiscard]] auto memFn()
+    {
+      setTrampolineFct<function>();
+
+      // return DelegateRAII{&m_delegate};
+      return DelegateRAII{};
+    }
+
+    template <MemFctConst_Ptr function>
+    [[nodiscard]] auto memFnConst()
+    {
+      setTrampolineFct<function>();
+
+      // return DelegateRAII{&m_delegate};
+      return DelegateRAII{};
     }
 
     DelegateStdFunction<R(Args...)>* m_delegate = {};

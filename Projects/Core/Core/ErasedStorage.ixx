@@ -11,7 +11,8 @@ module;
 
 export module ErasedStorage;
 
-import Core.Concepts;
+import CoreUtility;
+import CoreConcepts;
 
 namespace Core
 {
@@ -74,22 +75,22 @@ class ErasedStorage final
 
 public:
   constexpr ErasedStorage() noexcept = default;
-  constexpr ~ErasedStorage()
+  constexpr ~ErasedStorage() noexcept
   {
     erase();
   }
 
-  ErasedStorage(const ErasedStorage& other)
+  ErasedStorage(const ErasedStorage& other) noexcept(noexcept(copy(*this, other)))
   {
     copy(*this, other);
   }
 
-  ErasedStorage(ErasedStorage&& other) noexcept(noexcept(m_storageFcts.m_move(*this, other)))
+  ErasedStorage(ErasedStorage&& other) noexcept(noexcept(move(*this, other)))
   {
     move(*this, other);
   }
 
-  ErasedStorage& operator=(const ErasedStorage& other)
+  ErasedStorage& operator=(const ErasedStorage& other) noexcept(noexcept(copy(*this, other)) && noexcept(m_storageFcts.m_destroy(*this)))
   {
     // erase();
     if (m_storageFcts.m_destroy)
@@ -100,7 +101,7 @@ public:
 
     return *this;
   }
-  ErasedStorage& operator=(ErasedStorage&& other) noexcept(noexcept(m_storageFcts.m_move(*this, other)))
+  ErasedStorage& operator=(ErasedStorage&& other) noexcept(noexcept(move(*this, other)))
   {
     // erase();
     if (m_storageFcts.m_destroy)
@@ -130,10 +131,11 @@ public:
     static_assert(sizeof(ErasedType) <= size);
     static_assert(alignof(ErasedType) <= alignment);
 
-    auto* storagePtr = reinterpret_cast<ErasedType*>(std::addressof(m_storage));
+    auto* storagePtr = start_lifetime_as<ErasedType>(std::addressof(m_storage));
+    // auto* storagePtr = reinterpret_cast<ErasedType*>(std::addressof(m_storage));
     auto storageTypedPtr = std::construct_at(storagePtr);
 
-    m_storageFcts.setFcts<ErasedType>();
+    m_storageFcts.template setFcts<ErasedType>();
     return storageTypedPtr;
   }
 
@@ -147,10 +149,11 @@ public:
     static_assert(sizeof(ErasedType) <= size);
     static_assert(alignof(ErasedType) <= alignment);
 
-    auto* storagePtr = reinterpret_cast<ErasedType*>(std::addressof(m_storage));
+    auto* storagePtr = start_lifetime_as<ErasedType>(std::addressof(m_storage));
+    // auto* storagePtr = reinterpret_cast<ErasedType*>(std::addressof(m_storage));
     auto storageTypedPtr = std::construct_at(storagePtr, std::forward<Args>(args)...);
 
-    m_storageFcts.setFcts<ErasedType>();
+    m_storageFcts.template setFcts<ErasedType>();
     return storageTypedPtr;
   }
 
@@ -164,7 +167,7 @@ public:
     // This will have issues with multiple level of pointer indirection
     using RawType = std::remove_pointer_t<std::remove_reference_t<ErasedType>>;
 
-    m_storageFcts.setFcts<ErasedType>();
+    m_storageFcts.template setFcts<ErasedType>();
 
     if constexpr (std::is_lvalue_reference_v<ErasedType>)
     {
@@ -184,13 +187,15 @@ public:
     }
     else if constexpr (std::is_rvalue_reference_v<ErasedType>)
     {
-      auto* storagePtr = reinterpret_cast<RawType*>(std::addressof(m_storage));
+      auto* storagePtr = start_lifetime_as<RawType>(std::addressof(m_storage));
+      // auto* storagePtr = reinterpret_cast<RawType*>(std::addressof(m_storage));
       auto storageTypedPtr = std::construct_at(storagePtr, std::forward<ErasedType>(obj));
       return storageTypedPtr;
     }
     else if constexpr (std::is_pointer_v<ErasedType>)
     {
-      auto** storagePtr = reinterpret_cast<RawType**>(m_storage);
+      auto** storagePtr = start_lifetime_as<RawType*>(std::addressof(m_storage));
+      // auto** storagePtr = reinterpret_cast<RawType**>(m_storage);
       auto storageTypedPtr = std::construct_at(storagePtr, obj);
       return *storageTypedPtr;
     }
@@ -248,7 +253,7 @@ public:
     {
       static_assert(std::is_lvalue_reference_v<ErasedType> == false, "Creating an erased type of a reference to T is illegal, use T* as the erased type.");
       std::unreachable();
-      //return reinterpret_cast<RawType* const*>(std::addressof(m_storage));
+      // return reinterpret_cast<RawType* const*>(std::addressof(m_storage));
     }
     else if constexpr (std::is_rvalue_reference_v<ErasedType>)
     {
@@ -266,7 +271,6 @@ public:
     {
       std::unreachable();
     }
-
   }
 
   void swap(ErasedStorage& other)
@@ -304,7 +308,7 @@ private:
     std::destroy_at(storage.asTypedPtr<ErasedType>());
   }
 
-  static inline constexpr void move(ErasedStorage& dst, ErasedStorage& src) noexcept /*(noexcept(moveStorage<ErasedType>(dst, src)))*/
+  static inline constexpr void move(ErasedStorage& dst, ErasedStorage& src)
   {
     if (src.m_storageFcts.m_move)
     {
@@ -341,7 +345,7 @@ private:
     destroyStorage<ErasedType>(src);
   }
 
-  static inline constexpr void copy(ErasedStorage& dst, const ErasedStorage& src) noexcept /*(noexcept(copyStorage<ErasedType>(dst, src)))*/
+  static inline constexpr void copy(ErasedStorage& dst, const ErasedStorage& src)
   {
     if (src.m_storageFcts.m_copy)
     {

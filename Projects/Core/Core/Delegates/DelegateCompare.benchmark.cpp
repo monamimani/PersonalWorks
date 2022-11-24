@@ -48,7 +48,7 @@ void DelegateCompare_CopyCtorLValue(benchmark::State& state)
 
   auto delegate = Delegate_T{};
   benchmark::DoNotOptimize(delegate);
-  delegate.bind(bmStruct);
+  auto handle = delegate.bind(bmStruct);
 
   for (auto _ : state)
   {
@@ -64,7 +64,7 @@ void DelegateCompare_CopyCtorRValue(benchmark::State& state)
 {
   auto delegate = Delegate_T{};
   benchmark::DoNotOptimize(delegate);
-  delegate.bind(BMStruct{});
+  auto handle = delegate.bind(BMStruct{});
 
   for (auto _ : state)
   {
@@ -97,7 +97,7 @@ void DelegateCompare_MoveCtorLValue(benchmark::State& state)
 
   auto delegate = Delegate_T{};
   benchmark::DoNotOptimize(delegate);
-  delegate.bind(bmStruct);
+  auto handle = delegate.bind(bmStruct);
 
   for (auto _ : state)
   {
@@ -113,7 +113,7 @@ void DelegateCompare_MoveCtorRValue(benchmark::State& state)
 {
   auto delegate = Delegate_T{};
   benchmark::DoNotOptimize(delegate);
-  delegate.bind(BMStruct{});
+  auto handle = delegate.bind(BMStruct{});
 
   for (auto _ : state)
   {
@@ -146,7 +146,7 @@ void DelegateCompare_CopyAssignLValue(benchmark::State& state)
 
   auto delegate = Delegate_T{};
   benchmark::DoNotOptimize(delegate);
-  delegate.bind(bmStruct);
+  auto handle = delegate.bind(bmStruct);
 
   for (auto _ : state)
   {
@@ -162,7 +162,7 @@ void DelegateCompare_CopyAssignRValue(benchmark::State& state)
 {
   auto delegate = Delegate_T{};
   benchmark::DoNotOptimize(delegate);
-  delegate.bind(BMStruct{});
+  auto handle = delegate.bind(BMStruct{});
 
   for (auto _ : state)
   {
@@ -195,7 +195,7 @@ void DelegateCompare_MoveAssignLValue(benchmark::State& state)
 
   auto delegate = Delegate_T{};
   benchmark::DoNotOptimize(delegate);
-  delegate.bind(bmStruct);
+  auto handle = delegate.bind(bmStruct);
 
   for (auto _ : state)
   {
@@ -211,7 +211,7 @@ void DelegateCompare_MoveAssignRValue(benchmark::State& state)
 {
   auto delegate = Delegate_T{};
   benchmark::DoNotOptimize(delegate);
-  delegate.bind(BMStruct{});
+  auto handle = delegate.bind(BMStruct{});
 
   for (auto _ : state)
   {
@@ -255,11 +255,11 @@ void DelegateCompare_SwapLValue(benchmark::State& state)
   benchmark::DoNotOptimize(structB);
 
   auto delegateA = Delegate_T{};
-  delegateA.bind(structA);
+  auto handleA = delegateA.bind(structA);
   benchmark::DoNotOptimize(delegateA);
 
   auto delegateB = Delegate_T{};
-  delegateA.bind(structB);
+  auto handleB = delegateB.bind(structB);
   benchmark::DoNotOptimize(delegateB);
 
   for (auto _ : state)
@@ -280,11 +280,11 @@ template <class Delegate_T>
 void DelegateCompare_SwapRValue(benchmark::State& state)
 {
   auto delegateA = Delegate_T{};
-  delegateA.bind(BMStruct{});
+  auto handleA = delegateA.bind(BMStruct{});
   benchmark::DoNotOptimize(delegateA);
 
   auto delegateB = Delegate_T{};
-  delegateA.bind(BMStruct{});
+  auto handle = delegateB.bind(BMStruct{});
   benchmark::DoNotOptimize(delegateB);
 
   for (auto _ : state)
@@ -769,7 +769,7 @@ void DelegateCompare_BindObject_MemFn(benchmark::State& state)
   benchmark::DoNotOptimize(bmStruct);
 
   auto delegate = Delegate_T{};
-  auto delegateRAII = delegate.bindObject(bmStruct).memFn<&BMStruct::fct>();
+  auto delegateRAII = delegate.bind<&BMStruct::fct>(bmStruct);
   benchmark::DoNotOptimize(delegate);
 
   int value = 0;
@@ -791,7 +791,7 @@ void DelegateCompare_BindObject_MemFnOOL(benchmark::State& state)
   benchmark::DoNotOptimize(bmStructOutOfLine);
 
   auto delegate = Delegate_T{};
-  auto delegateRAII = delegate.bindObject(bmStructOutOfLine).memFn<&BMStructOutOfLine::fct>();
+  auto delegateRAII = delegate.bind<&BMStructOutOfLine::fct>(bmStructOutOfLine);
   benchmark::DoNotOptimize(delegate);
 
   int value = 0;
@@ -813,7 +813,7 @@ void DelegateCompare_BindObject_MemFnConst(benchmark::State& state)
   benchmark::DoNotOptimize(bmStruct);
 
   auto delegate = Delegate_T{};
-  auto delegateRAII = delegate.bindObject(bmStruct).memFn<&BMStruct::fctConst>();
+  auto delegateRAII = delegate.bind<&BMStruct::fctConst>(bmStruct);
   benchmark::DoNotOptimize(delegate);
 
   int value = 0;
@@ -835,7 +835,7 @@ void DelegateCompare_BindObject_MemFnConstOOL(benchmark::State& state)
   benchmark::DoNotOptimize(bmStructOutOfLine);
 
   auto delegate = Delegate_T{};
-  auto delegateRAII = delegate.bindObject(bmStructOutOfLine).memFn<&BMStructOutOfLine::fctConst>();
+  auto delegateRAII = delegate.bind<&BMStructOutOfLine::fctConst>(bmStructOutOfLine);
   ;
   benchmark::DoNotOptimize(delegate);
 

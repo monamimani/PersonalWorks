@@ -1,6 +1,6 @@
 module;
 
-export module Core : Singleton;
+export module CoreSingleton;
 
 export namespace Core
 {

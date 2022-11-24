@@ -2,10 +2,10 @@
 
 #include <algorithm>
 #include <array>
-//#include <format>
-#include "fmt/format.h"
+// #include <format>
 #include <tuple>
 
+#include "fmt/format.h"
 #include "TestUtilities/GoogleTest.h"
 #include "TestUtilities/TestStruct.test.h"
 using namespace Test;
@@ -16,7 +16,7 @@ import Delegate;
 namespace Delegate
 {
 using Delegate_T = Delegate<void(int&)>;
-//using Delegate_T = DelegateStdFunction<void(int&)>;
+// using Delegate_T = DelegateStdFunction<void(int&)>;
 
 using IsLValue = bool;
 using IsFctConst = bool;
@@ -100,22 +100,22 @@ auto bindObjectMemberFct(Delegate_T& delegate, TestStruct& testStruct, IsLValue 
   {
     if (isFctConst)
     {
-      return delegate.bindObject(const_cast<const TestStruct&>(testStruct)).memFn<&TestStruct::fctConst>();
+      return delegate.bind<&TestStruct::fctConst>(const_cast<const TestStruct&>(testStruct));
     }
     else
     {
-      return delegate.bindObject(testStruct).memFn<&TestStruct::fct>();
+      return delegate.bind<&TestStruct::fct>(testStruct);
     }
   }
   else
   {
     if (isFctConst)
     {
-      return delegate.bindObject(const_cast<const TestStruct&&>(std::move(testStruct))).memFn<&TestStruct::fctConst>();
+      return delegate.bind<&TestStruct::fctConst>(const_cast<const TestStruct&&>(std::move(testStruct)));
     }
     else
     {
-      return delegate.bindObject(std::move(testStruct)).memFn<&TestStruct::fct>();
+      return delegate.bind<&TestStruct::fct>(std::move(testStruct));
     }
   }
 }
@@ -137,7 +137,7 @@ auto bindObjectMemberFctTemplate(Delegate_T& delegate, TestStruct& testStruct, I
   {
     if (isFctConst)
     {
-      return delegate.bindObject(const_cast<const TestStruct&&>(std::move(testStruct))).memFn<&TestStruct::fctTemplate>();
+      return delegate.bindObject(const_cast<const TestStruct&&>(std::move(testStruct))).memFnConst<&TestStruct::fctTemplate>();
     }
     else
     {
@@ -152,7 +152,7 @@ auto bindObjectMemberFctConstOverloaded(Delegate_T& delegate, TestStruct& testSt
   {
     if (isFctConst)
     {
-      return delegate.bindObject(const_cast<const TestStruct&&>(std::move(testStruct))).memFn<&TestStruct::fctConstOverloaded>();
+      return delegate.bindObject(const_cast<const TestStruct&&>(std::move(testStruct))).memFnConst<&TestStruct::fctConstOverloaded>();
     }
     else
     {
@@ -182,14 +182,14 @@ auto bindObjectMemberFctParamOverloaded(Delegate_T& delegate, TestStruct& testSt
     }
     else
     {
-      return delegate.bindObject(const_cast<const TestStruct&>(testStruct)).memFn<&TestStruct::fctParamOverloaded>();
+      return delegate.bindObject(const_cast<const TestStruct&>(testStruct)).memFnConst<&TestStruct::fctParamOverloaded>();
     }
   }
   else
   {
     if (isFctConst)
     {
-      return delegate.bindObject(const_cast<const TestStruct&&>(std::move(testStruct))).memFn<&TestStruct::fctParamOverloaded>();
+      return delegate.bindObject(const_cast<const TestStruct&&>(std::move(testStruct))).memFnConst<&TestStruct::fctParamOverloaded>();
     }
     else
     {
@@ -203,7 +203,7 @@ auto bindDelegate(Delegate_T& delegate, TestStruct& testStruct, BindKind bindKin
   switch (bindKind)
   {
     case BindKind::Empty:
-      return Delegate_T::DelegateRAII{};
+      return Delegate_T::DelegateRAII{&delegate};
     case BindKind::FreeFunction:
       return bindFreeFunction(delegate, testStruct, isLValue, isFctConst);
     case BindKind::Functor:
@@ -229,12 +229,12 @@ public:
   static std::string getTestNamePart(IsLValue isLValue, IsFctConst isFctConst, BindKind bindkind)
   {
     static constexpr auto bindkindTuples = std::to_array<std::tuple<BindKind, const char*>>({
-        {                         BindKind::Empty,                           "Empty"},
-        {                  BindKind::FreeFunction,                         "FreeFct"},
-        {                       BindKind::Functor,                         "Functor"},
-        {                     BindKind::MemberFct,                      "BindMemFct"},
-        {                     BindKind::MemberFct,              "BindMemFctTemplate"},
-        {               BindKind::ObjectMemberFct,                "BindObjectMemFct"},
+        {BindKind::Empty, "Empty"},
+        {BindKind::FreeFunction, "FreeFct"},
+        {BindKind::Functor, "Functor"},
+        {BindKind::MemberFct, "BindMemFct"},
+        {BindKind::ObjectMemberFct, "BindObjectMemFct"},
+        {BindKind::ObjectMemberFctTemplate, "BindMemFctTemplate"},
         {BindKind::ObjectMemberFctConstOverloaded, "BindObjectMemFctConstOverloaded"},
         {BindKind::ObjectMemberFctParamOverloaded, "BindObjectMemFctParamOverloaded"}
     });
@@ -255,8 +255,7 @@ public:
   {
     static constexpr std::array fctConstness = {true, false};
     static constexpr std::array valueKinds = {true, false};
-    static constexpr std::array memberFctBindKind = {
-        BindKind::Functor, BindKind::MemberFct, BindKind::ObjectMemberFct, BindKind::ObjectMemberFctTemplate, BindKind::ObjectMemberFctConstOverloaded, BindKind::ObjectMemberFctParamOverloaded};
+    static constexpr std::array memberFctBindKind = {BindKind::Functor, BindKind::MemberFct, BindKind::ObjectMemberFct, BindKind::ObjectMemberFctTemplate, BindKind::ObjectMemberFctConstOverloaded, BindKind::ObjectMemberFctParamOverloaded};
     static constexpr auto memFctParamSetPartSize = valueKinds.size() * fctConstness.size() * memberFctBindKind.size();
 
     auto paramSetPart = std::vector<ParamSetType>();
@@ -296,6 +295,7 @@ protected:
   bool m_isConst = false;
   bool m_isBindKindEmpty = false;
   Delegate_T m_delegate;
+  Delegate_T::DelegateRAII m_handle;
   SpecialFunctionCallCounter m_counters;
 
   // static void SetUpTestSuite() {
@@ -310,13 +310,14 @@ protected:
     m_isConst = isFctConst;
     m_isBindKindEmpty = bindKind == BindKind::Empty;
 
-    bindDelegate(m_delegate, m_testStruct, bindKind, isLValue, isFctConst);
+    m_handle = bindDelegate(m_delegate, m_testStruct, bindKind, isLValue, isFctConst);
 
     TestStruct::resetStaticCounters();
   }
 
   void TearDown() override
   {
+    m_delegate.unbind();
     TestStruct::resetStaticCounters();
   }
 
@@ -354,10 +355,12 @@ public:
 protected:
   TestStruct m_testStruct;
   Delegate_T m_delegateA;
+  Delegate_T::DelegateRAII m_handleA;
   bool m_isDelegateAConst = false;
   bool m_isDelegateABindKindEmpty = false;
 
   Delegate_T m_delegateB;
+  Delegate_T::DelegateRAII m_handleB;
   bool m_isDelegateBConst = false;
   bool m_isDelegateBBindKindEmpty = false;
 
@@ -375,8 +378,8 @@ protected:
     m_isDelegateABindKindEmpty = bindKindA == BindKind::Empty;
     m_isDelegateBBindKindEmpty = bindKindB == BindKind::Empty;
 
-    bindDelegate(m_delegateA, m_testStruct, bindKindA, isLValueA, m_isDelegateAConst);
-    bindDelegate(m_delegateB, m_testStruct, bindKindB, isLValueB, m_isDelegateBConst);
+    m_handleA = bindDelegate(m_delegateA, m_testStruct, bindKindA, isLValueA, m_isDelegateAConst);
+    m_handleB = bindDelegate(m_delegateB, m_testStruct, bindKindB, isLValueB, m_isDelegateBConst);
 
     TestStruct::resetStaticCounters();
   }

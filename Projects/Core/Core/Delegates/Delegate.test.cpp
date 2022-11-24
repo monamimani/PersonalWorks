@@ -229,6 +229,7 @@ TEST_P(UnaryDelegateTestF, unbind)
     ASSERT_FALSE(m_delegate);
   }
 
+
   m_delegate.unbind();
   ASSERT_FALSE(m_delegate);
 }
@@ -259,7 +260,7 @@ TEST(DelegateTest, invokeSafe)
   int value = 28;
   Delegate<int(int&)> delegate;
   ASSERT_FALSE((bool)delegate);
-  delegate.bind<&TestStruct::fctReturn>(testStruct);
+  auto handle = delegate.bind<&TestStruct::fctReturn>(testStruct);
   ASSERT_TRUE((bool)delegate);
   ASSERT_TRUE(delegate.isBound());
 

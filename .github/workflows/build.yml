@@ -95,8 +95,17 @@ jobs:
         sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 110 --slave /usr/bin/g++ g++ /usr/bin/g++-11 --slave /usr/bin/gcov gcov /usr/bin/gcov-11
         sudo apt-get install ninja-build
 
-    - name: Install Windows packages
+    - name: Cache Windows packages
       if: runner.os == 'Windows'
+      id: cache-install-opencppcoverage
+      uses: actions/cache@v3
+      with:
+        path: C:\Program Files\OpenCppCoverage
+        key: ${{ runner.os }}-cache-install-opencppcoverage
+        
+    - name: Install Windows packages
+      if: (runner.os == 'Windows') && (steps.cache-install-opencppcoverage.outputs.cache-hit != 'true')
+      shell: pwsh
       run: |
         choco install opencppcoverage
 
@@ -156,7 +165,7 @@ jobs:
 
     - name: OpenCppCoverage
       run: |
-        OpenCppCoverage --working_dir="_Out/build/${{ matrix.config.configurePreset }}/_bin/${{ matrix.config.buildConfig }}" --export_type cobertura:coverage.xml -- Core.test.exe
+        OpenCppCoverage --working_dir="./_Out/build/${{ matrix.config.configurePreset }}/_bin/${{ matrix.config.buildConfig }}" --export_type cobertura:coverage.xml -- Core.test.exe
 
     - name: Codecov
       uses: codecov/codecov-action@v3.1.1

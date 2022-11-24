@@ -76,7 +76,7 @@ jobs:
 
     env:
       binDir: "_Out/build/${{ matrix.config.configurePreset }}/_bin"
-      fullBinDir: ${{ github.workspace }}/${{env.binDir}}/${{ matrix.config.buildConfig }}
+      fullBinDir: "${{ github.workspace }}/${{env.binDir}}/${{ matrix.config.buildConfig }}""
       libDir: "_Out/build/${{ matrix.config.configurePreset }}/_lib"
 
     steps:
@@ -174,7 +174,7 @@ jobs:
 
     - name: OpenCppCoverage
       run: |
-        OpenCppCoverage --export_type cobertura:coverage.xml --  ${{ github.workspace }}/${{env.binDir}}/${{ matrix.config.buildConfig }}/Core.test.exe
+        OpenCppCoverage --module ${{ github.workspace }} --export_type cobertura:coverage.xml --  ${{env.binDir}}/${{ matrix.config.buildConfig }}/Core.test.exe
 
     - name: Codecov
       uses: codecov/codecov-action@v3.1.1

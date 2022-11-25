@@ -163,7 +163,7 @@ jobs:
       uses: codecov/codecov-action@v3.1.1
       with:
         name: ${{github.repository}}
-        directory: "./${{ env.binDir }}/${{ matrix.config.buildConfig }}/"
+        directory: "${{ github.workspace }}/${{ env.binDir }}/${{ matrix.config.buildConfig }}/"
         files: ./coverage.xml 
         verbose: true
 

@@ -157,8 +157,8 @@ jobs:
     - name: OpenCppCoverage
       run: |
         $buildConfigDir = Resolve-Path -Path "${{ env.binDir }}/${{ matrix.config.buildConfig }}"
-        # --excluded_sources="*\vcpkg_installed" 
-        OpenCppCoverage --config_file=OpenCppCoverage.config.txt --export_type=cobertura:$buildConfigDir/coverage.xml --modules=$buildConfigDir $buildConfigDir/CoreTests.exe
+        # --modules=$buildConfigDir --excluded_sources="*\vcpkg_installed" 
+        OpenCppCoverage --config_file=OpenCppCoverage.config.txt --export_type=cobertura:$buildConfigDir/coverage.xml $buildConfigDir/CoreTests.exe
 
     - name: Codecov
       uses: codecov/codecov-action@v3.1.1
@@ -166,6 +166,8 @@ jobs:
         name: ${{github.repository}}
         directory: ${{ env.binDir }}/${{ matrix.config.buildConfig }}
         files: ./coverage.xml 
+        path_to_write_report: ./codecov_report.txt
+        verbose: true
 
     - name: Upload Test Results
       uses: actions/upload-artifact@v3

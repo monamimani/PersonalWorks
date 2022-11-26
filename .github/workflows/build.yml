@@ -165,7 +165,6 @@ jobs:
       with:
         name: ${{github.repository}}
         files: ./coverage.xml
-        verbose: true
 
     - name: Upload Test Results
       uses: actions/upload-artifact@v3

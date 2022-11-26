@@ -78,6 +78,7 @@ jobs:
       binDir: "_Out/build/${{ matrix.config.configurePreset }}/_bin"
       fullBinDir: "${{ github.workspace }}/_Out/build/${{ matrix.config.configurePreset }}/_bin"
       libDir: "_Out/build/${{ matrix.config.configurePreset }}/_lib"
+      coverageFile: "${{ github.workspace }}/_Out/build/${{ matrix.config.configurePreset }}/_bin/${{ matrix.config.buildConfig }}/coverage.xml"
 
     steps:
     - uses: actions/checkout@v3  
@@ -119,7 +120,6 @@ jobs:
       run: |
         # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#adding-a-system-path
         echo "VCPKG_ROOT=$VCPKG_INSTALLATION_ROOT" >> $GITHUB_ENV
-        echo "COVERAGE_FILE=${{ github.workspace }}/_Out/build/${{ matrix.config.configurePreset }}/_bin/${{ matrix.config.buildConfig }}/coverage.xml" >> $GITHUB_ENV
         echo "C:\Program Files\OpenCppCoverage" >> $GITHUB_PATH
 
     - name: Cmake Configure
@@ -158,13 +158,13 @@ jobs:
     - name: OpenCppCoverage
       run: |
         $buildConfigDir = Resolve-Path -Path "${{ env.binDir }}/${{ matrix.config.buildConfig }}"
-        OpenCppCoverage --config_file=OpenCppCoverage.config.txt --modules=$buildConfigDir --excluded_sources="*\vcpkg_installed"  --export_type=cobertura:"${{COVERAGE_FILE}}" -- $buildConfigDir/CoreTests.exe --gtest_brief=1
+        OpenCppCoverage --config_file=OpenCppCoverage.config.txt --modules=$buildConfigDir --excluded_sources="*\vcpkg_installed"  --export_type=cobertura:"${{env.coverageFile}}" -- $buildConfigDir/CoreTests.exe --gtest_brief=1
 
     - name: Codecov
       uses: codecov/codecov-action@v3.1.1
       with:
         name: ${{github.repository}}
-        files: ${{COVERAGE_FILE}}
+        files: ${{env.coverageFile}}
         verbose: true
 
     - name: Upload Test Results

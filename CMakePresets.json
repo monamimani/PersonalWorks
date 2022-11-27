@@ -2,7 +2,7 @@
   "version": 4,
   "cmakeMinimumRequired": {
     "major": 3,
-    "minor": 22,
+    "minor": 24,
     "patch": 0
   },
   "configurePresets": [
@@ -11,10 +11,10 @@
       "hidden": true,
       "binaryDir": "${sourceDir}/_Out/build/${presetName}",
       "installDir": "${sourceDir}/_Out/install/${presetName}",
+      "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
       "cacheVariables": {
         "CMAKE_CXX_STANDARD": "23",
-        "CMAKE_CXX_STANDARD_REQUIRED": "YES",
-        "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+        "CMAKE_CXX_STANDARD_REQUIRED": "YES"
       }
     },
     {

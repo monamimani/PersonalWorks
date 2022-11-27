@@ -16,46 +16,46 @@ jobs:
             testPreset: windows-vs2022-x64-debug,
             experimental: false
           }
-        # - {
-        #     os: windows-latest,
-        #     buildConfig: relWithDebInfo,
-        #     configurePreset: windows-vs2022,
-        #     buildPreset: windows-vs2022-x64-release,
-        #     testPreset: windows-vs2022-x64-release,
-        #     experimental: false
-        #   }
-        # - {
-        #     os: windows-latest,
-        #     buildConfig: release,
-        #     configurePreset: windows-vs2022,
-        #     buildPreset: windows-vs2022-x64-shipping,
-        #     testPreset: windows-vs2022-x64-shipping,
-        #     experimental: false
-        #   }
-        # - {
-        #     os: ubuntu-latest,
-        #     buildConfig: debug,
-        #     configurePreset: linux-ninja-multi-config,
-        #     buildPreset: linux-ninja-multi-config-x64-debug,
-        #     testPreset: linux-ninja-multi-config-x64-debug,
-        #     experimental: true
-        #   }
-        # - {
-        #     os: ubuntu-latest,
-        #     buildConfig: relWithDebInfo,
-        #     configurePreset: linux-ninja-multi-config,
-        #     buildPreset: linux-ninja-multi-config-x64-release,
-        #     testPreset: linux-ninja-multi-config-x64-release,
-        #     experimental: true
-        #   }
-        # - {
-        #     os: ubuntu-latest,
-        #     buildConfig: release,
-        #     configurePreset: linux-ninja-multi-config,
-        #     buildPreset: linux-ninja-multi-config-x64-shipping,
-        #     testPreset: linux-ninja-multi-config-x64-shipping,
-        #     experimental: true
-        #   }
+        - {
+            os: windows-latest,
+            buildConfig: relWithDebInfo,
+            configurePreset: windows-vs2022,
+            buildPreset: windows-vs2022-x64-release,
+            testPreset: windows-vs2022-x64-release,
+            experimental: false
+          }
+        - {
+            os: windows-latest,
+            buildConfig: release,
+            configurePreset: windows-vs2022,
+            buildPreset: windows-vs2022-x64-shipping,
+            testPreset: windows-vs2022-x64-shipping,
+            experimental: false
+          }
+        - {
+            os: ubuntu-latest,
+            buildConfig: debug,
+            configurePreset: linux-ninja-multi-config,
+            buildPreset: linux-ninja-multi-config-x64-debug,
+            testPreset: linux-ninja-multi-config-x64-debug,
+            experimental: true
+          }
+        - {
+            os: ubuntu-latest,
+            buildConfig: relWithDebInfo,
+            configurePreset: linux-ninja-multi-config,
+            buildPreset: linux-ninja-multi-config-x64-release,
+            testPreset: linux-ninja-multi-config-x64-release,
+            experimental: true
+          }
+        - {
+            os: ubuntu-latest,
+            buildConfig: release,
+            configurePreset: linux-ninja-multi-config,
+            buildPreset: linux-ninja-multi-config-x64-shipping,
+            testPreset: linux-ninja-multi-config-x64-shipping,
+            experimental: true
+          }
         
 
 

@@ -233,7 +233,7 @@ TYPED_TEST(ErasedStorageTestStructF, Construct)
 
     // I think this is UB because we are accessing the storage before any object was constructed in it.
     // Or it isn't because std::byte is special.
-    //ASSERT_EQ(reinterpret_cast<const ErasedTypeByte&>(*typedPtr), std::byte{});
+    ASSERT_EQ(reinterpret_cast<const ErasedTypeByte&>(*typedPtr), std::byte{});
 
     const auto* typedStorage = storage.construct<ErasedType>();
     this->m_counters.m_nbCallDefaultConstructor++;
@@ -246,7 +246,7 @@ TYPED_TEST(ErasedStorageTestStructF, Construct)
     // Destructor
     storage.~ErasedStorage();
     this->m_counters.m_nbCallDestructor++;
-    //ASSERT_EQ(reinterpret_cast<const ErasedTypeByte&>(*typedPtr), std::byte{});
+    ASSERT_EQ(reinterpret_cast<const ErasedTypeByte&>(*typedPtr), std::byte{});
   }
 
   ExpectSpecialFunctionCallCounter(this->m_counters);
@@ -267,7 +267,7 @@ TYPED_TEST(ErasedStorageTestStructF, ParamConstruct)
 
     // I think this is UB because we are accessing the storage before any object was constructed in it.
     // Or it isn't because std::byte is special.
-    //ASSERT_EQ(reinterpret_cast<const ErasedTypeByte&>(*typedPtr), std::byte{});
+    ASSERT_EQ(reinterpret_cast<const ErasedTypeByte&>(*typedPtr), std::byte{});
 
     const auto* typedStorage = storage.construct<ErasedType>(TestStruct::m_staticValue);
     this->m_counters.m_nbCallDefaultConstructor++;
@@ -280,7 +280,7 @@ TYPED_TEST(ErasedStorageTestStructF, ParamConstruct)
     // Destructor
     storage.~ErasedStorage();
     this->m_counters.m_nbCallDestructor++;
-    //ASSERT_EQ(reinterpret_cast<const ErasedTypeByte&>(*typedPtr), std::byte{});
+    ASSERT_EQ(reinterpret_cast<const ErasedTypeByte&>(*typedPtr), std::byte{});
   }
 
   ExpectSpecialFunctionCallCounter(this->m_counters);

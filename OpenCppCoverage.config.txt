@@ -1,4 +1,4 @@
-sources=Projects/*.test.*
+sources=Projects\*.test.*
 excluded_line_regex="\s*else.*" 
 excluded_line_regex="\s*\}.*" 
 excluded_line_regex=".*@NOCOVERAGE.*" 

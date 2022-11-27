@@ -1,5 +1,5 @@
 {
-  "version": 3,
+  "version": 4,
   "cmakeMinimumRequired": {
     "major": 3,
     "minor": 22,
@@ -21,7 +21,11 @@
       "name": "checkers",
       "hidden": true,
       "cacheVariables": {
-        "USE_ASAN": true
+        "USE_ASAN": false,
+        "ENABLE_CPPCHECK_DEFAULT": true,
+        "ENABLE_CLANG_TIDY_DEFAULT": true,
+        //"ENABLE_CPPCHECK": true,
+        //"ENABLE_CLANG_TIDY":  true
       },
       "vendor": {
         "microsoft.com/VisualStudioSettings/CMake/1.0": {
@@ -38,8 +42,6 @@
         "CMAKE_CXX_COMPILER": "cl",
         "CMAKE_CXX_FLAGS": "/DWIN32 /D_WINDOWS /W4 /EHsc /MP /permissive-",
         "CMAKE_C_FLAGS": "/DWIN32 /D_WINDOWS /W4 /EHsc /MP /permissive-",
-        "ENABLE_CPPCHECK_DEFAULT": "FALSE",
-        "ENABLE_CLANG_TIDY_DEFAULT": "FALSE",
         "VCPKG_TARGET_TRIPLET": "x64-windows"
       },
       "condition": {
@@ -108,8 +110,24 @@
       "inherits": [ "base", "Windows-base", "Vs2022" ]
     },
     {
+      "name": "windows-ninja-multi-config",
+      "inherits": [ "base", "Windows-base", "ninja-multi-config" ]
+    },
+    {
+      "name": "windows-ninja",
+      "inherits": [ "base", "Windows-base", "ninja" ]
+    },
+    {
       "name": "windows-vs2022-checkers",
       "inherits": [ "base", "checkers", "Windows-base", "Vs2022" ]
+    },
+    {
+      "name": "windows-ninja-multi-config-checkers",
+      "inherits": [ "base", "checkers", "Windows-base", "ninja-multi-config" ]
+    },
+    {
+      "name": "windows-ninja-checkers",
+      "inherits": [ "base", "checkers", "Windows-base", "ninja" ]
     },
     {
       "name": "linux-ninja-multi-config",
@@ -161,6 +179,21 @@
     {
       "name": "windows-vs2022-x64-shipping",
       "configurePreset": "windows-vs2022",
+      "configuration": "Release"
+    },
+    {
+      "name": "windows-vs2022-x64-checkers-debug",
+      "configurePreset": "windows-vs2022-checkers",
+      "configuration": "Debug"
+    },
+    {
+      "name": "windows-vs2022-x64-checkers-release",
+      "configurePreset": "windows-vs2022-checkers",
+      "configuration": "RelWithDebInfo"
+    },
+    {
+      "name": "windows-vs2022-x64-checkers-shipping",
+      "configurePreset": "windows-vs2022-checkers",
       "configuration": "Release"
     },
     {

@@ -46,6 +46,7 @@ function(add_test_target)
     PRIVATE 
       $<$<NOT:$<BOOL:${ADD_TEST_TARGET_MAINFILE}>>:GTest::gtest_main>
       TestUtilities
+      SanitizersConfiguration
       ${ADD_TEST_TARGET_LINKLIBS}
   )
 

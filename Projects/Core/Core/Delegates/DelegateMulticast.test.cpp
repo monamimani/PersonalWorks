@@ -550,11 +550,11 @@ TEST_P(UnaryOpF, MoveCopyAssignBroadcast)
   ASSERT_FALSE((bool)delegateMulticast.isEmpty());
 
   DelegateMulticast_T delegateMulticastCopy;
-  delegateMulticastCopy = delegateMulticastMove;
+  delegateMulticastCopy = delegateMulticast;
   ASSERT_FALSE((bool)delegateMulticastCopy.isEmpty());
 
   value = {};
-  delegateMulticastMove.broadcast(value);
+  delegateMulticast.broadcast(value);
   if (isFctConst)
   {
     ASSERT_EQ(value, TestStruct::m_staticValueConst);

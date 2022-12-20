@@ -17,7 +17,6 @@ export template <typename Ret, typename... Args>
 class StaticFunction<Ret(Args...)> final
 {
 
-
   using UnderlineStorageType = void*;
   inline static constexpr auto UnderlineStorageAlingOf = alignof(UnderlineStorageType);
   inline static constexpr auto UnderlineStorageSize = 2 * sizeof(UnderlineStorageType);
@@ -64,19 +63,9 @@ public:
   template <Core::FunctorAndReturn<Ret, Args...> Instance_T>
   constexpr void bind(Instance_T&& functor)
   {
-
     reset();
     constructStorage(std::forward<Instance_T>(functor));
     setTrampolineFct<Instance_T&&>();
-  }
-
-  template <Core::InvocableAndReturn<Ret, Args...> auto function, typename Instance_T>
-  // requires Core::InvocableAndReturn<decltype(function), Ret, Instance_T, Args...>
-  [[nodiscard]] constexpr void bind(Instance_T&& instance)
-  {
-    reset();
-    constructStorage(std::forward<Instance_T>(instance));
-    setTrampolineFct<Instance_T&&, function>();
   }
 
   template <auto function, typename Instance_T>
@@ -86,18 +75,6 @@ public:
     reset();
     constructStorage(std::forward<Instance_T>(instance));
     setTrampolineFct<Instance_T&&, function>();
-  }
-
-  /// @brief Function to be used when the staticFunction function is overloaded (const, parameter or a template for exemple).
-  /// @tparam Instance_T
-  /// @param instance
-  /// @return
-  template <typename Instance_T>
-  [[nodiscard]] constexpr auto bindObject(Instance_T&& instance)
-  {
-    reset();
-    constructStorage(std::forward<Instance_T>(instance));
-    return ObjectMemFnBinder<Instance_T&&, StaticFunction<Ret(Args...)>>{this};
   }
 
   [[nodiscard]] constexpr bool isBound() const
@@ -209,32 +186,6 @@ private:
     }
   }
 
-  // template <typename Instance_T>
-  //[[nodiscard]] auto setTrampolineFct(MemberFunctionConstOrNot_Ptr<Instance_T> function)
-  //{
-  //   if constexpr (std::is_lvalue_reference_v<Instance_T&&>)
-  //   {
-  //     m_function = [](Storage_T& storage, Args&&... args) -> Ret
-  //     {
-  //       using Type = std::remove_reference_t<Instance_T>;
-  //       auto* object = storage.asTypedPtr<Type*>();
-  //       return std::invoke_r<Ret>(function, (*object), std::forward<Args>(args)...);
-  //     };
-  //   }
-
-  //  if constexpr (std::is_rvalue_reference_v<Instance_T&&>)
-  //  {
-  //    m_function = [](Storage_T& storage, Args&&... args) -> Ret
-  //    {
-  //      auto* object = storage.asTypedPtr<Instance_T>();
-  //      return std::invoke_r<Ret>(function, object, std::forward<Args>(args)...);
-  //    };
-  //  }
-
-  //  //return DelegateRAII{this};
-  //  return DelegateRAII{};
-  //}
-
   template <typename Instance_T>
   void constructStorage(Instance_T&& instance)
   {
@@ -253,38 +204,6 @@ private:
 private:
   Storage_T m_storage;
   Trampoline_T m_function = nullptr;
-};
-
-template <typename Ret, typename... Args>
-template <typename Instance_T, typename StaticFunction_T>
-class [[nodiscard]] StaticFunction<Ret(Args...)>::ObjectMemFnBinder
-{
-  using Type = std::remove_reference_t<Instance_T>;
-  using MemFct_Ptr = StaticFunction_T::template MemberFunction_Ptr<Instance_T>;
-  using MemFctConst_Ptr = StaticFunction_T::template MemberFunctionConst_Ptr<Instance_T>;
-
-  friend typename StaticFunction_T;
-
-  /// @brief Constructor is private so that only StaticFunction_T can construct it.
-  ObjectMemFnBinder(StaticFunction_T* staticFunction)
-  : m_staticFunction{staticFunction}
-  {
-  }
-
-public:
-  template <MemFct_Ptr function>
-  [[nodiscard]] decltype(auto) memFn() &&
-  {
-    return m_staticFunction->template setTrampolineFct<Instance_T&&, function>();
-  }
-
-  template <MemFctConst_Ptr function>
-  [[nodiscard]] decltype(auto) memFnConst() &&
-  {
-    return m_staticFunction->template setTrampolineFct<Instance_T&&, function>();
-  }
-
-  StaticFunction_T* m_staticFunction = {};
 };
 } // namespace Core
 

@@ -16,26 +16,26 @@ class DelegateStdFunction<R(Args...)>
   using Function_Sig = R(Args...);
   using Function_Ptr = std::add_pointer_t<Function_Sig>;
 
-  template <typename Instance_T>
-  using InstanceType = std::remove_reference_t<Instance_T>;
+  //template <typename Instance_T>
+  //using InstanceType = std::remove_reference_t<Instance_T>;
   // template <typename Instance_T>
   // using MemberFunction_Sig = Ret(InstanceType<Instance_T>&, Args...);
   template <typename Instance_T>
-  using MemberFunction_Ptr = R (InstanceType<Instance_T>::*)(Args...);
+  using MemberFunction_Ptr = R (Instance_T::*)(Args...);
   template <typename Instance_T>
-  using MemberFunctionConst_Ptr = R (InstanceType<Instance_T>::*)(Args...) const;
+  using MemberFunctionConst_Ptr = R (Instance_T::*)(Args...) const;
   // template <typename Instance_T>
   // using MemberFunctionConstOrNot_Ptr = std::conditional_t<std::is_const_v<InstanceType<Instance_T>>, MemberFunctionConst_Ptr<Instance_T>, MemberFunction_Ptr<Instance_T>>;
 
 public:
   template <typename Instance_T>
-  static consteval decltype(auto) asMemFnPtr(MemberFunction_Ptr<Instance_T> fct)
+  static consteval decltype(auto) asFnPtr(MemberFunction_Ptr<Instance_T> fct)
   {
     return fct;
   }
 
   template <typename Instance_T>
-  static consteval decltype(auto) asMemFnConstPtr(MemberFunctionConst_Ptr<Instance_T> fct)
+  static consteval decltype(auto) asFnConstPtr(MemberFunctionConst_Ptr<Instance_T> fct)
   {
     return fct;
   }
@@ -81,7 +81,7 @@ public:
   }
 
   template <auto F, typename Instance_T>
-  requires Core::InvocableAndReturn<decltype(F), R, Instance_T, Args...>
+  requires Core::InvocableAndReturnNTTP<F, R, Instance_T, Args...>
   inline constexpr [[nodiscard]] auto bind(Instance_T&& instance)
   {
     if constexpr (std::is_lvalue_reference_v<Instance_T&&>)

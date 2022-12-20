@@ -22,7 +22,7 @@ TEST_P(UnaryDelegateTestF, CtorDtor)
     ASSERT_FALSE((bool)m_delegate);
   }
 
-  std::destroy_at(&m_delegate);
+   std::destroy_at(&m_delegate);
   //m_delegate.~Delegate();
   ASSERT_FALSE((bool)m_delegate);
 }
@@ -203,20 +203,20 @@ TEST_P(UnaryDelegateTestF, operatorEqual)
   ASSERT_EQ(m_delegate, delegateCopy);
 }
 
-TEST_P(UnaryDelegateTestF, reset)
-{
-  if (!m_isBindKindEmpty)
-  {
-    ASSERT_TRUE(m_delegate);
-  }
-  else
-  {
-    ASSERT_FALSE(m_delegate);
-  }
-
-  m_delegate.reset();
-  ASSERT_FALSE(m_delegate);
-}
+//TEST_P(UnaryDelegateTestF, reset)
+//{
+//  if (!m_isBindKindEmpty)
+//  {
+//    ASSERT_TRUE(m_delegate);
+//  }
+//  else
+//  {
+//    ASSERT_FALSE(m_delegate);
+//  }
+//
+//  m_delegate.reset();
+//  ASSERT_FALSE(m_delegate);
+//}
 
 TEST_P(UnaryDelegateTestF, unbind)
 {

@@ -604,7 +604,7 @@ void DelegateCompare_BindNTTP_CastMemFnConstOverloaded(benchmark::State& state)
   benchmark::DoNotOptimize(bmStruct);
 
   auto delegate = Delegate_T{};
-  auto delegateRAII = delegate.bind<Delegate_T::template asMemFnPtr<BMStruct>(&BMStruct::fctConstOverloaded)>(bmStruct);
+  auto delegateRAII = delegate.bind<Delegate_T::asFnPtr(&BMStruct::fctConstOverloaded)>(bmStruct);
   benchmark::DoNotOptimize(delegate);
 
   int value = 0;
@@ -626,7 +626,7 @@ void DelegateCompare_BindNTTP_CastMemFnConstOverloadedOOL(benchmark::State& stat
   benchmark::DoNotOptimize(bmStructOutOfLine);
 
   auto delegate = Delegate_T{};
-  auto delegateRAII = delegate.bind<Delegate_T::template asMemFnPtr<BMStructOutOfLine>(&BMStructOutOfLine::fctConstOverloaded)>(bmStructOutOfLine);
+  auto delegateRAII = delegate.bind<Delegate_T::template asFnPtr<BMStructOutOfLine>(&BMStructOutOfLine::fctConstOverloaded)>(bmStructOutOfLine);
   benchmark::DoNotOptimize(delegate);
 
   int value = 0;
@@ -649,7 +649,7 @@ void DelegateCompare_BindNTTP_CastMemFnConstOverloadedConst(benchmark::State& st
   benchmark::DoNotOptimize(bmStruct);
 
   auto delegate = Delegate_T{};
-  auto delegateRAII = delegate.bind<Delegate_T::template asMemFnConstPtr<BMStruct>(&BMStruct::fctConstOverloaded)>(bmStruct);
+  auto delegateRAII = delegate.bind<Delegate_T::template asFnConstPtr<BMStruct>(&BMStruct::fctConstOverloaded)>(bmStruct);
   benchmark::DoNotOptimize(delegate);
 
   int value = 0;
@@ -671,7 +671,7 @@ void DelegateCompare_BindNTTP_CastMemFnConstOverloadedConstOOL(benchmark::State&
   benchmark::DoNotOptimize(bmStructOutOfLine);
 
   auto delegate = Delegate_T{};
-  auto delegateRAII = delegate.bind<Delegate_T::template asMemFnConstPtr<BMStructOutOfLine>(&BMStructOutOfLine::fctConstOverloaded)>(bmStructOutOfLine);
+  auto delegateRAII = delegate.bind<Delegate_T::template asFnConstPtr<BMStructOutOfLine>(&BMStructOutOfLine::fctConstOverloaded)>(bmStructOutOfLine);
   benchmark::DoNotOptimize(delegate);
 
   int value = 0;
@@ -690,7 +690,7 @@ template <class Delegate_T>
 void DelegateCompare_BindNTTP_CastMemFnConstOverloadedRValue(benchmark::State& state)
 {
   auto delegate = Delegate_T{};
-  auto delegateRAII = delegate.bind<Delegate_T::template asMemFnPtr<BMStruct>(&BMStruct::fctConstOverloaded)>(BMStruct{});
+  auto delegateRAII = delegate.bind<Delegate_T::template asFnPtr<BMStruct>(&BMStruct::fctConstOverloaded)>(BMStruct{});
   benchmark::DoNotOptimize(delegate);
 
   int value = 0;
@@ -709,7 +709,7 @@ template <class Delegate_T>
 void DelegateCompare_BindNTTP_CastMemFnConstOverloadedRValueOOL(benchmark::State& state)
 {
   auto delegate = Delegate_T{};
-  auto delegateRAII = delegate.bind<Delegate_T::template asMemFnPtr<BMStructOutOfLine>(&BMStructOutOfLine::fctConstOverloaded)>(BMStructOutOfLine{});
+  auto delegateRAII = delegate.bind<Delegate_T::template asFnPtr<BMStructOutOfLine>(&BMStructOutOfLine::fctConstOverloaded)>(BMStructOutOfLine{});
   benchmark::DoNotOptimize(delegate);
 
   int value = 0;
@@ -728,7 +728,7 @@ template <class Delegate_T>
 void DelegateCompare_BindNTTP_CastMemFnConstOverloadedConstRValue(benchmark::State& state)
 {
   auto delegate = Delegate_T{};
-  auto delegateRAII = delegate.bind<Delegate_T::template asMemFnConstPtr<BMStruct>(&BMStruct::fctConstOverloaded)>(BMStruct{});
+  auto delegateRAII = delegate.bind<Delegate_T::template asFnConstPtr<BMStruct>(&BMStruct::fctConstOverloaded)>(BMStruct{});
   benchmark::DoNotOptimize(delegate);
 
   int value = 0;
@@ -747,7 +747,7 @@ template <class Delegate_T>
 void DelegateCompare_BindNTTP_CastMemFnConstOverloadedConstRValueOOL(benchmark::State& state)
 {
   auto delegate = Delegate_T{};
-  auto delegateRAII = delegate.bind<Delegate_T::template asMemFnConstPtr<BMStructOutOfLine>(&BMStructOutOfLine::fctConstOverloaded)>(BMStructOutOfLine{});
+  auto delegateRAII = delegate.bind<Delegate_T::template asFnConstPtr<BMStructOutOfLine>(&BMStructOutOfLine::fctConstOverloaded)>(BMStructOutOfLine{});
   benchmark::DoNotOptimize(delegate);
 
   int value = 0;
@@ -858,7 +858,8 @@ void DelegateCompare_BindObject_CastMemFnConstOverloaded(benchmark::State& state
   benchmark::DoNotOptimize(bmStruct);
 
   auto delegate = Delegate_T{};
-  auto delegateRAII = delegate.bindObject(bmStruct).memFn<&BMStruct::fctConstOverloaded>();
+  auto delegateRAII = delegate.bind<Delegate_T::asFnPtr(&BMStruct::fctConstOverloaded)>(bmStruct);
+  //auto delegateRAII = delegate.bindObject(bmStruct).memFn<&BMStruct::fctConstOverloaded>();
   benchmark::DoNotOptimize(delegate);
 
   int value = 0;
@@ -880,7 +881,8 @@ void DelegateCompare_BindObject_CastMemFnConstOverloadedOOL(benchmark::State& st
   benchmark::DoNotOptimize(bmStructOutOfLine);
 
   auto delegate = Delegate_T{};
-  auto delegateRAII = delegate.bindObject(bmStructOutOfLine).memFn<&BMStructOutOfLine::fctConstOverloaded>();
+  auto delegateRAII = delegate.bind<Delegate_T::asFnPtr(&BMStructOutOfLine::fctConstOverloaded)>(bmStructOutOfLine);
+  //auto delegateRAII = delegate.bindObject(bmStructOutOfLine).memFn<&BMStructOutOfLine::fctConstOverloaded>();
   benchmark::DoNotOptimize(delegate);
 
   int value = 0;
@@ -902,7 +904,8 @@ void DelegateCompare_BindObject_CastMemFnConstOverloadedConst(benchmark::State& 
   benchmark::DoNotOptimize(bmStruct);
 
   auto delegate = Delegate_T{};
-  auto delegateRAII = delegate.bindObject(bmStruct).memFnConst<&BMStruct::fctConstOverloaded>();
+  auto delegateRAII = delegate.bind<Delegate_T::asFnConstPtr(&BMStruct::fctConstOverloaded)>(bmStruct);
+  //auto delegateRAII = delegate.bindObject(bmStruct).memFnConst<&BMStruct::fctConstOverloaded>();
   benchmark::DoNotOptimize(delegate);
 
   int value = 0;
@@ -924,7 +927,8 @@ void DelegateCompare_BindObject_CastMemFnConstOverloadedConstOOL(benchmark::Stat
   benchmark::DoNotOptimize(bmStructOutOfLine);
 
   auto delegate = Delegate_T{};
-  auto delegateRAII = delegate.bindObject(bmStructOutOfLine).memFnConst<&BMStructOutOfLine::fctConstOverloaded>();
+  auto delegateRAII = delegate.bind<Delegate_T::asFnConstPtr(&BMStructOutOfLine::fctConstOverloaded)>(bmStructOutOfLine);
+  //auto delegateRAII = delegate.bindObject(bmStructOutOfLine).memFnConst<&BMStructOutOfLine::fctConstOverloaded>();
   benchmark::DoNotOptimize(delegate);
 
   int value = 0;
@@ -943,7 +947,8 @@ template <class Delegate_T>
 void DelegateCompare_BindObject_CastMemFnConstOverloadedRValue(benchmark::State& state)
 {
   auto delegate = Delegate_T{};
-  auto delegateRAII = delegate.bindObject(BMStruct{}).memFn<&BMStruct::fctConstOverloaded>();
+  auto delegateRAII = delegate.bind<Delegate_T::asFnPtr(&BMStruct::fctConstOverloaded)>(BMStruct{});
+  //auto delegateRAII = delegate.bindObject(BMStruct{}).memFn<&BMStruct::fctConstOverloaded>();
   benchmark::DoNotOptimize(delegate);
 
   int value = 0;
@@ -962,7 +967,8 @@ template <class Delegate_T>
 void DelegateCompare_BindObject_CastMemFnConstOverloadedRValueOOL(benchmark::State& state)
 {
   auto delegate = Delegate_T{};
-  auto delegateRAII = delegate.bindObject(BMStructOutOfLine{}).memFn<&BMStructOutOfLine::fctConstOverloaded>();
+  auto delegateRAII = delegate.bind<Delegate_T::asFnPtr(&BMStructOutOfLine::fctConstOverloaded)>(BMStructOutOfLine{});
+  //auto delegateRAII = delegate.bindObject(BMStructOutOfLine{}).memFn<&BMStructOutOfLine::fctConstOverloaded>();
   benchmark::DoNotOptimize(delegate);
 
   int value = 0;
@@ -981,7 +987,8 @@ template <class Delegate_T>
 void DelegateCompare_BindObject_CastMemFnConstOverloadedConstRValue(benchmark::State& state)
 {
   auto delegate = Delegate_T{};
-  auto delegateRAII = delegate.bindObject(BMStruct{}).memFnConst<&BMStruct::fctConstOverloaded>();
+  auto delegateRAII = delegate.bind<Delegate_T::asFnConstPtr(&BMStruct::fctConstOverloaded)>(BMStruct{});
+  //auto delegateRAII = delegate.bindObject(BMStruct{}).memFnConst<&BMStruct::fctConstOverloaded>();
   benchmark::DoNotOptimize(delegate);
 
   int value = 0;
@@ -1000,7 +1007,8 @@ template <class Delegate_T>
 void DelegateCompare_BindObject_CastMemFnConstOverloadedConstRValueOOL(benchmark::State& state)
 {
   auto delegate = Delegate_T{};
-  auto delegateRAII = delegate.bindObject(BMStructOutOfLine{}).memFnConst<&BMStructOutOfLine::fctConstOverloaded>();
+  auto delegateRAII = delegate.bind<Delegate_T::asFnConstPtr(&BMStructOutOfLine::fctConstOverloaded)>(BMStructOutOfLine{});
+  //auto delegateRAII = delegate.bindObject(BMStructOutOfLine{}).memFnConst<&BMStructOutOfLine::fctConstOverloaded>();
   benchmark::DoNotOptimize(delegate);
 
   int value = 0;

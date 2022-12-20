@@ -61,6 +61,7 @@ set(privateFiles
   ${targetName}/CoreUtility.ixx
   ${targetName}/Endian.cpp
   ${targetName}/ErasedStorage.ixx
+  ${targetName}/StaticFunction.ixx
   ${platform_privateFiles}
 )
 

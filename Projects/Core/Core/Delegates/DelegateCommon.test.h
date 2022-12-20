@@ -126,22 +126,26 @@ auto bindObjectMemberFctTemplate(Delegate_T& delegate, TestStruct& testStruct, I
   {
     if (isFctConst)
     {
-      return delegate.bindObject(testStruct).memFnConst<&TestStruct::fctTemplate>();
+      return delegate.bind<Delegate_T::asFnConstPtr(&TestStruct::fctTemplate<int>)>(testStruct);
     }
     else
     {
-      return delegate.bindObject(testStruct).memFn<&TestStruct::fctTemplate>();
+      return delegate.bind<Delegate_T::asFnPtr(&TestStruct::fctTemplate<int>)>(testStruct);
     }
   }
   else
   {
     if (isFctConst)
     {
-      return delegate.bindObject(const_cast<const TestStruct&&>(std::move(testStruct))).memFnConst<&TestStruct::fctTemplate>();
+      return delegate.bind<Delegate_T::asFnConstPtr(&TestStruct::fctTemplate<int>)>(const_cast<const TestStruct&&>(std::move(testStruct)));
+      //return delegate.bind<ObjMemFct::asFnConstPtr(&TestStruct::fctTemplate)>(const_cast<const TestStruct&&>(std::move(testStruct)));
+      //return delegate.bindObject(const_cast<const TestStruct&&>(std::move(testStruct))).memFnConst<&TestStruct::fctTemplate>();
     }
     else
     {
-      return delegate.bindObject(std::move(testStruct)).memFn<&TestStruct::fctTemplate>();
+      return delegate.bind<Delegate_T::asFnPtr(&TestStruct::fctTemplate<int>)>(std::move(testStruct));
+      //return delegate.bind<ObjMemFct::asFnPtr(&TestStruct::fctTemplate)>(std::move(testStruct));
+      //return delegate.bindObject(std::move(testStruct)).memFn<&TestStruct::fctTemplate>();
     }
   }
 }
@@ -152,22 +156,26 @@ auto bindObjectMemberFctConstOverloaded(Delegate_T& delegate, TestStruct& testSt
   {
     if (isFctConst)
     {
-      return delegate.bindObject(const_cast<const TestStruct&&>(std::move(testStruct))).memFnConst<&TestStruct::fctConstOverloaded>();
+      return delegate.bind<Delegate_T::asFnConstPtr(&TestStruct::fctConstOverloaded)>(const_cast<const TestStruct&&>(std::move(testStruct)));
+      //return delegate.bindObject(const_cast<const TestStruct&&>(std::move(testStruct))).memFnConst<&TestStruct::fctConstOverloaded>();
     }
     else
     {
-      return delegate.bindObject(std::move(testStruct)).memFn<&TestStruct::fctConstOverloaded>();
+      return delegate.bind<Delegate_T::asFnPtr(&TestStruct::fctConstOverloaded)>(std::move(testStruct));
+      //return delegate.bindObject(std::move(testStruct)).memFn<&TestStruct::fctConstOverloaded>();
     }
   }
   else
   {
     if (isFctConst)
     {
-      return delegate.bindObject(testStruct).memFnConst<&TestStruct::fctConstOverloaded>();
+      return delegate.bind<Delegate_T::asFnConstPtr(&TestStruct::fctConstOverloaded)>(testStruct);
+      //return delegate.bindObject(testStruct).memFnConst<&TestStruct::fctConstOverloaded>();
     }
     else
     {
-      return delegate.bindObject(testStruct).memFn<&TestStruct::fctConstOverloaded>();
+      return delegate.bind<Delegate_T::asFnPtr(&TestStruct::fctConstOverloaded)>(testStruct);
+      //return delegate.bindObject(testStruct).memFn<&TestStruct::fctConstOverloaded>();
     }
   }
 }
@@ -178,22 +186,26 @@ auto bindObjectMemberFctParamOverloaded(Delegate_T& delegate, TestStruct& testSt
   {
     if (!isFctConst)
     {
-      return delegate.bindObject(testStruct).memFn<&TestStruct::fctParamOverloaded>();
+      return delegate.bind<Delegate_T::asFnPtr(&TestStruct::fctParamOverloaded)>(testStruct);
+      //return delegate.bindObject(testStruct).memFn<&TestStruct::fctParamOverloaded>();
     }
     else
     {
-      return delegate.bindObject(const_cast<const TestStruct&>(testStruct)).memFnConst<&TestStruct::fctParamOverloaded>();
+      return delegate.bind<Delegate_T::asFnConstPtr(&TestStruct::fctParamOverloaded)>(testStruct);
+      //return delegate.bindObject(const_cast<const TestStruct&>(testStruct)).memFnConst<&TestStruct::fctParamOverloaded>();
     }
   }
   else
   {
     if (isFctConst)
     {
-      return delegate.bindObject(const_cast<const TestStruct&&>(std::move(testStruct))).memFnConst<&TestStruct::fctParamOverloaded>();
+      return delegate.bind<Delegate_T::asFnConstPtr(&TestStruct::fctParamOverloaded)>(const_cast<const TestStruct&&>(std::move(testStruct)));
+      //return delegate.bindObject(const_cast<const TestStruct&&>(std::move(testStruct))).memFnConst<&TestStruct::fctParamOverloaded>();
     }
     else
     {
-      return delegate.bindObject(std::move(testStruct)).memFn<&TestStruct::fctParamOverloaded>();
+      return delegate.bind<Delegate_T::asFnPtr(&TestStruct::fctParamOverloaded)>(std::move(testStruct));
+      //return delegate.bindObject(std::move(testStruct)).memFn<&TestStruct::fctParamOverloaded>();
     }
   }
 }
@@ -203,7 +215,7 @@ auto bindDelegate(Delegate_T& delegate, TestStruct& testStruct, BindKind bindKin
   switch (bindKind)
   {
     case BindKind::Empty:
-      return Delegate_T::DelegateRAII{&delegate};
+      return Delegate_T::DelegateRAII{};
     case BindKind::FreeFunction:
       return bindFreeFunction(delegate, testStruct, isLValue, isFctConst);
     case BindKind::Functor:

@@ -29,25 +29,24 @@ set(testFiles
 set(benchmarkFiles 
 )
 
-add_library(${targetName})
+add_library(${targetName} INTERFACE )
 
 target_sources(${targetName}
-  PRIVATE
-    ${privateFiles}
-  PUBLIC
-    ${publicFiles}
   INTERFACE
+    ${privateFiles}
+    ${publicFiles}
     ${interfaceFiles}
 )
 
 target_include_directories(${targetName}
-    PUBLIC
+    INTERFACE
         "${CMAKE_CURRENT_SOURCE_DIR}"
 )
 
 target_link_libraries(${targetName}
   PRIVATE
   PUBLIC
+  INTERFACE
     GTest::gmock 
     GTest::gtest
     benchmark::benchmark

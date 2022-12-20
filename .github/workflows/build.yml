@@ -157,7 +157,7 @@ jobs:
 
     - name: OpenCppCoverage
       run: |
-        $buildConfigDir = Resolve-Path -Path "${{ env.binDir }}/${{ matrix.config.buildConfig }}"
+        $buildConfigDir = Resolve-Path -Path "${{ env.binDir }}"
         OpenCppCoverage --config_file=OpenCppCoverage.config.txt --modules=$buildConfigDir --excluded_sources="*\vcpkg_installed" --excluded_sources="Projects\TestUtilities\*" --excluded_sources="Projects\*.test*"  --export_type=cobertura:coverage.xml -- $buildConfigDir/CoreTests.exe --gtest_brief=1
 
     - name: Codecov

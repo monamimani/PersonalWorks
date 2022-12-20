@@ -163,6 +163,7 @@ jobs:
     - name: Codecov
       uses: codecov/codecov-action@v3.1.1
       with:
+        flags: ${{ runner.os }}-${{ matrix.config.buildConfig }}
         name: ${{github.repository}}
         files: ./coverage.xml
 

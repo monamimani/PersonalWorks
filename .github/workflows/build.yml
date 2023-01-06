@@ -171,7 +171,7 @@ jobs:
       if: ${{ always() }}
       with:
         api_key: ${{ secrets.FORESIGHT_API_KEY }}
-        test_framework: GOLANG
+        test_framework: JUNIT
         # test_format: JUNIT
         test_path: ${{ env.buildConfigBinDir }}/*.xml
         coverage_format: COBERTURA/XML
@@ -192,7 +192,7 @@ jobs:
       with:
         name: PersonalWorks_${{github.workflow}}-${{github.job}}-${{ matrix.config.buildConfig }}_TestsResults
         path: |
-          ${{ env.buildConfigBinDir }}/*.json
+          ${{ env.buildConfigBinDir }}/*.xml
 
     - name: Upload Workflow artifact ${{ matrix.config.buildConfig }}
       uses: actions/upload-artifact@v3

@@ -173,7 +173,7 @@ jobs:
         api_key: ${{ secrets.FORESIGHT_API_KEY }}
         test_framework: GOLANG
         # test_format: JUNIT
-        test_path: ${{ env.binDir }}/${{ matrix.config.buildConfig }}/CoreTEsts.json
+        test_path: ${{ env.binDir }}/${{ matrix.config.buildConfig }}/*.json
         coverage_format: COBERTURA/XML
         coverage_path: ./coverage.xml
         tags: | 

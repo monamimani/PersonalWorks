@@ -81,9 +81,11 @@ jobs:
       coverageFile: "${{ github.workspace }}/_Out/build/${{ matrix.config.configurePreset }}/_bin/${{ matrix.config.buildConfig }}/coverage.xml"
 
     steps:
-    - name: FOreSight Collect Workflow Telemetry
+    - name: ForeSight Collect Workflow Telemetry
       uses: runforesight/foresight-workflow-kit-action@v1
       if: ${{ always() }}
+      with:
+        api_key: ${{ secrets.FORESIGHT_API_KEY }}
 
     - uses: actions/checkout@v3  
       with:
@@ -168,9 +170,10 @@ jobs:
       uses: runforesight/foresight-test-kit-action@v1
       if: ${{ always() }}
       with:
-        test_format: JUNIT
-        test_framework: JUNIT
-        # test_path: ${{ env.binDir }}/
+        api_key: ${{ secrets.FORESIGHT_API_KEY }}
+        test_framework: GOLANG
+        # test_format: JUNIT
+        test_path: ${{ env.binDir }}/${{ matrix.config.buildConfig }}/CoreTEsts.json
         coverage_format: COBERTURA/XML
         coverage_path: ./coverage.xml
         tags: | 

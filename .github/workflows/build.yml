@@ -194,6 +194,19 @@ jobs:
         path: |
           ${{ env.buildConfigBinDir }}/*.xml
 
+    - name: Run Google Benchmark (${{ runner.os }})
+      run: |
+        $buildConfigBinDir = "${{ env.buildConfigBinDir }}"
+        $benchmarkExe = (Get-ChildItem -Path $buildConfigBinDir -Recurse | Where-Object Name -like *benchmarks*.exe).FullName
+        foreach ($exe in $benchmarkExe) {
+          Write-Host($exe)
+          $exeName = Get-ChildItem $exe | Select-Object -ExpandProperty BaseName
+          Write-Host($exeName)
+          &$exe --benchmark_out_format=json
+        }
+        #| Where-Object { $_.Filename -match 'tests' }
+        #| Where-Object { $_.DirectoryName -match 'Release' }
+
     - name: Upload Workflow artifact ${{ matrix.config.buildConfig }}
       uses: actions/upload-artifact@v3
       with:

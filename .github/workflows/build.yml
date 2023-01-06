@@ -81,6 +81,10 @@ jobs:
       coverageFile: "${{ github.workspace }}/_Out/build/${{ matrix.config.configurePreset }}/_bin/${{ matrix.config.buildConfig }}/coverage.xml"
 
     steps:
+    - name: FOreSight Collect Workflow Telemetry
+      uses: runforesight/foresight-workflow-kit-action@v1
+      if: ${{ always() }}
+
     - uses: actions/checkout@v3  
       with:
         lfs: true
@@ -159,6 +163,19 @@ jobs:
       run: |
         $buildConfigDir = Resolve-Path -Path "${{ env.binDir }}"
         OpenCppCoverage --config_file=OpenCppCoverage.config.txt --modules=$buildConfigDir --excluded_sources="*\vcpkg_installed" --excluded_sources="Projects\TestUtilities\*" --excluded_sources="Projects\*.test*"  --export_type=cobertura:coverage.xml -- $buildConfigDir/CoreTests.exe --gtest_brief=1
+
+    - name: Foresight Analyze Test and/or Coverage Results
+      uses: runforesight/foresight-test-kit-action@v1
+      if: ${{ always() }}
+      with:
+        test_format: JUNIT
+        test_framework: JUNIT
+        # test_path: ${{ env.binDir }}/
+        coverage_format: COBERTURA/XML
+        coverage_path: ./coverage.xml
+        tags: | 
+          os:${{ runner.os }}
+          buildConfig:${{ matrix.config.buildConfig }}
 
     - name: Codecov
       uses: codecov/codecov-action@v3.1.1

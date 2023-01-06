@@ -202,7 +202,7 @@ jobs:
           Write-Host($exe)
           $exeName = Get-ChildItem $exe | Select-Object -ExpandProperty BaseName
           Write-Host($exeName)
-          &$exe --benchmark_out_format=json --benchmark_out=$exeNam
+          &$exe --benchmark_out_format=json --benchmark_out=$exeName
         }
         #| Where-Object { $_.Filename -match 'tests' }
         #| Where-Object { $_.DirectoryName -match 'Release' }

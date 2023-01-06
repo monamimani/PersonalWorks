@@ -172,7 +172,7 @@ jobs:
       with:
         api_key: ${{ secrets.FORESIGHT_API_KEY }}
         test_framework: JUNIT
-        # test_format: JUNIT
+        test_format: JUNIT
         test_path: ${{ env.buildConfigBinDir }}/*.xml
         coverage_format: COBERTURA/XML
         coverage_path: ./coverage.xml
@@ -202,10 +202,8 @@ jobs:
           Write-Host($exe)
           $exeName = Get-ChildItem $exe | Select-Object -ExpandProperty BaseName
           Write-Host($exeName)
-          &$exe --benchmark_out_format=json --benchmark_out=$exeName
+          &$exe --benchmark_out_format=json --benchmark_out=$buildConfigBinDir/$exeName.json
         }
-        #| Where-Object { $_.Filename -match 'tests' }
-        #| Where-Object { $_.DirectoryName -match 'Release' }
 
     - name: Upload Workflow artifact ${{ matrix.config.buildConfig }}
       uses: actions/upload-artifact@v3

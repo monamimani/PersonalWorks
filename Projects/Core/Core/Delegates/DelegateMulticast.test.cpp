@@ -14,7 +14,7 @@ import DelegateMulticast;
 #include "DelegateMulticastCommon.test.h"
 #include "TestUtilities/GoogleTest.h"
 
-using namespace Test;
+using namespace TestUtilities;
 
 namespace Delegate
 {
@@ -119,9 +119,9 @@ enum class BindKind
   Functor,
   MemberFct,
   ObjectMemberFct,
-  ObjectMemberFctTemplate,
-  ObjectMemberFctConstOverloaded,
-  ObjectMemberFctParamOverloaded
+  MemberFctTemplate,
+  MemberFctConstOverloaded,
+  MemberFctParamOverloaded
 };
 
 typedef DelegateMulticast_T::DelegateRAII CreateDelegateMulticast(DelegateMulticast_T&, TestStruct&, IsLValue, IsFctConst);
@@ -305,11 +305,11 @@ auto bindDelegate(DelegateMulticast_T& delegate, TestStruct& testStruct, BindKin
       return bindMemberFct(delegate, testStruct, isLValue, isFctConst);
     case BindKind::ObjectMemberFct:
       return bindObjectMemberFct(delegate, testStruct, isLValue, isFctConst);
-    case BindKind::ObjectMemberFctTemplate:
+    case BindKind::MemberFctTemplate:
       return bindObjectMemberFctTemplate(delegate, testStruct, isLValue, isFctConst);
-    case BindKind::ObjectMemberFctConstOverloaded:
+    case BindKind::MemberFctConstOverloaded:
       return bindObjectMemberFctConstOverloaded(delegate, testStruct, isLValue, isFctConst);
-    case BindKind::ObjectMemberFctParamOverloaded:
+    case BindKind::MemberFctParamOverloaded:
       return bindObjectMemberFctParamOverloaded(delegate, testStruct, isLValue, isFctConst);
   }
 
@@ -324,9 +324,9 @@ std::string getTestNamePart(IsLValue isLValue, IsFctConst isFctConst, BindKind b
       {                       BindKind::Functor,                         "Functor"},
       {                     BindKind::MemberFct,                      "BindMemFct"},
       {               BindKind::ObjectMemberFct,                "BindObjectMemFct"},
-      {       BindKind::ObjectMemberFctTemplate,              "BindMemFctTemplate"},
-      {BindKind::ObjectMemberFctConstOverloaded, "BindObjectMemFctConstOverloaded"},
-      {BindKind::ObjectMemberFctParamOverloaded, "BindObjectMemFctParamOverloaded"}
+      {       BindKind::MemberFctTemplate,              "BindMemFctTemplate"},
+      {BindKind::MemberFctConstOverloaded, "BindObjectMemFctConstOverloaded"},
+      {BindKind::MemberFctParamOverloaded, "BindObjectMemFctParamOverloaded"}
   });
 
   auto isRequestedFactory = [bindkind](const std::tuple<BindKind, const char*>& element)
@@ -381,7 +381,7 @@ auto makeDelegateTypeParamSet()
 {
   static constexpr std::array fctConstness = {true, false};
   static constexpr std::array valueKinds = {true, false};
-  static constexpr std::array memberFctDelegateTypes = { BindKind::Functor, BindKind::MemberFct, BindKind::ObjectMemberFct, BindKind::ObjectMemberFctTemplate, BindKind::ObjectMemberFctConstOverloaded, BindKind::ObjectMemberFctParamOverloaded };
+  static constexpr std::array memberFctDelegateTypes = { BindKind::Functor, BindKind::MemberFct, BindKind::ObjectMemberFct, BindKind::MemberFctTemplate, BindKind::MemberFctConstOverloaded, BindKind::MemberFctParamOverloaded };
   static constexpr auto memFctParamSetPartSize = valueKinds.size() * fctConstness.size() * memberFctDelegateTypes.size();
 
   auto paramSetPart = std::vector<ParamSetType>();

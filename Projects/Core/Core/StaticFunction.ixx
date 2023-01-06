@@ -29,14 +29,14 @@ class StaticFunction<Ret(Args...)> final
   class ObjectMemFnBinder;
 
 public:
+  //template <typename Instance_T>
+  //using InstanceType = std::remove_reference_t<Instance_T>;
   template <typename Instance_T>
-  using InstanceType = std::remove_reference_t<Instance_T>;
+  using MemberFunction_Ptr = Ret (Instance_T::*)(Args...);
   template <typename Instance_T>
-  using MemberFunction_Ptr = Ret (InstanceType<Instance_T>::*)(Args...);
-  template <typename Instance_T>
-  using MemberFunctionConst_Ptr = Ret (InstanceType<Instance_T>::*)(Args...) const;
-  template <typename Instance_T>
-  using MemberFunctionConstOrNot_Ptr = std::conditional_t<std::is_const_v<InstanceType<Instance_T>>, MemberFunctionConst_Ptr<Instance_T>, MemberFunction_Ptr<Instance_T>>;
+  using MemberFunctionConst_Ptr = Ret (Instance_T::*)(Args...) const;
+  //template <typename Instance_T>
+  //using MemberFunctionConstOrNot_Ptr = std::conditional_t<std::is_const_v<InstanceType<Instance_T>>, MemberFunctionConst_Ptr<Instance_T>, MemberFunction_Ptr<Instance_T>>;
 
   template <typename Instance_T>
   static consteval decltype(auto) asFnPtr(MemberFunction_Ptr<Instance_T> fct)
@@ -116,7 +116,7 @@ public:
     return m_function(m_storage, std::forward<Args>(args)...);
   }
 
-  constexpr decltype(auto) invokeSafe(Args&&... args)
+  [[nodiscard]] constexpr decltype(auto) invokeSafe(Args&&... args)
   {
     if constexpr (std::is_void_v<Ret>)
     {

@@ -67,6 +67,7 @@ set(privateFiles
 
 set(testFiles 
   ${targetName}/BuildConfig/BuildConfig.test.cpp
+  ${targetName}/StaticFunction.test.cpp
   ${targetName}/Delegates/Delegate.test.cpp
   ${targetName}/Delegates/DelegateCommon.test.h
   ${targetName}/Delegates/DelegateMulticast.test.cpp
@@ -85,6 +86,7 @@ set(benchmarkFiles
   ${targetName}/Delegates/DelegateCompare.benchmark.cpp
   ${targetName}/Delegates/DelegateMulticast.benchmark.cpp
   ${targetName}/ErasedStorage.benchmark.cpp
+  ${targetName}/StaticFunction.benchmark.cpp
 )
 
 add_library(${targetName})

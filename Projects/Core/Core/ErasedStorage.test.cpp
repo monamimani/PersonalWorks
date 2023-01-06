@@ -1,7 +1,7 @@
 
 #include "TestUtilities/GoogleTest.h"
 #include "TestUtilities/TestStruct.test.h"
-using namespace Test;
+using namespace TestUtilities;
 
 import Core;
 import ErasedStorage;

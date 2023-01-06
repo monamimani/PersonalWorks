@@ -2,7 +2,7 @@
 
 #include "TestUtilities/GoogleTest.h"
 
-namespace Test
+namespace TestUtilities
 {
 
 struct SpecialFunctionCallCounter

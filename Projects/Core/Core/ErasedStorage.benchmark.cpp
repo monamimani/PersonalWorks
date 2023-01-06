@@ -1,6 +1,6 @@
 #include "TestUtilities/GoogleBenchmark.h"
 #include "TestUtilities/TestStruct.test.h"
-using namespace Test;
+using namespace TestUtilities;
 
 import ErasedStorage;
 

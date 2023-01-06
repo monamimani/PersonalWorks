@@ -23,7 +23,6 @@ TEST_P(UnaryDelegateTestF, CtorDtor)
   }
 
    std::destroy_at(&m_delegate);
-  //m_delegate.~Delegate();
   ASSERT_FALSE((bool)m_delegate);
 }
 
@@ -67,6 +66,104 @@ TEST_P(UnaryDelegateTestF, MoveCtor)
     ASSERT_FALSE((bool)m_delegate); // This realy is a valid unspecified state, becaused moved from
     ASSERT_FALSE((bool)delegateMove);
   }
+}
+
+TEST_P(UnaryDelegateTestF, isBound)
+{
+  if (!m_isBindKindEmpty)
+  {
+    ASSERT_TRUE((bool)m_delegate);
+    ASSERT_TRUE(m_delegate.isBound());
+    ASSERT_TRUE(m_delegate);
+  }
+  else
+  {
+    ASSERT_FALSE((bool)m_delegate);
+    ASSERT_FALSE(m_delegate.isBound());
+    ASSERT_FALSE(m_delegate);
+  }
+}
+
+TEST_P(UnaryDelegateTestF, operatorEqual)
+{
+  Delegate_T delegateCopy = m_delegate;
+
+  if (!m_isBindKindEmpty)
+  {
+    ASSERT_TRUE(delegateCopy);
+  }
+  else
+  {
+    ASSERT_FALSE(delegateCopy);
+  }
+  ASSERT_EQ(m_delegate, delegateCopy);
+}
+
+//TEST_P(UnaryDelegateTestF, reset)
+//{
+//  if (!m_isBindKindEmpty)
+//  {
+//    ASSERT_TRUE(m_delegate);
+//  }
+//  else
+//  {
+//    ASSERT_FALSE(m_delegate);
+//  }
+//
+//  m_delegate.reset();
+//  ASSERT_FALSE(m_delegate);
+//}
+
+TEST_P(UnaryDelegateTestF, unbind)
+{
+  if (!m_isBindKindEmpty)
+  {
+    ASSERT_TRUE(m_delegate);
+  }
+  else
+  {
+    ASSERT_FALSE(m_delegate);
+  }
+
+
+  m_delegate.unbind();
+  ASSERT_FALSE(m_delegate);
+}
+
+TEST_P(UnaryDelegateTestF, invoke)
+{
+  int value = 28;
+  if (!m_isBindKindEmpty)
+  {
+    m_delegate.invoke(value);
+    ASSERT_EQ(value, getTestValue());
+  }
+}
+
+TEST_P(UnaryDelegateTestF, functionalOperator)
+{
+  int value = 28;
+  if (!m_isBindKindEmpty)
+  {
+    m_delegate(value);
+    ASSERT_EQ(value, getTestValue());
+  }
+}
+
+TEST(DelegateTest, invokeSafe)
+{
+  TestStruct testStruct;
+  int value = 28;
+  Delegate<int(int&)> delegate;
+  ASSERT_FALSE((bool)delegate);
+  auto handle = delegate.bind<&TestStruct::fctReturn>(testStruct);
+  ASSERT_TRUE((bool)delegate);
+  ASSERT_TRUE(delegate.isBound());
+
+  auto result = delegate.invokeSafe(value);
+  ASSERT_NE(result, std::nullopt);
+
+  ASSERT_EQ(result.value(), TestStruct::m_staticValue);
 }
 
 TEST_P(BinaryDelegateTestF, CopyAssign)
@@ -171,103 +268,4 @@ TEST_P(BinaryDelegateTestF, Swap)
   ASSERT_EQ(m_delegateA, delegateBCopy);
   ASSERT_EQ(m_delegateB, delegateACopy);
 }
-
-TEST_P(UnaryDelegateTestF, isBound)
-{
-  if (!m_isBindKindEmpty)
-  {
-    ASSERT_TRUE((bool)m_delegate);
-    ASSERT_TRUE(m_delegate.isBound());
-    ASSERT_TRUE(m_delegate);
-  }
-  else
-  {
-    ASSERT_FALSE((bool)m_delegate);
-    ASSERT_FALSE(m_delegate.isBound());
-    ASSERT_FALSE(m_delegate);
-  }
-}
-
-TEST_P(UnaryDelegateTestF, operatorEqual)
-{
-  Delegate_T delegateCopy = m_delegate;
-
-  if (!m_isBindKindEmpty)
-  {
-    ASSERT_TRUE(delegateCopy);
-  }
-  else
-  {
-    ASSERT_FALSE(delegateCopy);
-  }
-  ASSERT_EQ(m_delegate, delegateCopy);
-}
-
-//TEST_P(UnaryDelegateTestF, reset)
-//{
-//  if (!m_isBindKindEmpty)
-//  {
-//    ASSERT_TRUE(m_delegate);
-//  }
-//  else
-//  {
-//    ASSERT_FALSE(m_delegate);
-//  }
-//
-//  m_delegate.reset();
-//  ASSERT_FALSE(m_delegate);
-//}
-
-TEST_P(UnaryDelegateTestF, unbind)
-{
-  if (!m_isBindKindEmpty)
-  {
-    ASSERT_TRUE(m_delegate);
-  }
-  else
-  {
-    ASSERT_FALSE(m_delegate);
-  }
-
-
-  m_delegate.unbind();
-  ASSERT_FALSE(m_delegate);
-}
-
-TEST_P(UnaryDelegateTestF, invoke)
-{
-  int value = 28;
-  if (!m_isBindKindEmpty)
-  {
-    m_delegate.invoke(value);
-    ASSERT_EQ(value, getTestValue());
-  }
-}
-
-TEST_P(UnaryDelegateTestF, functionalOperator)
-{
-  int value = 28;
-  if (!m_isBindKindEmpty)
-  {
-    m_delegate(value);
-    ASSERT_EQ(value, getTestValue());
-  }
-}
-
-TEST(DelegateTest, invokeSafe)
-{
-  TestStruct testStruct;
-  int value = 28;
-  Delegate<int(int&)> delegate;
-  ASSERT_FALSE((bool)delegate);
-  auto handle = delegate.bind<&TestStruct::fctReturn>(testStruct);
-  ASSERT_TRUE((bool)delegate);
-  ASSERT_TRUE(delegate.isBound());
-
-  auto result = delegate.invokeSafe(value);
-  ASSERT_NE(result, std::nullopt);
-
-  ASSERT_EQ(result.value(), TestStruct::m_staticValue);
-}
-
 } // namespace Delegate

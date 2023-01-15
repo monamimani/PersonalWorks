@@ -1,7 +1,7 @@
 .vs
 .vscode
 .idea
-
+.venv
 
 bazel
 bazel-out

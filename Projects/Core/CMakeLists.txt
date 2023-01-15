@@ -43,6 +43,7 @@ set(publicFiles
   ${targetName}/Assert.h
   ${targetName}/Config.h
   ${targetName}/Endian.h
+  ${targetName}/EnumClassFlags.h
   ${targetName}/NonCopyable.h
   ${targetName}/PathUtils.h
   ${targetName}/Pimpl.h
@@ -76,6 +77,7 @@ set(testFiles
   ${targetName}/DelegateTypes/EventQueue.test.cpp
   ${targetName}/ErasedStorage.test.cpp
   ${targetName}/Pimpl.test.cpp
+  ${targetName}/EnumClassFlags.test.cpp
 )
 
 

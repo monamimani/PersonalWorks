@@ -226,21 +226,21 @@
       }
     },
     {
-      "name": "windows-vs2022-x64-debug",
+      "name": "windows-vs2022-x64-checkers-debug",
       "inherits": "test-base",
-      "configurePreset": "windows-vs2022",
+      "configurePreset": "windows-vs2022-checkers",
       "configuration": "Debug"
     },
     {
-      "name": "windows-vs2022-x64-release",
+      "name": "windows-vs2022-x64-checkers-release",
       "inherits": "test-base",
-      "configurePreset": "windows-vs2022",
+      "configurePreset": "windows-vs2022-checkers",
       "configuration": "RelWithDebInfo"
     },
     {
-      "name": "windows-vs2022-x64-shipping",
+      "name": "windows-vs2022-x64-checkers-shipping",
       "inherits": "test-base",
-      "configurePreset": "windows-vs2022",
+      "configurePreset": "windows-vs2022-checkers",
       "configuration": "Release"
     },
     {

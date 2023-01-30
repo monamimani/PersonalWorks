@@ -212,3 +212,23 @@ jobs:
         path: |
           _Out/build/${{ matrix.config.configurePreset }}/_bin/${{ matrix.config.buildConfig }}
           _Out/build/${{ matrix.config.configurePreset }}/_lib/${{ matrix.config.buildConfig }}
+
+    - id: 'auth'
+      name: 'Authenticate to Google Cloud'
+      uses: 'google-github-actions/auth@v1'
+      with:
+        workload_identity_provider: 'projects/673586812696/locations/global/workloadIdentityPools/github-actions'
+        service_account: 'personalworks-db@tonal-justice-374902.iam.gserviceaccount.com'
+
+    - name: 'Setup Go for SendToMongoDb'
+      uses: actions/setup-go@v3
+      with:
+        go-version-file: 'Tools/UploadDataToMongoDb/go.mod'
+        check-latest: true
+        cache: true
+        cache-dependency-path: Tools/UploadDataToMongoDb/go.sum
+
+    - name: 'Send Data to MongoDB'
+      run: |
+        go version
+        go run Tools/UploadDataToMongoDb/main.go

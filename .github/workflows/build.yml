@@ -202,7 +202,7 @@ jobs:
           Write-Host($exe)
           $exeName = Get-ChildItem $exe | Select-Object -ExpandProperty BaseName
           Write-Host($exeName)
-          &$exe --benchmark_out_format=json --benchmark_out=$buildConfigBinDir/$exeName.json
+          &$exe --benchmark_out_format=json --benchmark_out=$exeName.json
         }
 
     - name: Upload Workflow artifact ${{ matrix.config.buildConfig }}

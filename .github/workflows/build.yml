@@ -4,6 +4,12 @@ on: [push, pull_request, release]
 
 jobs:
   build:
+
+    # Add permissions for gcloud Authentification
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
     strategy:
       fail-fast: false
       matrix:

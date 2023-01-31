@@ -240,10 +240,11 @@ jobs:
         cache: true
         cache-dependency-path: 'Tools/UploadDataToMongoDb/go.sum'
 
+      # The compilation can be done independently of the build of Personalworks, other steps too like Auth, Setup gcloud, installing some dependencies of opencoverage,....
     - name: 'Send Data to MongoDB'
       run: |
         pushd Tools/UploadDataToMongoDb/
         go version
         go build .
-        SendToMongoDb.exe
+        ./SendToMongoDb.exe
         popd

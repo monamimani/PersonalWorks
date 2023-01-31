@@ -244,5 +244,6 @@ jobs:
       run: |
         pushd Tools/UploadDataToMongoDb/
         go version
-        go run Tools/UploadDataToMongoDb/main.go
+        go build .
+        SendToMongoDb.exe
         popd

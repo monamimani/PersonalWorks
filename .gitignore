@@ -33,3 +33,4 @@ CMakeUserPresets.json
 /vc140.pdb
 
 /Tools/UploadDataToMongoDb/upload_data_mongodb/target
+SendToMongoDb.exe

@@ -226,6 +226,12 @@ jobs:
         workload_identity_provider: 'projects/673586812696/locations/global/workloadIdentityPools/github-actions'
         service_account: 'personalworks-db@tonal-justice-374902.iam.gserviceaccount.com'
 
+    - name: 'Set up gcloud SDK'
+      uses: 'google-github-actions/setup-gcloud@v1'
+
+    - name: 'Use gcloud CLI'
+      run: 'gcloud info'
+
     - name: 'Setup Go for SendToMongoDb'
       uses: actions/setup-go@v3
       with:
@@ -237,4 +243,5 @@ jobs:
     - name: 'Send Data to MongoDB'
       run: |
         go version
-        go run ./Tools/UploadDataToMongoDb/main.go
+        go mod download
+        go run Tools/UploadDataToMongoDb/main.go

@@ -242,6 +242,7 @@ jobs:
 
     - name: 'Send Data to MongoDB'
       run: |
+        pushd Tools/UploadDataToMongoDb/
         go version
-        go mod download
         go run Tools/UploadDataToMongoDb/main.go
+        popd

@@ -224,7 +224,7 @@ jobs:
       uses: 'google-github-actions/auth@v1'
       with:
         workload_identity_provider: ${secrets.GCLOUD_IAM_WORKLOAD_IDENTITY_PROVIDER}
-        service_account: '${secrets.GCE_INSTANCE_SERVICE_ACCOUNT}'
+        service_account: personalworks-db@tonal-justice-374902.iam.gserviceaccount.com
 
     - name: 'Set up gcloud SDK'
       uses: 'google-github-actions/setup-gcloud@v1'

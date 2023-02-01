@@ -233,21 +233,21 @@ jobs:
       with:
         project_id: ${{steps.gcloud_auth.outputs.project_id}}
 
-    # - name: 'Create ssh tunnel'
-    #   if: (runner.os == 'Windows') && (matrix.config.buildConfig == 'release')
-    #   run: |
-    #     # gcloud auth list --filter=status:ACTIVE --format="value(account)"
-    #     # gcloud info
-    #     gcloud compute ssh ${{secrets.GCE_INSTANCE_NAME}} --quiet --zone us-east1-b --tunnel-through-iap --ssh-flag="-L 27017:localhost:27017"
-
-    - id: 'compute-ssh'
-      uses: 'google-github-actions/ssh-compute@v0'
+    - name: 'Create ssh tunnel'
       if: (runner.os == 'Windows') && (matrix.config.buildConfig == 'release')
-      with:
-        instance_name: ${{secrets.GCE_INSTANCE_NAME}}
-        zone: us-east1-b
-        ssh_args: "-L 27017:localhost:27017"
-        command: 'echo Hello world'
+      run: |
+        # gcloud auth list --filter=status:ACTIVE --format="value(account)"
+        # gcloud info
+        gcloud compute ssh ${{secrets.GCE_INSTANCE_NAME}} --quiet --force-key-file-overwrite --zone us-east1-b --tunnel-through-iap --ssh-flag="-L 27017:localhost:27017"
+
+    # - id: 'compute-ssh'
+    #   uses: 'google-github-actions/ssh-compute@v0'
+    #   if: (runner.os == 'Windows') && (matrix.config.buildConfig == 'release')
+    #   with:
+    #     instance_name: ${{secrets.GCE_INSTANCE_NAME}}
+    #     zone: us-east1-b
+    #     ssh_args: "-L 27017:localhost:27017"
+    #     command: 'echo Hello world'
 
     - name: 'Setup Go for SendToMongoDb'
       if: (runner.os == 'Windows') && (matrix.config.buildConfig == 'release')

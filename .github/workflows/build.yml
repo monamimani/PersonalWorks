@@ -220,7 +220,7 @@ jobs:
           _Out/build/${{ matrix.config.configurePreset }}/_lib/${{ matrix.config.buildConfig }}
 
     - id: 'gcloud_auth'
-      if: (runner.os == 'Windows') && (${{ matrix.config.buildConfig }} == 'release')
+      if: (runner.os == 'Windows') && (matrix.config.buildConfig == 'release')
       name: 'Authenticate to Google Cloud'
       uses: 'google-github-actions/auth@v1'
       with:
@@ -228,20 +228,20 @@ jobs:
         service_account: personalworks-db@tonal-justice-374902.iam.gserviceaccount.com
 
     - name: 'Set up gcloud SDK'
-      if: (runner.os == 'Windows') && (${{ matrix.config.buildConfig }} == 'release')
+      if: (runner.os == 'Windows') && (matrix.config.buildConfig == 'release')
       uses: 'google-github-actions/setup-gcloud@v1'
       with:
         project_id: ${{steps.gcloud_auth.outputs.project_id}}
 
     - name: 'Create ssh tunnel'
-      if: (runner.os == 'Windows') && (${{ matrix.config.buildConfig }} == 'release')
+      if: (runner.os == 'Windows') && (matrix.config.buildConfig == 'release')
       run: |
         # gcloud auth list --filter=status:ACTIVE --format="value(account)"
         # gcloud info
         gcloud compute ssh ${{secrets.GCE_INSTANCE_NAME}} --zone us-east1-b --tunnel-through-iap --ssh-flag="-L 27017:localhost:27017"
 
     - name: 'Setup Go for SendToMongoDb'
-      if: (runner.os == 'Windows') && (${{ matrix.config.buildConfig }} == 'release')
+      if: (runner.os == 'Windows') && (matrix.config.buildConfig == 'release')
       uses: actions/setup-go@v3
       with:
         check-latest: true
@@ -251,7 +251,7 @@ jobs:
 
       # The compilation can be done independently of the build of Personalworks, other steps too like Auth, Setup gcloud, installing some dependencies of opencoverage,....
     - name: 'Send Data to MongoDB'
-      if: (runner.os == 'Windows') && (${{ matrix.config.buildConfig }} == 'release')
+      if: (runner.os == 'Windows') && (matrix.config.buildConfig == 'release')
       run: |
         pushd Tools/UploadDataToMongoDb/
         go version

@@ -32,5 +32,7 @@ CMakeUserPresets.json
 
 /vc140.pdb
 
+/Tools/GBenchmarkTool/code/gbench/__pycache__
+
 /Tools/UploadDataToMongoDb/upload_data_mongodb/target
 SendToMongoDb.exe

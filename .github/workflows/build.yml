@@ -247,6 +247,7 @@ jobs:
         instance_name: ${{secrets.GCE_INSTANCE_NAME}}
         zone: us-east1-b
         ssh_args: "-L 27017:localhost:27017"
+        command: 'echo Hello world'
 
     - name: 'Setup Go for SendToMongoDb'
       if: (runner.os == 'Windows') && (matrix.config.buildConfig == 'release')

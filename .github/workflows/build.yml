@@ -233,8 +233,8 @@ jobs:
 
     - name: 'Create ssh tunnel'
       run: |
-        gcloud auth list --filter=status:ACTIVE --format="value(account)"
-        gcloud info
+        # gcloud auth list --filter=status:ACTIVE --format="value(account)"
+        # gcloud info
         gcloud compute ssh ${{secrets.GCE_INSTANCE_NAME}} --zone us-east1-b --tunnel-through-iap --ssh-flag="-L 27017:localhost:27017"
 
     - name: 'Setup Go for SendToMongoDb'

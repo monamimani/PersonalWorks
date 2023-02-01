@@ -223,14 +223,16 @@ jobs:
       name: 'Authenticate to Google Cloud'
       uses: 'google-github-actions/auth@v1'
       with:
-        workload_identity_provider: 'projects/673586812696/locations/global/workloadIdentityPools/github-actions'
-        service_account: 'personalworks-db@tonal-justice-374902.iam.gserviceaccount.com'
+        workload_identity_provider: ${secrets.GCLOUD_IAM_WORKLOAD_IDENTITY_PROVIDER}
+        service_account: ${secrets.GCE_INSTANCE_SERVICE_ACCOUNT}
 
     - name: 'Set up gcloud SDK'
       uses: 'google-github-actions/setup-gcloud@v1'
 
-    - name: 'Use gcloud CLI'
-      run: 'gcloud info'
+    - name: 'Create ssh tunnel'
+      run: |
+        gcloud info
+        gcloud compute ssh ${secrets.GCE_INSTANCE_NAME} --zone us-east1-b --project ${PROJECT_ID} --tunnel-through-iap --ssh-flag="-L 27017:localhost:27017"
 
     - name: 'Setup Go for SendToMongoDb'
       uses: actions/setup-go@v3

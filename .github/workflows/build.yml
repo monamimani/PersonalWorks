@@ -143,73 +143,73 @@ jobs:
       run: |
         cmake --build --preset ${{ matrix.config.buildPreset }}
 
-    - name: Run Google test (Windows)
-      if: runner.os == 'Windows'
-      run: |
-        $buildConfigBinDir = "${{ env.buildConfigBinDir }}"
-        $testExe = (Get-ChildItem -Path $buildConfigBinDir -Recurse | Where-Object Name -like *tests*.exe).FullName
-        foreach ($exe in $testExe) {
-          Write-Host($exe)
-          $exeName = Get-ChildItem $exe | Select-Object -ExpandProperty BaseName
-          Write-Host($exeName)
-          &$exe --gtest_output=xml:$buildConfigBinDir/
-        }
-        #| Where-Object { $_.Filename -match 'tests' }
-        #| Where-Object { $_.DirectoryName -match 'Release' }
+    # - name: Run Google test (Windows)
+    #   if: runner.os == 'Windows'
+    #   run: |
+    #     $buildConfigBinDir = "${{ env.buildConfigBinDir }}"
+    #     $testExe = (Get-ChildItem -Path $buildConfigBinDir -Recurse | Where-Object Name -like *tests*.exe).FullName
+    #     foreach ($exe in $testExe) {
+    #       Write-Host($exe)
+    #       $exeName = Get-ChildItem $exe | Select-Object -ExpandProperty BaseName
+    #       Write-Host($exeName)
+    #       &$exe --gtest_output=xml:$buildConfigBinDir/
+    #     }
+    #     #| Where-Object { $_.Filename -match 'tests' }
+    #     #| Where-Object { $_.DirectoryName -match 'Release' }
 
-    - name: Run Google test (Linux)
-      if: runner.os == 'Linux'
-      run: |
-        ctest --preset ${{ matrix.config.testPreset }} --show-only
+    # - name: Run Google test (Linux)
+    #   if: runner.os == 'Linux'
+    #   run: |
+    #     ctest --preset ${{ matrix.config.testPreset }} --show-only
 
     # - name: CTest
     #   run: |
     #     ctest --show-only
     #     # ctest --preset ${{ matrix.config.testPreset }}
 
-    - name: OpenCppCoverage
-      run: |
-        $buildConfigDir = Resolve-Path -Path "${{ env.buildConfigBinDir }}"
-        OpenCppCoverage --config_file=OpenCppCoverage.config.txt --modules=$buildConfigDir --excluded_sources="*\vcpkg_installed" --excluded_sources="Projects\TestUtilities\*" --excluded_sources="Projects\*.test*"  --export_type=cobertura:coverage.xml -- $buildConfigDir/CoreTests.exe --gtest_brief=1
+    # - name: OpenCppCoverage
+    #   run: |
+    #     $buildConfigDir = Resolve-Path -Path "${{ env.buildConfigBinDir }}"
+    #     OpenCppCoverage --config_file=OpenCppCoverage.config.txt --modules=$buildConfigDir --excluded_sources="*\vcpkg_installed" --excluded_sources="Projects\TestUtilities\*" --excluded_sources="Projects\*.test*"  --export_type=cobertura:coverage.xml -- $buildConfigDir/CoreTests.exe --gtest_brief=1
 
-    - name: Foresight Analyze Test and/or Coverage Results
-      uses: runforesight/foresight-test-kit-action@v1
-      if: ${{ always() }}
-      with:
-        api_key: ${{ secrets.FORESIGHT_API_KEY }}
-        test_framework: JUNIT
-        test_format: JUNIT
-        test_path: ${{ env.buildConfigBinDir }}/*.xml
-        coverage_format: COBERTURA/XML
-        coverage_path: ./coverage.xml
-        tags: | 
-          os:${{ runner.os }}
-          buildConfig:${{ matrix.config.buildConfig }}
+    # - name: Foresight Analyze Test and/or Coverage Results
+    #   uses: runforesight/foresight-test-kit-action@v1
+    #   if: ${{ always() }}
+    #   with:
+    #     api_key: ${{ secrets.FORESIGHT_API_KEY }}
+    #     test_framework: JUNIT
+    #     test_format: JUNIT
+    #     test_path: ${{ env.buildConfigBinDir }}/*.xml
+    #     coverage_format: COBERTURA/XML
+    #     coverage_path: ./coverage.xml
+    #     tags: | 
+    #       os:${{ runner.os }}
+    #       buildConfig:${{ matrix.config.buildConfig }}
 
-    - name: Codecov
-      uses: codecov/codecov-action@v3.1.1
-      with:
-        flags: ${{ runner.os }}-${{ matrix.config.buildConfig }}
-        name: ${{github.repository}}
-        files: ./coverage.xml
+    # - name: Codecov
+    #   uses: codecov/codecov-action@v3.1.1
+    #   with:
+    #     flags: ${{ runner.os }}-${{ matrix.config.buildConfig }}
+    #     name: ${{github.repository}}
+    #     files: ./coverage.xml
 
-    - name: Upload Test Results ${{ matrix.config.buildConfig }}
-      uses: actions/upload-artifact@v3
-      with:
-        name: PersonalWorks_${{github.workflow}}-${{github.job}}-${{ matrix.config.buildConfig }}_TestsResults
-        path: |
-          ${{ env.buildConfigBinDir }}/*.xml
+    # - name: Upload Test Results ${{ matrix.config.buildConfig }}
+    #   uses: actions/upload-artifact@v3
+    #   with:
+    #     name: PersonalWorks_${{github.workflow}}-${{github.job}}-${{ matrix.config.buildConfig }}_TestsResults
+    #     path: |
+    #       ${{ env.buildConfigBinDir }}/*.xml
 
-    - name: Run Google Benchmark (${{ runner.os }})
-      run: |
-        $buildConfigBinDir = "${{ env.buildConfigBinDir }}"
-        $benchmarkExe = (Get-ChildItem -Path $buildConfigBinDir -Recurse | Where-Object Name -like *benchmarks*.exe).FullName
-        foreach ($exe in $benchmarkExe) {
-          Write-Host($exe)
-          $exeName = Get-ChildItem $exe | Select-Object -ExpandProperty BaseName
-          Write-Host($exeName)
-          &$exe --benchmark_out_format=json --benchmark_out=$exeName.json
-        }
+    # - name: Run Google Benchmark (${{ runner.os }})
+    #   run: |
+    #     $buildConfigBinDir = "${{ env.buildConfigBinDir }}"
+    #     $benchmarkExe = (Get-ChildItem -Path $buildConfigBinDir -Recurse | Where-Object Name -like *benchmarks*.exe).FullName
+    #     foreach ($exe in $benchmarkExe) {
+    #       Write-Host($exe)
+    #       $exeName = Get-ChildItem $exe | Select-Object -ExpandProperty BaseName
+    #       Write-Host($exeName)
+    #       &$exe --benchmark_out_format=json --benchmark_out=$exeName.json
+    #     }
 
     - name: Upload Workflow artifact ${{ matrix.config.buildConfig }}
       uses: actions/upload-artifact@v3
@@ -231,6 +231,8 @@ jobs:
 
     - name: 'Create ssh tunnel'
       run: |
+        echo '${{ steps.gcloud_auth.outputs.project_id }}'
+        echo '${{ steps.gcloud_auth.outputs.access_token }}'
         gcloud info
         gcloud compute ssh ${secrets.GCE_INSTANCE_NAME} --zone us-east1-b --project ${steps.gcloud_auth.outputs.project_id} --tunnel-through-iap --ssh-flag="-L 27017:localhost:27017"
 

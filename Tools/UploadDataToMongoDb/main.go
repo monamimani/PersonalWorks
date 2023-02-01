@@ -7,9 +7,14 @@ import (
 	"log"
 	"os"
 	"path"
+	"time"
 
 	compute "cloud.google.com/go/compute/apiv1"
 	computepb "cloud.google.com/go/compute/apiv1/computepb"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/mongo/readpref"
 
 	"google.golang.org/api/iterator"
 )
@@ -93,31 +98,31 @@ func gcloudVMInstance() {
 }
 
 func mongodb() {
-	// // Create a new client and connect to the server
-	// opts := options.Client()
-	// opts.ApplyURI(uri)
-	// opts.SetConnectTimeout(5 * time.Second)
-	// client, err := mongo.Connect(context.TODO(), opts)
-	// if err != nil {
-	// 	log.Panic(err)
-	// }
-	// defer func() {
-	// 	if err = client.Disconnect(context.TODO()); err != nil {
-	// 		log.Panic(err)
-	// 	}
-	// }()
-	// // Ping the primary
-	// if err := client.Ping(context.TODO(), readpref.Primary()); err != nil {
-	// 	log.Panic(err)
-	// }
+	// Create a new client and connect to the server
+	opts := options.Client()
+	opts.ApplyURI(uri)
+	opts.SetConnectTimeout(5 * time.Second)
+	client, err := mongo.Connect(context.TODO(), opts)
+	if err != nil {
+		log.Panic(err)
+	}
+	defer func() {
+		if err = client.Disconnect(context.TODO()); err != nil {
+			log.Panic(err)
+		}
+	}()
+	// Ping the primary
+	if err := client.Ping(context.TODO(), readpref.Primary()); err != nil {
+		log.Panic(err)
+	}
 
-	// databases, err := client.ListDatabaseNames(context.TODO(), bson.D{})
+	databases, err := client.ListDatabaseNames(context.TODO(), bson.D{})
 
-	// if err == nil {
-	// 	fmt.Println(databases)
-	// }
+	if err == nil {
+		fmt.Println(databases)
+	}
 
-	// fmt.Println("Successfully connected and pinged.")
+	fmt.Println("Successfully connected and pinged.")
 }
 
 func listInstances(projectID, zone string) {
@@ -221,6 +226,8 @@ func main() {
 		}
 		log.Printf("Status of %s: %s", instanceName, *computePbInstance.Status)
 	}
+
+	mongodb()
 
 	// stopReq := &computepb.StopInstanceRequest{
 	// 	Project:  projectId,

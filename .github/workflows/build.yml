@@ -234,7 +234,7 @@ jobs:
         echo '${{ steps.gcloud_auth.outputs.project_id }}'
         echo '${{ steps.gcloud_auth.outputs.access_token }}'
         gcloud info
-        gcloud compute ssh ${secrets.GCE_INSTANCE_NAME} --zone us-east1-b --project ${steps.gcloud_auth.outputs.project_id} --tunnel-through-iap --ssh-flag="-L 27017:localhost:27017"
+        gcloud compute ssh ${secrets.GCE_INSTANCE_NAME} --zone us-east1-b --project ${{steps.gcloud_auth.outputs.project_id}} --tunnel-through-iap --ssh-flag="-L 27017:localhost:27017"
 
     - name: 'Setup Go for SendToMongoDb'
       uses: actions/setup-go@v3

@@ -219,7 +219,7 @@ jobs:
           _Out/build/${{ matrix.config.configurePreset }}/_bin/${{ matrix.config.buildConfig }}
           _Out/build/${{ matrix.config.configurePreset }}/_lib/${{ matrix.config.buildConfig }}
 
-    - id: 'auth'
+    - id: 'gcloud_auth'
       name: 'Authenticate to Google Cloud'
       uses: 'google-github-actions/auth@v1'
       with:
@@ -232,7 +232,7 @@ jobs:
     - name: 'Create ssh tunnel'
       run: |
         gcloud info
-        gcloud compute ssh ${secrets.GCE_INSTANCE_NAME} --zone us-east1-b --project ${PROJECT_ID} --tunnel-through-iap --ssh-flag="-L 27017:localhost:27017"
+        gcloud compute ssh ${secrets.GCE_INSTANCE_NAME} --zone us-east1-b --project ${steps.gcloud_auth.outputs.project_id} --tunnel-through-iap --ssh-flag="-L 27017:localhost:27017"
 
     - name: 'Setup Go for SendToMongoDb'
       uses: actions/setup-go@v3

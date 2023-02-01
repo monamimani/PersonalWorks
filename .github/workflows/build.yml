@@ -231,6 +231,7 @@ jobs:
 
     - name: 'Create ssh tunnel'
       run: |
+        echo ${secrets.GCLOUD_IAM_WORKLOAD_IDENTITY_PROVIDER}
         gcloud info
         gcloud compute ssh ${{secrets.GCE_INSTANCE_NAME}} --zone us-east1-b --project ${{steps.gcloud_auth.outputs.project_id}} --tunnel-through-iap --ssh-flag="-L 27017:localhost:27017"
 

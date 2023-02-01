@@ -211,43 +211,43 @@ jobs:
     #       &$exe --benchmark_out_format=json --benchmark_out=$exeName.json
     #     }
 
-    - name: Upload Workflow artifact ${{ matrix.config.buildConfig }}
-      uses: actions/upload-artifact@v3
-      with:
-        name: PersonalWorks_${{github.workflow}}-${{github.job}}-${{ matrix.config.buildConfig }}_Out
-        path: |
-          _Out/build/${{ matrix.config.configurePreset }}/_bin/${{ matrix.config.buildConfig }}
-          _Out/build/${{ matrix.config.configurePreset }}/_lib/${{ matrix.config.buildConfig }}
+    # - name: Upload Workflow artifact ${{ matrix.config.buildConfig }}
+    #   uses: actions/upload-artifact@v3
+    #   with:
+    #     name: PersonalWorks_${{github.workflow}}-${{github.job}}-${{ matrix.config.buildConfig }}_Out
+    #     path: |
+    #       _Out/build/${{ matrix.config.configurePreset }}/_bin/${{ matrix.config.buildConfig }}
+    #       _Out/build/${{ matrix.config.configurePreset }}/_lib/${{ matrix.config.buildConfig }}
 
-    - id: 'gcloud_auth'
-      name: 'Authenticate to Google Cloud'
-      uses: 'google-github-actions/auth@v1'
-      with:
-        workload_identity_provider: ${secrets.GCLOUD_IAM_WORKLOAD_IDENTITY_PROVIDER}
-        service_account: personalworks-db@tonal-justice-374902.iam.gserviceaccount.com
+    # - id: 'gcloud_auth'
+    #   name: 'Authenticate to Google Cloud'
+    #   uses: 'google-github-actions/auth@v1'
+    #   with:
+    #     workload_identity_provider: ${secrets.GCLOUD_IAM_WORKLOAD_IDENTITY_PROVIDER}
+    #     service_account: personalworks-db@tonal-justice-374902.iam.gserviceaccount.com
 
-    - name: 'Set up gcloud SDK'
-      uses: 'google-github-actions/setup-gcloud@v1'
+    # - name: 'Set up gcloud SDK'
+    #   uses: 'google-github-actions/setup-gcloud@v1'
 
-    - name: 'Create ssh tunnel'
-      run: |
-        echo ${secrets.GCLOUD_IAM_WORKLOAD_IDENTITY_PROVIDER}
-        gcloud info
-        gcloud compute ssh ${{secrets.GCE_INSTANCE_NAME}} --zone us-east1-b --project ${{steps.gcloud_auth.outputs.project_id}} --tunnel-through-iap --ssh-flag="-L 27017:localhost:27017"
+    # - name: 'Create ssh tunnel'
+    #   run: |
+    #     echo ${secrets.GCLOUD_IAM_WORKLOAD_IDENTITY_PROVIDER}
+    #     gcloud info
+    #     gcloud compute ssh ${{secrets.GCE_INSTANCE_NAME}} --zone us-east1-b --project ${{steps.gcloud_auth.outputs.project_id}} --tunnel-through-iap --ssh-flag="-L 27017:localhost:27017"
 
-    - name: 'Setup Go for SendToMongoDb'
-      uses: actions/setup-go@v3
-      with:
-        check-latest: true
-        go-version-file: 'Tools/UploadDataToMongoDb/go.mod'
-        cache: true
-        cache-dependency-path: 'Tools/UploadDataToMongoDb/go.sum'
+    # - name: 'Setup Go for SendToMongoDb'
+    #   uses: actions/setup-go@v3
+    #   with:
+    #     check-latest: true
+    #     go-version-file: 'Tools/UploadDataToMongoDb/go.mod'
+    #     cache: true
+    #     cache-dependency-path: 'Tools/UploadDataToMongoDb/go.sum'
 
-      # The compilation can be done independently of the build of Personalworks, other steps too like Auth, Setup gcloud, installing some dependencies of opencoverage,....
-    - name: 'Send Data to MongoDB'
-      run: |
-        pushd Tools/UploadDataToMongoDb/
-        go version
-        go build .
-        ./SendToMongoDb.exe
-        popd
+    #   # The compilation can be done independently of the build of Personalworks, other steps too like Auth, Setup gcloud, installing some dependencies of opencoverage,....
+    # - name: 'Send Data to MongoDB'
+    #   run: |
+    #     pushd Tools/UploadDataToMongoDb/
+    #     go version
+    #     go build .
+    #     ./SendToMongoDb.exe
+    #     popd

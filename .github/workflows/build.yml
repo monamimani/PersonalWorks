@@ -227,6 +227,14 @@ jobs:
         workload_identity_provider: ${{secrets.GCLOUD_IAM_WORKLOAD_IDENTITY_PROVIDER}}
         service_account: personalworks-db@tonal-justice-374902.iam.gserviceaccount.com
 
+    - name: Cache Windows packages
+      if: (runner.os == 'Windows') && (matrix.config.buildConfig == 'release')
+      id: cache-setup-gcloud
+      uses: actions/cache@v3
+      with:
+        path: C:\hostedtoolcache\windows\gcloud\
+        key: ${{ runner.os }}-cache-setup-gcloud
+
     - name: 'Set up gcloud SDK'
       if: (runner.os == 'Windows') && (matrix.config.buildConfig == 'release')
       uses: 'google-github-actions/setup-gcloud@v1'

@@ -134,14 +134,14 @@ jobs:
         echo "VCPKG_ROOT=$VCPKG_INSTALLATION_ROOT" >> $GITHUB_ENV
         echo "C:\Program Files\OpenCppCoverage" >> $GITHUB_PATH
 
-    - name: Cmake Configure
-      run: |
-        cmake --preset ${{ matrix.config.configurePreset }}
+    # - name: Cmake Configure
+    #   run: |
+    #     cmake --preset ${{ matrix.config.configurePreset }}
 
-    - name: Cmake Build
-      # if: runner.os == 'Windows'
-      run: |
-        cmake --build --preset ${{ matrix.config.buildPreset }}
+    # - name: Cmake Build
+    #   # if: runner.os == 'Windows'
+    #   run: |
+    #     cmake --build --preset ${{ matrix.config.buildPreset }}
 
     # - name: Run Google test (Windows)
     #   if: runner.os == 'Windows'
@@ -240,7 +240,7 @@ jobs:
         # gcloud info
         # gcloud compute config-ssh
         # --quiet --force-key-file-overwrite
-        gcloud compute ssh ${{secrets.GCE_INSTANCE_NAME}} --quiet --zone us-east1-b --tunnel-through-iap --ssh-flag="-L 27017:localhost:27017"
+        gcloud compute ssh ${{secrets.GCE_INSTANCE_NAME}} --quiet --troubleshoot --zone us-east1-b --tunnel-through-iap --ssh-flag="-L 27017:localhost:27017"
 
     # - id: 'compute-ssh'
     #   uses: 'google-github-actions/ssh-compute@v0'

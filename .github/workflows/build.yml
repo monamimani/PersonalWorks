@@ -227,7 +227,7 @@ jobs:
         workload_identity_provider: ${{secrets.GCLOUD_IAM_WORKLOAD_IDENTITY_PROVIDER}}
         service_account: personalworks-db@tonal-justice-374902.iam.gserviceaccount.com
 
-    - name: Cache Windows packages
+    - name: Cache gcloud setup
       if: (runner.os == 'Windows') && (matrix.config.buildConfig == 'release')
       id: cache-setup-gcloud
       uses: actions/cache@v3

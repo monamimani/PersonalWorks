@@ -259,7 +259,6 @@ jobs:
         # gcloud compute config-ssh
         # --quiet --force-key-file-overwrite
         nohup gcloud compute ssh ${{secrets.GCE_INSTANCE_NAME}} --quiet --zone us-east1-b --tunnel-through-iap --ssh-flag="-o ExitOnForwardFailure=yes -L 27017:localhost:27017" &
-        write-host "After invoke-expression"; 
 
         pushd Tools/UploadDataToMongoDb/
         go version

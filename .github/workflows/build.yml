@@ -211,14 +211,6 @@ jobs:
     #       &$exe --benchmark_out_format=json --benchmark_out=$exeName.json
     #     }
 
-    - name: Upload Workflow artifact ${{ matrix.config.buildConfig }}
-      uses: actions/upload-artifact@v3
-      with:
-        name: PersonalWorks_${{github.workflow}}-${{github.job}}-${{ matrix.config.buildConfig }}_Out
-        path: |
-          _Out/build/${{ matrix.config.configurePreset }}/_bin/${{ matrix.config.buildConfig }}
-          _Out/build/${{ matrix.config.configurePreset }}/_lib/${{ matrix.config.buildConfig }}
-
     - id: 'gcloud_auth'
       if: (runner.os == 'Windows') && (matrix.config.buildConfig == 'release')
       name: 'Authenticate to Google Cloud'
@@ -262,6 +254,7 @@ jobs:
         # gcloud compute ssh ${{secrets.GCE_INSTANCE_NAME}} --quiet --zone us-east1-b --tunnel-through-iap --verbosity=debug --ssh-flag="-o ExitOnForwardFailure=yes -fNT -L 27017:localhost:27017"
 
         gcloud compute config-ssh --quiet
+        ssh mongodb-personalworks-servers-vm-0.us-east1-b.tonal-justice-374902 -fNT -L 27017:localhost:27017 -E _Out/build/${{ matrix.config.configurePreset }}/_bin/ssh.log
         $sshTunnelJob = Start-Job -ScriptBlock { ssh mongodb-personalworks-servers-vm-0.us-east1-b.tonal-justice-374902 -fNT -L 27017:localhost:27017}
         Get-Job
 
@@ -274,6 +267,14 @@ jobs:
         Stop-Job $sshTunnelJob.Name
         gcloud compute config-ssh --quiet --remove
         
+
+    - name: Upload Workflow artifact ${{ matrix.config.buildConfig }}
+      uses: actions/upload-artifact@v3
+      with:
+        name: PersonalWorks_${{github.workflow}}-${{github.job}}-${{ matrix.config.buildConfig }}_Out
+        path: |
+          _Out/build/${{ matrix.config.configurePreset }}/_bin/${{ matrix.config.buildConfig }}
+          _Out/build/${{ matrix.config.configurePreset }}/_lib/${{ matrix.config.buildConfig }}
 
     # - id: 'compute-ssh'
     #   uses: 'google-github-actions/ssh-compute@v0'

@@ -256,7 +256,11 @@ jobs:
 
         # $sshTunnelJob = Start-Job -Name SshTunnelJob -ScriptBlock { ssh mongodb-personalworks-servers-vm-0.us-east1-b.tonal-justice-374902 -fNT -E ssh.log -L 27017:localhost:27017}
 
-        $sshTunnelJob = Start-Job -Name SshTunnelJob -ScriptBlock { gcloud compute ssh ${{secrets.GCE_INSTANCE_NAME}} --quiet --zone us-east1-b --tunnel-through-iap --verbosity=debug --ssh-flag="-o ExitOnForwardFailure=yes -L 27017:localhost:27017"}
+        $sshTunnelJob = Start-Job -Name SshTunnelJob -ScriptBlock { 
+          gcloud compute ssh ${{secrets.GCE_INSTANCE_NAME}} --quiet --zone us-east1-b --tunnel-through-iap --verbosity=debug --ssh-flag="-o ExitOnForwardFailure=yes -L 27017:localhost:27017"
+          Test-NetConnection localhost -port 27017
+          }
+
         Get-Job 
         Receive-Job -Name SshTunnelJob
 
@@ -265,7 +269,7 @@ jobs:
         pushd Tools/UploadDataToMongoDb/
         go version
         go build .
-        ./SendToMongoDb.exe
+        #./SendToMongoDb.exe
         popd
 
         Get-Job

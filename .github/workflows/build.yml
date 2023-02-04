@@ -259,10 +259,10 @@ jobs:
         
         gcloud info
 
-        gcloud compute ssh ${{secrets.GCE_INSTANCE_NAME}} --quiet --zone us-east1-b --tunnel-through-iap --verbosity=debug --ssh-flag="-o ExitOnForwardFailure=yes -fNT -L 27017:localhost:27017"
+        # gcloud compute ssh ${{secrets.GCE_INSTANCE_NAME}} --quiet --zone us-east1-b --tunnel-through-iap --verbosity=debug --ssh-flag="-o ExitOnForwardFailure=yes -fNT -L 27017:localhost:27017"
 
-        #gcloud compute config-ssh --quiet
-        #ssh -nNT -L 27017:127.0.0.1:27017 ${{secrets.GCE_INSTANCE_NAME}}.us-east1-b.tonal-justice-374902 &
+        gcloud compute config-ssh --quiet
+        $sshTunnelJob = Start-Job -ScriptBlock { ssh ${{secrets.GCE_INSTANCE_NAME}}.us-east1-b.tonal-justice-374902 -fNT -L 27017:localhost:27017}
 
 
         pushd Tools/UploadDataToMongoDb/
@@ -270,6 +270,9 @@ jobs:
         go build .
         ./SendToMongoDb.exe
         popd
+
+        Stop-Job $sshTunnelJob.Name
+        gcloud compute config-ssh --quiet --remove
         
 
     # - id: 'compute-ssh'

@@ -239,6 +239,7 @@ jobs:
       if: (runner.os == 'Windows') && (matrix.config.buildConfig == 'release')
       uses: 'google-github-actions/setup-gcloud@v1'
       with:
+        skip_install: true
         project_id: ${{steps.gcloud_auth.outputs.project_id}}
 
     - name: 'Create ssh tunnel'
@@ -248,7 +249,7 @@ jobs:
         # gcloud info
         # gcloud compute config-ssh
         # --quiet --force-key-file-overwrite
-        gcloud compute ssh ${{secrets.GCE_INSTANCE_NAME}} --quiet --troubleshoot --zone us-east1-b --tunnel-through-iap --ssh-flag="-L 27017:localhost:27017"
+        gcloud compute ssh ${{secrets.GCE_INSTANCE_NAME}} --quiet --zone us-east1-b --tunnel-through-iap --ssh-flag="-L 27017:localhost:27017"
 
     # - id: 'compute-ssh'
     #   uses: 'google-github-actions/ssh-compute@v0'

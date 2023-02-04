@@ -263,7 +263,7 @@ jobs:
 
         gcloud compute config-ssh --quiet
         $sshTunnelJob = Start-Job -ScriptBlock { ssh mongodb-personalworks-servers-vm-0.us-east1-b.tonal-justice-374902 -fNT -L 27017:localhost:27017}
-        Write-Host $sshTunnelJob
+        Get-Job
 
         pushd Tools/UploadDataToMongoDb/
         go version

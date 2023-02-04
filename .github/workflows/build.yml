@@ -252,16 +252,13 @@ jobs:
 
     - name: 'Create ssh tunnel'
       if: (runner.os == 'Windows') && (matrix.config.buildConfig == 'release')
-      shell: powershell
+      shell: bash
       run: |
         # gcloud auth list --filter=status:ACTIVE --format="value(account)"
         # gcloud info
         # gcloud compute config-ssh
         # --quiet --force-key-file-overwrite
-        invoke-expression 'cmd /c start powershell -Command { 
-          write-host "Hi, new window!"; 
-          gcloud compute ssh ${{secrets.GCE_INSTANCE_NAME}} --quiet --zone us-east1-b --tunnel-through-iap --ssh-flag="-o ExitOnForwardFailure=yes -L 27017:localhost:27017"
-        }'
+        nohup gcloud compute ssh ${{secrets.GCE_INSTANCE_NAME}} --quiet --zone us-east1-b --tunnel-through-iap --ssh-flag="-o ExitOnForwardFailure=yes -L 27017:localhost:27017" &
         write-host "After invoke-expression"; 
 
         pushd Tools/UploadDataToMongoDb/

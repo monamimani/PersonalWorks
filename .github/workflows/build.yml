@@ -262,7 +262,7 @@ jobs:
 
 
         gcloud compute config-ssh --quiet
-        ssh -L 27017:127.0.0.1:27017 ${{secrets.GCE_INSTANCE_NAME}}.us-east1-b.tonal-justice-374902
+        ssh -nNT -L 27017:127.0.0.1:27017 ${{secrets.GCE_INSTANCE_NAME}}.us-east1-b.tonal-justice-374902
 
 
         pushd Tools/UploadDataToMongoDb/

@@ -248,7 +248,7 @@ jobs:
         # gcloud info
         # gcloud compute config-ssh
         # --quiet --force-key-file-overwrite
-        gcloud compute ssh ${{secrets.GCE_INSTANCE_NAME}} --quiet --zone us-east1-b --tunnel-through-iap --ssh-flag="-L 27017:localhost:27017"
+        gcloud compute ssh ${{secrets.GCE_INSTANCE_NAME}} --quiet --zone us-east1-b --tunnel-through-iap --ssh-flag="-L 27017:localhost:27017 -nNT"
 
     # - id: 'compute-ssh'
     #   uses: 'google-github-actions/ssh-compute@v0'

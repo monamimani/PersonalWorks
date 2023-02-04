@@ -236,7 +236,7 @@ jobs:
         key: ${{ runner.os }}-cache-setup-gcloud
 
     - name: 'Set up gcloud SDK'
-      if: (runner.os == 'Windows') && (matrix.config.buildConfig == 'release')
+      if: (runner.os == 'Windows') && (matrix.config.buildConfig == 'release') && (steps.cache-install-cache-setup-gcloud.outputs.cache-hit != 'true')
       uses: 'google-github-actions/setup-gcloud@v1'
       with:
         skip_install: true

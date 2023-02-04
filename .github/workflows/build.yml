@@ -241,6 +241,15 @@ jobs:
       with:
         project_id: ${{steps.gcloud_auth.outputs.project_id}}
 
+    - name: 'Setup Go for SendToMongoDb'
+      if: (runner.os == 'Windows') && (matrix.config.buildConfig == 'release')
+      uses: actions/setup-go@v3
+      with:
+        check-latest: true
+        go-version-file: 'Tools/UploadDataToMongoDb/go.mod'
+        cache: true
+        cache-dependency-path: 'Tools/UploadDataToMongoDb/go.sum'
+
     - name: 'Create ssh tunnel'
       if: (runner.os == 'Windows') && (matrix.config.buildConfig == 'release')
       shell: powershell
@@ -254,6 +263,12 @@ jobs:
           gcloud compute ssh ${{secrets.GCE_INSTANCE_NAME}} --quiet --zone us-east1-b --tunnel-through-iap --ssh-flag="-o ExitOnForwardFailure=yes -L 27017:localhost:27017"
         }'
         write-host "After invoke-expression"; 
+
+        pushd Tools/UploadDataToMongoDb/
+        go version
+        go build .
+        ./SendToMongoDb.exe
+        popd
         
 
     # - id: 'compute-ssh'
@@ -265,24 +280,15 @@ jobs:
     #     ssh_args: "-L 27017:localhost:27017"
     #     command: 'echo Hello world'
 
-    - name: 'Setup Go for SendToMongoDb'
-      if: (runner.os == 'Windows') && (matrix.config.buildConfig == 'release')
-      uses: actions/setup-go@v3
-      with:
-        check-latest: true
-        go-version-file: 'Tools/UploadDataToMongoDb/go.mod'
-        cache: true
-        cache-dependency-path: 'Tools/UploadDataToMongoDb/go.sum'
-
       # The compilation can be done independently of the build of Personalworks, other steps too like Auth, Setup gcloud, installing some dependencies of opencoverage,....
-    - name: 'Send Data to MongoDB'
-      if: (runner.os == 'Windows') && (matrix.config.buildConfig == 'release')
-      run: |
-        pushd Tools/UploadDataToMongoDb/
-        go version
-        go build .
-        ./SendToMongoDb.exe
-        popd
+    # - name: 'Send Data to MongoDB'
+    #   if: (runner.os == 'Windows') && (matrix.config.buildConfig == 'release')
+    #   run: |
+    #     pushd Tools/UploadDataToMongoDb/
+    #     go version
+    #     go build .
+    #     ./SendToMongoDb.exe
+    #     popd
 
     # - name: 'Remove ssh '
     #   if: (runner.os == 'Windows') && (matrix.config.buildConfig == 'release')

@@ -239,7 +239,6 @@ jobs:
       if: (runner.os == 'Windows') && (matrix.config.buildConfig == 'release') && (steps.cache-install-cache-setup-gcloud.outputs.cache-hit != 'true')
       uses: 'google-github-actions/setup-gcloud@v1'
       with:
-        skip_install: true
         project_id: ${{steps.gcloud_auth.outputs.project_id}}
 
     - name: 'Create ssh tunnel'

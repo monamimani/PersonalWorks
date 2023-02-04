@@ -254,9 +254,11 @@ jobs:
         # gcloud compute ssh ${{secrets.GCE_INSTANCE_NAME}} --quiet --zone us-east1-b --tunnel-through-iap --verbosity=debug --ssh-flag="-o ExitOnForwardFailure=yes -fNT -L 27017:localhost:27017"
 
         gcloud compute config-ssh --quiet
-        ssh mongodb-personalworks-servers-vm-0.us-east1-b.tonal-justice-374902 -fNT -L 27017:localhost:27017 -E _Out/build/${{ matrix.config.configurePreset }}/_bin/ssh.log
+        ssh mongodb-personalworks-servers-vm-0.us-east1-b.tonal-justice-374902 -fNT -L 27017:localhost:27017 -E ssh.log
         $sshTunnelJob = Start-Job -ScriptBlock { ssh mongodb-personalworks-servers-vm-0.us-east1-b.tonal-justice-374902 -fNT -L 27017:localhost:27017}
         Get-Job
+
+        Test-NetConnection localhost -port 27017
 
         pushd Tools/UploadDataToMongoDb/
         go version
@@ -275,6 +277,7 @@ jobs:
         path: |
           _Out/build/${{ matrix.config.configurePreset }}/_bin/${{ matrix.config.buildConfig }}
           _Out/build/${{ matrix.config.configurePreset }}/_lib/${{ matrix.config.buildConfig }}
+          ssh.log
 
     # - id: 'compute-ssh'
     #   uses: 'google-github-actions/ssh-compute@v0'

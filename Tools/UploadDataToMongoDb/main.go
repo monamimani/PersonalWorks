@@ -20,7 +20,7 @@ import (
 )
 
 // Connection URI
-const uri = "mongodb://Github:XD7rkisqxDjhbbXU@localhost:27017/?authSource=admin&authMechanism=SCRAM-SHA-256&w=majority"
+const uri = "mongodb://Github:XD7rkisqxDjhbbXU@localhost:80/?authSource=admin&authMechanism=SCRAM-SHA-256&w=majority"
 
 func gcloudVMInstance() {
 	// projectId := "tonal-justice-374902"

@@ -283,6 +283,7 @@ jobs:
 
     - name: Upload Workflow artifact ${{ matrix.config.buildConfig }}
       uses: actions/upload-artifact@v3
+      if: always()
       with:
         name: PersonalWorks_${{github.workflow}}-${{github.job}}-${{ matrix.config.buildConfig }}_Out
         path: |

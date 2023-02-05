@@ -252,13 +252,13 @@ jobs:
         gcloud info
 
         # gcloud compute ssh ${{secrets.GCE_INSTANCE_NAME}} --quiet --zone us-east1-b --tunnel-through-iap --verbosity=debug --ssh-flag="-o ExitOnForwardFailure=yes -fNT -L 27017:localhost:27017"
-        gcloud compute config-ssh --quiet
+        # gcloud compute config-ssh --quiet
 
-        ssh mongodb-personalworks-servers-vm-0.us-east1-b.tonal-justice-374902 -vvv -fNT -E ssh.log -L 27017:localhost:27017
+        # ssh mongodb-personalworks-servers-vm-0.us-east1-b.tonal-justice-374902 -vvv -fNT -E ssh.log -L 27017:localhost:27017
 
         # $sshTunnelJob = Start-Job -Name SshTunnelJob -ScriptBlock { ssh mongodb-personalworks-servers-vm-0.us-east1-b.tonal-justice-374902 -fNT -E ssh.log -L 27017:localhost:27017}
 
-        # $sshTunnelJob = Start-Job -Name SshTunnelJob -ScriptBlock { gcloud compute ssh ${{secrets.GCE_INSTANCE_NAME}} --quiet --zone us-east1-b --tunnel-through-iap --verbosity=debug --ssh-flag="-o ExitOnForwardFailure=yes -NL 27017:localhost:27017"}
+        $sshTunnelJob = Start-Job -Name SshTunnelJob -ScriptBlock { gcloud compute ssh ${{secrets.GCE_INSTANCE_NAME}} --quiet --zone us-east1-b --tunnel-through-iap --verbosity=debug --ssh-flag="-E ssh.log -vvv -o ExitOnForwardFailure=yes -NL 27017:localhost:27017"}
 
         # Get-Job 
         # Receive-Job -Name SshTunnelJob | Format-List -Force -Expand CoreOnly
@@ -278,7 +278,7 @@ jobs:
         # Write-Host SshTunnelJob
         # Receive-Job -Name SshTunnelJob | Format-List -Force -Expand CoreOnly
 
-        gcloud compute config-ssh --quiet --remove
+        # gcloud compute config-ssh --quiet --remove
         
 
     - name: Upload Workflow artifact ${{ matrix.config.buildConfig }}

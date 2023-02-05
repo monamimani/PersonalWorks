@@ -252,19 +252,16 @@ jobs:
         gcloud info
 
         # gcloud compute ssh ${{secrets.GCE_INSTANCE_NAME}} --quiet --zone us-east1-b --tunnel-through-iap --verbosity=debug --ssh-flag="-o ExitOnForwardFailure=yes -fNT -L 27017:localhost:27017"
-        gcloud compute config-ssh --quiet
+        # gcloud compute config-ssh --quiet
 
         # $sshTunnelJob = Start-Job -Name SshTunnelJob -ScriptBlock { ssh mongodb-personalworks-servers-vm-0.us-east1-b.tonal-justice-374902 -fNT -E ssh.log -L 27017:localhost:27017}
 
-        # $sshTunnelJob = Start-Job -Name SshTunnelJob -ScriptBlock { 
-        #   gcloud compute ssh ${{secrets.GCE_INSTANCE_NAME}} --quiet --zone us-east1-b --tunnel-through-iap --verbosity=debug --ssh-flag="-o ExitOnForwardFailure=yes -L 27017:localhost:27017"
-        #   Test-NetConnection localhost -port 27017
-        #   }
+        $sshTunnelJob = Start-Job -Name SshTunnelJob -ScriptBlock { 
+          gcloud compute ssh ${{secrets.GCE_INSTANCE_NAME}} --quiet --zone us-east1-b --tunnel-through-iap --verbosity=debug --ssh-flag="-o ExitOnForwardFailure=yes -NL 27017:localhost:27017"
+          }
 
-        # Get-Job 
-        # Receive-Job -Name SshTunnelJob
-
-        gcloud compute ssh ${{secrets.GCE_INSTANCE_NAME}} --quiet --zone us-east1-b --tunnel-through-iap --verbosity=debug --ssh-flag="-o ExitOnForwardFailure=yes -NL 27017:localhost:27017"
+        Get-Job 
+        Receive-Job -Name SshTunnelJob | Format-List -Force -Expand CoreOnly
 
         Test-NetConnection localhost -port 27017
 
@@ -274,14 +271,14 @@ jobs:
         ./SendToMongoDb.exe
         popd
 
-        # Get-Job
-        # Receive-Job -Name SshTunnelJob
-        # Stop-Job $sshTunnelJob.Name
+        Get-Job
+        Receive-Job -Name SshTunnelJob
+        Stop-Job $sshTunnelJob.Name
 
-        # Write-Host SshTunnelJob
-        # Receive-Job -Name SshTunnelJob
+        Write-Host SshTunnelJob
+        Receive-Job -Name SshTunnelJob | Format-List -Force -Expand CoreOnly
 
-        gcloud compute config-ssh --quiet --remove
+        # gcloud compute config-ssh --quiet --remove
         
 
     - name: Upload Workflow artifact ${{ matrix.config.buildConfig }}

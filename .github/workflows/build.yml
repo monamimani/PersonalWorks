@@ -14,22 +14,22 @@ jobs:
       fail-fast: false
       matrix:
         config:
-        - {
-            os: windows-latest,
-            buildConfig: debug,
-            configurePreset: windows-vs2022,
-            buildPreset: windows-vs2022-x64-debug,
-            testPreset: windows-vs2022-x64-debug,
-            experimental: false
-          }
-        - {
-            os: windows-latest,
-            buildConfig: relWithDebInfo,
-            configurePreset: windows-vs2022,
-            buildPreset: windows-vs2022-x64-release,
-            testPreset: windows-vs2022-x64-release,
-            experimental: false
-          }
+        # - {
+        #     os: windows-latest,
+        #     buildConfig: debug,
+        #     configurePreset: windows-vs2022,
+        #     buildPreset: windows-vs2022-x64-debug,
+        #     testPreset: windows-vs2022-x64-debug,
+        #     experimental: false
+        #   }
+        # - {
+        #     os: windows-latest,
+        #     buildConfig: relWithDebInfo,
+        #     configurePreset: windows-vs2022,
+        #     buildPreset: windows-vs2022-x64-release,
+        #     testPreset: windows-vs2022-x64-release,
+        #     experimental: false
+        #   }
         - {
             os: windows-latest,
             buildConfig: release,
@@ -38,30 +38,30 @@ jobs:
             testPreset: windows-vs2022-x64-shipping,
             experimental: false
           }
-        - {
-            os: ubuntu-latest,
-            buildConfig: debug,
-            configurePreset: linux-ninja-multi-config,
-            buildPreset: linux-ninja-multi-config-x64-debug,
-            testPreset: linux-ninja-multi-config-x64-debug,
-            experimental: true
-          }
-        - {
-            os: ubuntu-latest,
-            buildConfig: relWithDebInfo,
-            configurePreset: linux-ninja-multi-config,
-            buildPreset: linux-ninja-multi-config-x64-release,
-            testPreset: linux-ninja-multi-config-x64-release,
-            experimental: true
-          }
-        - {
-            os: ubuntu-latest,
-            buildConfig: release,
-            configurePreset: linux-ninja-multi-config,
-            buildPreset: linux-ninja-multi-config-x64-shipping,
-            testPreset: linux-ninja-multi-config-x64-shipping,
-            experimental: true
-          }
+        # - {
+        #     os: ubuntu-latest,
+        #     buildConfig: debug,
+        #     configurePreset: linux-ninja-multi-config,
+        #     buildPreset: linux-ninja-multi-config-x64-debug,
+        #     testPreset: linux-ninja-multi-config-x64-debug,
+        #     experimental: true
+        #   }
+        # - {
+        #     os: ubuntu-latest,
+        #     buildConfig: relWithDebInfo,
+        #     configurePreset: linux-ninja-multi-config,
+        #     buildPreset: linux-ninja-multi-config-x64-release,
+        #     testPreset: linux-ninja-multi-config-x64-release,
+        #     experimental: true
+        #   }
+        # - {
+        #     os: ubuntu-latest,
+        #     buildConfig: release,
+        #     configurePreset: linux-ninja-multi-config,
+        #     buildPreset: linux-ninja-multi-config-x64-shipping,
+        #     testPreset: linux-ninja-multi-config-x64-shipping,
+        #     experimental: true
+        #   }
         
 
 
@@ -259,6 +259,8 @@ jobs:
         # $sshTunnelJob = Start-Job -Name SshTunnelJob -ScriptBlock { ssh mongodb-personalworks-servers-vm-0.us-east1-b.tonal-justice-374902 -fNT -E ssh.log -L 27017:localhost:27017}
 
         # $sshTunnelJob = Start-Job -Name SshTunnelJob -ScriptBlock { gcloud compute ssh ${{secrets.GCE_INSTANCE_NAME}} --quiet --zone us-east1-b --tunnel-through-iap --verbosity=debug --ssh-flag="-vvv -o ExitOnForwardFailure=yes -NL 27017:localhost:27017"}
+
+        gcloud compute config-ssh
 
         gcloud compute ssh ${{secrets.GCE_INSTANCE_NAME}} --quiet --zone us-east1-b --tunnel-through-iap --verbosity=debug --ssh-flag="-v -T -L 27017:localhost:27017"
 

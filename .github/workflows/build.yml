@@ -249,6 +249,7 @@ jobs:
         # gcloud compute config-ssh
         # --quiet --force-key-file-overwrite
         
+        gcloud config set auth/impersonate_service_account personalworks-db@tonal-justice-374902.iam.gserviceaccount.com
         gcloud info
 
         # gcloud compute ssh ${{secrets.GCE_INSTANCE_NAME}} --quiet --zone us-east1-b --tunnel-through-iap --verbosity=debug --ssh-flag="-o ExitOnForwardFailure=yes -fNT -L 27017:localhost:27017"
@@ -283,7 +284,9 @@ jobs:
         Write-Host SshTunnelJob
         Receive-Job -Name SshTunnelJob | Format-List -Force -Expand CoreOnly
 
-        # gcloud compute config-ssh --quiet --remove
+        
+        gcloud config unset auth/impersonate_service_account
+        gcloud compute config-ssh --remove
         
 
     - name: Upload Workflow artifact ${{ matrix.config.buildConfig }}

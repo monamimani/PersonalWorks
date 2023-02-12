@@ -267,7 +267,7 @@ jobs:
         Receive-Job -Name SshTunnelJob | Format-List -Force -Expand CoreOnly
 
         # 27017
-        Test-NetConnection localhost -port 22500
+        Test-NetConnection localhost -port 80
 
         pushd Tools/UploadDataToMongoDb/
         go version

@@ -280,7 +280,6 @@ jobs:
 
         Write-Host SshTunnelJob
         Receive-Job -Name SshTunnelJob | Format-List -Force -Expand CoreOnly
-
         
         gcloud config unset auth/impersonate_service_account
         gcloud compute config-ssh --remove

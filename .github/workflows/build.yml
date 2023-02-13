@@ -233,14 +233,14 @@ jobs:
       with:
         project_id: ${{steps.gcloud_auth.outputs.project_id}}
 
-    - name: 'Setup Go for SendToMongoDb'
-      if: (runner.os == 'Windows') && (matrix.config.buildConfig == 'release')
-      uses: actions/setup-go@v3
-      with:
-        check-latest: true
-        go-version-file: 'Tools/UploadDataToMongoDb/go.mod'
-        cache: true
-        cache-dependency-path: 'Tools/UploadDataToMongoDb/go.sum'
+    # - name: 'Setup Go for SendToMongoDb'
+    #   if: (runner.os == 'Windows') && (matrix.config.buildConfig == 'release')
+    #   uses: actions/setup-go@v3
+    #   with:
+    #     check-latest: true
+    #     go-version-file: 'Tools/UploadDataToMongoDb/go.mod'
+    #     cache: true
+    #     cache-dependency-path: 'Tools/UploadDataToMongoDb/go.sum'
 
     - name: 'Create ssh tunnel'
       if: (runner.os == 'Windows') && (matrix.config.buildConfig == 'release')
@@ -253,6 +253,8 @@ jobs:
         gcloud info
         gcloud compute config-ssh
         # gcloud compute config-ssh --quiet
+
+        netsh advfirewall firewall add rule name="Open mongod port 27017" dir=in action=allow protocol=TCP localport=27017
 
         # ssh mongodb-personalworks-servers-vm-0.us-east1-b.tonal-justice-374902 -vvv -fNT -E ssh.log -L 27017:localhost:27017
 

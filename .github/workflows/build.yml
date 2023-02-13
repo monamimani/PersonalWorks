@@ -266,6 +266,8 @@ jobs:
         Get-Job 
         Receive-Job -Name SshTunnelJob | Format-List -Force -Expand CoreOnly
 
+        netstat -aon
+
         # 27017
         Test-NetConnection localhost -port 9876
 

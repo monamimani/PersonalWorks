@@ -271,11 +271,11 @@ jobs:
         # 27017
         Test-NetConnection localhost -port 27017
 
-        pushd Tools/UploadDataToMongoDb/
-        go version
-        go build .
-        ./SendToMongoDb.exe
-        popd
+        # pushd Tools/UploadDataToMongoDb/
+        # go version
+        # go build .
+        # ./SendToMongoDb.exe
+        # popd
 
         Get-Job
         Receive-Job -Name SshTunnelJob

@@ -258,7 +258,7 @@ jobs:
 
         # ssh mongodb-personalworks-servers-vm-0.us-east1-b.tonal-justice-374902 -vvv -fNT -E ssh.log -L 27017:localhost:27017
 
-        autossh -M 0 -o "ServerAliveInterval 30" -o "ServerAliveCountMax 3" -N -T -L 27017:localhost:27017 user@remote-host &
+        autossh -M 0 -o "ServerAliveInterval 30" -o "ServerAliveCountMax 3" -o "User=personalworks-db_tonal-justice-374902_iam_gserviceaccount_com" -N -T -L 27017:localhost:27017 mongodb-personalworks-servers-vm-0.us-east1-b.tonal-justice-374902 &
 
         # $sshTunnelJob = Start-Job -Name SshTunnelJob -ScriptBlock { ssh -o "User=personalworks-db_tonal-justice-374902_iam_gserviceaccount_com" mongodb-personalworks-servers-vm-0.us-east1-b.tonal-justice-374902 -vvv -fNT -L 27017:0.0.0.0:27017}
         # ssh -o "User=personalworks-db_tonal-justice-374902_iam_gserviceaccount_com" mongodb-personalworks-servers-vm-0.us-east1-b.tonal-justice-374902 -vvv -fNT -L 27017:localhost:27017
@@ -267,8 +267,8 @@ jobs:
         # gcloud compute ssh ${{secrets.GCE_INSTANCE_NAME}} --quiet --zone us-east1-b --tunnel-through-iap --verbosity=debug --ssh-flag="-o ExitOnForwardFailure=yes -fNT -L 27017:localhost:27017"
         # gcloud compute ssh ${{secrets.GCE_INSTANCE_NAME}} --quiet --zone us-east1-b --tunnel-through-iap --verbosity=debug --ssh-flag="-v -T -L 27017:localhost:27017"
 
-        Get-Job 
-        Receive-Job -Name SshTunnelJob | Format-List -Force -Expand CoreOnly
+        #Get-Job 
+        #Receive-Job -Name SshTunnelJob | Format-List -Force -Expand CoreOnly
 
         netstat -aon
 

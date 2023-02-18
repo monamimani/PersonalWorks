@@ -335,7 +335,6 @@ jobs:
         submodules: true
 
     - name: 'Setup Go for SendToMongoDb'
-      if: (runner.os == 'Windows') && (matrix.config.buildConfig == 'release')
       uses: actions/setup-go@v3
       with:
         check-latest: true
@@ -344,7 +343,6 @@ jobs:
         cache-dependency-path: 'Tools/UploadDataToMongoDb/go.sum'
 
     - name: 'Compile UploadDataToMongoDb'
-      if: (runner.os == 'Windows') && (matrix.config.buildConfig == 'release')
       run: |
         pushd Tools/UploadDataToMongoDb/
         go version
@@ -352,7 +350,6 @@ jobs:
         popd
 
     - name: Cache Tools Build
-      if: runner.os == 'Windows'
       id: cache-tools-build
       uses: actions/cache@v3
       with:

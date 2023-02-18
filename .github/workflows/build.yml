@@ -94,46 +94,46 @@ jobs:
       with:
         api_key: ${{ secrets.FORESIGHT_API_KEY }}
 
-    # - uses: actions/checkout@v3  
-    #   with:
-    #     lfs: true
-    #     submodules: true
+    - uses: actions/checkout@v3  
+      with:
+        lfs: true
+        submodules: true
 
-    # - name: Cache vcpkg
-    #   id: cache-vcpkg
-    #   uses: actions/cache@v3
-    #   with:
-    #     path: _Out/build/vcpkg_installed
-    #     key: ${{ runner.os }}-${{ matrix.config.configurePreset }}-vcpkg-${{ hashFiles('**/vcpkg.json') }}
+    - name: Cache vcpkg
+      id: cache-vcpkg
+      uses: actions/cache@v3
+      with:
+        path: _Out/build/vcpkg_installed
+        key: ${{ runner.os }}-${{ matrix.config.configurePreset }}-vcpkg-${{ hashFiles('**/vcpkg.json') }}
 
-    # - name: Install Linux packages
-    #   if: runner.os == 'Linux'
-    #   run: |
-    #     sudo apt update
-    #     sudo apt install gcc-11 g++-11
-    #     sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 110 --slave /usr/bin/g++ g++ /usr/bin/g++-11 --slave /usr/bin/gcov gcov /usr/bin/gcov-11
-    #     sudo apt-get install ninja-build
+    - name: Install Linux packages
+      if: runner.os == 'Linux'
+      run: |
+        sudo apt update
+        sudo apt install gcc-11 g++-11
+        sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 110 --slave /usr/bin/g++ g++ /usr/bin/g++-11 --slave /usr/bin/gcov gcov /usr/bin/gcov-11
+        sudo apt-get install ninja-build
 
-    # - name: Cache Windows packages
-    #   if: runner.os == 'Windows'
-    #   id: cache-install-opencppcoverage
-    #   uses: actions/cache@v3
-    #   with:
-    #     path: C:\Program Files\OpenCppCoverage
-    #     key: ${{ runner.os }}-cache-install-opencppcoverage
+    - name: Cache Windows packages
+      if: runner.os == 'Windows'
+      id: cache-install-opencppcoverage
+      uses: actions/cache@v3
+      with:
+        path: C:\Program Files\OpenCppCoverage
+        key: ${{ runner.os }}-cache-install-opencppcoverage
         
-    # - name: Install Windows packages
-    #   if: (runner.os == 'Windows') && (steps.cache-install-opencppcoverage.outputs.cache-hit != 'true')
-    #   shell: pwsh
-    #   run: |
-    #     choco install opencppcoverage
+    - name: Install Windows packages
+      if: (runner.os == 'Windows') && (steps.cache-install-opencppcoverage.outputs.cache-hit != 'true')
+      shell: pwsh
+      run: |
+        choco install opencppcoverage
 
-    # - name: "Set environmental variables"
-    #   shell: bash
-    #   run: |
-    #     # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#adding-a-system-path
-    #     echo "VCPKG_ROOT=$VCPKG_INSTALLATION_ROOT" >> $GITHUB_ENV
-    #     echo "C:\Program Files\OpenCppCoverage" >> $GITHUB_PATH
+    - name: "Set environmental variables"
+      shell: bash
+      run: |
+        # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#adding-a-system-path
+        echo "VCPKG_ROOT=$VCPKG_INSTALLATION_ROOT" >> $GITHUB_ENV
+        echo "C:\Program Files\OpenCppCoverage" >> $GITHUB_PATH
 
     # - name: Cmake Configure
     #   run: |
@@ -212,14 +212,30 @@ jobs:
     #       &$exe --benchmark_out_format=json --benchmark_out=$exeName.json
     #     }
 
-    # - name: 'Setup Go for SendToMongoDb'
-    #   if: (runner.os == 'Windows') && (matrix.config.buildConfig == 'release')
-    #   uses: actions/setup-go@v3
-    #   with:
-    #     check-latest: true
-    #     go-version-file: 'Tools/UploadDataToMongoDb/go.mod'
-    #     cache: true
-    #     cache-dependency-path: 'Tools/UploadDataToMongoDb/go.sum'
+    - name: 'Setup Go for SendToMongoDb'
+      if: (runner.os == 'Windows') && (matrix.config.buildConfig == 'release')
+      uses: actions/setup-go@v3
+      with:
+        check-latest: true
+        go-version-file: 'Tools/UploadDataToMongoDb/go.mod'
+        cache: true
+        cache-dependency-path: 'Tools/UploadDataToMongoDb/go.sum'
+
+    - name: 'Compile UploadDataToMongoDb'
+      if: (runner.os == 'Windows') && (matrix.config.buildConfig == 'release')
+      run: |
+        pushd Tools/UploadDataToMongoDb/
+        go version
+        go build .
+        popd
+
+    - name: Cache Tools Build
+      if: runner.os == 'Windows'
+      id: cache-tools-build
+      uses: actions/cache@v3
+      with:
+        path: Tools
+        key: cache-tools-build-${{ github.sha }}
 
     # - id: 'gcloud_auth'
     #   if: (runner.os == 'Windows') && (matrix.config.buildConfig == 'release')
@@ -330,6 +346,7 @@ jobs:
 
   SSH_Tunnel:
     runs-on: ubuntu-latest
+    needs: cache-tools-build
 
     # Add permissions for gcloud Authentification
     permissions:
@@ -352,6 +369,14 @@ jobs:
     #   with:
     #     lfs: true
     #     submodules: true
+
+    - name: Cache Tools Build
+      if: runner.os == 'Windows'
+      id: cache-tools-build
+      uses: actions/cache@v3
+      with:
+        path: Tools
+        key: cache-tools-build-${{ github.sha }}
 
     - id: 'gcloud_auth'
       name: 'Authenticate to Google Cloud'

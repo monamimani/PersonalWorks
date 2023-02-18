@@ -251,7 +251,7 @@ jobs:
         
         gcloud config set auth/impersonate_service_account personalworks-db@tonal-justice-374902.iam.gserviceaccount.com
         gcloud info
-        gcloud compute config-ssh
+        gcloud compute config-ssh --quiet
         # gcloud compute config-ssh --quiet
 
         # netsh advfirewall firewall add rule name="Open mongod port 27017" dir=in action=allow protocol=TCP localport=27017

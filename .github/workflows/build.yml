@@ -349,7 +349,6 @@ jobs:
         api_key: ${{ secrets.FORESIGHT_API_KEY }}
 
     - id: 'gcloud_auth'
-      if: (runner.os == 'Windows') && (matrix.config.buildConfig == 'release')
       name: 'Authenticate to Google Cloud'
       uses: 'google-github-actions/auth@v1'
       with:
@@ -357,7 +356,6 @@ jobs:
         service_account: personalworks-db@tonal-justice-374902.iam.gserviceaccount.com
 
     - name: Cache gcloud setup
-      if: (runner.os == 'Windows') && (matrix.config.buildConfig == 'release')
       id: cache-setup-gcloud
       uses: actions/cache@v3
       with:
@@ -365,13 +363,12 @@ jobs:
         key: ${{ runner.os }}-cache-setup-gcloud
 
     - name: 'Set up gcloud SDK'
-      if: (runner.os == 'Windows') && (matrix.config.buildConfig == 'release') && (steps.cache-install-cache-setup-gcloud.outputs.cache-hit != 'true')
+      if: (steps.cache-install-cache-setup-gcloud.outputs.cache-hit != 'true')
       uses: 'google-github-actions/setup-gcloud@v1'
       with:
         project_id: ${{steps.gcloud_auth.outputs.project_id}}
 
     - name: 'Create ssh tunnel'
-      if: (runner.os == 'Windows') && (matrix.config.buildConfig == 'release')
       run: |
         # gcloud auth list --filter=status:ACTIVE --format="value(account)"
         # gcloud compute config-ssh

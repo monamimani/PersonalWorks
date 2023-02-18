@@ -334,6 +334,14 @@ jobs:
         lfs: true
         submodules: true
 
+    - name: Cache Tools Build
+      id: cache-tools-build
+      uses: actions/cache@v3
+      with:
+        path: Tools
+        key: cache-tools-build-${{ github.run_id }}
+        restore-keys: cache-tools-build-
+
     - name: 'Setup Go for SendToMongoDb'
       uses: actions/setup-go@v3
       with:
@@ -349,12 +357,6 @@ jobs:
         go build .
         popd
 
-    - name: Cache Tools Build
-      id: cache-tools-build
-      uses: actions/cache@v3
-      with:
-        path: Tools
-        key: cache-tools-build-${{ github.sha }}
 
   SSH_Tunnel:
     runs-on: ubuntu-latest
@@ -383,12 +385,11 @@ jobs:
     #     submodules: true
 
     - name: Cache Tools Build
-      if: runner.os == 'Windows'
       id: cache-tools-build
       uses: actions/cache@v3
       with:
         path: Tools
-        key: cache-tools-build-${{ github.sha }}
+        key: cache-tools-build-${{ github.run_id }}
 
     - id: 'gcloud_auth'
       name: 'Authenticate to Google Cloud'
@@ -443,11 +444,11 @@ jobs:
 
         nc -vz 127.0.0.1 27017
 
-        # pushd Tools/UploadDataToMongoDb/
-        # go version
-        # go build .
-        # ./SendToMongoDb.exe
-        # popd
+        pushd Tools/UploadDataToMongoDb/
+        go version
+        go build .
+        ./SendToMongoDb.exe
+        popd
 
         #Get-Job
         #Stop-Job $sshTunnelJob.Name

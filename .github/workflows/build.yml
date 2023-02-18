@@ -263,7 +263,7 @@ jobs:
         # $sshTunnelJob = Start-Job -Name SshTunnelJob -ScriptBlock { ssh -o "User=personalworks-db_tonal-justice-374902_iam_gserviceaccount_com" mongodb-personalworks-servers-vm-0.us-east1-b.tonal-justice-374902 -vvv -fNT -L 27017:0.0.0.0:27017}
         # ssh -o "User=personalworks-db_tonal-justice-374902_iam_gserviceaccount_com" mongodb-personalworks-servers-vm-0.us-east1-b.tonal-justice-374902 -v -fNT -L 27017:localhost:27017
 
-        $sshTunnelJob = Start-Job -Name SshTunnelJob -ScriptBlock { gcloud compute ssh ${{secrets.GCE_INSTANCE_NAME}} --zone us-east1-b --tunnel-through-iap --verbosity=debug --ssh-flag=" -T -L 27017:localhost:27017"}
+        $sshTunnelJob = Start-Job -Name SshTunnelJob -ScriptBlock { gcloud compute ssh ${{secrets.GCE_INSTANCE_NAME}} --zone us-east1-b --tunnel-through-iap --verbosity=debug --ssh-flag="-T -L 27017:localhost:27017"}
         # gcloud compute ssh ${{secrets.GCE_INSTANCE_NAME}} --quiet --zone us-east1-b --tunnel-through-iap --verbosity=debug --ssh-flag="-o ExitOnForwardFailure=yes -fNT -L 27017:localhost:27017"
         # gcloud compute ssh ${{secrets.GCE_INSTANCE_NAME}} --quiet --zone us-east1-b --tunnel-through-iap --verbosity=debug --ssh-flag="-T -L 27017:localhost:27017"
 
@@ -282,11 +282,13 @@ jobs:
         popd
 
         Get-Job
-        Receive-Job -Name SshTunnelJob
         Stop-Job $sshTunnelJob.Name
+        $jobOutput = Receive-Job -Name SshTunnelJob
 
-        Write-Host SshTunnelJob
-        Receive-Job -Name SshTunnelJob | Format-List -Force -Expand CoreOnly
+        Write-Host $sshTunnelJob.Name
+        foreach ($item in $output){
+          Write-Host $item
+        }
         
         gcloud config unset auth/impersonate_service_account
         gcloud compute config-ssh --remove

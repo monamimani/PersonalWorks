@@ -6,9 +6,10 @@ jobs:
   build:
 
     # Add permissions for gcloud Authentification
-    permissions:
-      contents: 'read'
-      id-token: 'write'
+    # permissions:
+    #   contents: 'read'
+    #   id-token: 'write'
+    permissions: read-all|write-all
 
     strategy:
       fail-fast: false
@@ -93,46 +94,46 @@ jobs:
       with:
         api_key: ${{ secrets.FORESIGHT_API_KEY }}
 
-    - uses: actions/checkout@v3  
-      with:
-        lfs: true
-        submodules: true
+    # - uses: actions/checkout@v3  
+    #   with:
+    #     lfs: true
+    #     submodules: true
 
-    - name: Cache vcpkg
-      id: cache-vcpkg
-      uses: actions/cache@v3
-      with:
-        path: _Out/build/vcpkg_installed
-        key: ${{ runner.os }}-${{ matrix.config.configurePreset }}-vcpkg-${{ hashFiles('**/vcpkg.json') }}
+    # - name: Cache vcpkg
+    #   id: cache-vcpkg
+    #   uses: actions/cache@v3
+    #   with:
+    #     path: _Out/build/vcpkg_installed
+    #     key: ${{ runner.os }}-${{ matrix.config.configurePreset }}-vcpkg-${{ hashFiles('**/vcpkg.json') }}
 
-    - name: Install Linux packages
-      if: runner.os == 'Linux'
-      run: |
-        sudo apt update
-        sudo apt install gcc-11 g++-11
-        sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 110 --slave /usr/bin/g++ g++ /usr/bin/g++-11 --slave /usr/bin/gcov gcov /usr/bin/gcov-11
-        sudo apt-get install ninja-build
+    # - name: Install Linux packages
+    #   if: runner.os == 'Linux'
+    #   run: |
+    #     sudo apt update
+    #     sudo apt install gcc-11 g++-11
+    #     sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 110 --slave /usr/bin/g++ g++ /usr/bin/g++-11 --slave /usr/bin/gcov gcov /usr/bin/gcov-11
+    #     sudo apt-get install ninja-build
 
-    - name: Cache Windows packages
-      if: runner.os == 'Windows'
-      id: cache-install-opencppcoverage
-      uses: actions/cache@v3
-      with:
-        path: C:\Program Files\OpenCppCoverage
-        key: ${{ runner.os }}-cache-install-opencppcoverage
+    # - name: Cache Windows packages
+    #   if: runner.os == 'Windows'
+    #   id: cache-install-opencppcoverage
+    #   uses: actions/cache@v3
+    #   with:
+    #     path: C:\Program Files\OpenCppCoverage
+    #     key: ${{ runner.os }}-cache-install-opencppcoverage
         
-    - name: Install Windows packages
-      if: (runner.os == 'Windows') && (steps.cache-install-opencppcoverage.outputs.cache-hit != 'true')
-      shell: pwsh
-      run: |
-        choco install opencppcoverage
+    # - name: Install Windows packages
+    #   if: (runner.os == 'Windows') && (steps.cache-install-opencppcoverage.outputs.cache-hit != 'true')
+    #   shell: pwsh
+    #   run: |
+    #     choco install opencppcoverage
 
-    - name: "Set environmental variables"
-      shell: bash
-      run: |
-        # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#adding-a-system-path
-        echo "VCPKG_ROOT=$VCPKG_INSTALLATION_ROOT" >> $GITHUB_ENV
-        echo "C:\Program Files\OpenCppCoverage" >> $GITHUB_PATH
+    # - name: "Set environmental variables"
+    #   shell: bash
+    #   run: |
+    #     # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#adding-a-system-path
+    #     echo "VCPKG_ROOT=$VCPKG_INSTALLATION_ROOT" >> $GITHUB_ENV
+    #     echo "C:\Program Files\OpenCppCoverage" >> $GITHUB_PATH
 
     # - name: Cmake Configure
     #   run: |
@@ -211,6 +212,15 @@ jobs:
     #       &$exe --benchmark_out_format=json --benchmark_out=$exeName.json
     #     }
 
+    # - name: 'Setup Go for SendToMongoDb'
+    #   if: (runner.os == 'Windows') && (matrix.config.buildConfig == 'release')
+    #   uses: actions/setup-go@v3
+    #   with:
+    #     check-latest: true
+    #     go-version-file: 'Tools/UploadDataToMongoDb/go.mod'
+    #     cache: true
+    #     cache-dependency-path: 'Tools/UploadDataToMongoDb/go.sum'
+
     - id: 'gcloud_auth'
       if: (runner.os == 'Windows') && (matrix.config.buildConfig == 'release')
       name: 'Authenticate to Google Cloud'
@@ -232,15 +242,6 @@ jobs:
       uses: 'google-github-actions/setup-gcloud@v1'
       with:
         project_id: ${{steps.gcloud_auth.outputs.project_id}}
-
-    # - name: 'Setup Go for SendToMongoDb'
-    #   if: (runner.os == 'Windows') && (matrix.config.buildConfig == 'release')
-    #   uses: actions/setup-go@v3
-    #   with:
-    #     check-latest: true
-    #     go-version-file: 'Tools/UploadDataToMongoDb/go.mod'
-    #     cache: true
-    #     cache-dependency-path: 'Tools/UploadDataToMongoDb/go.sum'
 
     - name: 'Create ssh tunnel'
       if: (runner.os == 'Windows') && (matrix.config.buildConfig == 'release')
@@ -291,7 +292,7 @@ jobs:
         
         gcloud config unset auth/impersonate_service_account
         gcloud compute config-ssh --remove
-        
+
 
     - name: Upload Workflow artifact ${{ matrix.config.buildConfig }}
       uses: actions/upload-artifact@v3
@@ -326,3 +327,90 @@ jobs:
     #   if: (runner.os == 'Windows') && (matrix.config.buildConfig == 'release')
     #   run: |
     #     gcloud compute config-ssh --remove
+
+  # SSH_Tunnel:
+  #   runs-on: ubuntu-latest
+
+  #   # Add permissions for gcloud Authentification
+  #   permissions:
+  #     contents: 'read'
+  #     id-token: 'write'
+
+  #   steps:
+  #   - name: Foresight Collect Workflow Telemetry
+  #     uses: runforesight/foresight-workflow-kit-action@v1
+  #     if: ${{ always() }}
+  #     with:
+  #       api_key: ${{ secrets.FORESIGHT_API_KEY }}
+
+  #   - id: 'gcloud_auth'
+  #     if: (runner.os == 'Windows') && (matrix.config.buildConfig == 'release')
+  #     name: 'Authenticate to Google Cloud'
+  #     uses: 'google-github-actions/auth@v1'
+  #     with:
+  #       workload_identity_provider: ${{secrets.GCLOUD_IAM_WORKLOAD_IDENTITY_PROVIDER}}
+  #       service_account: personalworks-db@tonal-justice-374902.iam.gserviceaccount.com
+
+  #   - name: Cache gcloud setup
+  #     if: (runner.os == 'Windows') && (matrix.config.buildConfig == 'release')
+  #     id: cache-setup-gcloud
+  #     uses: actions/cache@v3
+  #     with:
+  #       path: C:\hostedtoolcache\windows\gcloud
+  #       key: ${{ runner.os }}-cache-setup-gcloud
+
+  #   - name: 'Set up gcloud SDK'
+  #     if: (runner.os == 'Windows') && (matrix.config.buildConfig == 'release') && (steps.cache-install-cache-setup-gcloud.outputs.cache-hit != 'true')
+  #     uses: 'google-github-actions/setup-gcloud@v1'
+  #     with:
+  #       project_id: ${{steps.gcloud_auth.outputs.project_id}}
+
+  #   - name: 'Create ssh tunnel'
+  #     if: (runner.os == 'Windows') && (matrix.config.buildConfig == 'release')
+  #     run: |
+  #       # gcloud auth list --filter=status:ACTIVE --format="value(account)"
+  #       # gcloud compute config-ssh
+  #       # --quiet --force-key-file-overwrite
+        
+  #       gcloud config set auth/impersonate_service_account personalworks-db@tonal-justice-374902.iam.gserviceaccount.com
+  #       gcloud info
+  #       gcloud compute config-ssh --quiet --verbosity=debug
+  #       # gcloud compute config-ssh --quiet
+
+  #       # netsh advfirewall firewall add rule name="Open mongod port 27017" dir=in action=allow protocol=TCP localport=27017
+
+  #       # ssh mongodb-personalworks-servers-vm-0.us-east1-b.tonal-justice-374902 -vvv -fNT -E ssh.log -L 27017:localhost:27017
+
+  #       # autossh -M 0 -o "ServerAliveInterval 30" -o "ServerAliveCountMax 3" -o "User=personalworks-db_tonal-justice-374902_iam_gserviceaccount_com" -N -T -L 27017:localhost:27017 mongodb-personalworks-servers-vm-0.us-east1-b.tonal-justice-374902 &
+
+  #       # $sshTunnelJob = Start-Job -Name SshTunnelJob -ScriptBlock { ssh -o "User=personalworks-db_tonal-justice-374902_iam_gserviceaccount_com" mongodb-personalworks-servers-vm-0.us-east1-b.tonal-justice-374902 -vvv -fNT -L 27017:0.0.0.0:27017}
+  #       # ssh -o "User=personalworks-db_tonal-justice-374902_iam_gserviceaccount_com" mongodb-personalworks-servers-vm-0.us-east1-b.tonal-justice-374902 -v -fNT -L 27017:localhost:27017
+
+  #       # $sshTunnelJob = Start-Job -Name SshTunnelJob -ScriptBlock { gcloud compute ssh ${{secrets.GCE_INSTANCE_NAME}} --zone us-east1-b --tunnel-through-iap --verbosity=debug --ssh-flag="-T -L 27017:localhost:27017"}
+  #       # gcloud compute ssh ${{secrets.GCE_INSTANCE_NAME}} --quiet --zone us-east1-b --tunnel-through-iap --verbosity=debug --ssh-flag="-o ExitOnForwardFailure=yes -fNT -L 27017:localhost:27017"
+  #       gcloud compute ssh ${{secrets.GCE_INSTANCE_NAME}} --quiet --zone us-east1-b --tunnel-through-iap --verbosity=debug --ssh-flag="-T -L 27017:localhost:27017"
+
+  #       # Get-Job 
+
+  #       netstat -aon
+
+  #       # 27017
+  #       Test-NetConnection localhost -port 27017
+
+  #       pushd Tools/UploadDataToMongoDb/
+  #       go version
+  #       go build .
+  #       ./SendToMongoDb.exe
+  #       popd
+
+  #       #Get-Job
+  #       #Stop-Job $sshTunnelJob.Name
+  #       #$jobOutput = Receive-Job -Name SshTunnelJob
+
+  #       #Write-Host $sshTunnelJob.Name
+  #       #foreach ($item in $output){
+  #       #  Write-Host $item
+  #       #}
+        
+  #       gcloud config unset auth/impersonate_service_account
+  #       gcloud compute config-ssh --remove

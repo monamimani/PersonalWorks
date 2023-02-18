@@ -9,7 +9,7 @@ jobs:
     # permissions:
     #   contents: 'read'
     #   id-token: 'write'
-    permissions: read-all|write-all
+    permissions: {read-all|write-all}
 
     strategy:
       fail-fast: false

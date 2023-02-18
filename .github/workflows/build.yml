@@ -380,7 +380,7 @@ jobs:
         # --quiet --force-key-file-overwrite
         
         gcloud config set auth/impersonate_service_account personalworks-db@tonal-justice-374902.iam.gserviceaccount.com
-        gcloud info
+        # gcloud info
         # gcloud compute config-ssh --quiet --verbosity=debug
         # gcloud compute config-ssh --quiet
 
@@ -395,7 +395,7 @@ jobs:
 
         # $sshTunnelJob = Start-Job -Name SshTunnelJob -ScriptBlock { gcloud compute ssh ${{secrets.GCE_INSTANCE_NAME}} --zone us-east1-b --tunnel-through-iap --verbosity=debug --ssh-flag="-T -L 27017:localhost:27017"}
         # gcloud compute ssh ${{secrets.GCE_INSTANCE_NAME}} --quiet --zone us-east1-b --tunnel-through-iap --verbosity=debug --ssh-flag="-o ExitOnForwardFailure=yes -fNT -L 27017:localhost:27017"
-        gcloud compute ssh ${{secrets.GCE_INSTANCE_NAME}} --quiet --zone us-east1-b --tunnel-through-iap --verbosity=debug --ssh-flag="-fNT -L 27017:localhost:27017"
+        gcloud compute ssh ${{secrets.GCE_INSTANCE_NAME}} --quiet --zone us-east1-b --tunnel-through-iap --ssh-flag="-fNT -L 27017:localhost:27017"
 
         # Get-Job 
 
@@ -403,7 +403,8 @@ jobs:
 
         # 27017
         # telnet localhost -port 27017
-        nc -vz localhost 27017
+
+        nc -vz 127.0.0.1 27017
 
         # pushd Tools/UploadDataToMongoDb/
         # go version

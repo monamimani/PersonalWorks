@@ -348,6 +348,11 @@ jobs:
       with:
         api_key: ${{ secrets.FORESIGHT_API_KEY }}
 
+    - uses: actions/checkout@v3  
+      with:
+        lfs: true
+        submodules: true
+
     - id: 'gcloud_auth'
       name: 'Authenticate to Google Cloud'
       uses: 'google-github-actions/auth@v1'
@@ -355,18 +360,18 @@ jobs:
         workload_identity_provider: ${{secrets.GCLOUD_IAM_WORKLOAD_IDENTITY_PROVIDER}}
         service_account: personalworks-db@tonal-justice-374902.iam.gserviceaccount.com
 
-    - name: Cache gcloud setup
-      id: cache-setup-gcloud
-      uses: actions/cache@v3
-      with:
-        path: C:\hostedtoolcache\windows\gcloud
-        key: ${{ runner.os }}-cache-setup-gcloud
+    # - name: Cache gcloud setup
+    #   id: cache-setup-gcloud
+    #   uses: actions/cache@v3
+    #   with:
+    #     path: C:\hostedtoolcache\windows\gcloud
+    #     key: ${{ runner.os }}-cache-setup-gcloud
 
-    - name: 'Set up gcloud SDK'
-      if: (steps.cache-install-cache-setup-gcloud.outputs.cache-hit != 'true')
-      uses: 'google-github-actions/setup-gcloud@v1'
-      with:
-        project_id: ${{steps.gcloud_auth.outputs.project_id}}
+    # - name: 'Set up gcloud SDK'
+    #   if: (steps.cache-install-cache-setup-gcloud.outputs.cache-hit != 'true')
+    #   uses: 'google-github-actions/setup-gcloud@v1'
+    #   with:
+    #     project_id: ${{steps.gcloud_auth.outputs.project_id}}
 
     - name: 'Create ssh tunnel'
       run: |
@@ -394,10 +399,10 @@ jobs:
 
         # Get-Job 
 
-        netstat -aon
+        # netstat -aon
 
         # 27017
-        Test-NetConnection localhost -port 27017
+        telnet localhost -port 27017
 
         # pushd Tools/UploadDataToMongoDb/
         # go version

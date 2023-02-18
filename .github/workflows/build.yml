@@ -348,10 +348,10 @@ jobs:
       with:
         api_key: ${{ secrets.FORESIGHT_API_KEY }}
 
-    - uses: actions/checkout@v3  
-      with:
-        lfs: true
-        submodules: true
+    # - uses: actions/checkout@v3  
+    #   with:
+    #     lfs: true
+    #     submodules: true
 
     - id: 'gcloud_auth'
       name: 'Authenticate to Google Cloud'
@@ -403,6 +403,7 @@ jobs:
 
         # 27017
         telnet localhost -port 27017
+        nc -vz localhost 27017
 
         # pushd Tools/UploadDataToMongoDb/
         # go version

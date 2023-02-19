@@ -453,7 +453,7 @@ jobs:
 
         cd Tools/UploadDataToMongoDb/
         ls -sh
-        SendToMongoDb.exe
+        SendToMongoDb
         #popd
 
         #Get-Job

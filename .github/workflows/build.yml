@@ -368,7 +368,7 @@ jobs:
       id-token: 'write'
 
     container:
-      image: google/cloud-sdk:alpine
+      image: google/cloud-sdk:sdk:slim
       ports:
       - 27017:27017
       volumes:

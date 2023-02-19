@@ -1,0 +1,10 @@
+name: PersonalWorks Benchmarks
+
+on: workflow_call
+
+jobs:
+  benchamrks-personalwork:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Dummy
+      run: echo WIP

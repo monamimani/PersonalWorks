@@ -393,14 +393,6 @@ jobs:
         path: Tools
         key: cache-tools-build-${{ github.run_id }}
 
-    - name: 'Setup Go for SendToMongoDb'
-      uses: actions/setup-go@v3
-      with:
-        check-latest: true
-        go-version-file: 'Tools/UploadDataToMongoDb/go.mod'
-        cache: false
-        #cache-dependency-path: 'Tools/UploadDataToMongoDb/go.sum'
-
     - id: 'gcloud_auth'
       name: 'Authenticate to Google Cloud'
       uses: 'google-github-actions/auth@v1'
@@ -457,10 +449,9 @@ jobs:
         # echo "nc"
         # nc -vz 127.0.0.1 27017
 
-        cd Tools/UploadDataToMongoDb/
-        go version
-        ./SendToMongoDb.exe
-        popd
+        #cd Tools/UploadDataToMongoDb/
+        Tools/UploadDataToMongoDb/SendToMongoDb.exe
+        #popd
 
         #Get-Job
         #Stop-Job $sshTunnelJob.Name

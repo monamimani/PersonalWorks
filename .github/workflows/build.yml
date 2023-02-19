@@ -419,6 +419,8 @@ jobs:
         # gcloud compute config-ssh
         # --quiet --force-key-file-overwrite
         
+        $(gcloud info --format="value(basic.python_location)") -m pip install numpy
+
         gcloud config set auth/impersonate_service_account personalworks-db@tonal-justice-374902.iam.gserviceaccount.com
         # gcloud info
         # gcloud compute config-ssh --quiet --verbosity=debug

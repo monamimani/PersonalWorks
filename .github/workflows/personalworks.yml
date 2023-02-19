@@ -62,7 +62,7 @@ jobs:
       id-token: 'write'
 
     container:
-      image: google/cloud-sdk:alpine
+      image: google/cloud-sdk:slim
       ports:
       - 27017:27017
       volumes:
@@ -82,23 +82,22 @@ jobs:
         path: Tools
         key: cache-tools-build-${{ github.run_id }}
 
-    - id: 'gcloud_auth'
+    - id: gcloud_auth
       name: 'Authenticate to Google Cloud'
       uses: 'google-github-actions/auth@v1'
       with:
         workload_identity_provider: ${{secrets.GCLOUD_IAM_WORKLOAD_IDENTITY_PROVIDER}}
         service_account: personalworks-db@tonal-justice-374902.iam.gserviceaccount.com
 
-    - name: 'SSH Tunnel & SendToMongoDb'
-      run: |        
+    - name: SSH Tunnel & SendToMongoDb
+      run: |  
+        sudo apt-get install python3-pip      
         $(gcloud info --format="value(basic.python_location)") -m pip install numpy
 
         gcloud config set auth/impersonate_service_account personalworks-db@tonal-justice-374902.iam.gserviceaccount.com
         # gcloud info
         # gcloud compute config-ssh --quiet --verbosity=debug
         # gcloud compute config-ssh --quiet
-
-        # netsh advfirewall firewall add rule name="Open mongod port 27017" dir=in action=allow protocol=TCP localport=27017
 
         # ssh mongodb-personalworks-servers-vm-0.us-east1-b.tonal-justice-374902 -vvv -fNT -E ssh.log -L 27017:localhost:27017
 

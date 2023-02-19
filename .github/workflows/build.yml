@@ -457,7 +457,7 @@ jobs:
         # echo "nc"
         # nc -vz 127.0.0.1 27017
 
-        pushd Tools/UploadDataToMongoDb/
+        cd Tools/UploadDataToMongoDb/
         go version
         ./SendToMongoDb.exe
         popd

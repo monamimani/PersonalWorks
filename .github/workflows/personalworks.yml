@@ -137,4 +137,6 @@ jobs:
       run: |        
         gh extension install actions/gh-actions-cache
 
+        gh actions-cache delete CacheBuild --confirm
+
         gh actions-cache delete cache-tools-build-${{ github.run_id }} --confirm

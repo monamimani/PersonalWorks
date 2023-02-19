@@ -1,4 +1,4 @@
-name: Cmake build
+name: Personalworks
 
 on: [push, pull_request, release]
 
@@ -215,6 +215,23 @@ jobs:
           _Out/build/${{ matrix.config.configurePreset }}/_lib/${{ matrix.config.buildConfig }}
           ssh.log
 
+  tests-personalworks:
+    runs-on: ubuntu-latest
+    needs: windows-vs2022-x64-release    
+    steps:
+    - name: Foresight Collect Workflow Telemetry
+      uses: runforesight/foresight-workflow-kit-action@v1
+      if: ${{ always() }}
+      with:
+        api_key: ${{ secrets.FORESIGHT_API_KEY }}
+
+    - name: 'Run Tests '
+      run: |
+        pushd Tools/UploadDataToMongoDb/
+        go version
+        go build .
+        popd
+
   build-tools:
     runs-on: ubuntu-latest
 
@@ -329,6 +346,8 @@ jobs:
       if: ${{ always() }}
       with:
         api_key: ${{ secrets.FORESIGHT_API_KEY }}
+
+    - uses: actions/checkout@v3 
 
     - name: 'Clean caches'
       env:

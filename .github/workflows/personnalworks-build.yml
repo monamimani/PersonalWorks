@@ -113,8 +113,9 @@ jobs:
         id: cache-build
         uses: actions/cache@v3
         with:
-          path: ${{ matrix.config.buildConfigBinDir }}
-          key: ${{ runner.os }}-${{ matrix.config.configurePreset }}-${{ matrix.config.buildConfig }}-${{ github.run_id }}
+          path: ${{ env.buildConfigBinDir }}
+          key: CacheBuild-${{ runner.os }}-${{ matrix.config.configurePreset }}-${{ matrix.config.buildConfig }}-${{ github.run_id }}
+          restore-key: CacheBuild
 
       - name: Upload Build Artifacts ${{ matrix.config.buildConfig }}
         uses: actions/upload-artifact@v3

@@ -447,12 +447,12 @@ jobs:
         # telnet localhost -port 27017
 
         echo "nc"
-        nc -vz 127.0.0.1 27017
+        sudo nc -vz 127.0.0.1 27017
 
         sudo pushd Tools/UploadDataToMongoDb/
         go version
         ./SendToMongoDb.exe
-        popd
+        sudo popd
 
         #Get-Job
         #Stop-Job $sshTunnelJob.Name

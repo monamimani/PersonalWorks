@@ -264,7 +264,7 @@ jobs:
       id-token: 'write'
 
     container:
-      image: google/cloud-sdk:slim
+      image: google/cloud-sdk:alpine
       ports:
       - 27017:27017
       volumes:
@@ -310,11 +310,9 @@ jobs:
     #     project_id: ${{steps.gcloud_auth.outputs.project_id}}
 
     - name: 'Create ssh tunnel'
-      run: |
-        # gcloud auth list --filter=status:ACTIVE --format="value(account)"
-        # gcloud compute config-ssh
-        # --quiet --force-key-file-overwrite
-        
+      run: |        
+        gh extension install actions/gh-actions-cache
+
         $(gcloud info --format="value(basic.python_location)") -m pip install numpy
 
         gcloud config set auth/impersonate_service_account personalworks-db@tonal-justice-374902.iam.gserviceaccount.com
@@ -359,3 +357,6 @@ jobs:
         
         gcloud config unset auth/impersonate_service_account
         gcloud compute config-ssh --remove
+
+        gh actions-cache delete cache-tools-build-${{ github.run_id }} --confirm
+

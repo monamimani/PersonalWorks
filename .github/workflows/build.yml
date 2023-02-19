@@ -453,8 +453,7 @@ jobs:
 
         cd Tools/UploadDataToMongoDb/
         ls -sh
-        SendToMongoDb
-        #popd
+        ./SendToMongoDb
 
         #Get-Job
         #Stop-Job $sshTunnelJob.Name

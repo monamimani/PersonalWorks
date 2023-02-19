@@ -90,8 +90,7 @@ jobs:
         service_account: personalworks-db@tonal-justice-374902.iam.gserviceaccount.com
 
     - name: SSH Tunnel & SendToMongoDb
-      run: |  
-        sudo apt-get install python3-pip      
+      run: |       
         $(gcloud info --format="value(basic.python_location)") -m pip install numpy
 
         gcloud config set auth/impersonate_service_account personalworks-db@tonal-justice-374902.iam.gserviceaccount.com

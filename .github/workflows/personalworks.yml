@@ -4,7 +4,7 @@ on: [push, pull_request, release]
 
 jobs:
   build-personalworks:  
-    uses: ${{github.repository}}/.github/workflows/personnalworks-build.yml@main
+    uses: ./.github/workflows/personnalworks-build.yml@main
 
   build-tools:
     runs-on: ubuntu-latest

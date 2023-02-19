@@ -331,6 +331,8 @@ jobs:
         api_key: ${{ secrets.FORESIGHT_API_KEY }}
 
     - name: 'Clean caches'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |        
         gh extension install actions/gh-actions-cache
 

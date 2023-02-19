@@ -355,7 +355,9 @@ jobs:
         pushd Tools/UploadDataToMongoDb/
         go version
         go build .
+        ls -sh
         popd
+        ls -sh
 
 
   SSH_Tunnel:

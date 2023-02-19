@@ -12,7 +12,7 @@ jobs:
 
   benchamrks-personalworks:  
     needs: build-personalworks 
-    uses: ./.github/workflows/personnalworks-benchamrks.yml
+    uses: ./.github/workflows/personnalworks-benchmarks.yml
 
   build-tools:
     runs-on: ubuntu-latest

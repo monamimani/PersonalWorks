@@ -97,7 +97,7 @@ jobs:
         run: |
           sudo apt update
           sudo apt install gcc-11 g++-11
-          sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 110 --slave /usr/bin/g++ g++ /usr/bin/g++-11 --slave /usr/bin/gcov gcov /usr/bin/gcov-11
+          sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 110 --slave /usr/bin/g++ g++ /usr/bin/g++-11
           sudo apt-get install ninja-build
 
       - name: Cmake Configure
@@ -115,3 +115,12 @@ jobs:
         with:
           path: ${{ matrix.config.buildConfigBinDir }}
           key: ${{ runner.os }}-${{ matrix.config.configurePreset }}-${{ matrix.config.buildConfig }}-${{ github.run_id }}
+
+      - name: Upload Build Artifacts ${{ matrix.config.buildConfig }}
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: PersonalWorks-Build-${{github.workflow}}-${{github.job}}-${{ matrix.config.buildConfig }}_Out
+          path: |
+            _Out/build/${{ matrix.config.configurePreset }}/_bin/${{ matrix.config.buildConfig }}
+            _Out/build/${{ matrix.config.configurePreset }}/_lib/${{ matrix.config.buildConfig }}

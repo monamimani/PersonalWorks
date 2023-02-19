@@ -236,7 +236,6 @@ jobs:
       with:
         path: Tools
         key: cache-tools-build-${{ github.run_id }}
-        #restore-keys: cache-tools-build-
 
     - name: 'Setup Go for SendToMongoDb'
       uses: actions/setup-go@v3
@@ -291,10 +290,8 @@ jobs:
         workload_identity_provider: ${{secrets.GCLOUD_IAM_WORKLOAD_IDENTITY_PROVIDER}}
         service_account: personalworks-db@tonal-justice-374902.iam.gserviceaccount.com
 
-    - name: 'Create ssh tunnel'
+    - name: 'SSH Tunnel & SendToMongoDb'
       run: |        
-        gh extension install actions/gh-actions-cache
-
         $(gcloud info --format="value(basic.python_location)") -m pip install numpy
 
         gcloud config set auth/impersonate_service_account personalworks-db@tonal-justice-374902.iam.gserviceaccount.com
@@ -315,38 +312,17 @@ jobs:
         # gcloud compute ssh ${{secrets.GCE_INSTANCE_NAME}} --quiet --zone us-east1-b --tunnel-through-iap --verbosity=debug --ssh-flag="-o ExitOnForwardFailure=yes -fNT -L 27017:localhost:27017"
         gcloud compute ssh ${{secrets.GCE_INSTANCE_NAME}} --quiet --zone us-east1-b --tunnel-through-iap --ssh-flag="-fNT -L 27017:localhost:27017"
 
-        # Get-Job 
-
-        # netstat -aon
-
-        # 27017
-        # telnet localhost -port 27017
-
-        # echo "nc"
-        # nc -vz 127.0.0.1 27017
-
         cd Tools/UploadDataToMongoDb/
         ./SendToMongoDb
-
-        #Get-Job
-        #Stop-Job $sshTunnelJob.Name
-        #$jobOutput = Receive-Job -Name SshTunnelJob
-
-        #Write-Host $sshTunnelJob.Name
-        #foreach ($item in $output){
-        #  Write-Host $item
-        #}
         
         gcloud config unset auth/impersonate_service_account
         gcloud compute config-ssh --remove
-
-        gh actions-cache delete cache-tools-build-${{ github.run_id }} --confirm
 
   Cleanup:
     runs-on: ubuntu-latest
     needs: [build-personalworks, SSH_Tunnel]
     if: ${{ always() }}
-    
+
     steps:
     - name: Foresight Collect Workflow Telemetry
       uses: runforesight/foresight-workflow-kit-action@v1

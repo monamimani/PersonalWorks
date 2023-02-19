@@ -446,11 +446,10 @@ jobs:
         # 27017
         # telnet localhost -port 27017
 
-        sudo nc -vz 127.0.0.1 27017
+        # nc -vz 127.0.0.1 27017
 
         pushd Tools/UploadDataToMongoDb/
         go version
-        go build .
         ./SendToMongoDb.exe
         popd
 

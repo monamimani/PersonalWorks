@@ -355,9 +355,7 @@ jobs:
         pushd Tools/UploadDataToMongoDb/
         go version
         go build .
-        ls -sh
         popd
-        ls -sh
 
 
   SSH_Tunnel:
@@ -452,7 +450,6 @@ jobs:
         # nc -vz 127.0.0.1 27017
 
         cd Tools/UploadDataToMongoDb/
-        ls -sh
         ./SendToMongoDb
 
         #Get-Job

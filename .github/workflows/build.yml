@@ -5,32 +5,26 @@ on: [push, pull_request, release]
 jobs:
   build-personalworks:
 
-    # Add permissions for gcloud Authentification
-    # permissions:
-    #   contents: 'read'
-    #   id-token: 'write'
-    #permissions: write-all
-
     strategy:
       fail-fast: false
       matrix:
         config:
-        # - {
-        #     os: windows-latest,
-        #     buildConfig: debug,
-        #     configurePreset: windows-vs2022,
-        #     buildPreset: windows-vs2022-x64-debug,
-        #     testPreset: windows-vs2022-x64-debug,
-        #     experimental: false
-        #   }
-        # - {
-        #     os: windows-latest,
-        #     buildConfig: relWithDebInfo,
-        #     configurePreset: windows-vs2022,
-        #     buildPreset: windows-vs2022-x64-release,
-        #     testPreset: windows-vs2022-x64-release,
-        #     experimental: false
-        #   }
+        - {
+            os: windows-latest,
+            buildConfig: debug,
+            configurePreset: windows-vs2022,
+            buildPreset: windows-vs2022-x64-debug,
+            testPreset: windows-vs2022-x64-debug,
+            experimental: false
+          }
+        - {
+            os: windows-latest,
+            buildConfig: relWithDebInfo,
+            configurePreset: windows-vs2022,
+            buildPreset: windows-vs2022-x64-release,
+            testPreset: windows-vs2022-x64-release,
+            experimental: false
+          }
         - {
             os: windows-latest,
             buildConfig: release,
@@ -39,30 +33,30 @@ jobs:
             testPreset: windows-vs2022-x64-shipping,
             experimental: false
           }
-        # - {
-        #     os: ubuntu-latest,
-        #     buildConfig: debug,
-        #     configurePreset: linux-ninja-multi-config,
-        #     buildPreset: linux-ninja-multi-config-x64-debug,
-        #     testPreset: linux-ninja-multi-config-x64-debug,
-        #     experimental: true
-        #   }
-        # - {
-        #     os: ubuntu-latest,
-        #     buildConfig: relWithDebInfo,
-        #     configurePreset: linux-ninja-multi-config,
-        #     buildPreset: linux-ninja-multi-config-x64-release,
-        #     testPreset: linux-ninja-multi-config-x64-release,
-        #     experimental: true
-        #   }
-        # - {
-        #     os: ubuntu-latest,
-        #     buildConfig: release,
-        #     configurePreset: linux-ninja-multi-config,
-        #     buildPreset: linux-ninja-multi-config-x64-shipping,
-        #     testPreset: linux-ninja-multi-config-x64-shipping,
-        #     experimental: true
-        #   }
+        - {
+            os: ubuntu-latest,
+            buildConfig: debug,
+            configurePreset: linux-ninja-multi-config,
+            buildPreset: linux-ninja-multi-config-x64-debug,
+            testPreset: linux-ninja-multi-config-x64-debug,
+            experimental: true
+          }
+        - {
+            os: ubuntu-latest,
+            buildConfig: relWithDebInfo,
+            configurePreset: linux-ninja-multi-config,
+            buildPreset: linux-ninja-multi-config-x64-release,
+            testPreset: linux-ninja-multi-config-x64-release,
+            experimental: true
+          }
+        - {
+            os: ubuntu-latest,
+            buildConfig: release,
+            configurePreset: linux-ninja-multi-config,
+            buildPreset: linux-ninja-multi-config-x64-shipping,
+            testPreset: linux-ninja-multi-config-x64-shipping,
+            experimental: true
+          }
         
 
 
@@ -76,7 +70,6 @@ jobs:
   #   - os: windows-latest
   #     buildType: Shipping
   #     configurePreset: x64-shipping
-    # name: ${{ matrix.buildType }} build on ${{ matrix.os }}
     runs-on: ${{ matrix.config.os }}
     continue-on-error: ${{ matrix.config.experimental }}
     name: ${{ matrix.config.buildPreset }}
@@ -128,196 +121,99 @@ jobs:
       run: |
         choco install opencppcoverage
 
-    - name: "Set environmental variables"
+    - name: Set environmental variables
       shell: bash
       run: |
         # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#adding-a-system-path
         echo "VCPKG_ROOT=$VCPKG_INSTALLATION_ROOT" >> $GITHUB_ENV
         echo "C:\Program Files\OpenCppCoverage" >> $GITHUB_PATH
 
-    # - name: Cmake Configure
-    #   run: |
-    #     cmake --preset ${{ matrix.config.configurePreset }}
+    - name: Cmake Configure
+      run: |
+        cmake --preset ${{ matrix.config.configurePreset }}
 
-    # - name: Cmake Build
-    #   # if: runner.os == 'Windows'
-    #   run: |
-    #     cmake --build --preset ${{ matrix.config.buildPreset }}
+    - name: Cmake Build
+      # if: runner.os == 'Windows'
+      run: |
+        cmake --build --preset ${{ matrix.config.buildPreset }}
 
-    # - name: Run Google test (Windows)
-    #   if: runner.os == 'Windows'
-    #   run: |
-    #     $buildConfigBinDir = "${{ env.buildConfigBinDir }}"
-    #     $testExe = (Get-ChildItem -Path $buildConfigBinDir -Recurse | Where-Object Name -like *tests*.exe).FullName
-    #     foreach ($exe in $testExe) {
-    #       Write-Host($exe)
-    #       $exeName = Get-ChildItem $exe | Select-Object -ExpandProperty BaseName
-    #       Write-Host($exeName)
-    #       &$exe --gtest_output=xml:$buildConfigBinDir/
-    #     }
-    #     #| Where-Object { $_.Filename -match 'tests' }
-    #     #| Where-Object { $_.DirectoryName -match 'Release' }
+    - name: Run Google test (Windows)
+      if: runner.os == 'Windows'
+      run: |
+        $buildConfigBinDir = "${{ env.buildConfigBinDir }}"
+        $testExe = (Get-ChildItem -Path $buildConfigBinDir -Recurse | Where-Object Name -like *tests*.exe).FullName
+        foreach ($exe in $testExe) {
+          Write-Host($exe)
+          $exeName = Get-ChildItem $exe | Select-Object -ExpandProperty BaseName
+          Write-Host($exeName)
+          &$exe --gtest_output=xml:$buildConfigBinDir/
+        }
+        #| Where-Object { $_.Filename -match 'tests' }
+        #| Where-Object { $_.DirectoryName -match 'Release' }
 
-    # - name: Run Google test (Linux)
-    #   if: runner.os == 'Linux'
-    #   run: |
-    #     ctest --preset ${{ matrix.config.testPreset }} --show-only
+    - name: Run Google test (Linux)
+      if: runner.os == 'Linux'
+      run: |
+        ctest --preset ${{ matrix.config.testPreset }} --show-only
 
     # - name: CTest
     #   run: |
     #     ctest --show-only
     #     # ctest --preset ${{ matrix.config.testPreset }}
 
-    # - name: OpenCppCoverage
-    #   run: |
-    #     $buildConfigDir = Resolve-Path -Path "${{ env.buildConfigBinDir }}"
-    #     OpenCppCoverage --config_file=OpenCppCoverage.config.txt --modules=$buildConfigDir --excluded_sources="*\vcpkg_installed" --excluded_sources="Projects\TestUtilities\*" --excluded_sources="Projects\*.test*"  --export_type=cobertura:coverage.xml -- $buildConfigDir/CoreTests.exe --gtest_brief=1
+    - name: OpenCppCoverage
+      run: |
+        $buildConfigDir = Resolve-Path -Path "${{ env.buildConfigBinDir }}"
+        OpenCppCoverage --config_file=OpenCppCoverage.config.txt --modules=$buildConfigDir --excluded_sources="*\vcpkg_installed" --excluded_sources="Projects\TestUtilities\*" --excluded_sources="Projects\*.test*"  --export_type=cobertura:coverage.xml -- $buildConfigDir/CoreTests.exe --gtest_brief=1
 
-    # - name: Foresight Analyze Test and/or Coverage Results
-    #   uses: runforesight/foresight-test-kit-action@v1
-    #   if: ${{ always() }}
-    #   with:
-    #     api_key: ${{ secrets.FORESIGHT_API_KEY }}
-    #     test_framework: JUNIT
-    #     test_format: JUNIT
-    #     test_path: ${{ env.buildConfigBinDir }}/*.xml
-    #     coverage_format: COBERTURA/XML
-    #     coverage_path: ./coverage.xml
-    #     tags: | 
-    #       os:${{ runner.os }}
-    #       buildConfig:${{ matrix.config.buildConfig }}
+    - name: Foresight Upload Test/Coverage Results
+      uses: runforesight/foresight-test-kit-action@v1
+      if: ${{ always() }}
+      with:
+        api_key: ${{ secrets.FORESIGHT_API_KEY }}
+        test_framework: JUNIT
+        test_format: JUNIT
+        test_path: ${{ env.buildConfigBinDir }}/*.xml
+        coverage_format: COBERTURA/XML
+        coverage_path: ./coverage.xml
+        tags: | 
+          os:${{ runner.os }}
+          buildConfig:${{ matrix.config.buildConfig }}
 
-    # - name: Codecov
-    #   uses: codecov/codecov-action@v3.1.1
-    #   with:
-    #     flags: ${{ runner.os }}-${{ matrix.config.buildConfig }}
-    #     name: ${{github.repository}}
-    #     files: ./coverage.xml
+    - name: Codecov
+      uses: codecov/codecov-action@v3.1.1
+      with:
+        flags: ${{ runner.os }}-${{ matrix.config.buildConfig }}
+        name: ${{github.repository}}
+        files: ./coverage.xml
 
-    # - name: Upload Test Results ${{ matrix.config.buildConfig }}
-    #   uses: actions/upload-artifact@v3
-    #   with:
-    #     name: PersonalWorks_${{github.workflow}}-${{github.job}}-${{ matrix.config.buildConfig }}_TestsResults
-    #     path: |
-    #       ${{ env.buildConfigBinDir }}/*.xml
+    - name: Upload Artifact Test Results ${{ matrix.config.buildConfig }}
+      uses: actions/upload-artifact@v3
+      with:
+        name: PersonalWorks_${{github.workflow}}-${{github.job}}-${{ matrix.config.buildConfig }}_TestsResults
+        path: |
+          ${{ env.buildConfigBinDir }}/*.xml
 
-    # - name: Run Google Benchmark (${{ runner.os }})
-    #   run: |
-    #     $buildConfigBinDir = "${{ env.buildConfigBinDir }}"
-    #     $benchmarkExe = (Get-ChildItem -Path $buildConfigBinDir -Recurse | Where-Object Name -like *benchmarks*.exe).FullName
-    #     foreach ($exe in $benchmarkExe) {
-    #       Write-Host($exe)
-    #       $exeName = Get-ChildItem $exe | Select-Object -ExpandProperty BaseName
-    #       Write-Host($exeName)
-    #       &$exe --benchmark_out_format=json --benchmark_out=$exeName.json
-    #     }
+    - name: Run Google Benchmark (${{ runner.os }})
+      run: |
+        $buildConfigBinDir = "${{ env.buildConfigBinDir }}"
+        $benchmarkExe = (Get-ChildItem -Path $buildConfigBinDir -Recurse | Where-Object Name -like *benchmarks*.exe).FullName
+        foreach ($exe in $benchmarkExe) {
+          Write-Host($exe)
+          $exeName = Get-ChildItem $exe | Select-Object -ExpandProperty BaseName
+          Write-Host($exeName)
+          &$exe --benchmark_out_format=json --benchmark_out=$exeName.json
+        }
 
-    # - id: 'gcloud_auth'
-    #   if: (runner.os == 'Windows') && (matrix.config.buildConfig == 'release')
-    #   name: 'Authenticate to Google Cloud'
-    #   uses: 'google-github-actions/auth@v1'
-    #   with:
-    #     workload_identity_provider: ${{secrets.GCLOUD_IAM_WORKLOAD_IDENTITY_PROVIDER}}
-    #     service_account: personalworks-db@tonal-justice-374902.iam.gserviceaccount.com
-
-    # - name: Cache gcloud setup
-    #   if: (runner.os == 'Windows') && (matrix.config.buildConfig == 'release')
-    #   id: cache-setup-gcloud
-    #   uses: actions/cache@v3
-    #   with:
-    #     path: C:\hostedtoolcache\windows\gcloud
-    #     key: ${{ runner.os }}-cache-setup-gcloud
-
-    # - name: 'Set up gcloud SDK'
-    #   if: (runner.os == 'Windows') && (matrix.config.buildConfig == 'release') && (steps.cache-install-cache-setup-gcloud.outputs.cache-hit != 'true')
-    #   uses: 'google-github-actions/setup-gcloud@v1'
-    #   with:
-    #     project_id: ${{steps.gcloud_auth.outputs.project_id}}
-
-    # - name: 'Create ssh tunnel'
-    #   if: (runner.os == 'Windows') && (matrix.config.buildConfig == 'release')
-    #   run: |
-    #     # gcloud auth list --filter=status:ACTIVE --format="value(account)"
-    #     # gcloud compute config-ssh
-    #     # --quiet --force-key-file-overwrite
-        
-    #     gcloud config set auth/impersonate_service_account personalworks-db@tonal-justice-374902.iam.gserviceaccount.com
-    #     gcloud info
-    #     gcloud compute config-ssh --quiet --verbosity=debug
-    #     # gcloud compute config-ssh --quiet
-
-    #     # netsh advfirewall firewall add rule name="Open mongod port 27017" dir=in action=allow protocol=TCP localport=27017
-
-    #     # ssh mongodb-personalworks-servers-vm-0.us-east1-b.tonal-justice-374902 -vvv -fNT -E ssh.log -L 27017:localhost:27017
-
-    #     # autossh -M 0 -o "ServerAliveInterval 30" -o "ServerAliveCountMax 3" -o "User=personalworks-db_tonal-justice-374902_iam_gserviceaccount_com" -N -T -L 27017:localhost:27017 mongodb-personalworks-servers-vm-0.us-east1-b.tonal-justice-374902 &
-
-    #     # $sshTunnelJob = Start-Job -Name SshTunnelJob -ScriptBlock { ssh -o "User=personalworks-db_tonal-justice-374902_iam_gserviceaccount_com" mongodb-personalworks-servers-vm-0.us-east1-b.tonal-justice-374902 -vvv -fNT -L 27017:0.0.0.0:27017}
-    #     # ssh -o "User=personalworks-db_tonal-justice-374902_iam_gserviceaccount_com" mongodb-personalworks-servers-vm-0.us-east1-b.tonal-justice-374902 -v -fNT -L 27017:localhost:27017
-
-    #     $sshTunnelJob = Start-Job -Name SshTunnelJob -ScriptBlock { gcloud compute ssh ${{secrets.GCE_INSTANCE_NAME}} --zone us-east1-b --tunnel-through-iap --verbosity=debug --ssh-flag="-T -L 27017:localhost:27017"}
-    #     # gcloud compute ssh ${{secrets.GCE_INSTANCE_NAME}} --quiet --zone us-east1-b --tunnel-through-iap --verbosity=debug --ssh-flag="-o ExitOnForwardFailure=yes -fNT -L 27017:localhost:27017"
-    #     # gcloud compute ssh ${{secrets.GCE_INSTANCE_NAME}} --quiet --zone us-east1-b --tunnel-through-iap --verbosity=debug --ssh-flag="-T -L 27017:localhost:27017"
-
-    #     # Get-Job 
-
-    #     netstat -aon
-
-    #     # 27017
-    #     Test-NetConnection localhost -port 27017
-
-    #     pushd Tools/UploadDataToMongoDb/
-    #     go version
-    #     go build .
-    #     ./SendToMongoDb.exe
-    #     popd
-
-    #     #Get-Job
-    #     Stop-Job $sshTunnelJob.Name
-    #     $jobOutput = Receive-Job -Name SshTunnelJob
-
-    #     Write-Host $sshTunnelJob.Name
-    #     foreach ($item in $output){
-    #       Write-Host $item
-    #     }
-        
-    #     gcloud config unset auth/impersonate_service_account
-    #     gcloud compute config-ssh --remove
-
-
-    # - name: Upload Workflow artifact ${{ matrix.config.buildConfig }}
-    #   uses: actions/upload-artifact@v3
-    #   if: always()
-    #   with:
-    #     name: PersonalWorks_${{github.workflow}}-${{github.job}}-${{ matrix.config.buildConfig }}_Out
-    #     path: |
-    #       _Out/build/${{ matrix.config.configurePreset }}/_bin/${{ matrix.config.buildConfig }}
-    #       _Out/build/${{ matrix.config.configurePreset }}/_lib/${{ matrix.config.buildConfig }}
-    #       ssh.log
-
-    # - id: 'compute-ssh'
-    #   uses: 'google-github-actions/ssh-compute@v0'
-    #   if: (runner.os == 'Windows') && (matrix.config.buildConfig == 'release')
-    #   with:
-    #     instance_name: ${{secrets.GCE_INSTANCE_NAME}}
-    #     zone: us-east1-b
-    #     ssh_args: "-L 27017:localhost:27017"
-    #     command: 'echo Hello world'
-
-      # The compilation can be done independently of the build of Personalworks, other steps too like Auth, Setup gcloud, installing some dependencies of opencoverage,....
-    # - name: 'Send Data to MongoDB'
-    #   if: (runner.os == 'Windows') && (matrix.config.buildConfig == 'release')
-    #   run: |
-    #     pushd Tools/UploadDataToMongoDb/
-    #     go version
-    #     go build .
-    #     ./SendToMongoDb.exe
-    #     popd
-
-    # - name: 'Remove ssh '
-    #   if: (runner.os == 'Windows') && (matrix.config.buildConfig == 'release')
-    #   run: |
-    #     gcloud compute config-ssh --remove
+    - name: Upload Build Artifacts ${{ matrix.config.buildConfig }}
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: PersonalWorks_${{github.workflow}}-${{github.job}}-${{ matrix.config.buildConfig }}_Out
+        path: |
+          _Out/build/${{ matrix.config.configurePreset }}/_bin/${{ matrix.config.buildConfig }}
+          _Out/build/${{ matrix.config.configurePreset }}/_lib/${{ matrix.config.buildConfig }}
+          ssh.log
 
   build-tools:
     runs-on: ubuntu-latest

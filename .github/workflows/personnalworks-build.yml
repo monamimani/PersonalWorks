@@ -5,35 +5,6 @@ on: workflow_call
 jobs:
   build:
 
-
-    # strategy:
-    #     matrix:
-    #       platform: [
-    #         {
-    #           os: windows-latest,
-    #           genertor: windows-vs2022,
-    #           experimental: false
-    #         },
-    #         {
-    #           os: ubuntu-latest,
-    #           genertor: linux-ninja-multi-config,
-    #           experimental: true
-    #         }]
-    #       architecture: [x64]
-    #       buildConfig: [
-    #         {
-    #           name: debug,
-    #           value: debug
-    #         },
-    #         {
-    #           name: release,
-    #           value: relWithDebInfo
-    #         },
-    #         {
-    #           name: shipping,
-    #           value: release
-    #         },]
-
     strategy:
         matrix:
           platform:
@@ -47,15 +18,15 @@ jobs:
           buildConfig: [
             { 
               name: debug,
-              value: debug
+              optimization: debug
             },
             { 
               name: release,
-              value: relWithDebInfo
+              optimization: relWithDebInfo
             },
             { 
               name: shipping,
-              value: release
+              optimization: release
             },]
           
 
@@ -117,14 +88,15 @@ jobs:
     continue-on-error: ${{ matrix.platform.experimental }}
     name: ${{ matrix.platform.genertor }}-${{ matrix.architecture }}-${{ matrix.buildConfig.name }}
 
-    #env:
-      # configurePreset: ${{ matrix.platform.genertor }}
-      # buildConfig: ${{ matrix.buildConfig.value }}
-      # buildPreset: ${{ matrix.platform.genertor }}-${{ matrix.architecture }}-${{ matrix.buildConfig.name }}
-      # testPreset: ${{ matrix.platform.genertor }}-${{ matrix.architecture }}-${{ matrix.buildConfig.name }}
-      # buildConfigBinDir: "_Out/build/${{ matrix.platform.genertor }}/_bin/${{ matrix.buildConfig.value }}"
-      # fullBinDir: "${{ github.workspace }}/_Out/build/${{ matrix.config.configurePreset }}/_bin"
-      # libDir: "_Out/build/${{ matrix.config.configurePreset }}/_lib"
+    env:
+      configurePreset: ${{ matrix.platform.genertor }}
+      buildConfig: ${{ matrix.buildConfig.optimization }}
+      buildPreset: ${{ matrix.platform.genertor }}-${{ matrix.architecture }}-${{ matrix.buildConfig.name }}
+      testPreset: ${{ matrix.platform.genertor }}-${{ matrix.architecture }}-${{ matrix.buildConfig.name }}
+
+      buildConfigBinDir: "_Out/build/${{ matrix.platform.genertor }}/_bin/${{ matrix.buildConfig.optimization }}"
+      fullBinDir: "${{ github.workspace }}/_Out/build/${{ matrix.config.configurePreset }}/_bin"
+      libDir: "_Out/build/${{ matrix.config.configurePreset }}/_lib"
 
     steps:
       - name: Foresight Collect Workflow Telemetry
@@ -133,56 +105,56 @@ jobs:
         with:
           api_key: ${{ secrets.FORESIGHT_API_KEY }}
 
-      # - uses: actions/checkout@v3
-      #   with:
-      #     lfs: true
-      #     submodules: true
+      - uses: actions/checkout@v3
+        with:
+          lfs: true
+          submodules: true
 
-      # - name: Cache vcpkg
-      #   id: cache-vcpkg
-      #   uses: actions/cache@v3
-      #   with:
-      #     path: _Out/build/vcpkg_installed
-      #     key: ${{ runner.os }}-${{ matrix.config.configurePreset }}-vcpkg-${{ hashFiles('**/vcpkg.json') }}
+      - name: Cache vcpkg
+        id: cache-vcpkg
+        uses: actions/cache@v3
+        with:
+          path: _Out/build/vcpkg_installed
+          key: ${{ runner.os }}-${{ env.configurePreset }}-vcpkg-${{ hashFiles('**/vcpkg.json') }}
 
-      # - name: Set environmental variables
-      #   shell: bash
-      #   run: |
-      #     # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#adding-a-system-path
-      #     echo "VCPKG_ROOT=$VCPKG_INSTALLATION_ROOT" >> $GITHUB_ENV
+      - name: Set environmental variables
+        shell: bash
+        run: |
+          # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#adding-a-system-path
+          echo "VCPKG_ROOT=$VCPKG_INSTALLATION_ROOT" >> $GITHUB_ENV
 
-      # - name: Install Linux packages
-      #   if: runner.os == 'Linux'
-      #   run: |
-      #     sudo apt update
-      #     sudo apt install gcc-11 g++-11
-      #     sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 110 --slave /usr/bin/g++ g++ /usr/bin/g++-11
-      #     sudo apt-get install ninja-build
+      - name: Install Linux packages
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt update
+          sudo apt install gcc-11 g++-11
+          sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 110 --slave /usr/bin/g++ g++ /usr/bin/g++-11
+          sudo apt-get install ninja-build
 
-      # - name: Cmake Configure
-      #   run: |
-      #     cmake --preset ${{ matrix.config.configurePreset }}
+      - name: Cmake Configure
+        run: |
+          cmake --preset ${{ env.configurePreset }}
 
-      # - name: Cmake Build
-      #   if: runner.os == 'Windows'
-      #   run: |
-      #     cmake --build --preset ${{ matrix.config.buildPreset }}
+      - name: Cmake Build
+        if: runner.os == 'Windows'
+        run: |
+          cmake --build --preset ${{ env.buildPreset }}
 
-      # - name: Cache Build
-      #   id: cache-build
-      #   uses: actions/cache@v3
-      #   with:
-      #     path: |
-      #       ${{ env.buildConfigBinDir }}
-      #       OpenCppCoverage.config.txt
-      #     key: CacheBuild-${{ runner.os }}-${{ matrix.config.configurePreset }}-${{ matrix.config.buildConfig }}-${{ github.run_id }}
-      #     restore-key: CacheBuild
+      - name: Cache Build
+        id: cache-build
+        uses: actions/cache@v3
+        with:
+          path: |
+            ${{ env.buildConfigBinDir }}
+            OpenCppCoverage.config.txt
+          key: CacheBuild-${{ runner.os }}-${{ env.configurePreset }}-${{ env.buildConfig }}-${{ github.run_id }}
+          restore-key: CacheBuild
 
-      # - name: Upload Build Artifacts ${{ matrix.config.buildConfig }}
-      #   uses: actions/upload-artifact@v3
-      #   if: always()
-      #   with:
-      #     name: PersonalWorks-Build-${{github.workflow}}-${{github.job}}-${{ matrix.config.buildConfig }}_Out
-      #     path: |
-      #       _Out/build/${{ matrix.config.configurePreset }}/_bin/${{ matrix.config.buildConfig }}
-      #       _Out/build/${{ matrix.config.configurePreset }}/_lib/${{ matrix.config.buildConfig }}
+      - name: Upload Build Artifacts ${{ matrix.config.buildConfig }}
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: ${{github.workflow}}-${{github.job}}-${{ env.configurePreset }}-${{ env.buildConfig }}-Build
+          path: |
+            _Out/build/${{ env.configurePreset }}/_bin/${{ env.buildConfig }}
+            _Out/build/${{ env.configurePreset }}/_lib/${{ env.buildConfig }}

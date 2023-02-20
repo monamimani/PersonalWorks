@@ -104,7 +104,13 @@ jobs:
         project_id: ${{steps.gcloud_auth.outputs.project_id}}
 
     - name: SSH Tunnel & SendToMongoDb
-      run: |       
+      run: |  
+        for i in $(gcloud compute os-login ssh-keys list | grep -v FINGERPRINT) 
+        do 
+          echo $i 
+          gcloud compute os-login ssh-keys remove --key $i
+        done
+
         $(gcloud info --format="value(basic.python_location)") -m pip install numpy
 
         gcloud config set auth/impersonate_service_account ${{secrets.GCE_SERVICE_ACCOUNT}}
@@ -119,6 +125,14 @@ jobs:
         ./SendToMongoDb
         
         gcloud config unset auth/impersonate_service_account
+
+        for i in $(gcloud compute os-login ssh-keys list | grep -v FINGERPRINT) 
+        do 
+          echo $i 
+          gcloud compute os-login ssh-keys remove --key $i
+        done
+
+        
 
   Cleanup:
     runs-on: ubuntu-latest

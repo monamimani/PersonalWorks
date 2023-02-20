@@ -89,13 +89,13 @@ jobs:
 
     runs-on: ${{ matrix.platform.os }}
     continue-on-error: ${{ matrix.experimental }}
-    name: ${{ matrix.platform.genertor }}-${{ matrix.platform.genertor }}-${{ matrix.architecture }}-${{ matrix.buildConfig.name }}
+    name: ${{ matrix.platform.genertor }}-${{ matrix.architecture }}-${{ matrix.buildConfig.name }}
 
     env:
       configurePreset: ${{ matrix.platform.genertor }}
       buildConfig: ${{ matrix.buildConfig.value }}
-      buildPreset: ${{ matrix.platform.genertor }}-${{ matrix.platform.genertor }}-${{ matrix.architecture }}-${{ matrix.buildConfig.name }}
-      testPreset: ${{ matrix.platform.genertor }}-${{ matrix.platform.genertor }}-${{ matrix.architecture }}-${{ matrix.buildConfig.name }}
+      buildPreset: ${{ matrix.platform.genertor }}-${{ matrix.architecture }}-${{ matrix.buildConfig.name }}
+      testPreset: ${{ matrix.platform.genertor }}-${{ matrix.architecture }}-${{ matrix.buildConfig.name }}
       buildConfigBinDir: "_Out/build/${{ matrix.platform.genertor }}/_bin/${{ matrix.buildConfig.value }}"
       # fullBinDir: "${{ github.workspace }}/_Out/build/${{ matrix.config.configurePreset }}/_bin"
       # libDir: "_Out/build/${{ matrix.config.configurePreset }}/_lib"

@@ -32,7 +32,7 @@ jobs:
             },]
           experimental: [false]
           include:
-            - os: ubuntu-latest
+            - platform.os: ubuntu-latest
               experimental: true
 
     # strategy:

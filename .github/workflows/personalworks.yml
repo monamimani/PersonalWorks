@@ -87,13 +87,13 @@ jobs:
       uses: 'google-github-actions/auth@v1'
       with:
         workload_identity_provider: ${{secrets.GCLOUD_IAM_WORKLOAD_IDENTITY_PROVIDER}}
-        service_account: personalworks-db@tonal-justice-374902.iam.gserviceaccount.com
+        service_account: ${{secrets.GCE_SERVICE_ACCOUNT}}
 
     # - name: Cache gcloud setup
     #   id: cache-setup-gcloud
     #   uses: actions/cache@v3
     #   with:
-    #     path: C:\hostedtoolcache\windows\gcloud
+    #     path: /opt/hostedtoolcache/gcloud/
     #     key: ${{ runner.os }}-cache-setup-gcloud
 
     # - name: 'Set up gcloud SDK'
@@ -104,17 +104,14 @@ jobs:
 
     - name: SSH Tunnel & SendToMongoDb
       run: |       
-        # $(gcloud info --format="value(basic.python_location)") -m pip install numpy
+        $(gcloud info --format="value(basic.python_location)") -m pip install numpy
 
-        gcloud config set auth/impersonate_service_account personalworks-db@tonal-justice-374902.iam.gserviceaccount.com
+        gcloud config set auth/impersonate_service_account ${{secrets.GCE_SERVICE_ACCOUNT}}
         
         # gcloud info     
         # gcloud compute config-ssh --quiet --verbosity=debug
 
-        # ssh mongodb-personalworks-servers-vm-0.us-east1-b.tonal-justice-374902 -vvv -fNT -E ssh.log -L 27017:localhost:27017
 
-
-        # gcloud compute ssh ${{secrets.GCE_INSTANCE_NAME}} --quiet --zone us-east1-b --tunnel-through-iap --verbosity=debug --ssh-flag="-o ExitOnForwardFailure=yes -fNT -L 27017:localhost:27017"
         gcloud compute ssh ${{secrets.GCE_INSTANCE_NAME}} --quiet --zone us-east1-b --tunnel-through-iap --ssh-flag="-fNT -L 27017:localhost:27017"
 
         cd Tools/UploadDataToMongoDb/
@@ -143,6 +140,10 @@ jobs:
       run: |        
         gh extension install actions/gh-actions-cache
 
-        gh actions-cache delete CacheBuild --confirm
+        cacheBuildList=$(gh actions-cache list --key CacheBuild-)
+        echo $(cacheBuildList)
+        gh actions-cache delete $(cacheBuildList) --confirm
 
-        gh actions-cache delete cache-tools-build-${{ github.run_id }} --confirm
+        cacheToolList=$(gh actions-cache list --key cache-tools-build-)
+        echo $(cacheToolList)
+        gh actions-cache delete $(cacheToolList) --confirm

@@ -142,9 +142,9 @@ jobs:
         gh extension install actions/gh-actions-cache
 
         cacheBuildList=$(gh actions-cache list --key CacheBuild-)
-        echo $(cacheBuildList)
-        gh actions-cache delete $(cacheBuildList) --confirm
+        echo $cacheBuildList
+        gh actions-cache delete $cacheBuildList --confirm
 
         cacheToolList=$(gh actions-cache list --key cache-tools-build-)
-        echo $(cacheToolList)
-        gh actions-cache delete $(cacheToolList) --confirm
+        echo $cacheToolList
+        gh actions-cache delete $cacheToolList --confirm

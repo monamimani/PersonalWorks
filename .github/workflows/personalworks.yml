@@ -89,38 +89,31 @@ jobs:
         workload_identity_provider: ${{secrets.GCLOUD_IAM_WORKLOAD_IDENTITY_PROVIDER}}
         service_account: personalworks-db@tonal-justice-374902.iam.gserviceaccount.com
 
-    - name: Cache gcloud setup
-      id: cache-setup-gcloud
-      uses: actions/cache@v3
-      with:
-        path: C:\hostedtoolcache\windows\gcloud
-        key: ${{ runner.os }}-cache-setup-gcloud
+    # - name: Cache gcloud setup
+    #   id: cache-setup-gcloud
+    #   uses: actions/cache@v3
+    #   with:
+    #     path: C:\hostedtoolcache\windows\gcloud
+    #     key: ${{ runner.os }}-cache-setup-gcloud
 
-    - name: 'Set up gcloud SDK'
-      if: (steps.cache-install-cache-setup-gcloud.outputs.cache-hit != 'true')
-      uses: 'google-github-actions/setup-gcloud@v1'
-      with:
-        project_id: ${{steps.gcloud_auth.outputs.project_id}}
+    # - name: 'Set up gcloud SDK'
+    #   if: (steps.cache-install-cache-setup-gcloud.outputs.cache-hit != 'true')
+    #   uses: 'google-github-actions/setup-gcloud@v1'
+    #   with:
+    #     project_id: ${{steps.gcloud_auth.outputs.project_id}}
 
     - name: SSH Tunnel & SendToMongoDb
       run: |       
-        $(gcloud info --format="value(basic.python_location)") -m pip install numpy
+        # $(gcloud info --format="value(basic.python_location)") -m pip install numpy
 
         gcloud config set auth/impersonate_service_account personalworks-db@tonal-justice-374902.iam.gserviceaccount.com
         
-        gcloud info
-        
+        # gcloud info     
         # gcloud compute config-ssh --quiet --verbosity=debug
-        # gcloud compute config-ssh --quiet
 
         # ssh mongodb-personalworks-servers-vm-0.us-east1-b.tonal-justice-374902 -vvv -fNT -E ssh.log -L 27017:localhost:27017
 
-        # autossh -M 0 -o "ServerAliveInterval 30" -o "ServerAliveCountMax 3" -o "User=personalworks-db_tonal-justice-374902_iam_gserviceaccount_com" -N -T -L 27017:localhost:27017 mongodb-personalworks-servers-vm-0.us-east1-b.tonal-justice-374902 &
 
-        # $sshTunnelJob = Start-Job -Name SshTunnelJob -ScriptBlock { ssh -o "User=personalworks-db_tonal-justice-374902_iam_gserviceaccount_com" mongodb-personalworks-servers-vm-0.us-east1-b.tonal-justice-374902 -vvv -fNT -L 27017:0.0.0.0:27017}
-        # ssh -o "User=personalworks-db_tonal-justice-374902_iam_gserviceaccount_com" mongodb-personalworks-servers-vm-0.us-east1-b.tonal-justice-374902 -v -fNT -L 27017:localhost:27017
-
-        # $sshTunnelJob = Start-Job -Name SshTunnelJob -ScriptBlock { gcloud compute ssh ${{secrets.GCE_INSTANCE_NAME}} --zone us-east1-b --tunnel-through-iap --verbosity=debug --ssh-flag="-T -L 27017:localhost:27017"}
         # gcloud compute ssh ${{secrets.GCE_INSTANCE_NAME}} --quiet --zone us-east1-b --tunnel-through-iap --verbosity=debug --ssh-flag="-o ExitOnForwardFailure=yes -fNT -L 27017:localhost:27017"
         gcloud compute ssh ${{secrets.GCE_INSTANCE_NAME}} --quiet --zone us-east1-b --tunnel-through-iap --ssh-flag="-fNT -L 27017:localhost:27017"
 
@@ -128,7 +121,6 @@ jobs:
         ./SendToMongoDb
         
         gcloud config unset auth/impersonate_service_account
-        gcloud compute config-ssh --remove
 
   Cleanup:
     runs-on: ubuntu-latest

@@ -148,7 +148,7 @@ jobs:
             ${{ env.buildConfigBinDir }}
             OpenCppCoverage.config.txt
           key: CacheBuild-${{ runner.os }}-${{ env.configurePreset }}-${{ env.buildConfig }}-${{ github.run_id }}
-          restore-key: CacheBuild
+          restore-keys: CacheBuild
 
       - name: Upload Build Artifacts ${{ matrix.config.buildConfig }}
         uses: actions/upload-artifact@v3

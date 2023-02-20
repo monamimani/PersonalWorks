@@ -11,7 +11,7 @@ jobs:
             {
             os: windows-latest,
             genertor: windows-vs2022
-            }]
+            },]
           architecture: [x64]
           buildConfig: [
             { 
@@ -27,10 +27,10 @@ jobs:
               value: release
             },]
           experimental: [false]
-          include:
-            - platform.os: ubuntu-latest
-              platform.genertor: linux-ninja-multi-config
-              experimental: true
+          # include:
+          #   - platform.os: ubuntu-latest
+          #     platform.genertor: linux-ninja-multi-config
+          #     experimental: true
 
     # strategy:
     #   fail-fast: false

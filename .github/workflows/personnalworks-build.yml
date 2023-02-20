@@ -6,20 +6,30 @@ jobs:
   build-personalworks:
 
     strategy:
-          matrix:
-            os: [windows-latest]
-            buildConfigName: [""]
-            buildConfig: [""]
-            experimental: [false]
-            include:
-              - buildConfigName: debug
-                buildConfig: debug
-              - buildConfigName: release
-                buildConfig: relWithDebInfo
-              - buildConfigName: shipping
-                buildConfig: release
-              - os: ubuntu-latest
-                experimental: true
+        matrix:
+          platform: [
+            {
+            os: windows-latest,
+            genertor: windows-vs2022
+            }]
+          architecture: [x64]
+          buildConfig: [
+            { 
+              name: debug,
+              value: debug
+            },
+            { 
+              name: release,
+              value: relWithDebInfo
+            },
+            { 
+              name: shipping,
+              value: release
+            },]
+          experimental: [false]
+          include:
+            - os: ubuntu-latest
+              experimental: true
 
     # strategy:
     #   fail-fast: false
@@ -74,14 +84,18 @@ jobs:
     #         experimental: true
     #       }
 
-    runs-on: ${{ matrix.config.os }}
-    continue-on-error: ${{ matrix.config.experimental }}
-    name: ${{ matrix.config.buildPreset }}
+    runs-on: ${{ matrix.platform.os }}
+    continue-on-error: ${{ matrix.experimental }}
+    name: ${{ matrix.platform.genertor }}-${{ matrix.platform.genertor }}-
 
     env:
-      buildConfigBinDir: "_Out/build/${{ matrix.config.configurePreset }}/_bin/${{ matrix.config.buildConfig }}"
-      fullBinDir: "${{ github.workspace }}/_Out/build/${{ matrix.config.configurePreset }}/_bin"
-      libDir: "_Out/build/${{ matrix.config.configurePreset }}/_lib"
+      configurePreset: ${{ matrix.platform.genertor }}
+      buildConfig: ${{ matrix.buildConfig.value }}
+      buildPreset: ${{ matrix.platform.genertor }}-${{ matrix.platform.genertor }}-${{ matrix.architecture }}-${{ matrix.buildConfig.name }}
+      testPreset: ${{ matrix.platform.genertor }}-${{ matrix.platform.genertor }}-${{ matrix.architecture }}-${{ matrix.buildConfig.name }}
+      buildConfigBinDir: "_Out/build/${{ env.configurePreset }}/_bin/${{ matrix.buildConfig.value }}"
+      # fullBinDir: "${{ github.workspace }}/_Out/build/${{ matrix.config.configurePreset }}/_bin"
+      # libDir: "_Out/build/${{ matrix.config.configurePreset }}/_lib"
 
     steps:
       - name: Foresight Collect Workflow Telemetry

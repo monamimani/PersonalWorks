@@ -105,11 +105,6 @@ jobs:
 
     - name: SSH Tunnel & SendToMongoDb
       run: |  
-        for i in $(gcloud compute os-login ssh-keys list | grep -v FINGERPRINT) 
-        do 
-          echo $i 
-          gcloud compute os-login ssh-keys remove --key $i
-        done
 
         $(gcloud info --format="value(basic.python_location)") -m pip install numpy
 
@@ -119,18 +114,18 @@ jobs:
         # gcloud compute config-ssh --quiet --verbosity=debug
 
 
-        gcloud compute ssh ${{secrets.GCE_INSTANCE_NAME}} --quiet --zone us-east1-b --tunnel-through-iap --ssh-flag="-fNT -L 27017:localhost:27017"
+        gcloud compute ssh ${{secrets.GCE_INSTANCE_NAME}} --quiet --zone us-east1-b --tunnel-through-iap --ssh-flag="-fNT -L 27017:localhost:27017" --ssh-key-expire-after=60m
 
         cd Tools/UploadDataToMongoDb/
         ./SendToMongoDb
         
         gcloud config unset auth/impersonate_service_account
 
-        for i in $(gcloud compute os-login ssh-keys list | grep -v FINGERPRINT) 
-        do 
-          echo $i 
-          gcloud compute os-login ssh-keys remove --key $i
-        done
+        # for i in $(gcloud compute os-login ssh-keys list | grep -v FINGERPRINT) 
+        # do 
+        #   echo Removing ssh key $i 
+        #   gcloud compute os-login ssh-keys remove --key $i
+        # done
 
         
 
@@ -155,16 +150,18 @@ jobs:
       run: |        
         gh extension install actions/gh-actions-cache
 
-        cacheBuildList=$(gh actions-cache list --key CacheBuild- | cut -f 1)
-        echo "Deleting caches: " ${cacheBuildList[*]}
-        gh actions-cache delete $cacheBuildList --confirm
-
-          # echo "Deleting caches..."
-          # for cacheKey in $cacheKeysForPR
-          # do
-          #     gh actions-cache delete $cacheKey -R $REPO -B $BRANCH --confirm
-          # done
+        cacheBuildList=$(gh actions-cache list --key CacheBuild- | cut -f 1)             
+        echo Deleting caches:
+        for cacheKey in $cacheBuildList
+        do
+            echo $cacheKey 
+            gh actions-cache delete $cacheKey --confirm
+        done
 
         cacheToolList=$(gh actions-cache list --key cache-tools-build- | cut -f 1)
-        echo "Deleting caches: " ${cacheToolList[*]}
-        gh actions-cache delete $cacheToolList --confirm
+        echo Deleting caches:
+        for cacheKey in $cacheToolList
+        do
+            echo $cacheKey 
+            gh actions-cache delete $cacheKey --confirm
+        done

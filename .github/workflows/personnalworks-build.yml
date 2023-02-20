@@ -32,10 +32,7 @@ jobs:
             },]
           experimental: [false]
           include:
-            - platform: {
-                os: ubuntu-latest,
-                genertor: linux-ninja-multi-config
-              }
+            - os: ubuntu-latest
               experimental: true
 
     # strategy:

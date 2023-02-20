@@ -96,11 +96,12 @@ jobs:
     #     path: /opt/hostedtoolcache/gcloud/
     #     key: ${{ runner.os }}-cache-setup-gcloud
 
-    # - name: 'Set up gcloud SDK'
-    #   if: (steps.cache-install-cache-setup-gcloud.outputs.cache-hit != 'true')
-    #   uses: 'google-github-actions/setup-gcloud@v1'
-    #   with:
-    #     project_id: ${{steps.gcloud_auth.outputs.project_id}}
+    - name: 'Set up gcloud SDK'
+      if: (steps.cache-install-cache-setup-gcloud.outputs.cache-hit != 'true')
+      uses: 'google-github-actions/setup-gcloud@v1'
+      with:
+        skip_install: true
+        project_id: ${{steps.gcloud_auth.outputs.project_id}}
 
     - name: SSH Tunnel & SendToMongoDb
       run: |       

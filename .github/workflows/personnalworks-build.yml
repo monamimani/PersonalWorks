@@ -5,19 +5,37 @@ on: workflow_call
 jobs:
   build-personalworks:
 
+
+    # strategy:
+    #     matrix:
+    #       platform: [
+    #         {
+    #           os: windows-latest,
+    #           genertor: windows-vs2022,
+    #           experimental: false
+    #         },
+    #         {
+    #           os: ubuntu-latest,
+    #           genertor: linux-ninja-multi-config,
+    #           experimental: true
+    #         }]
+    #       architecture: [x64]
+    #       buildConfig: [
+    #         {
+    #           name: debug,
+    #           value: debug
+    #         },
+    #         {
+    #           name: release,
+    #           value: relWithDebInfo
+    #         },
+    #         {
+    #           name: shipping,
+    #           value: release
+    #         },]
+
     strategy:
         matrix:
-          platform: [
-            {
-              os: windows-latest,
-              genertor: windows-vs2022,
-              experimental: false
-            },
-            {
-              os: ubuntu-latest,
-              genertor: linux-ninja-multi-config,
-              experimental: true
-            }]
           architecture: [x64]
           buildConfig: [
             { 
@@ -32,6 +50,15 @@ jobs:
               name: shipping,
               value: release
             },]
+          platform:
+            - os: windows-latest
+              genertor: windows-vs2022
+              experimental: false
+            - os: ubuntu-latest
+              genertor: linux-ninja-multi-config
+              experimental: true
+          
+
 
     # strategy:
     #   fail-fast: false
@@ -90,12 +117,12 @@ jobs:
     continue-on-error: ${{ matrix.platform.experimental }}
     name: ${{ matrix.platform.genertor }}-${{ matrix.architecture }}-${{ matrix.buildConfig.name }}
 
-    env:
-      configurePreset: ${{ matrix.platform.genertor }}
-      buildConfig: ${{ matrix.buildConfig.value }}
-      buildPreset: ${{ matrix.platform.genertor }}-${{ matrix.architecture }}-${{ matrix.buildConfig.name }}
-      testPreset: ${{ matrix.platform.genertor }}-${{ matrix.architecture }}-${{ matrix.buildConfig.name }}
-      buildConfigBinDir: "_Out/build/${{ matrix.platform.genertor }}/_bin/${{ matrix.buildConfig.value }}"
+    #env:
+      # configurePreset: ${{ matrix.platform.genertor }}
+      # buildConfig: ${{ matrix.buildConfig.value }}
+      # buildPreset: ${{ matrix.platform.genertor }}-${{ matrix.architecture }}-${{ matrix.buildConfig.name }}
+      # testPreset: ${{ matrix.platform.genertor }}-${{ matrix.architecture }}-${{ matrix.buildConfig.name }}
+      # buildConfigBinDir: "_Out/build/${{ matrix.platform.genertor }}/_bin/${{ matrix.buildConfig.value }}"
       # fullBinDir: "${{ github.workspace }}/_Out/build/${{ matrix.config.configurePreset }}/_bin"
       # libDir: "_Out/build/${{ matrix.config.configurePreset }}/_lib"
 
@@ -106,7 +133,7 @@ jobs:
         with:
           api_key: ${{ secrets.FORESIGHT_API_KEY }}
 
-      # - uses: actions/checkout@v3  
+      # - uses: actions/checkout@v3
       #   with:
       #     lfs: true
       #     submodules: true

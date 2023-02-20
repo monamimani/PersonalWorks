@@ -141,10 +141,16 @@ jobs:
       run: |        
         gh extension install actions/gh-actions-cache
 
-        cacheBuildList=$(gh actions-cache list --key CacheBuild-)
-        echo $cacheBuildList
+        cacheBuildList=$(gh actions-cache list --key CacheBuild- | cut -f 1)
+        echo "Deleting caches: " ${cacheBuildList[*]}
         gh actions-cache delete $cacheBuildList --confirm
 
-        cacheToolList=$(gh actions-cache list --key cache-tools-build-)
-        echo $cacheToolList
+          # echo "Deleting caches..."
+          # for cacheKey in $cacheKeysForPR
+          # do
+          #     gh actions-cache delete $cacheKey -R $REPO -B $BRANCH --confirm
+          # done
+
+        cacheToolList=$(gh actions-cache list --key cache-tools-build- | cut -f 1)
+        echo "Deleting caches: " ${cacheToolList[*]}
         gh actions-cache delete $cacheToolList --confirm

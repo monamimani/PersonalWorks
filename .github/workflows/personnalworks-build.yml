@@ -9,9 +9,13 @@ jobs:
         matrix:
           platform: [
             {
-            os: windows-latest,
-            genertor: windows-vs2022
-            },]
+              os: windows-latest,
+              genertor: windows-vs2022
+            },
+            {
+              os: ubuntu-latest,
+              genertor: linux-ninja-multi-config
+            }]
           architecture: [x64]
           buildConfig: [
             { 

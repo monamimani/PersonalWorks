@@ -3,8 +3,8 @@ name: Personalworks
 on: [push, pull_request, release]
 
 jobs:
-  # build-personalworks:  
-  #   uses: ./.github/workflows/personnalworks-build.yml
+  build-personalworks:  
+    uses: ./.github/workflows/personnalworks-build.yml
 
   # tests-personalworks: 
   #   needs: build-personalworks 
@@ -14,154 +14,152 @@ jobs:
   #   needs: build-personalworks 
   #   uses: ./.github/workflows/personnalworks-benchmarks.yml
 
-  build-tools:
-    runs-on: ubuntu-latest
+  # build-tools:
+  #   runs-on: ubuntu-latest
 
-    steps:
-    - name: Foresight Collect Workflow Telemetry
-      uses: runforesight/foresight-workflow-kit-action@v1
-      if: ${{ always() }}
-      with:
-        api_key: ${{ secrets.FORESIGHT_API_KEY }}
+  #   steps:
+  #   - name: Foresight Collect Workflow Telemetry
+  #     uses: runforesight/foresight-workflow-kit-action@v1
+  #     if: ${{ always() }}
+  #     with:
+  #       api_key: ${{ secrets.FORESIGHT_API_KEY }}
 
-    - uses: actions/checkout@v3  
-      with:
-        lfs: true
-        submodules: true
+  #   - uses: actions/checkout@v3  
+  #     with:
+  #       lfs: true
+  #       submodules: true
 
-    - name: Cache Tools Build
-      id: cache-tools-build
-      uses: actions/cache@v3
-      with:
-        path: Tools
-        key: cache-tools-build-${{ github.run_id }}
+  #   - name: Cache Tools Build
+  #     id: cache-tools-build
+  #     uses: actions/cache@v3
+  #     with:
+  #       path: Tools
+  #       key: cache-tools-build-${{ github.run_id }}
 
-    - name: 'Setup Go for SendToMongoDb'
-      uses: actions/setup-go@v3
-      with:
-        check-latest: true
-        go-version-file: 'Tools/UploadDataToMongoDb/go.mod'
-        cache: true
-        cache-dependency-path: 'Tools/UploadDataToMongoDb/go.sum'
+  #   - name: 'Setup Go for SendToMongoDb'
+  #     uses: actions/setup-go@v3
+  #     with:
+  #       check-latest: true
+  #       go-version-file: 'Tools/UploadDataToMongoDb/go.mod'
+  #       cache: true
+  #       cache-dependency-path: 'Tools/UploadDataToMongoDb/go.sum'
 
-    - name: 'Compile UploadDataToMongoDb'
-      run: |
-        pushd Tools/UploadDataToMongoDb/
-        go version
-        go build .
-        popd
+  #   - name: 'Compile UploadDataToMongoDb'
+  #     run: |
+  #       pushd Tools/UploadDataToMongoDb/
+  #       go version
+  #       go build .
+  #       popd
 
 
-  updatedb_personalworks:
-    runs-on: ubuntu-latest
-    needs: build-tools
+  # updatedb_personalworks:
+  #   runs-on: ubuntu-latest
+  #   needs: build-tools
 
-    # Add permissions for gcloud Authentification
-    permissions:
-      contents: 'read'
-      id-token: 'write'
+  #   # Add permissions for gcloud Authentification
+  #   permissions:
+  #     contents: 'read'
+  #     id-token: 'write'
 
-    # container:
-    #   image: google/cloud-sdk:slim
-    #   ports:
-    #   - 27017:27017
-    #   volumes:
-    #   - Tools
+  #   # container:
+  #   #   image: google/cloud-sdk:slim
+  #   #   ports:
+  #   #   - 27017:27017
+  #   #   volumes:
+  #   #   - Tools
 
-    steps:
-    - name: Foresight Collect Workflow Telemetry
-      uses: runforesight/foresight-workflow-kit-action@v1
-      if: ${{ always() }}
-      with:
-        api_key: ${{ secrets.FORESIGHT_API_KEY }}
+  #   steps:
+  #   - name: Foresight Collect Workflow Telemetry
+  #     uses: runforesight/foresight-workflow-kit-action@v1
+  #     if: ${{ always() }}
+  #     with:
+  #       api_key: ${{ secrets.FORESIGHT_API_KEY }}
 
-    - name: Cache Tools Build
-      id: cache-tools-build
-      uses: actions/cache@v3
-      with:
-        path: Tools
-        key: cache-tools-build-${{ github.run_id }}
+  #   - name: Cache Tools Build
+  #     id: cache-tools-build
+  #     uses: actions/cache@v3
+  #     with:
+  #       path: Tools
+  #       key: cache-tools-build-${{ github.run_id }}
 
-    - name: 'Authenticate to Google Cloud'
-      id: gcloud_auth
-      uses: 'google-github-actions/auth@v1'
-      with:
-        workload_identity_provider: ${{secrets.GCLOUD_IAM_WORKLOAD_IDENTITY_PROVIDER}}
-        service_account: ${{secrets.GCE_SERVICE_ACCOUNT}}
+  #   - name: 'Authenticate to Google Cloud'
+  #     id: gcloud_auth
+  #     uses: 'google-github-actions/auth@v1'
+  #     with:
+  #       workload_identity_provider: ${{secrets.GCLOUD_IAM_WORKLOAD_IDENTITY_PROVIDER}}
+  #       service_account: ${{secrets.GCE_SERVICE_ACCOUNT}}
 
-    # - name: Cache gcloud setup
-    #   id: cache-setup-gcloud
-    #   uses: actions/cache@v3
-    #   with:
-    #     path: /opt/hostedtoolcache/gcloud/
-    #     key: ${{ runner.os }}-cache-setup-gcloud
+  #   # - name: Cache gcloud setup
+  #   #   id: cache-setup-gcloud
+  #   #   uses: actions/cache@v3
+  #   #   with:
+  #   #     path: /opt/hostedtoolcache/gcloud/
+  #   #     key: ${{ runner.os }}-cache-setup-gcloud
 
-    - name: 'Set up gcloud SDK'
-      if: (steps.cache-install-cache-setup-gcloud.outputs.cache-hit != 'true')
-      uses: 'google-github-actions/setup-gcloud@v1'
-      with:
-        skip_install: true
-        project_id: ${{steps.gcloud_auth.outputs.project_id}}
+  #   - name: 'Set up gcloud SDK'
+  #     if: (steps.cache-install-cache-setup-gcloud.outputs.cache-hit != 'true')
+  #     uses: 'google-github-actions/setup-gcloud@v1'
+  #     with:
+  #       skip_install: true
+  #       project_id: ${{steps.gcloud_auth.outputs.project_id}}
 
-    - name: SSH Tunnel & SendToMongoDb
-      run: |  
+  #   - name: SSH Tunnel & SendToMongoDb
+  #     run: |  
 
-        $(gcloud info --format="value(basic.python_location)") -m pip install numpy
+  #       $(gcloud info --format="value(basic.python_location)") -m pip install numpy
 
-        gcloud config set auth/impersonate_service_account ${{secrets.GCE_SERVICE_ACCOUNT}}
+  #       gcloud config set auth/impersonate_service_account ${{secrets.GCE_SERVICE_ACCOUNT}}
         
-        # gcloud info     
-        # gcloud compute config-ssh --quiet --verbosity=debug
+  #       # gcloud info     
+  #       # gcloud compute config-ssh --quiet --verbosity=debug
 
 
-        gcloud compute ssh ${{secrets.GCE_INSTANCE_NAME}} --quiet --zone us-east1-b --tunnel-through-iap --ssh-flag="-fNT -L 27017:localhost:27017" --ssh-key-expire-after=60m
+  #       gcloud compute ssh ${{secrets.GCE_INSTANCE_NAME}} --quiet --zone us-east1-b --tunnel-through-iap --ssh-flag="-fNT -L 27017:localhost:27017" --ssh-key-expire-after=60m
 
-        cd Tools/UploadDataToMongoDb/
-        ./SendToMongoDb
+  #       cd Tools/UploadDataToMongoDb/
+  #       ./SendToMongoDb
         
-        gcloud config unset auth/impersonate_service_account
+  #       gcloud config unset auth/impersonate_service_account
 
-        # for i in $(gcloud compute os-login ssh-keys list | grep -v FINGERPRINT) 
-        # do 
-        #   echo Removing ssh key $i 
-        #   gcloud compute os-login ssh-keys remove --key $i
-        # done
+  #       # for i in $(gcloud compute os-login ssh-keys list | grep -v FINGERPRINT) 
+  #       # do 
+  #       #   echo Removing ssh key $i 
+  #       #   gcloud compute os-login ssh-keys remove --key $i
+  #       # done
 
-        
+  # Cleanup:
+  #   runs-on: ubuntu-latest
+  #   # needs: [build-personalworks, tests-personalworks, benchamrks-personalworks, updatedb_personalworks]
+  #   needs: [updatedb_personalworks]
+  #   if: ${{ always() }}
 
-  Cleanup:
-    runs-on: ubuntu-latest
-    # needs: [build-personalworks, tests-personalworks, benchamrks-personalworks, updatedb_personalworks]
-    needs: [updatedb_personalworks]
-    if: ${{ always() }}
+  #   steps:
+  #   - name: Foresight Collect Workflow Telemetry
+  #     uses: runforesight/foresight-workflow-kit-action@v1
+  #     if: ${{ always() }}
+  #     with:
+  #       api_key: ${{ secrets.FORESIGHT_API_KEY }}
 
-    steps:
-    - name: Foresight Collect Workflow Telemetry
-      uses: runforesight/foresight-workflow-kit-action@v1
-      if: ${{ always() }}
-      with:
-        api_key: ${{ secrets.FORESIGHT_API_KEY }}
+  #   - uses: actions/checkout@v3 
 
-    - uses: actions/checkout@v3 
+  #   - name: 'Clean caches'
+  #     env:
+  #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #     run: |        
+  #       gh extension install actions/gh-actions-cache
 
-    - name: 'Clean caches'
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |        
-        gh extension install actions/gh-actions-cache
+  #       cacheBuildList=$(gh actions-cache list --key CacheBuild- | cut -f 1)             
+  #       echo Deleting caches:
+  #       for cacheKey in $cacheBuildList
+  #       do
+  #           echo $cacheKey 
+  #           gh actions-cache delete $cacheKey --confirm
+  #       done
 
-        cacheBuildList=$(gh actions-cache list --key CacheBuild- | cut -f 1)             
-        echo Deleting caches:
-        for cacheKey in $cacheBuildList
-        do
-            echo $cacheKey 
-            gh actions-cache delete $cacheKey --confirm
-        done
-
-        cacheToolList=$(gh actions-cache list --key cache-tools-build- | cut -f 1)
-        echo Deleting caches:
-        for cacheKey in $cacheToolList
-        do
-            echo $cacheKey 
-            gh actions-cache delete $cacheKey --confirm
-        done
+  #       cacheToolList=$(gh actions-cache list --key cache-tools-build- | cut -f 1)
+  #       echo Deleting caches:
+  #       for cacheKey in $cacheToolList
+  #       do
+  #           echo $cacheKey 
+  #           gh actions-cache delete $cacheKey --confirm
+  #       done

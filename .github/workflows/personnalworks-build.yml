@@ -10,11 +10,13 @@ jobs:
           platform: [
             {
               os: windows-latest,
-              genertor: windows-vs2022
+              genertor: windows-vs2022,
+              experimental: false
             },
             {
               os: ubuntu-latest,
-              genertor: linux-ninja-multi-config
+              genertor: linux-ninja-multi-config,
+              experimental: true
             }]
           architecture: [x64]
           buildConfig: [
@@ -30,10 +32,6 @@ jobs:
               name: shipping,
               value: release
             },]
-          experimental: [false]
-          include:
-            - platform.os: ubuntu-latest
-              experimental: true
 
     # strategy:
     #   fail-fast: false
@@ -89,7 +87,7 @@ jobs:
     #       }
 
     runs-on: ${{ matrix.platform.os }}
-    continue-on-error: ${{ matrix.experimental }}
+    continue-on-error: ${{ matrix.platform.experimental }}
     name: ${{ matrix.platform.genertor }}-${{ matrix.architecture }}-${{ matrix.buildConfig.name }}
 
     env:

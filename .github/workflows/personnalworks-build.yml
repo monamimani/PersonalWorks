@@ -27,10 +27,12 @@ jobs:
               value: release
             },]
           experimental: [false]
-          # include:
-          #   - platform.os: ubuntu-latest
-          #     platform.genertor: linux-ninja-multi-config
-          #     experimental: true
+          include:
+            - platform: {
+                os: ubuntu-latest,
+                genertor: linux-ninja-multi-config
+              }
+              experimental: true
 
     # strategy:
     #   fail-fast: false
@@ -87,7 +89,7 @@ jobs:
 
     runs-on: ${{ matrix.platform.os }}
     continue-on-error: ${{ matrix.experimental }}
-    name: ${{ matrix.platform.genertor }}-${{ matrix.platform.genertor }}-
+    name: ${{ matrix.platform.genertor }}-${{ matrix.platform.genertor }}-${{ matrix.architecture }}-${{ matrix.buildConfig.name }}
 
     env:
       configurePreset: ${{ matrix.platform.genertor }}

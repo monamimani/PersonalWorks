@@ -132,7 +132,8 @@ jobs:
 
   Cleanup:
     runs-on: ubuntu-latest
-    needs: [build-personalworks, tests-personalworks, benchamrks-personalworks, SSH_Tunnel]
+    # needs: [build-personalworks, tests-personalworks, benchamrks-personalworks, SSH_Tunnel]
+    needs: [SSH_Tunnel]
     if: ${{ always() }}
 
     steps:

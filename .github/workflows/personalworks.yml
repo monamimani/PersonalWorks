@@ -3,16 +3,16 @@ name: Personalworks
 on: [push, pull_request, release]
 
 jobs:
-  build-personalworks:  
-    uses: ./.github/workflows/personnalworks-build.yml
+  # build-personalworks:  
+  #   uses: ./.github/workflows/personnalworks-build.yml
 
-  tests-personalworks: 
-    needs: build-personalworks 
-    uses: ./.github/workflows/personnalworks-tests.yml
+  # tests-personalworks: 
+  #   needs: build-personalworks 
+  #   uses: ./.github/workflows/personnalworks-tests.yml
 
-  benchamrks-personalworks:  
-    needs: build-personalworks 
-    uses: ./.github/workflows/personnalworks-benchmarks.yml
+  # benchamrks-personalworks:  
+  #   needs: build-personalworks 
+  #   uses: ./.github/workflows/personnalworks-benchmarks.yml
 
   build-tools:
     runs-on: ubuntu-latest
@@ -52,7 +52,7 @@ jobs:
         popd
 
 
-  SSH_Tunnel:
+  Update_PersonalWorksDb:
     runs-on: ubuntu-latest
     needs: build-tools
 
@@ -61,12 +61,12 @@ jobs:
       contents: 'read'
       id-token: 'write'
 
-    container:
-      image: google/cloud-sdk:slim
-      ports:
-      - 27017:27017
-      volumes:
-      - Tools
+    # container:
+    #   image: google/cloud-sdk:slim
+    #   ports:
+    #   - 27017:27017
+    #   volumes:
+    #   - Tools
 
     steps:
     - name: Foresight Collect Workflow Telemetry
@@ -82,19 +82,34 @@ jobs:
         path: Tools
         key: cache-tools-build-${{ github.run_id }}
 
-    - id: gcloud_auth
-      name: 'Authenticate to Google Cloud'
+    - name: 'Authenticate to Google Cloud'
+      id: gcloud_auth
       uses: 'google-github-actions/auth@v1'
       with:
         workload_identity_provider: ${{secrets.GCLOUD_IAM_WORKLOAD_IDENTITY_PROVIDER}}
         service_account: personalworks-db@tonal-justice-374902.iam.gserviceaccount.com
+
+    - name: Cache gcloud setup
+      id: cache-setup-gcloud
+      uses: actions/cache@v3
+      with:
+        path: C:\hostedtoolcache\windows\gcloud
+        key: ${{ runner.os }}-cache-setup-gcloud
+
+    - name: 'Set up gcloud SDK'
+      if: (steps.cache-install-cache-setup-gcloud.outputs.cache-hit != 'true')
+      uses: 'google-github-actions/setup-gcloud@v1'
+      with:
+        project_id: ${{steps.gcloud_auth.outputs.project_id}}
 
     - name: SSH Tunnel & SendToMongoDb
       run: |       
         $(gcloud info --format="value(basic.python_location)") -m pip install numpy
 
         gcloud config set auth/impersonate_service_account personalworks-db@tonal-justice-374902.iam.gserviceaccount.com
-        # gcloud info
+        
+        gcloud info
+        
         # gcloud compute config-ssh --quiet --verbosity=debug
         # gcloud compute config-ssh --quiet
 

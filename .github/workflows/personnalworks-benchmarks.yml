@@ -78,7 +78,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ${{ env.buildConfigBinDir }}
-          key: CacheBuild-${{ runner.os }}-${{ matrix.config.configurePreset }}-${{ matrix.config.buildConfig }}-${{ github.run_id }}
+          key: CacheBuild-${{ github.run_id }}-${{ runner.os }}-${{ matrix.config.configurePreset }}-${{ matrix.config.buildConfig }}
 
       - name: Run Google Benchmark (${{ runner.os }})
         if: runner.os == 'Windows'

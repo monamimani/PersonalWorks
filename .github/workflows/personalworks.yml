@@ -54,7 +54,7 @@ jobs:
 
   updatedb_personalworks:
     runs-on: ubuntu-latest
-    needs: build-tools
+    needs: [build-tools, tests-personalworks, benchamrks-personalworks]
     concurrency: updatedb_personalworks
 
     # Add permissions for gcloud Authentification
@@ -82,6 +82,16 @@ jobs:
       with:
         path: Tools
         key: cache-tools-build-${{ github.run_id }}
+
+    - name: Cache Build Test Results
+      id: cache-build
+      uses: actions/cache@v3
+      with:
+        key: CacheTestsResults-${{ github.run_id }}-${{ runner.os }}-${{ env.buildConfig }}
+        path: |
+          _Out/build/debug/_bin/*/*.xml
+          _Out/build/relWithDebInfo/_bin/*/*.xml
+          _Out/build/release/_bin/*/*.xml
 
     - name: 'Authenticate to Google Cloud'
       id: gcloud_auth
@@ -112,11 +122,10 @@ jobs:
         gcloud compute instances start ${{secrets.GCE_INSTANCE_NAME}} --zone us-east1-b
         gcloud compute instances describe ${{secrets.GCE_INSTANCE_NAME}} --zone us-east1-b --format="yaml(status)"
 
-        instanceStatus=$(gcloud compute instances describe ${{secrets.GCE_INSTANCE_NAME}} --zone us-east1-b --format="yaml(status)")
+        instanceStatus=$(gcloud compute instances describe ${{secrets.GCE_INSTANCE_NAME}} --zone us-east1-b --format="value(status)")
         echo $instanceStatus
         while [ $instanceStatus != "RUNNING" ]
         do
-          echo $instanceStatus
           sleep 5s
           instanceStatus=$(gcloud compute instances describe ${{secrets.GCE_INSTANCE_NAME}} --zone us-east1-b --format="yaml(status)")
         done

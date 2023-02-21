@@ -78,7 +78,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ${{ env.buildConfigBinDir }}
-          key: CacheBuild-${{ runner.os }}-${{ matrix.config.configurePreset }}-${{ matrix.config.buildConfig }}-${{ github.run_id }}
+          key: CacheBuild-${{ github.run_id }}-${{ runner.os }}-${{ matrix.config.configurePreset }}-${{ matrix.config.buildConfig }}
 
       - name: Install Linux packages
         if: runner.os == 'Linux'
@@ -113,7 +113,8 @@ jobs:
         if: runner.os == 'Windows'
         run: |
           $buildConfigBinDir = "${{ env.buildConfigBinDir }}"
-          Get-ChildItem -Path .\*.exe -Recurse -Force
+          $items = Get-ChildItem -Path .\*.exe -Recurse -Force
+          Write-Host $items
           $testExe = (Get-ChildItem -Path $buildConfigBinDir -Recurse | Where-Object Name -like *tests*.exe).FullName
           foreach ($exe in $testExe) {
             Write-Host($exe)

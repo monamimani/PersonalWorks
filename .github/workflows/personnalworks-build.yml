@@ -154,7 +154,7 @@ jobs:
         uses: actions/upload-artifact@v3
         if: always()
         with:
-          name: ${{github.workflow}}-${{github.job}}-${{ env.configurePreset }}-Build
+          name: ${{github.workflow}}-${{ env.configurePreset }}-Build-${{github.run_number}}
           path: |
             _Out/build/${{ env.configurePreset }}/_bin/${{ env.buildConfig }}
             _Out/build/${{ env.configurePreset }}/_lib/${{ env.buildConfig }}

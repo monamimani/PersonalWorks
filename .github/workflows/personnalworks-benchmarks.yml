@@ -3,7 +3,7 @@ name: PersonalWorks Benchmarks
 on: workflow_call
 
 jobs:
-  benchamrks-personalwork:
+  benchamrks:
     strategy:
       fail-fast: false
       matrix:

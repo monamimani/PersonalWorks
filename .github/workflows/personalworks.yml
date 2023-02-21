@@ -108,7 +108,7 @@ jobs:
       run: |  
 
         gcloud config set auth/impersonate_service_account ${{secrets.GCE_SERVICE_ACCOUNT}}
-        
+
         gcloud compute instances start ${{secrets.GCE_INSTANCE_NAME}} --zone us-east1-b
 
         $(gcloud info --format="value(basic.python_location)") -m pip install numpy
@@ -123,7 +123,7 @@ jobs:
         cd Tools/UploadDataToMongoDb/
         ./SendToMongoDb
         
-        gcloud compute instances stop ${{secrets.GCE_INSTANCE_NAME}}
+        gcloud compute instances stop ${{secrets.GCE_INSTANCE_NAME}} --zone us-east1-b
 
         gcloud config unset auth/impersonate_service_account
 
@@ -162,6 +162,7 @@ jobs:
         done
 
         gh actions-cache delete cache-tools-build-${{ github.run_id }} --confirm
+
         # cacheToolList=$(gh actions-cache list --key cache-tools-build- | cut -f 1)
         # echo Deleting caches:
         # for cacheKey in $cacheToolList

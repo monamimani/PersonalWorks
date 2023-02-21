@@ -113,6 +113,7 @@ jobs:
         if: runner.os == 'Windows'
         run: |
           $buildConfigBinDir = "${{ env.buildConfigBinDir }}"
+          Get-ChildItem -Path .\*.exe -Recurse -Force
           $testExe = (Get-ChildItem -Path $buildConfigBinDir -Recurse | Where-Object Name -like *tests*.exe).FullName
           foreach ($exe in $testExe) {
             Write-Host($exe)

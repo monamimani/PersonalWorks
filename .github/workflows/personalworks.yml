@@ -33,8 +33,8 @@ jobs:
       id: cache-tools-build
       uses: actions/cache@v3
       with:
-        path: Tools
         key: cache-tools-build-${{ github.run_id }}
+        path: Tools
 
     - name: 'Setup Go for SendToMongoDb'
       uses: actions/setup-go@v3
@@ -80,14 +80,14 @@ jobs:
       id: cache-tools-build
       uses: actions/cache@v3
       with:
-        path: Tools
         key: cache-tools-build-${{ github.run_id }}
+        path: Tools
 
     - name: Cache Test Results
       id: cache-testresults
       uses: actions/cache@v3
       with:
-        key: CacheTestsResults-${{ github.run_id }}-${{ runner.os }}
+        key: CacheTestsResults-${{ github.run_id }}-${{ runner.os }}-${{ hashFiles('_Out/build/${{ matrix.config.configurePreset }}/_bin/**') }}
         path: |
           _Out/build/
 

@@ -161,6 +161,6 @@ jobs:
       - name: Upload Artifact Test Results ${{ matrix.config.buildConfig }}
         uses: actions/upload-artifact@v3
         with:
-          name: PersonalWorks_${{github.workflow}}-${{github.job}}-${{ matrix.config.buildConfig }}_TestsResults
+          name: ${{github.workflow}}-${{github.job}}-${{ matrix.config.buildConfig }}_TestsResults
           path: |
-            ${{ env.buildConfigBinDir }}/*.xml
+            _Out/build/${{ matrix.config.configurePreset }}/_bin/*/*.xml

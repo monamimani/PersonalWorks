@@ -83,8 +83,8 @@ jobs:
         path: Tools
         key: cache-tools-build-${{ github.run_id }}
 
-    - name: Cache Build Test Results
-      id: cache-build
+    - name: Cache Test Results
+      id: cache-testresults
       uses: actions/cache@v3
       with:
         key: CacheTestsResults-${{ github.run_id }}-${{ runner.os }}-${{ env.buildConfig }}

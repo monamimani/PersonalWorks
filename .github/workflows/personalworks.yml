@@ -87,7 +87,7 @@ jobs:
       id: cache-testresults
       uses: actions/cache@v3
       with:
-        key: CacheTestsResults-${{ github.run_id }}-${{ runner.os }}-${{ env.buildConfig }}
+        key: CacheTestsResults-${{ github.run_id }}-${{ runner.os }}
         path: |
           _Out/build/
 
@@ -115,20 +115,14 @@ jobs:
     - name: SSH Tunnel & SendToMongoDb
       run: |  
 
+        ls -R
+
         gcloud config set auth/impersonate_service_account ${{secrets.GCE_SERVICE_ACCOUNT}}
 
         gcloud compute instances start ${{secrets.GCE_INSTANCE_NAME}} --zone us-east1-b
         gcloud compute instances describe ${{secrets.GCE_INSTANCE_NAME}} --zone us-east1-b --format="yaml(status)"
 
         instanceStatus=$(gcloud compute instances describe ${{secrets.GCE_INSTANCE_NAME}} --zone us-east1-b --format="value(status)")
-        echo $instanceStatus
-        while [ $instanceStatus != "RUNNING" ]
-        do
-          sleep 5s
-          instanceStatus=$(gcloud compute instances describe ${{secrets.GCE_INSTANCE_NAME}} --zone us-east1-b --format="yaml(status)")
-        done
-
-
 
         $(gcloud info --format="value(basic.python_location)") -m pip install numpy
 
@@ -138,6 +132,15 @@ jobs:
 
 
         gcloud compute ssh ${{secrets.GCE_INSTANCE_NAME}} --quiet --zone us-east1-b --tunnel-through-iap --ssh-flag="-fNT -L 27017:localhost:27017" --ssh-key-expire-after=60m
+
+        while [ $instanceStatus != "RUNNING" ] && [$? -eq 255]
+        do
+          echo gcloud compute ssh failed retry.
+          sleep 5s
+          instanceStatus=$(gcloud compute instances describe ${{secrets.GCE_INSTANCE_NAME}} --zone us-east1-b --format="yaml(status)")
+
+          gcloud compute ssh ${{secrets.GCE_INSTANCE_NAME}} --quiet --zone us-east1-b --tunnel-through-iap --ssh-flag="-fNT -L 27017:localhost:27017" --ssh-key-expire-after=60m
+        done
 
         cd Tools/UploadDataToMongoDb/
         ./SendToMongoDb

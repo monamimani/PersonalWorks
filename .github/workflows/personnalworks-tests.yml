@@ -162,7 +162,7 @@ jobs:
         id: cache-testresults
         uses: actions/cache@v3
         with:
-          key: CacheTestsResults-${{ github.run_id }}-${{ runner.os }}-${{ env.buildConfig }}
+          key: CacheTestsResults-${{ github.run_id }}-${{ runner.os }}
           path: |
             _Out/build/${{ matrix.config.configurePreset }}/_bin/*/*.xml
 

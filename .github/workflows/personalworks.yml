@@ -112,11 +112,11 @@ jobs:
         gcloud compute instances start ${{secrets.GCE_INSTANCE_NAME}} --zone us-east1-b
         gcloud compute instances describe ${{secrets.GCE_INSTANCE_NAME}} --zone us-east1-b --format="yaml(status)"
 
-        STATUS = $(gcloud compute instances describe ${{secrets.GCE_INSTANCE_NAME}} --zone us-east1-b --format="yaml(status)")
-        while [ $STATUS != "RUNNING" ]
+        instanceStatus=$(gcloud compute instances describe ${{secrets.GCE_INSTANCE_NAME}} --zone us-east1-b --format="yaml(status)")
+        while [ $instanceStatus != "RUNNING" ]
         do
           sleep(5s)
-          STATUS = $(gcloud compute instances describe ${{secrets.GCE_INSTANCE_NAME}} --zone us-east1-b --format="yaml(status)")
+          instanceStatus=$(gcloud compute instances describe ${{secrets.GCE_INSTANCE_NAME}} --zone us-east1-b --format="yaml(status)")
         done
 
 

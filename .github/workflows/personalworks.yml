@@ -110,7 +110,8 @@ jobs:
         gcloud config set auth/impersonate_service_account ${{secrets.GCE_SERVICE_ACCOUNT}}
 
         gcloud compute instances start ${{secrets.GCE_INSTANCE_NAME}} --zone us-east1-b
-
+        gcloud compute instances describe ${{secrets.GCE_INSTANCE_NAME}} --zone us-east1-b
+        
         $(gcloud info --format="value(basic.python_location)") -m pip install numpy
 
         

@@ -77,7 +77,9 @@ jobs:
         id: cache-build
         uses: actions/cache@v3
         with:
-          path: ${{ env.buildConfigBinDir }}
+          path: |
+            ${{ env.buildConfigBinDir }}
+            OpenCppCoverage.config.txt
           key: CacheBuild-${{ github.run_id }}-${{ runner.os }}-${{ matrix.config.configurePreset }}-${{ matrix.config.buildConfig }}
 
       - name: Install Linux packages
@@ -113,7 +115,7 @@ jobs:
         if: runner.os == 'Windows'
         run: |
           $buildConfigBinDir = "${{ env.buildConfigBinDir }}"
-          $items = Get-ChildItem -Path .\ -Recurse -Force
+          $items = Get-ChildItem -Recurse -Force
           Write-Host $items
           # $testExe = (Get-ChildItem -Path $buildConfigBinDir -Recurse | Where-Object Name -like *tests*.exe).FullName
           # foreach ($exe in $testExe) {

@@ -107,11 +107,12 @@ jobs:
     - name: SSH Tunnel & SendToMongoDb
       run: |  
 
-        gcloud compute instances start ${{secrets.GCE_INSTANCE_NAME}}
+        gcloud config set auth/impersonate_service_account ${{secrets.GCE_SERVICE_ACCOUNT}}
+        
+        gcloud compute instances start ${{secrets.GCE_INSTANCE_NAME}} --zone us-east1-b
 
         $(gcloud info --format="value(basic.python_location)") -m pip install numpy
 
-        gcloud config set auth/impersonate_service_account ${{secrets.GCE_SERVICE_ACCOUNT}}
         
         # gcloud info     
         # gcloud compute config-ssh --quiet --verbosity=debug

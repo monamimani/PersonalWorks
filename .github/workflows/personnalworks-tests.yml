@@ -115,15 +115,15 @@ jobs:
         if: runner.os == 'Windows'
         run: |
           $buildConfigBinDir = "${{ env.buildConfigBinDir }}"
-          $items = Get-ChildItem -Recurse -Force
-          Write-Host $items
-          # $testExe = (Get-ChildItem -Path $buildConfigBinDir -Recurse | Where-Object Name -like *tests*.exe).FullName
-          # foreach ($exe in $testExe) {
-          #   Write-Host($exe)
-          #   $exeName = Get-ChildItem $exe | Select-Object -ExpandProperty BaseName
-          #   Write-Host($exeName)
-          #   &$exe --gtest_output=xml:$buildConfigBinDir/
-          # }
+          Get-ChildItem -Recurse -Force
+          
+          $testExe = (Get-ChildItem -Path $buildConfigBinDir -Recurse | Where-Object Name -like *tests*.exe).FullName
+          foreach ($exe in $testExe) {
+            Write-Host($exe)
+            $exeName = Get-ChildItem $exe | Select-Object -ExpandProperty BaseName
+            Write-Host($exeName)
+            &$exe --gtest_output=xml:$buildConfigBinDir/
+          }
           #| Where-Object { $_.Filename -match 'tests' }
           #| Where-Object { $_.DirectoryName -match 'Release' }
 

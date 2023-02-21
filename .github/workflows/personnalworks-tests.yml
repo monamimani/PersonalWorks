@@ -127,10 +127,10 @@ jobs:
           #| Where-Object { $_.Filename -match 'tests' }
           #| Where-Object { $_.DirectoryName -match 'Release' }
 
-      - name: Run Google test (Linux)
-        if: runner.os == 'Linux'
-        run: |
-          ctest --preset ${{ matrix.config.testPreset }} --show-only
+      # - name: Run Google test (Linux)
+      #   if: runner.os == 'Linux'
+      #   run: |
+      #     ctest --preset ${{ matrix.config.testPreset }} --show-only
 
       - name: OpenCppCoverage
         run: |
@@ -158,9 +158,17 @@ jobs:
           name: ${{github.repository}}
           files: ./coverage.xml
 
+      - name: Cache Build Test Results
+        id: cache-build
+        uses: actions/cache@v3
+        with:
+          key: CacheTestsResults-${{ github.run_id }}-${{ runner.os }}-${{ env.buildConfig }}
+          path: |
+            _Out/build/${{ matrix.config.configurePreset }}/_bin/*/*.xml
+
       - name: Upload Artifact Test Results ${{ matrix.config.buildConfig }}
         uses: actions/upload-artifact@v3
         with:
-          name: ${{github.workflow}}-${{ matrix.config.configurePreset }}-TestsResults--${{github.run_number}}
+          name: ${{github.workflow}}-${{ matrix.config.configurePreset }}-TestsResults-${{github.run_number}}
           path: |
             _Out/build/${{ matrix.config.configurePreset }}/_bin/*/*.xml

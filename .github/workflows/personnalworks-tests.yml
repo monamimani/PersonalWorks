@@ -3,7 +3,7 @@ name: PersonalWorks Tests
 on: workflow_call
 
 jobs:
-  tests-personalwork:
+  tests:
     strategy:
       fail-fast: false
       matrix:
@@ -161,6 +161,6 @@ jobs:
       - name: Upload Artifact Test Results ${{ matrix.config.buildConfig }}
         uses: actions/upload-artifact@v3
         with:
-          name: ${{github.workflow}}-${{github.job}}-${{ matrix.config.buildConfig }}_TestsResults
+          name: ${{github.workflow}}-${{ matrix.config.configurePreset }}-TestsResults--${{github.run_number}}
           path: |
             _Out/build/${{ matrix.config.configurePreset }}/_bin/*/*.xml

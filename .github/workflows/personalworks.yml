@@ -89,9 +89,7 @@ jobs:
       with:
         key: CacheTestsResults-${{ github.run_id }}-${{ runner.os }}-${{ env.buildConfig }}
         path: |
-          _Out/build/debug/_bin/*/*.xml
-          _Out/build/relWithDebInfo/_bin/*/*.xml
-          _Out/build/release/_bin/*/*.xml
+          _Out/build/
 
     - name: 'Authenticate to Google Cloud'
       id: gcloud_auth

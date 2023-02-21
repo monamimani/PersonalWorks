@@ -93,10 +93,10 @@ jobs:
       buildConfig: ${{ matrix.buildConfig.optimization }}
       buildPreset: ${{ matrix.platform.genertor }}-${{ matrix.architecture }}-${{ matrix.buildConfig.name }}
       testPreset: ${{ matrix.platform.genertor }}-${{ matrix.architecture }}-${{ matrix.buildConfig.name }}
-
+                          
       buildConfigBinDir: "_Out/build/${{ matrix.platform.genertor }}/_bin/${{ matrix.buildConfig.optimization }}"
-      fullBinDir: "${{ github.workspace }}/_Out/build/${{ matrix.config.configurePreset }}/_bin"
-      libDir: "_Out/build/${{ matrix.config.configurePreset }}/_lib"
+      buildConfigLibDir: "_Out/build/${{ matrix.platform.genertor }}/_lib/${{ matrix.buildConfig.optimization }}"
+      fullBinDir: "${{ github.workspace }}/_Out/build/${{ matrix.platform.genertor }}/_bin"
 
     steps:
       - name: Foresight Collect Workflow Telemetry

@@ -87,14 +87,13 @@ jobs:
         if: runner.os == 'Windows'
         run: |
           $buildConfigBinDir = "${{ env.buildConfigBinDir }}"
-          Get-ChildItem -Recurse -Force
           
           $testExe = (Get-ChildItem -Path $buildConfigBinDir -Recurse | Where-Object Name -like *tests*.exe).FullName
           foreach ($exe in $testExe) {
             Write-Host($exe)
             $exeName = Get-ChildItem $exe | Select-Object -ExpandProperty BaseName
             Write-Host($exeName)
-            &$exe --gtest_output=xml:$buildConfigBinDir/
+            &$exe --gtest_output=xml:$buildConfigBinDir/Tests/
           }
           #| Where-Object { $_.Filename -match 'tests' }
           #| Where-Object { $_.DirectoryName -match 'Release' }
@@ -112,7 +111,7 @@ jobs:
             Write-Host($exe)
             $exeName = Get-ChildItem $exe | Select-Object -ExpandProperty BaseName
             Write-Host($exeName)
-            OpenCppCoverage --config_file=OpenCppCoverage.config.txt --modules=$buildConfigDir --excluded_sources="*\vcpkg_installed" --excluded_sources="Projects\TestUtilities\*" --excluded_sources="Projects\*.test*"  --export_type=cobertura:coverage.xml -- $buildConfigDir/$exe --gtest_brief=1
+            OpenCppCoverage --config_file=OpenCppCoverage.config.txt --modules=$buildConfigDir --excluded_sources="*\vcpkg_installed" --excluded_sources="Projects\TestUtilities\*" --excluded_sources="Projects\*.test*"  --export_type=cobertura:coverage.xml -- $exe --gtest_brief=1
           }
           # OpenCppCoverage --config_file=OpenCppCoverage.config.txt --modules=$buildConfigDir --excluded_sources="*\vcpkg_installed" --excluded_sources="Projects\TestUtilities\*" --excluded_sources="Projects\*.test*"  --export_type=cobertura:coverage.xml -- $buildConfigDir/CoreTests.exe --gtest_brief=1
 
@@ -142,4 +141,4 @@ jobs:
         with:
           name: ${{github.workflow}}-${{ env.configurePreset }}-QA-${{github.run_number}}
           path: |
-            _Out/build/${{ env.configurePreset }}/_bin/*/*.xml
+            _Out/build/${{ env.configurePreset }}/_bin/*/Tests/*.xml

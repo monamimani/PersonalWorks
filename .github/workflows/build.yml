@@ -23,7 +23,7 @@ jobs:
   build:
     runs-on: ${{ inputs.os }}
     continue-on-error: ${{ inputs.experimental }}
-
+    name: ${{ inputs.buildPreset }}
     env:
       configurePreset: ${{ inputs.configurePreset }}
       buildConfig: ${{ inputs.buildConfig }}

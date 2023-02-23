@@ -27,7 +27,7 @@ jobs:
   
     runs-on: ${{ inputs.os }}
     continue-on-error: ${{ inputs.experimental }}
-    name: ${{ inputs.buildPreset }}
+    name: Benchmarks-${{ inputs.buildPreset }}
     env:
       configurePreset: ${{ inputs.configurePreset }}
       buildConfig: ${{ inputs.buildConfig }}

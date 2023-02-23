@@ -1,0 +1,79 @@
+name: Build
+description: Compile and builds the targets of Personalworks.
+
+inputs:
+  buildConfig:
+    description: "The build configuration"
+    required: true
+  configurePreset:
+    description: "The Cmake configure preset"
+    required: true
+  buildPreset:
+    description: "The Cmake build preset"
+    required: true
+
+
+runs:
+  using: "composite"
+  steps:
+  - name: Foresight Collect Workflow Telemetry
+    uses: runforesight/foresight-workflow-kit-action@v1
+    if: ${{ always() }}
+    with:
+      api_key: ${{ secrets.FORESIGHT_API_KEY }}
+
+  - uses: actions/checkout@v3
+    with:
+      lfs: true
+      submodules: true
+
+  - name: Cache vcpkg
+    id: cache-vcpkg
+    uses: actions/cache@v3
+    with:
+      path: _Out/build/vcpkg_installed
+      key: ${{ runner.os }}-${{ inputs.configurePreset }}-vcpkg-${{ hashFiles('**/vcpkg.json') }}
+
+  - name: Set environmental variables
+    shell: bash
+    run: |
+      # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#adding-a-system-path
+      echo "VCPKG_ROOT=$VCPKG_INSTALLATION_ROOT" >> $GITHUB_ENV
+
+  - name: Install Linux packages
+    if: runner.os == 'Linux'
+    shell: bash
+    run: |
+      sudo apt update
+      sudo apt install gcc-11 g++-11
+      sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 110 --slave /usr/bin/g++ g++ /usr/bin/g++-11
+      sudo apt-get install ninja-build
+
+  - name: Cmake Configure
+    shell: bash
+    run: |
+      cmake --preset ${{ inputs.configurePreset }}
+
+  - name: Cmake Build
+    if: runner.os == 'Windows'
+    shell: pwsh
+    run: |
+      cmake --build --preset ${{ inputs.buildPreset }}
+
+  - name: Cache Build
+    id: cache-build
+    uses: actions/cache@v3
+    with:
+      path: |
+        "_Out/build/${{ inputs.configurePreset }}/_bin/${{ inputs.buildConfig }}"
+        OpenCppCoverage.config.txt
+      key: CacheBuild-${{ github.run_id }}-${{ runner.os }}-${{ inputs.configurePreset }}-${{ inputs.buildConfig }}
+
+  - name: Upload Build Artifacts ${{ inputs.buildConfig }}
+    uses: actions/upload-artifact@v3
+    if: always()
+    with:
+      name: ${{github.workflow}}-${{ inputs.configurePreset }}-Build-${{github.run_number}}
+      path: |
+        _Out/build/${{ inputs.configurePreset }}/_bin/${{ inputs.buildConfig }}
+        _Out/build/${{ inputs.configurePreset }}/_lib/${{ inputs.buildConfig }}

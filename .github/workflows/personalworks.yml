@@ -29,19 +29,10 @@ jobs:
             name: shipping,
             optimization: release
           },]
-          
+
     name: ${{ matrix.platform.genertor }}-${{ matrix.architecture }}-${{ matrix.buildConfig.name }}
     
-    # uses: ./.github/workflows/workflow.yml
-    # with:
-    #   os: ${{ matrix.platform.os }}
-    #   buildConfig: ${{ matrix.buildConfig.optimization }}
-    #   configurePreset: ${{ matrix.platform.genertor }}
-    #   buildPreset: ${{ matrix.platform.genertor }}-${{ matrix.architecture }}-${{ matrix.buildConfig.name }}
-    #   testPreset: ${{ matrix.platform.genertor }}-${{ matrix.architecture }}-${{ matrix.buildConfig.name }}
-    #   experimental: ${{ matrix.platform.experimental }}
-
-    uses: ./.github/workflows/workflow-composite.yml
+    uses: ./.github/workflows/workflow.yml
     with:
       os: ${{ matrix.platform.os }}
       buildConfig: ${{ matrix.buildConfig.optimization }}
@@ -49,17 +40,6 @@ jobs:
       buildPreset: ${{ matrix.platform.genertor }}-${{ matrix.architecture }}-${{ matrix.buildConfig.name }}
       testPreset: ${{ matrix.platform.genertor }}-${{ matrix.architecture }}-${{ matrix.buildConfig.name }}
       experimental: ${{ matrix.platform.experimental }}
-
-  # build-personalworks:  
-  #   uses: ./.github/workflows/personnalworks-build.yml
-
-  # tests-personalworks: 
-  #   needs: build-personalworks 
-  #   uses: ./.github/workflows/personnalworks-tests.yml
-
-  # benchamrks-personalworks:  
-  #   needs: build-personalworks 
-  #   uses: ./.github/workflows/personnalworks-benchmarks.yml
 
   build-tools:
     runs-on: ubuntu-latest

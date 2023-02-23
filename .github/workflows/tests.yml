@@ -107,7 +107,14 @@ jobs:
       - name: OpenCppCoverage
         run: |
           $buildConfigDir = Resolve-Path -Path "${{ env.buildConfigBinDir }}"
-          OpenCppCoverage --config_file=OpenCppCoverage.config.txt --modules=$buildConfigDir --excluded_sources="*\vcpkg_installed" --excluded_sources="Projects\TestUtilities\*" --excluded_sources="Projects\*.test*"  --export_type=cobertura:coverage.xml -- $buildConfigDir/CoreTests.exe --gtest_brief=1
+          $testsExe = (Get-ChildItem -Path $buildConfigBinDir -Recurse | Where-Object Name -like *tests*.exe).FullName
+          foreach ($exe in $testsExe) {
+            Write-Host($exe)
+            $exeName = Get-ChildItem $exe | Select-Object -ExpandProperty BaseName
+            Write-Host($exeName)
+            OpenCppCoverage --config_file=OpenCppCoverage.config.txt --modules=$buildConfigDir --excluded_sources="*\vcpkg_installed" --excluded_sources="Projects\TestUtilities\*" --excluded_sources="Projects\*.test*"  --export_type=cobertura:coverage.xml -- $buildConfigDir/$exe --gtest_brief=1
+          }
+          # OpenCppCoverage --config_file=OpenCppCoverage.config.txt --modules=$buildConfigDir --excluded_sources="*\vcpkg_installed" --excluded_sources="Projects\TestUtilities\*" --excluded_sources="Projects\*.test*"  --export_type=cobertura:coverage.xml -- $buildConfigDir/CoreTests.exe --gtest_brief=1
 
       - name: Foresight Upload Test/Coverage Results
         uses: runforesight/foresight-test-kit-action@v1
@@ -130,9 +137,9 @@ jobs:
           name: ${{github.repository}}
           files: ./coverage.xml
 
-      - name: Upload Artifact Test Results ${{ env.buildConfig }}
+      - name: Upload Artifact QA Results ${{ env.buildConfig }}
         uses: actions/upload-artifact@v3
         with:
-          name: ${{github.workflow}}-${{ env.configurePreset }}-TestsResults-${{github.run_number}}
+          name: ${{github.workflow}}-${{ env.configurePreset }}-QA-${{github.run_number}}
           path: |
             _Out/build/${{ env.configurePreset }}/_bin/*/*.xml

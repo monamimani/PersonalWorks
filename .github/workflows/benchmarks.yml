@@ -65,3 +65,10 @@ jobs:
             Write-Host($exeName)
             &$exe --benchmark_out_format=json --benchmark_out=$exeName.json
           }
+
+      - name: Upload Artifact QA Results ${{ env.buildConfig }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{github.workflow}}-${{ env.configurePreset }}-QA-${{github.run_number}}
+          path: |
+            _Out/build/${{ env.configurePreset }}/_bin/*/*.json

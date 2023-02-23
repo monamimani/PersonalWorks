@@ -25,14 +25,20 @@ on:
 jobs:
   tests:
 
-    runs-on: ${{ matrix.config.os }}
-    continue-on-error: ${{ matrix.config.experimental }}
-    name: ${{ matrix.config.buildPreset }}
+    runs-on: ${{ inputs.os }}
+    continue-on-error: ${{ inputs.experimental }}
+    name: ${{ inputs.buildPreset }}
 
     env:
-      buildConfigBinDir: "_Out/build/${{ matrix.config.configurePreset }}/_bin/${{ matrix.config.buildConfig }}"
-      fullBinDir: "${{ github.workspace }}/_Out/build/${{ matrix.config.configurePreset }}/_bin"
-      libDir: "_Out/build/${{ matrix.config.configurePreset }}/_lib"
+      configurePreset: ${{ inputs.configurePreset }}
+      buildConfig: ${{ inputs.buildConfig }}
+      buildPreset: ${{ inputs.buildPreset }}
+      testPreset: ${{ inputs.testPreset }}
+                          
+      buildConfigBinDir: "_Out/build/${{ inputs.configurePreset }}/_bin/${{ inputs.buildConfig }}"
+      buildConfigLibDir: "_Out/build/${{ inputs.configurePreset }}/_lib/${{ inputs.buildConfig }}"
+      fullBinDir: "${{ github.workspace }}/_Out/build/${{ inputs.configurePreset }}/_bin"
+
 
     steps:
       - name: Foresight Collect Workflow Telemetry
@@ -48,7 +54,7 @@ jobs:
           path: |
             ${{ env.buildConfigBinDir }}
             OpenCppCoverage.config.txt
-          key: CacheBuild-${{ github.run_id }}-${{ runner.os }}-${{ matrix.config.configurePreset }}-${{ matrix.config.buildConfig }}
+          key: CacheBuild-${{ github.run_id }}-${{ runner.os }}-${{ env.configurePreset }}-${{ env.buildConfig }}
 
       - name: Install Linux packages
         if: runner.os == 'Linux'
@@ -117,12 +123,12 @@ jobs:
           coverage_path: ./coverage.xml
           tags: | 
             os:${{ runner.os }}
-            buildConfig:${{ matrix.config.buildConfig }}
+            buildConfig:${{ env.buildConfig }}
 
       - name: Codecov
         uses: codecov/codecov-action@v3.1.1
         with:
-          flags: ${{ runner.os }}-${{ matrix.config.buildConfig }}
+          flags: ${{ runner.os }}-${{ env.buildConfig }}
           name: ${{github.repository}}
           files: ./coverage.xml
 
@@ -130,13 +136,13 @@ jobs:
         id: cache-testresults
         uses: actions/cache@v3
         with:
-          key: CacheTestsResults-${{ github.run_id }}-${{ runner.os }}-${{ hashFiles('_Out/build/${{ matrix.config.configurePreset }}/_bin/**') }}
+          key: CacheTestsResults-${{ github.run_id }}-${{ runner.os }}-${{ hashFiles('_Out/build/${{ env.configurePreset }}/_bin/**') }}
           path: |
-            _Out/build/${{ matrix.config.configurePreset }}/_bin/*/*.xml
+            _Out/build/${{ env.configurePreset }}/_bin/*/*.xml
 
-      - name: Upload Artifact Test Results ${{ matrix.config.buildConfig }}
+      - name: Upload Artifact Test Results ${{ env.buildConfig }}
         uses: actions/upload-artifact@v3
         with:
-          name: ${{github.workflow}}-${{ matrix.config.configurePreset }}-TestsResults-${{github.run_number}}
+          name: ${{github.workflow}}-${{ env.configurePreset }}-TestsResults-${{github.run_number}}
           path: |
-            _Out/build/${{ matrix.config.configurePreset }}/_bin/*/*.xml
+            _Out/build/${{ env.configurePreset }}/_bin/*/*.xml

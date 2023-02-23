@@ -24,19 +24,19 @@ on:
 
 jobs:
   build:
-    runs-on: ${{ matrix.platform.os }}
-    continue-on-error: ${{ matrix.platform.experimental }}
-    name: ${{ matrix.platform.genertor }}-${{ matrix.architecture }}-${{ matrix.buildConfig.name }}
+    runs-on: ${{ inputs.os }}
+    continue-on-error: ${{ inputs.experimental }}
+    name: ${{ inputs.buildPreset }}
 
     env:
-      configurePreset: ${{ matrix.platform.genertor }}
-      buildConfig: ${{ matrix.buildConfig.optimization }}
-      buildPreset: ${{ matrix.platform.genertor }}-${{ matrix.architecture }}-${{ matrix.buildConfig.name }}
-      testPreset: ${{ matrix.platform.genertor }}-${{ matrix.architecture }}-${{ matrix.buildConfig.name }}
+      configurePreset: ${{ inputs.configurePreset }}
+      buildConfig: ${{ inputs.buildConfig }}
+      buildPreset: ${{ inputs.buildPreset }}
+      testPreset: ${{ inputs.testPreset }}
                           
-      buildConfigBinDir: "_Out/build/${{ matrix.platform.genertor }}/_bin/${{ matrix.buildConfig.optimization }}"
-      buildConfigLibDir: "_Out/build/${{ matrix.platform.genertor }}/_lib/${{ matrix.buildConfig.optimization }}"
-      fullBinDir: "${{ github.workspace }}/_Out/build/${{ matrix.platform.genertor }}/_bin"
+      buildConfigBinDir: "_Out/build/${{ inputs.configurePreset }}/_bin/${{ inputs.buildConfig }}"
+      buildConfigLibDir: "_Out/build/${{ inputs.configurePreset }}/_lib/${{ inputs.buildConfig }}"
+      fullBinDir: "${{ github.workspace }}/_Out/build/${{ inputs.configurePreset }}/_bin"
 
     steps:
       - name: Foresight Collect Workflow Telemetry

@@ -22,11 +22,6 @@ runs:
     with:
       api_key: ${{ secrets.FORESIGHT_API_KEY }}
 
-  - uses: actions/checkout@v3
-    with:
-      lfs: true
-      submodules: true
-
   - name: Cache vcpkg
     id: cache-vcpkg
     uses: actions/cache@v3

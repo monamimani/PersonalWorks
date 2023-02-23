@@ -31,6 +31,7 @@ jobs:
           },]
     
     uses: ./.github/workflows/workflow.yml
+    name: ${{ matrix.platform.genertor }}-${{ matrix.architecture }}-${{ matrix.buildConfig.name }}
     with:
       os: ${{ matrix.platform.os }}
       buildConfig: ${{ matrix.buildConfig.optimization }}

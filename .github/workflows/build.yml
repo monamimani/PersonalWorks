@@ -15,9 +15,6 @@ on:
       buildPreset:
         required: true
         type: string
-      testPreset:
-        required: true
-        type: string
       experimental:
         required: true
         type: boolean
@@ -26,13 +23,11 @@ jobs:
   build:
     runs-on: ${{ inputs.os }}
     continue-on-error: ${{ inputs.experimental }}
-    name: ${{ inputs.buildPreset }}
 
     env:
       configurePreset: ${{ inputs.configurePreset }}
       buildConfig: ${{ inputs.buildConfig }}
       buildPreset: ${{ inputs.buildPreset }}
-      testPreset: ${{ inputs.testPreset }}
                           
       buildConfigBinDir: "_Out/build/${{ inputs.configurePreset }}/_bin/${{ inputs.buildConfig }}"
       buildConfigLibDir: "_Out/build/${{ inputs.configurePreset }}/_lib/${{ inputs.buildConfig }}"
@@ -89,7 +84,7 @@ jobs:
             OpenCppCoverage.config.txt
           key: CacheBuild-${{ github.run_id }}-${{ runner.os }}-${{ env.configurePreset }}-${{ env.buildConfig }}
 
-      - name: Upload Build Artifacts ${{ matrix.config.buildConfig }}
+      - name: Upload Build Artifacts ${{ env.buildConfig }}
         uses: actions/upload-artifact@v3
         if: always()
         with:

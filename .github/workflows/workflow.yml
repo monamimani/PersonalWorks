@@ -28,7 +28,6 @@ jobs:
       buildConfig: ${{ inputs.buildConfig }}
       configurePreset: ${{ inputs.configurePreset }}
       buildPreset: ${{ inputs.buildPreset }}
-      testPreset: ${{ inputs.testPreset }}
       experimental: ${{ inputs.experimental }}
 
   tests:

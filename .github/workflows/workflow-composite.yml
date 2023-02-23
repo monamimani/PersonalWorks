@@ -25,6 +25,17 @@ jobs:
     runs-on: ${{ inputs.os }}
     continue-on-error: ${{ inputs.experimental }}
     steps:
+    - name: Foresight Collect Workflow Telemetry
+      uses: runforesight/foresight-workflow-kit-action@v1
+      if: ${{ always() }}
+      with:
+        api_key: ${{ secrets.FORESIGHT_API_KEY }}
+
+    - uses: actions/checkout@v3
+      with:
+        lfs: true
+        submodules: true
+
     - uses: ./.github/actions/build
       with:
         buildConfig: ${{ inputs.buildConfig }}
@@ -36,18 +47,28 @@ jobs:
     runs-on: ${{ inputs.os }}
     continue-on-error: ${{ inputs.experimental }}
     steps:
-      - uses: ./.github/actions/tests
-        with:
-          buildConfig: ${{ inputs.buildConfig }}
-          configurePreset: ${{ inputs.configurePreset }}
-          testPreset: ${{ inputs.testPreset }}
+    - name: Foresight Collect Workflow Telemetry
+      uses: runforesight/foresight-workflow-kit-action@v1
+      if: ${{ always() }}
+      with:
+        api_key: ${{ secrets.FORESIGHT_API_KEY }}
+    - uses: ./.github/actions/tests
+      with:
+        buildConfig: ${{ inputs.buildConfig }}
+        configurePreset: ${{ inputs.configurePreset }}
+        testPreset: ${{ inputs.testPreset }}
 
   benchmarks:
     needs: build
     runs-on: ${{ inputs.os }}
     continue-on-error: ${{ inputs.experimental }}
     steps:
-      - uses: ./.github/actions/benchmarks
-        with:
-          buildConfig: ${{ inputs.buildConfig }}
-          configurePreset: ${{ inputs.configurePreset }}
+    - name: Foresight Collect Workflow Telemetry
+      uses: runforesight/foresight-workflow-kit-action@v1
+      if: ${{ always() }}
+      with:
+        api_key: ${{ secrets.FORESIGHT_API_KEY }}
+    - uses: ./.github/actions/benchmarks
+      with:
+        buildConfig: ${{ inputs.buildConfig }}
+        configurePreset: ${{ inputs.configurePreset }}

@@ -24,9 +24,9 @@ on:
 
 jobs:
   tests:
-
     runs-on: ${{ inputs.os }}
     continue-on-error: ${{ inputs.experimental }}
+    name: ${{ inputs.testPreset }}
 
     env:
       configurePreset: ${{ inputs.configurePreset }}

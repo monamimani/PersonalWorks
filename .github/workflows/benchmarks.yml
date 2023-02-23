@@ -58,12 +58,16 @@ jobs:
         if: runner.os == 'Windows'
         run: |
           $buildConfigBinDir = "${{ env.buildConfigBinDir }}"
+          $benchmarkOutputDir = "$buildConfigBinDir/Benchmarks"
+          if (!(Test-Path $benchmarkOutputDir -PathType Container)) {
+            New-Item -ItemType Directory -Force -Path $benchmarkOutputDir
+          }
           $benchmarkExe = (Get-ChildItem -Path $buildConfigBinDir -Recurse | Where-Object Name -like *benchmarks*.exe).FullName
           foreach ($exe in $benchmarkExe) {
             Write-Host($exe)
             $exeName = Get-ChildItem $exe | Select-Object -ExpandProperty BaseName
             Write-Host($exeName)
-            &$exe --benchmark_out_format=json --benchmark_out=$exeName.json
+            &$exe --benchmark_out_format=json --benchmark_out=$benchmarkOutputDir/$exeName.json
           }
 
       - name: Upload Artifact QA Results ${{ env.buildConfig }}
@@ -71,4 +75,4 @@ jobs:
         with:
           name: ${{github.workflow}}-${{ env.configurePreset }}-QA-${{github.run_number}}
           path: |
-            _Out/build/${{ env.configurePreset }}/_bin/*/*.json
+            _Out/build/${{ env.configurePreset }}/_bin/*/Benchmarks/*.json

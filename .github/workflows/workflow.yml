@@ -1,0 +1,54 @@
+on: 
+  workflow_call:
+    inputs:
+      os:
+        required: true
+        type: string
+      buildConfig:
+        required: true
+        type: string
+      configurePreset:
+        required: true
+        type: string
+      buildPreset:
+        required: true
+        type: string
+      testPreset:
+        required: true
+        type: string
+      experimental:
+        required: true
+        type: boolean
+
+jobs:
+  build:
+    uses: ./.github/workflows/build.yml
+    with:
+      os: ${{ inputs.os }}
+      buildConfig: ${{ inputs.buildConfig }}
+      configurePreset: ${{ inputs.configurePreset }}
+      buildPreset: ${{ inputs.buildPreset }}
+      testPreset: ${{ inputs.testPreset }}
+      experimental: ${{ inputs.experimental }}
+
+  tests:
+    needs: build
+    uses: ./.github/workflows/tests.yml
+    with:
+      os: ${{ inputs.os }}
+      buildConfig: ${{ inputs.buildConfig }}
+      configurePreset: ${{ inputs.configurePreset }}
+      buildPreset: ${{ inputs.buildPreset }}
+      testPreset: ${{ inputs.testPreset }}
+      experimental: ${{ inputs.experimental }}
+
+  benchmarks:
+    needs: build
+    uses: ./.github/workflows/benchmarks.yml
+    with:
+      os: ${{ inputs.os }}
+      buildConfig: ${{ inputs.buildConfig }}
+      configurePreset: ${{ inputs.configurePreset }}
+      buildPreset: ${{ inputs.buildPreset }}
+      testPreset: ${{ inputs.testPreset }}
+      experimental: ${{ inputs.experimental }}

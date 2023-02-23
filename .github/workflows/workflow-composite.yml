@@ -21,37 +21,33 @@ on:
         type: boolean
 
 jobs:
-
   build:
+    runs-on: ${{ inputs.os }}
+    continue-on-error: ${{ inputs.experimental }}
     steps:
     - uses: ./.github/actions/build
       with:
-        os: ${{ inputs.os }}
         buildConfig: ${{ inputs.buildConfig }}
         configurePreset: ${{ inputs.configurePreset }}
         buildPreset: ${{ inputs.buildPreset }}
-        experimental: ${{ inputs.experimental }}
 
   tests:
     needs: build
+    runs-on: ${{ inputs.os }}
+    continue-on-error: ${{ inputs.experimental }}
     steps:
       - uses: ./.github/actions/tests
         with:
-          os: ${{ inputs.os }}
           buildConfig: ${{ inputs.buildConfig }}
           configurePreset: ${{ inputs.configurePreset }}
-          buildPreset: ${{ inputs.buildPreset }}
           testPreset: ${{ inputs.testPreset }}
-          experimental: ${{ inputs.experimental }}
 
   benchmarks:
     needs: build
+    runs-on: ${{ inputs.os }}
+    continue-on-error: ${{ inputs.experimental }}
     steps:
       - uses: ./.github/actions/benchmarks
         with:
-          os: ${{ inputs.os }}
           buildConfig: ${{ inputs.buildConfig }}
           configurePreset: ${{ inputs.configurePreset }}
-          buildPreset: ${{ inputs.buildPreset }}
-          testPreset: ${{ inputs.testPreset }}
-          experimental: ${{ inputs.experimental }}

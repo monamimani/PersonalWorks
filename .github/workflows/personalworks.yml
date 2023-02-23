@@ -29,9 +29,19 @@ jobs:
             name: shipping,
             optimization: release
           },]
-    
-    uses: ./.github/workflows/workflow.yml
+          
     name: ${{ matrix.platform.genertor }}-${{ matrix.architecture }}-${{ matrix.buildConfig.name }}
+    
+    # uses: ./.github/workflows/workflow.yml
+    # with:
+    #   os: ${{ matrix.platform.os }}
+    #   buildConfig: ${{ matrix.buildConfig.optimization }}
+    #   configurePreset: ${{ matrix.platform.genertor }}
+    #   buildPreset: ${{ matrix.platform.genertor }}-${{ matrix.architecture }}-${{ matrix.buildConfig.name }}
+    #   testPreset: ${{ matrix.platform.genertor }}-${{ matrix.architecture }}-${{ matrix.buildConfig.name }}
+    #   experimental: ${{ matrix.platform.experimental }}
+
+    uses: ./.github/workflows/workflow-composite.yml
     with:
       os: ${{ matrix.platform.os }}
       buildConfig: ${{ matrix.buildConfig.optimization }}

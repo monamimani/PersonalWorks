@@ -130,14 +130,6 @@ jobs:
           name: ${{github.repository}}
           files: ./coverage.xml
 
-      - name: Cache Test Results
-        id: cache-testresults
-        uses: actions/cache@v3
-        with:
-          key: CacheTestsResults-${{ github.run_id }}-${{ runner.os }}-${{ hashFiles('_Out/build/${{ env.configurePreset }}/_bin/**') }}
-          path: |
-            _Out/build/${{ env.configurePreset }}/_bin/*/*.xml
-
       - name: Upload Artifact Test Results ${{ env.buildConfig }}
         uses: actions/upload-artifact@v3
         with:

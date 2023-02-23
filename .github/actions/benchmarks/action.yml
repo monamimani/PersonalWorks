@@ -1,0 +1,40 @@
+name: Benchmarks
+description: Benchmarks the targets of Personalworks.
+
+inputs:
+  buildConfig:
+    description: "The build configuration"
+    required: true
+  configurePreset:
+    description: "The Cmake configure preset"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+  - name: Foresight Collect Workflow Telemetry
+    uses: runforesight/foresight-workflow-kit-action@v1
+    if: ${{ always() }}
+    with:
+      api_key: ${{ secrets.FORESIGHT_API_KEY }}
+
+  - name: Cache Build
+    id: cache-build
+    uses: actions/cache@v3
+    with:
+      path: |
+        "_Out/build/${{ inputs.configurePreset }}/_bin/${{ inputs.buildConfig }}"
+        OpenCppCoverage.config.txt
+      key: CacheBuild-${{ github.run_id }}-${{ runner.os }}-${{ inputs.configurePreset }}-${{ inputs.buildConfig }}
+
+  - name: Run Google Benchmark (${{ runner.os }})
+    if: runner.os == 'Windows'
+    run: |
+      $buildConfigBinDir = "_Out/build/${{ inputs.configurePreset }}/_bin/${{ inputs.buildConfig }}"
+      $benchmarkExe = (Get-ChildItem -Path $buildConfigBinDir -Recurse | Where-Object Name -like *benchmarks*.exe).FullName
+      foreach ($exe in $benchmarkExe) {
+        Write-Host($exe)
+        $exeName = Get-ChildItem $exe | Select-Object -ExpandProperty BaseName
+        Write-Host($exeName)
+        &$exe --benchmark_out_format=json --benchmark_out=$exeName.json
+      }

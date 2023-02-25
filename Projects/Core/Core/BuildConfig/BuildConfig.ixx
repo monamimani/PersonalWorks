@@ -1,8 +1,9 @@
 module;
 
 export module BuildConfig;
-
-export import "BuildConfig.hunit.h";
+namespace BuildConfig
+{
+} // namespace BuildConfig
 
 
 module : private;

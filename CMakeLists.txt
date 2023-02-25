@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.24)
 
-set(CMAKE_EXPERIMENTAL_CXX_MODULE_CMAKE_API "3c375311-a3c9-4396-a187-3227ef642046")
-
 set(VCPKG_INSTALLED_DIR  ${CMAKE_BINARY_DIR}/../vcpkg_installed)
+
+#set(CMAKE_VERBOSE_MAKEFILE ON)
 
 include(CMakePrintHelpers)
 # cmake_print_variables(CMAKE_MODULE_PATH)
@@ -38,10 +38,29 @@ include(CMake/BenchmarkTarget.cmake)
 
 # Prevent in-source builds.
 if ( ${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR} )
-message( FATAL_ERROR “In-source builds not allowed! Create a build directory and run CMake from there. ” )
+  message( FATAL_ERROR “In-source builds not allowed! Create a build directory and run CMake from there. ” )
 endif()
 
 include(CMake/DefaultProjectSettings.cmake)
+
+
+
+# CMAKE experimental C++ module
+set(CMAKE_EXPERIMENTAL_CXX_MODULE_CMAKE_API "2182bf5c-ef0d-489a-91da-49dbc3090d2a")
+set(CMAKE_EXPERIMENTAL_CXX_MODULE_DYNDEP 1)
+
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  
+  string(CONCAT CMAKE_EXPERIMENTAL_CXX_SCANDEP_SOURCE
+    "<CMAKE_CXX_COMPILER> <DEFINES> <INCLUDES> <FLAGS> <SOURCE>"
+    " -MT <DYNDEP_FILE> -MD -MF <DEP_FILE>"
+    " ${flags_to_scan_deps} -fdep-file=<DYNDEP_FILE> -fdep-output=<OBJECT>"
+    )
+
+  set(CMAKE_EXPERIMENTAL_CXX_MODULE_MAP_FORMAT "gcc")
+  set(CMAKE_EXPERIMENTAL_CXX_MODULE_MAP_FLAG
+    "${compiler_flags_for_module_map} -fmodule-mapper=<MODULE_MAP_FILE>")
+endif()
 
 
 option(BUILD_TESTS "Builds the tests" ON)
@@ -113,7 +132,7 @@ if (BUILD_TESTS)
   enable_testing()
   include(GoogleTest)
 
-  if(MSVC)
+  if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
       set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
   endif()
 endif()

@@ -4,6 +4,7 @@
 # Optionally glob, but only for CMake 3.12 or later: file(GLOB HEADER_LIST
 # CONFIGURE_DEPENDS "${ModernCMakeExample_SOURCE_DIR}/include/modern/*.hpp")
 
+
 get_filename_component(targetName ${CMAKE_CURRENT_LIST_DIR} NAME)
 
 if(CMAKE_SYSTEM_NAME STREQUAL Windows)
@@ -31,12 +32,10 @@ endif()
 set(interfaceFiles 
 )
 
+set(headerUnitFiles 
+)
+
 set(publicFiles 
-  ${targetName}/BuildConfig/BuildConfig.hunit.h
-  ${targetName}/BuildConfig/BuildConfigArchitecture.hunit.h
-  ${targetName}/BuildConfig/BuildConfigCompiler.hunit.h
-  ${targetName}/BuildConfig/BuildConfigPlatform.hunit.h
-  ${targetName}/Delegates/DelegateStdFunction.h
   ${targetName}/DelegateTypes/EventDispatcher.h
   ${targetName}/DelegateTypes/EventQueue.h
   ${targetName}/AppFrameTimer.h
@@ -47,23 +46,31 @@ set(publicFiles
   ${targetName}/NonCopyable.h
   ${targetName}/PathUtils.h
   ${targetName}/Pimpl.h
+  ${targetName}/BuildConfig/BuildConfig.hunit.h
+  ${targetName}/BuildConfig/BuildConfigArchitecture.hunit.h
+  ${targetName}/BuildConfig/BuildConfigCompiler.hunit.h
+  ${targetName}/BuildConfig/BuildConfigPlatform.hunit.h
   ${platform_publicFiles}
 )
 
-set(privateFiles 
+set(moduleFiles 
   ${targetName}/BuildConfig/BuildConfig.ixx
   ${targetName}/Delegates/Delegate.ixx
   ${targetName}/Delegates/DelegateMulticast.ixx
-  ${targetName}/DelegateTypes/EventDispatcher.cpp
-  ${targetName}/DelegateTypes/EventQueue.cpp
   ${targetName}/Core.ixx
   ${targetName}/CoreConcepts.ixx
   ${targetName}/CoreSingleton.ixx
   ${targetName}/CoreUtility.ixx
-  ${targetName}/Endian.cpp
   ${targetName}/ErasedStorage.ixx
   ${targetName}/StaticFunction.ixx
+)
+
+set(privateFiles 
+  ${targetName}/DelegateTypes/EventDispatcher.cpp
+  ${targetName}/DelegateTypes/EventQueue.cpp
+  ${targetName}/Endian.cpp
   ${platform_privateFiles}
+  ${moduleFiles}
 )
 
 set(testFiles 
@@ -80,8 +87,8 @@ set(testFiles
   ${targetName}/EnumClassFlags.test.cpp
 )
 
-
 set(benchmarkFiles 
+  ${targetName}/Delegates/DelegateStdFunction.h
   ${targetName}/Core.benchmark.cpp
   ${targetName}/Delegates/Delegate.benchmark.cpp
   ${targetName}/Delegates/DelegateCommon.benchmark.h
@@ -96,6 +103,10 @@ add_library(${targetName})
 target_sources(${targetName}
   PRIVATE
     ${privateFiles}
+  #PUBLIC
+  # FILE_SET CXX_MODULES FILES ${moduleFiles}
+  #PUBLIC
+  # FILE_SET CXX_MODULE_HEADER_UNITS FILES ${headerUnitFiles}
   PUBLIC
     ${publicFiles}
   INTERFACE
@@ -113,13 +124,15 @@ target_link_libraries(${targetName}
 )
 
 if(BUILD_TESTS)
-  add_test_target(
-    TARGET ${targetName} 
-    TESTFILES ${testFiles}
-    PRIVATEFILES ${privateFiles}
-    PUBLICFILES ${publicFiles}
-    INTERFACEFILES ${interfaceFiles}
-    MAINFILE CoreMain.test.cpp)
+ add_test_target(
+   TARGET ${targetName} 
+   TESTFILES ${testFiles}
+   PRIVATEFILES ${privateFiles}
+   #MODULEFILES ${moduleFiles}
+   #HEADERUNITFILES ${headerUnitFiles}
+   PUBLICFILES ${publicFiles}
+   INTERFACEFILES ${interfaceFiles}
+   MAINFILE CoreMain.test.cpp)
 endif()
 
 if(BUILD_BENCHMARKS)
@@ -127,6 +140,8 @@ if(BUILD_BENCHMARKS)
     TARGET ${targetName} 
     BENCHMARKFILES ${benchmarkFiles}
     PRIVATEFILES ${privateFiles}
+    #MODULEFILES ${moduleFiles}
+    #HEADERUNITFILES ${headerUnitFiles}
     PUBLICFILES ${publicFiles}
     INTERFACEFILES ${interfaceFiles}
     MAINFILE CoreMain.benchmark.cpp)

@@ -1,5 +1,5 @@
 {
-  "version": 4,
+  "version": 5,
   "cmakeMinimumRequired": {
     "major": 3,
     "minor": 24,
@@ -49,14 +49,6 @@
         "lhs": "${hostSystemName}",
         "rhs": "Windows"
       },
-      "architecture": {
-        "value": "x64",
-        "strategy": "external"
-      },
-      "toolset": {
-        "value": "host=x64",
-        "strategy": "external"
-      },
       "vendor": {
         "microsoft.com/VisualStudioSettings/CMake/1.0": {
           "hostOS": [ "Windows" ]
@@ -93,7 +85,15 @@
     {
       "name": "Vs2022",
       "hidden": true,
-      "generator": "Visual Studio 17 2022"
+      "generator": "Visual Studio 17 2022",
+      "architecture": {
+        "value": "x64",
+        "strategy": "set"
+      },
+      "toolset": {
+        "value": "host=x64",
+        "strategy": "set"
+      }
     },
     {
       "name": "ninja-multi-config",
@@ -103,7 +103,15 @@
     {
       "name": "ninja",
       "hidden": true,
-      "generator": "Ninja"
+      "generator": "Ninja",
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
+      },
+      "toolset": {
+        "value": "x64",
+        "strategy": "external"
+      }
     },
     {
       "name": "windows-vs2022",
@@ -166,6 +174,21 @@
     // }
   ],
   "buildPresets": [
+    {
+      "name": "windows-ninja-x64-debug",
+      "configurePreset": "windows-ninja",
+      "configuration": "Debug"
+    },
+    {
+      "name": "windows-ninja-x64-release",
+      "configurePreset": "windows-ninja",
+      "configuration": "RelWithDebInfo"
+    },
+    {
+      "name": "windows-ninja-x64-shipping",
+      "configurePreset": "windows-ninja",
+      "configuration": "Release"
+    },
     {
       "name": "windows-vs2022-x64-debug",
       "configurePreset": "windows-vs2022",

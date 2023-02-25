@@ -6,7 +6,7 @@ set(benchmark_target_included true)
 function(add_benchmark_target)
   set(options)
   set(oneValueArgs TARGET MAINFILE)
-  set(multiValueArgs BENCHMARKFILES MODULEFILES PRIVATEFILES PUBLICFILES INTERFACEFILES LINKLIBS)
+  set(multiValueArgs BENCHMARKFILES MODULEFILES HEADERUNITFILES PRIVATEFILES PUBLICFILES INTERFACEFILES LINKLIBS)
 
   cmake_parse_arguments(PARSE_ARGV 0 ADD_BENCHMARK_TARGET "${options}" "${oneValueArgs}" "${multiValueArgs}" )
 
@@ -38,6 +38,10 @@ function(add_benchmark_target)
       ${ADD_BENCHMARK_TARGET_BENCHMARKFILES}
     PUBLIC
       ${ADD_BENCHMARK_TARGET_PUBLICFILES}
+    #PUBLIC
+    #  FILE_SET CXX_MODULES FILES ${ADD_TEST_TARGET_MODULEFILES}
+    #PUBLIC
+    #  FILE_SET CXX_MODULE_HEADER_UNITS FILES ${ADD_TEST_TARGET_HEADERUNITFILES}
     INTERFACE
       ${ADD_BENCHMARK_TARGET_INTERFACEFILES}
   )
@@ -53,5 +57,6 @@ function(add_benchmark_target)
 
   set_target_properties(${targetNameBenchmarks} PROPERTIES FOLDER Benchmarks)
 
+  #set_target_properties(${targetNameBenchmarks} PROPERTIES VS_DEBUGGER_COMMAND_ARGUMENTS "--benchmark_out=${targetNameBenchmarks}.json --benchmark_out_format=json")
 
 endfunction()

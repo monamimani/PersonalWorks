@@ -43,11 +43,12 @@ set(testFiles
 set(benchmarkFiles 
 )
 
-add_executable(${targetName} ${platform_privateFiles})
+add_executable(${targetName})
 
 target_sources(${targetName}
   PRIVATE
     ${privateFiles}
+    ${platform_privateFiles}
     main.cpp
   PUBLIC
     ${publicFiles}

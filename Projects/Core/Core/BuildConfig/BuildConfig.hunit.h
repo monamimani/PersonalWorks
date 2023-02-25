@@ -1,8 +1,8 @@
 #pragma once
 
-import "BuildConfigArchitecture.hunit.h";
-import "BuildConfigCompiler.hunit.h";
-import "BuildConfigPlatform.hunit.h";
+#include "BuildConfigArchitecture.hunit.h"
+#include "BuildConfigCompiler.hunit.h"
+#include "BuildConfigPlatform.hunit.h"
 
 namespace BuildConfig
 {

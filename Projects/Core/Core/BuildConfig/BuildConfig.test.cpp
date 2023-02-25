@@ -1,6 +1,6 @@
 
-//import "BuildConfig.hunit.h";
-import BuildConfig;
+#include "BuildConfig.hunit.h"
+//import BuildConfig;
 
 #include "TestUtilities/GoogleTest.h"
 

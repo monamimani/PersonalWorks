@@ -8,6 +8,7 @@ UseTab: Never
 IndentWidth: 2
 ColumnLimit: 256
 MaxEmptyLinesToKeep: 1
+InsertNewlineAtEOF: True
 
 SortIncludes: CaseInsensitive
 IncludeBlocks: Regroup
@@ -24,6 +25,10 @@ FixNamespaceComments: True
 ReflowComments: True
 
 PointerAlignment: Left
+IntegerLiteralSeparator:
+  Binary: 4
+  Decimal: 3
+  Hex: 4
 
 AlignAfterOpenBracket: Align
 AlignOperands: AlignAfterOperator
@@ -42,18 +47,41 @@ BinPackParameters: False
 PackConstructorInitializers : Never
 
 AlwaysBreakTemplateDeclarations: Yes
-BreakBeforeBraces: Allman
 BreakConstructorInitializers : BeforeComma
+BreakAfterAttributes: Leave
 EmptyLineBeforeAccessModifier: LogicalBlock
 BreakBeforeConceptDeclarations: Always
-RequiresClausePosition: OwnLine #requires clang-format 15.0
-# RequiresExpressionIndentation: OuterScope #requires clang-format 16.0
+RequiresClausePosition: OwnLine
+RequiresExpressionIndentation: OuterScope #requires clang-format 16.0
+
+SeparateDefinitionBlocks: Always
 
 ConstructorInitializerIndentWidth: 0
 Cpp11BracedListStyle: True
 SpaceBeforeInheritanceColon : False
+SpaceAfterTemplateKeyword: False
 
 IndentRequires: False
 IndentCaseLabels: True
 IndentPPDirectives: BeforeHash
 NamespaceIndentation: Inner
+
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterCaseLabel: True
+  AfterClass: True
+  AfterControlStatement: Always
+  AfterEnum: True
+  AfterFunction: True
+  AfterNamespace: True
+  AfterStruct: True
+  AfterUnion: True
+  AfterExternBlock: True
+  BeforeCatch: True
+  BeforeElse: True
+  BeforeLambdaBody: False
+  BeforeWhile: True
+  IndentBraces: False
+  SplitEmptyFunction: False
+  SplitEmptyRecord: False
+  SplitEmptyNamespace: False

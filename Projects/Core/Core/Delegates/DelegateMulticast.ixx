@@ -50,11 +50,22 @@ private:
   std::shared_ptr<StaticFunction_T> m_staticFunction;
 };
 
+class DelegateBase
+{
+protected:
+
+private:
+  bool m_calling = false;
+  bool m_dirty = false;
+
+};
+
+
 export template <typename Signature>
 class DelegateMulticast;
 
 export template <typename Ret, typename... Args>
-class DelegateMulticast<Ret(Args...)> final
+class DelegateMulticast<Ret(Args...)> final: DelegateBase
 {
   static_assert(std::is_same_v<Ret, void>, "Delegate return values other than void are not supported.");
 

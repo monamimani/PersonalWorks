@@ -162,18 +162,25 @@ private:
     };
   }
 
+
   template<typename Instance_T>
   void constructStorage(Instance_T&& instance)
   {
-    if constexpr (std::is_lvalue_reference_v<Instance_T>)
+    if constexpr (std::is_pointer_v<Instance_T>)
     {
-      using Type = std::remove_reference_t<Instance_T>;
+      m_storage.construct(instance);
+    }
+    else if constexpr (std::is_lvalue_reference_v<Instance_T>)
+    {
       m_storage.construct(&instance);
     }
-
-    if constexpr (std::is_rvalue_reference_v<Instance_T&&>)
+    else if constexpr (std::is_rvalue_reference_v<Instance_T&&>)
     {
       m_storage.construct(std::forward<Instance_T>(instance));
+    }
+    else
+    {
+      std::unreachable();
     }
   }
 

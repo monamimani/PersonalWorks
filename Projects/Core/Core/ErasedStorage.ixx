@@ -17,7 +17,7 @@ import CoreConcepts;
 namespace Core
 {
 
-template <typename ErasedStorage_t>
+template<typename ErasedStorage_t>
 struct StorageFcts
 {
   //~StorageFcts()
@@ -25,7 +25,7 @@ struct StorageFcts
   //  resetFcts();
   //}
 
-  template <typename ErasedType>
+  template<typename ErasedType>
   void setFcts()
   {
     if constexpr (!std::is_trivially_copyable_v<ErasedType>)
@@ -65,16 +65,17 @@ struct StorageFcts
   // RelocateStorageFunction m_relocate = nullptr;
 };
 
-export template <std::size_t size, std::size_t alignment>
+export template<std::size_t size, std::size_t alignment>
 class ErasedStorage final
 {
-  template <typename Compound_T>
+  template<typename Compound_T>
   using Base_T = std::remove_cv_t<std::remove_pointer_t<std::remove_cvref_t<Compound_T>>>;
 
   static inline constexpr auto SizeT = size;
 
 public:
   constexpr ErasedStorage() noexcept = default;
+
   constexpr ~ErasedStorage() noexcept
   {
     erase();
@@ -101,6 +102,7 @@ public:
 
     return *this;
   }
+
   ErasedStorage& operator=(ErasedStorage&& other) noexcept(noexcept(move(*this, other)))
   {
     // erase();
@@ -124,7 +126,7 @@ public:
     std::memset(m_storage, 0, size);
   }
 
-  template <typename ErasedType>
+  template<typename ErasedType>
   requires std::constructible_from<ErasedType>
   constexpr auto* construct()
   {
@@ -142,7 +144,7 @@ public:
   // Clang format has issues with requires clause still
   // clang-format off
   template <typename ErasedType, typename... Args>
-  requires std::constructible_from<ErasedType, Args...> &&(sizeof...(Args) > 0) && !std::same_as<Base_T<std::tuple_element_t<0, std::tuple<Args...>>>, Base_T<ErasedType>> 
+  requires std::constructible_from<ErasedType, Args...> && (sizeof...(Args) > 0) && !std::same_as<Base_T<std::tuple_element_t<0, std::tuple<Args...>>>, Base_T<ErasedType>> 
   constexpr auto* construct(Args && ... args)
   // clang-format on
   {
@@ -157,7 +159,7 @@ public:
     return storageTypedPtr;
   }
 
-  template <typename ErasedType>
+  template<typename ErasedType>
   requires std::constructible_from<ErasedType, ErasedType&&>
   constexpr auto* construct(ErasedType&& obj)
   {
@@ -167,41 +169,30 @@ public:
     // This will have issues with multiple level of pointer indirection
     using RawType = std::remove_pointer_t<std::remove_reference_t<ErasedType>>;
 
-    m_storageFcts.template setFcts<ErasedType>();
-
     if constexpr (std::is_lvalue_reference_v<ErasedType>)
     {
-      static_assert(std::is_lvalue_reference_v<ErasedType> == false, "Creating an erased type of a reference to T is illegal, use T* as the erased type.");
-      std::unreachable();
+      m_storageFcts.template setFcts<std::add_pointer_t<RawType>>();
 
-      // This is jus to silence some compilation error, because of the static assert we don't return anything,
-      // which the compiler will complain about.
-      // using ReturnType = RawType*;
-      // return ReturnType(nullptr);
-
-      // At some point I thought this was valid, but I was confused by treating reference like pointers which they are not.
-      // For example sizeof(TestStruct&) is the same as doing sizeof(TestStruct)
-      // auto** storagePtr = reinterpret_cast<RawType**>(std::addressof(m_storage));
-      // auto storageTypedPtr = std::construct_at(storagePtr, std::addressof(obj));
-      // return *storageTypedPtr;
-    }
-    else if constexpr (std::is_rvalue_reference_v<ErasedType>)
-    {
-      auto* storagePtr = start_lifetime_as<RawType>(std::addressof(m_storage));
-      // auto* storagePtr = reinterpret_cast<RawType*>(std::addressof(m_storage));
-      auto storageTypedPtr = std::construct_at(storagePtr, std::forward<ErasedType>(obj));
-      return storageTypedPtr;
-    }
-    else if constexpr (std::is_pointer_v<ErasedType>)
-    {
       auto** storagePtr = start_lifetime_as<RawType*>(std::addressof(m_storage));
-      // auto** storagePtr = reinterpret_cast<RawType**>(m_storage);
-      auto storageTypedPtr = std::construct_at(storagePtr, obj);
+      auto storageTypedPtr = std::construct_at(storagePtr, &obj);
       return *storageTypedPtr;
     }
     else if constexpr (std::is_object_v<ErasedType>)
     {
-      static_assert(std::is_object_v<ErasedType> == false, "We should not get here, other overload of construct should have been called.");
+      m_storageFcts.template setFcts<ErasedType>();
+      if constexpr (std::is_pointer_v<ErasedType>)
+      {
+        auto** storagePtr = start_lifetime_as<RawType*>(std::addressof(m_storage));
+        ;
+        auto storageTypedPtr = std::construct_at(storagePtr, obj);
+        return *storageTypedPtr;
+      }
+      else
+      {
+        auto* storagePtr = start_lifetime_as<RawType>(std::addressof(m_storage));
+        auto storageTypedPtr = std::construct_at(storagePtr, std::forward<ErasedType>(obj));
+        return storageTypedPtr;
+      }
     }
     else
     {
@@ -209,31 +200,29 @@ public:
     }
   }
 
-  template <typename ErasedType>
+  template<typename ErasedType>
   constexpr auto asTypedPtr()
   {
     // This will have issues with multiple level of pointer indirection
     using RawType = std::remove_pointer_t<std::remove_reference_t<ErasedType>>;
 
     // TODO std::launder()
-
+    // static_assert(std::is_lvalue_reference_v<ErasedType> == false, "Creating an erased type of a reference to T is illegal, use T* as the erased type.");
+    // static_assert(std::is_object_v<ErasedType>); // this is true for int, int* and false for references, void and function
     if constexpr (std::is_lvalue_reference_v<ErasedType>)
     {
-      static_assert(std::is_lvalue_reference_v<ErasedType> == false, "Creating an erased type of a reference to T is illegal, use T* as the erased type.");
-      std::unreachable();
-      // return reinterpret_cast<RawType**>(std::addressof(m_storage));
-    }
-    else if constexpr (std::is_rvalue_reference_v<ErasedType>)
-    {
-      return reinterpret_cast<RawType*>(std::addressof(m_storage));
-    }
-    else if constexpr (std::is_pointer_v<ErasedType>)
-    {
-      return reinterpret_cast<RawType**>(std::addressof(m_storage));
+      return *reinterpret_cast<RawType**>(std::addressof(m_storage));
     }
     else if constexpr (std::is_object_v<ErasedType>)
     {
-      return reinterpret_cast<RawType*>(std::addressof(m_storage));
+      if constexpr (std::is_pointer_v<ErasedType>)
+      {
+        return *reinterpret_cast<RawType**>(std::addressof(m_storage));
+      }
+      else
+      {
+        return reinterpret_cast<RawType*>(std::addressof(m_storage));
+      }
     }
     else
     {
@@ -241,31 +230,30 @@ public:
     }
   }
 
-  template <typename ErasedType>
+  template<typename ErasedType>
   constexpr const auto asTypedPtr() const
   {
     // This will have issues with multiple level of pointer indirection
     using RawType = std::remove_pointer_t<std::remove_reference_t<ErasedType>>;
 
     // TODO std::launder()
+    // static_assert(std::is_lvalue_reference_v<ErasedType> == false, "Creating an erased type of a reference to T is illegal, use T* as the erased type.");
+    // static_assert(std::is_object_v<ErasedType>); // this is true for int, int* and false for references, void and function
 
     if constexpr (std::is_lvalue_reference_v<ErasedType>)
     {
-      static_assert(std::is_lvalue_reference_v<ErasedType> == false, "Creating an erased type of a reference to T is illegal, use T* as the erased type.");
-      std::unreachable();
-      // return reinterpret_cast<RawType* const*>(std::addressof(m_storage));
-    }
-    else if constexpr (std::is_rvalue_reference_v<ErasedType>)
-    {
-      return reinterpret_cast<const RawType*>(std::addressof(m_storage));
-    }
-    else if constexpr (std::is_pointer_v<ErasedType>)
-    {
-      return reinterpret_cast<RawType* const*>(std::addressof(m_storage));
+      return *reinterpret_cast<RawType**>(std::addressof(m_storage));
     }
     else if constexpr (std::is_object_v<ErasedType>)
     {
-      return reinterpret_cast<const RawType*>(std::addressof(m_storage));
+      if constexpr (std::is_pointer_v<ErasedType>)
+      {
+        return *reinterpret_cast<RawType* const*>(std::addressof(m_storage));
+      }
+      else
+      {
+        return reinterpret_cast<const RawType*>(std::addressof(m_storage));
+      }
     }
     else
     {
@@ -302,7 +290,7 @@ public:
   bool operator==(const ErasedStorage&) const = default;
 
 private:
-  template <typename ErasedType>
+  template<typename ErasedType>
   static constexpr void destroyStorage(ErasedStorage& storage)
   {
     std::destroy_at(storage.asTypedPtr<ErasedType>());
@@ -322,9 +310,8 @@ private:
     dst.m_storageFcts = src.m_storageFcts;
   }
 
-  template <typename ErasedType>
-  static inline constexpr void moveStorage(ErasedStorage& dst, ErasedStorage& src) noexcept(std::is_trivially_copyable_v<ErasedType> ||
-                                                                                            noexcept(std::construct_at(dst.asTypedPtr<ErasedType>(), std::move(*src.asTypedPtr<ErasedType>()))))
+  template<typename ErasedType>
+  static inline constexpr void moveStorage(ErasedStorage& dst, ErasedStorage& src) noexcept(std::is_trivially_copyable_v<ErasedType> || noexcept(std::construct_at(dst.asTypedPtr<ErasedType>(), std::move(*src.asTypedPtr<ErasedType>()))))
   {
     std::memset(dst.m_storage, 0, size);
     std::construct_at(dst.asTypedPtr<ErasedType>(), std::move(*src.asTypedPtr<ErasedType>()));
@@ -338,7 +325,7 @@ private:
   //   }
   // }
 
-  template <typename ErasedType>
+  template<typename ErasedType>
   static constexpr void relocateStorage(ErasedStorage& dst, ErasedStorage& src)
   {
     moveStorage<ErasedType>(dst, src);
@@ -359,14 +346,14 @@ private:
     dst.m_storageFcts = src.m_storageFcts;
   }
 
-  template <typename ErasedType>
-  static constexpr void copyStorage(ErasedStorage& dst, const ErasedStorage& src) noexcept(std::is_trivially_copyable_v<ErasedType> ||
-                                                                                           noexcept(std::construct_at(dst.asTypedPtr<ErasedType>(), *src.asTypedPtr<ErasedType>())))
+  template<typename ErasedType>
+  static constexpr void copyStorage(ErasedStorage& dst, const ErasedStorage& src) noexcept(std::is_trivially_copyable_v<ErasedType> || noexcept(std::construct_at(dst.asTypedPtr<ErasedType>(), *src.asTypedPtr<ErasedType>())))
   {
     std::memset(dst.m_storage, 0, size);
     std::construct_at(dst.asTypedPtr<ErasedType>(), *src.asTypedPtr<ErasedType>());
   }
 
+  static_assert(size > 0, "Size must be bigger that 0.");
   alignas(alignment) std::byte m_storage[size] = {};
 
   friend StorageFcts<ErasedStorage>;

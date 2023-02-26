@@ -33,7 +33,7 @@ enum class BindKind
 
 using ParamSetType = std::tuple<IsLValue, IsFctConst, BindKind>;
 
-//typedef Delegate_T::DelegateRAII Createdelegate(Delegate_T&, TestStruct&, IsLValue, IsFctConst);
+//typedef Delegate_T::Connection Createdelegate(Delegate_T&, TestStruct&, IsLValue, IsFctConst);
 
 //template<class DelegateT>
 //concept DelegateLike = requires(DelegateT delegate) {
@@ -184,7 +184,7 @@ static auto bindDelegate(Delegate_T& delegate, TestStruct& testStruct, BindKind 
   switch (bindKind)
   {
     case BindKind::Empty:
-      return Delegate_T::DelegateRAII{};
+      return Delegate_T::Connection{};
     case BindKind::FreeFunction:
       return bindFreeFunction(delegate, testStruct, isLValue, isFctConst);
     case BindKind::Functor:
@@ -273,7 +273,7 @@ protected:
   bool m_isConst = false;
   bool m_isBindKindEmpty = false;
   Delegate_T m_delegate;
-  Delegate_T::DelegateRAII m_handle;
+  Delegate_T::Connection m_handle;
   SpecialFunctionCallCounter m_counters;
 
   // static void SetUpTestSuite() {
@@ -333,12 +333,12 @@ public:
 protected:
   TestStruct m_testStruct;
   Delegate_T m_delegateA;
-  Delegate_T::DelegateRAII m_handleA;
+  Delegate_T::Connection m_handleA;
   bool m_isDelegateAConst = false;
   bool m_isDelegateABindKindEmpty = false;
 
   Delegate_T m_delegateB;
-  Delegate_T::DelegateRAII m_handleB;
+  Delegate_T::Connection m_handleB;
   bool m_isDelegateBConst = false;
   bool m_isDelegateBBindKindEmpty = false;
 

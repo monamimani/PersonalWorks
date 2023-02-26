@@ -621,7 +621,7 @@ TEST_P(OpArity2StaticFctTestF, MoveAssign)
 
   if (bindKindA != BindKind::Empty)
   {
-    ASSERT_TRUE((bool)staticFunctionA); // This realy is a valid unspecified state, becaused moved from
+    ASSERT_TRUE((bool)staticFunctionA); // This really is a valid unspecified state, because moved from
     ASSERT_TRUE((bool)staticFunctionB);
 
     int value = 28;
@@ -633,9 +633,9 @@ TEST_P(OpArity2StaticFctTestF, MoveAssign)
   }
   else
   {
-    ASSERT_FALSE((bool)staticFunctionA); // This realy is a valid unspecified state, becaused moved from
+    ASSERT_FALSE((bool)staticFunctionA); // This really is a valid unspecified state, because moved from
     ASSERT_FALSE((bool)staticFunctionB);
-    ASSERT_EQ(staticFunctionA, staticFunctionB); // This realy is a valid unspecified state, becaused moved from
+    ASSERT_EQ(staticFunctionA, staticFunctionB); // This really is a valid unspecified state, because moved from
   }
 }
 

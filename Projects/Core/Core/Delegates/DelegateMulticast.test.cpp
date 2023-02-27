@@ -124,7 +124,7 @@ enum class BindKind
   MemberFctParamOverloaded
 };
 
-typedef DelegateMulticast_T::DelegateRAII CreateDelegateMulticast(DelegateMulticast_T&, TestStruct&, IsLValue, IsFctConst);
+typedef DelegateMulticast_T::Connection CreateDelegateMulticast(DelegateMulticast_T&, TestStruct&, IsLValue, IsFctConst);
 
 auto bindEmpty([[maybe_unused]] DelegateMulticast_T&, [[maybe_unused]] TestStruct&, [[maybe_unused]] IsLValue, [[maybe_unused]] IsFctConst)
 {
@@ -296,7 +296,7 @@ auto bindDelegate(DelegateMulticast_T& delegate, TestStruct& testStruct, BindKin
   switch (bindKind)
   {
     case BindKind::Empty:
-      return DelegateMulticast_T::DelegateRAII{};
+      return DelegateMulticast_T::Connection{};
     case BindKind::FreeFunction:
       return bindFreeFunction(delegate, testStruct, isLValue, isFctConst);
     case BindKind::Functor:

@@ -278,8 +278,10 @@ protected:
 static const auto OpAr1Arg = ::testing::ValuesIn(DelegateLikeTestF::makeDelegateBindKindParamSet());
 static const auto OpAr2Arg = ::testing::Combine(OpAr1Arg, OpAr1Arg);
 
+template<typename DelegateLikeT , typename HandleT>
 class OpArity1DelegateLikeTestF: public DelegateLikeTestF, public testing::TestWithParam<ParamSetType>
 {
+
 public:
   static constexpr auto makeTestName = [](const testing::TestParamInfo<ParamType>& info) {
     auto [isLValueA, isFctConstA, bindKind] = info.param;
@@ -292,12 +294,45 @@ public:
   };
 
 protected:
+  using TestedType = DelegateLikeT;
+  bool m_isConst = false;
+  bool m_isBindKindEmpty = false;
+
+  TestStruct m_testStruct;
+  SpecialFunctionCallCounter m_counters;
+
+  DelegateLikeT m_delegate;
+  HandleT m_handle;
+
 private:
+  void SetUp() override
+  {
+    auto [isLValue, isFctConst, bindKind] = GetParam();
+    m_isConst = isFctConst;
+    m_isBindKindEmpty = bindKind == BindKind::Empty;
+
+    if constexpr (std::is_void_v<decltype(bind(m_delegate, m_testStruct, bindKind, isLValue, m_isConst))>)
+    {
+      bind(m_delegate, m_testStruct, bindKind, isLValue, isFctConst);
+    }
+    else
+    {
+      m_handle = bind(m_delegate, m_testStruct, bindKind, isLValue, isFctConst);
+    }
+
+    TestStruct::resetStaticCounters();
+  }
+
+  void TearDown() override
+  {
+    m_delegate.unbind();
+    TestStruct::resetStaticCounters();
+  }
 };
 
+template<typename DelegateLikeT, typename HandleT>
 class OpArity2DelegateLikeTestF: public DelegateLikeTestF, public testing::TestWithParam<std::tuple<ParamSetType, ParamSetType>>
 {
-
 public:
   static constexpr auto makeTestName = [](const testing::TestParamInfo<ParamType>& info) {
     auto [paramA, paramB] = info.param;
@@ -309,6 +344,55 @@ public:
 
     return fmt::format("{}_{}", delegateTypeAName, delegateTypeBName);
   };
+
+protected:
+  using TestedType = DelegateLikeT;
+
+  bool m_isDelegateAConst = false;
+  bool m_isDelegateABindKindEmpty = false;
+
+  TestStruct m_testStruct;
+  SpecialFunctionCallCounter m_counters;
+
+  DelegateLikeT m_delegateA;
+  HandleT m_handleA;
+
+  bool m_isDelegateBConst = false;
+  bool m_isDelegateBBindKindEmpty = false;
+
+  DelegateLikeT m_delegateB;
+  HandleT m_handleB;
+
+  void SetUp() override
+  {
+    auto [paramA, paramB] = GetParam();
+
+    auto [isLValueA, isDelegateAConst, bindKindA] = paramA;
+    auto [isLValueB, isDelegateBConst, bindKindB] = paramB;
+
+    m_isDelegateAConst = isDelegateAConst;
+    m_isDelegateBConst = isDelegateBConst;
+    m_isDelegateABindKindEmpty = bindKindA == BindKind::Empty;
+    m_isDelegateBBindKindEmpty = bindKindB == BindKind::Empty;
+
+    if constexpr (std::is_void_v<decltype(bind(m_delegateA, m_testStruct, bindKindA, isLValueA, m_isDelegateAConst))>)
+    {
+      bind(m_delegateA, m_testStruct, bindKindA, isLValueA, m_isDelegateAConst);
+      bind(m_delegateB, m_testStruct, bindKindB, isLValueB, m_isDelegateBConst);
+    }
+    else
+    {
+      m_handleA = bind(m_delegateA, m_testStruct, bindKindA, isLValueA, m_isDelegateAConst);
+      m_handleB = bind(m_delegateB, m_testStruct, bindKindB, isLValueB, m_isDelegateBConst);
+    }
+
+    TestStruct::resetStaticCounters();
+  }
+
+  void TearDown() override
+  {
+    TestStruct::resetStaticCounters();
+  }
 };
 
 } // namespace DelegateLikeTests

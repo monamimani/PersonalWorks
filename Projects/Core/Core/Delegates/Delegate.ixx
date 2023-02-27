@@ -66,6 +66,40 @@ private:
 template<typename Ret, typename... Args>
 Connection(std::shared_ptr<Core::StaticFunction<Ret(Args...)>>&&) -> Connection<Ret(Args...)>;
 
+export template<typename Ret, typename... Args>
+class DelegateBase
+{
+private:
+
+protected:
+  using Function_Sig = Ret(Args...);
+  using StaticFunction_T = Core::StaticFunction<Function_Sig>;
+
+  DelegateBase() = default;
+
+public:
+  using Connection = Connection<Function_Sig>;
+
+  template<typename Instance_T>
+  using MemberFunctionPtr = Ret (Instance_T::*)(Args...);
+  template<typename Instance_T>
+  using MemberFunctionConstPtr = Ret (Instance_T::*)(Args...) const;
+
+  template<typename Instance_T>
+  static consteval decltype(auto) asFnPtr(MemberFunctionPtr<Instance_T> fct)
+  {
+    return fct;
+  }
+
+  template<typename Instance_T>
+  static consteval decltype(auto) asFnConstPtr(MemberFunctionConstPtr<Instance_T> fct)
+  {
+    return fct;
+  }
+
+private:
+};
+
 export template<typename Signature>
 class Delegate;
 
@@ -79,50 +113,12 @@ class Delegate;
  * @tparam ...Args
  */
 export template<typename Ret, typename... Args>
-class Delegate<Ret(Args...)> final
+class Delegate<Ret(Args...)> final: public DelegateBase<Ret, Args...>
 {
 private:
-  using Function_Sig = Ret(Args...);
-  using StaticFunction_T = Core::StaticFunction<Function_Sig>;
+  using DelegateBase<Ret, Args...>::StaticFunction_T;
 
 public:
-  // template <typename Instance_T>
-  // using InstanceType = std::remove_reference_t<Instance_T>;
-  //  template <typename Instance_T>
-  //  using MemberFunction_Sig = Ret(InstanceType<Instance_T>&, Args...);
-  template<typename Instance_T>
-  using MemberFunction_Ptr = Ret (Instance_T::*)(Args...);
-  template<typename Instance_T>
-  using MemberFunctionConst_Ptr = Ret (Instance_T::*)(Args...) const;
-  // template <typename Instance_T>
-  // using MemberFunctionConstOrNot_Ptr = std::conditional_t<std::is_const_v<Instance_T>, MemberFunctionConst_Ptr<Instance_T>, MemberFunction_Ptr<Instance_T>>;
-
-  using Connection = Connection<Function_Sig>;
-
-  Delegate() = default;
-
-  ~Delegate()
-  {
-    m_staticFunction.reset();
-  }
-
-  // Delegate(const Delegate&) noexcept = default;
-  // Delegate(Delegate&&) noexcept = default;
-  // Delegate& operator=(const Delegate&) noexcept = default;
-  // Delegate& operator=(Delegate&&) noexcept = default;
-
-  template<typename Instance_T>
-  static consteval decltype(auto) asFnPtr(MemberFunction_Ptr<Instance_T> fct)
-  {
-    return fct;
-  }
-
-  template<typename Instance_T>
-  static consteval decltype(auto) asFnConstPtr(MemberFunctionConst_Ptr<Instance_T> fct)
-  {
-    return fct;
-  }
-
   template<Core::InvocableAndReturn<Ret, Args...> auto function>
   [[nodiscard]] constexpr auto bind()
   {

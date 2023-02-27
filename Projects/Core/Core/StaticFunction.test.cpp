@@ -1,7 +1,3 @@
-#include <algorithm>
-#include <array>
-#include <optional>
-#include <utility>
 
 #include "Delegates/DelegateCommon.test.h"
 
@@ -12,23 +8,20 @@ namespace StaticFunctionTests
 
 using namespace DelegateLikeTests;
 
-class StaticFctOp1ArgF: public OpArity1DelegateLikeTestF
-{};
-
-class StaticFctOp2ArgF: public OpArity2DelegateLikeTestF
-{};
-
 using StaticFctT = StaticFunction<void(int&)>;
+using StaticFctOp1F= OpArity1DelegateLikeTestF<StaticFctT, void*>;
+using StaticFctOp2F= OpArity2DelegateLikeTestF<StaticFctT, void*>;
 
-INSTANTIATE_TEST_SUITE_P(Op1Arg, StaticFctOp1ArgF, OpAr1Arg, OpArity1DelegateLikeTestF::makeTestName);
-INSTANTIATE_TEST_SUITE_P(Op2Arg, StaticFctOp2ArgF, OpAr2Arg, OpArity2DelegateLikeTestF::makeTestName);
 
-TEST_P(StaticFctOp1ArgF, CtorDtor)
+INSTANTIATE_TEST_SUITE_P(StaticFctOp1Arg, StaticFctOp1F, OpAr1Arg, StaticFctOp1F::makeTestName);
+INSTANTIATE_TEST_SUITE_P(StaticFctOp2Arg, StaticFctOp2F, OpAr2Arg, StaticFctOp2F::makeTestName);
+
+TEST_P(StaticFctOp1F, CtorDtor)
 {
   auto [isLValue, isFctConst, bindKind] = GetParam();
-
+  
   TestStruct testStruct;
-  StaticFctT staticFunction;
+  TestedType staticFunction;
   ASSERT_FALSE((bool)staticFunction);
   bind(staticFunction, testStruct, bindKind, isLValue, isFctConst);
 
@@ -42,16 +35,16 @@ TEST_P(StaticFctOp1ArgF, CtorDtor)
   }
 }
 
-TEST_P(StaticFctOp1ArgF, CopyCtor)
+TEST_P(StaticFctOp1F, CopyCtor)
 {
   auto [isLValue, isFctConst, bindKind] = GetParam();
 
   TestStruct testStruct;
-  StaticFctT staticFunction;
+  TestedType staticFunction;
   ASSERT_FALSE((bool)staticFunction);
   bind(staticFunction, testStruct, bindKind, isLValue, isFctConst);
 
-  StaticFctT staticFunctionCopy{staticFunction};
+  TestedType staticFunctionCopy{staticFunction};
 
   if (bindKind != BindKind::Empty)
   {
@@ -72,16 +65,16 @@ TEST_P(StaticFctOp1ArgF, CopyCtor)
   }
 }
 
-TEST_P(StaticFctOp1ArgF, MoveCtor)
+TEST_P(StaticFctOp1F, MoveCtor)
 {
   auto [isLValue, isFctConst, bindKind] = GetParam();
 
   TestStruct testStruct;
-  StaticFctT staticFunction;
+  TestedType staticFunction;
   ASSERT_FALSE((bool)staticFunction);
   bind(staticFunction, testStruct, bindKind, isLValue, isFctConst);
 
-  StaticFctT staticFunctionMove{std::move(staticFunction)};
+  TestedType staticFunctionMove{std::move(staticFunction)};
 
   if (bindKind != BindKind::Empty)
   {
@@ -102,12 +95,12 @@ TEST_P(StaticFctOp1ArgF, MoveCtor)
   }
 }
 
-TEST_P(StaticFctOp1ArgF, isBound)
+TEST_P(StaticFctOp1F, isBound)
 {
   auto [isLValue, isFctConst, bindKind] = GetParam();
 
   TestStruct testStruct;
-  StaticFctT staticFunction;
+  TestedType staticFunction;
   ASSERT_FALSE((bool)staticFunction);
   bind(staticFunction, testStruct, bindKind, isLValue, isFctConst);
 
@@ -125,15 +118,15 @@ TEST_P(StaticFctOp1ArgF, isBound)
   }
 }
 
-TEST_P(StaticFctOp1ArgF, EqualityOp)
+TEST_P(StaticFctOp1F, EqualityOp)
 {
   auto [isLValue, isFctConst, bindKind] = GetParam();
 
   TestStruct testStruct;
-  StaticFctT staticFunction;
+  TestedType staticFunction;
   ASSERT_FALSE((bool)staticFunction);
   bind(staticFunction, testStruct, bindKind, isLValue, isFctConst);
-  StaticFctT staticFunctionCopy{staticFunction};
+  TestedType staticFunctionCopy{staticFunction};
 
   if (bindKind != BindKind::Empty)
   {
@@ -148,12 +141,12 @@ TEST_P(StaticFctOp1ArgF, EqualityOp)
   EXPECT_EQ(staticFunction, staticFunctionCopy);
 }
 
-TEST_P(StaticFctOp1ArgF, reset)
+TEST_P(StaticFctOp1F, reset)
 {
   auto [isLValue, isFctConst, bindKind] = GetParam();
 
   TestStruct testStruct;
-  StaticFctT staticFunction;
+  TestedType staticFunction;
   ASSERT_FALSE((bool)staticFunction);
   bind(staticFunction, testStruct, bindKind, isLValue, isFctConst);
 
@@ -170,12 +163,12 @@ TEST_P(StaticFctOp1ArgF, reset)
   ASSERT_FALSE(staticFunction);
 }
 
-TEST_P(StaticFctOp1ArgF, unbind)
+TEST_P(StaticFctOp1F, unbind)
 {
   auto [isLValue, isFctConst, bindKind] = GetParam();
 
   TestStruct testStruct;
-  StaticFctT staticFunction;
+  TestedType staticFunction;
   ASSERT_FALSE((bool)staticFunction);
   bind(staticFunction, testStruct, bindKind, isLValue, isFctConst);
 
@@ -192,12 +185,12 @@ TEST_P(StaticFctOp1ArgF, unbind)
   ASSERT_FALSE(staticFunction);
 }
 
-TEST_P(StaticFctOp1ArgF, Invoke)
+TEST_P(StaticFctOp1F, Invoke)
 {
   auto [isLValue, isFctConst, bindKind] = GetParam();
 
   TestStruct testStruct;
-  StaticFctT staticFunction;
+  TestedType staticFunction;
   ASSERT_FALSE((bool)staticFunction);
   bind(staticFunction, testStruct, bindKind, isLValue, isFctConst);
 
@@ -215,12 +208,12 @@ TEST_P(StaticFctOp1ArgF, Invoke)
   }
 }
 
-TEST_P(StaticFctOp1ArgF, functionalOperator)
+TEST_P(StaticFctOp1F, functionalOperator)
 {
   auto [isLValue, isFctConst, bindKind] = GetParam();
 
   TestStruct testStruct;
-  StaticFctT staticFunction;
+  TestedType staticFunction;
   ASSERT_FALSE((bool)staticFunction);
   bind(staticFunction, testStruct, bindKind, isLValue, isFctConst);
 
@@ -252,7 +245,7 @@ TEST(StaticFunctionTest, invokeSafe)
   EXPECT_EQ(result.value(), TestStruct::m_staticValue);
 }
 
-TEST_P(StaticFctOp2ArgF, CopyAssign)
+TEST_P(StaticFctOp2F, CopyAssign)
 {
 
   auto [paramA, paramB] = GetParam();
@@ -260,12 +253,12 @@ TEST_P(StaticFctOp2ArgF, CopyAssign)
   auto [isLValueB, isFctConstB, bindKindB] = paramB;
 
   TestStruct testStructA;
-  StaticFctT staticFunctionA;
+  TestedType staticFunctionA;
   ASSERT_FALSE((bool)staticFunctionA);
   bind(staticFunctionA, testStructA, bindKindA, isLValueA, isFctConstA);
 
   TestStruct testStructB;
-  StaticFctT staticFunctionB;
+  TestedType staticFunctionB;
   ASSERT_FALSE((bool)staticFunctionB);
 
   staticFunctionB = staticFunctionA;
@@ -291,19 +284,19 @@ TEST_P(StaticFctOp2ArgF, CopyAssign)
   ASSERT_EQ(staticFunctionA, staticFunctionB);
 }
 
-TEST_P(StaticFctOp2ArgF, MoveAssign)
+TEST_P(StaticFctOp2F, MoveAssign)
 {
   auto [paramA, paramB] = GetParam();
   auto [isLValueA, isFctConstA, bindKindA] = paramA;
   auto [isLValueB, isFctConstB, bindKindB] = paramB;
 
   TestStruct testStructA;
-  StaticFctT staticFunctionA;
+  TestedType staticFunctionA;
   ASSERT_FALSE((bool)staticFunctionA);
   bind(staticFunctionA, testStructA, bindKindA, isLValueA, isFctConstA);
 
   TestStruct testStructB;
-  StaticFctT staticFunctionB;
+  TestedType staticFunctionB;
   ASSERT_FALSE((bool)staticFunctionB);
 
   staticFunctionB = std::move(staticFunctionA);
@@ -328,23 +321,23 @@ TEST_P(StaticFctOp2ArgF, MoveAssign)
   }
 }
 
-TEST_P(StaticFctOp2ArgF, Swap)
+TEST_P(StaticFctOp2F, Swap)
 {
   auto [paramA, paramB] = GetParam();
   auto [isLValueA, isFctConstA, bindKindA] = paramA;
   auto [isLValueB, isFctConstB, bindKindB] = paramB;
 
   TestStruct testStructA;
-  StaticFctT staticFunctionA;
+  TestedType staticFunctionA;
   ASSERT_FALSE((bool)staticFunctionA);
   bind(staticFunctionA, testStructA, bindKindA, isLValueA, isFctConstA);
 
   TestStruct testStructB;
-  StaticFctT staticFunctionB;
+  TestedType staticFunctionB;
   ASSERT_FALSE((bool)staticFunctionB);
   bind(staticFunctionB, testStructB, bindKindB, isLValueB, isFctConstB);
 
-  StaticFctT staticFunctionACopy = staticFunctionA;
+  TestedType staticFunctionACopy = staticFunctionA;
   if (bindKindA != BindKind::Empty)
   {
     ASSERT_TRUE((bool)staticFunctionACopy);
@@ -355,7 +348,7 @@ TEST_P(StaticFctOp2ArgF, Swap)
   }
   ASSERT_EQ(staticFunctionA, staticFunctionACopy);
 
-  StaticFctT staticFunctionBCopy = staticFunctionB;
+  TestedType staticFunctionBCopy = staticFunctionB;
   if (bindKindB != BindKind::Empty)
   {
     ASSERT_TRUE((bool)staticFunctionBCopy);

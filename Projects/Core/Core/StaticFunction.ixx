@@ -32,21 +32,21 @@ public:
   // template <typename Instance_T>
   // using InstanceType = std::remove_reference_t<Instance_T>;
   template<typename Instance_T>
-  using MemberFunction_Ptr = Ret (Instance_T::*)(Args...);
+  using MemberFunctionPtr = Ret (Instance_T::*)(Args...);
   template<typename Instance_T>
-  using MemberFunctionConst_Ptr = Ret (Instance_T::*)(Args...) const;
+  using MemberFunctionConstPtr = Ret (Instance_T::*)(Args...) const;
 
   // template <typename Instance_T>
-  // using MemberFunctionConstOrNot_Ptr = std::conditional_t<std::is_const_v<InstanceType<Instance_T>>, MemberFunctionConst_Ptr<Instance_T>, MemberFunction_Ptr<Instance_T>>;
+  // using MemberFunctionConstOrNot_Ptr = std::conditional_t<std::is_const_v<InstanceType<Instance_T>>, MemberFunctionConstPtr<Instance_T>, MemberFunctionPtr<Instance_T>>;
 
   template<typename Instance_T>
-  static consteval decltype(auto) asFnPtr(MemberFunction_Ptr<Instance_T> fct)
+  static consteval decltype(auto) asFnPtr(MemberFunctionPtr<Instance_T> fct)
   {
     return fct;
   }
 
   template<typename Instance_T>
-  static consteval decltype(auto) asFnConstPtr(MemberFunctionConst_Ptr<Instance_T> fct)
+  static consteval decltype(auto) asFnConstPtr(MemberFunctionConstPtr<Instance_T> fct)
   {
     return fct;
   }

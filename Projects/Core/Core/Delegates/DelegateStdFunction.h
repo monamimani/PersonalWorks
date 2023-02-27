@@ -21,21 +21,21 @@ class DelegateStdFunction<R(Args...)>
   // template <typename Instance_T>
   // using MemberFunction_Sig = Ret(InstanceType<Instance_T>&, Args...);
   template <typename Instance_T>
-  using MemberFunction_Ptr = R (Instance_T::*)(Args...);
+  using MemberFunctionPtr = R (Instance_T::*)(Args...);
   template <typename Instance_T>
-  using MemberFunctionConst_Ptr = R (Instance_T::*)(Args...) const;
+  using MemberFunctionConstPtr = R (Instance_T::*)(Args...) const;
   // template <typename Instance_T>
-  // using MemberFunctionConstOrNot_Ptr = std::conditional_t<std::is_const_v<InstanceType<Instance_T>>, MemberFunctionConst_Ptr<Instance_T>, MemberFunction_Ptr<Instance_T>>;
+  // using MemberFunctionConstOrNot_Ptr = std::conditional_t<std::is_const_v<InstanceType<Instance_T>>, MemberFunctionConstPtr<Instance_T>, MemberFunctionPtr<Instance_T>>;
 
 public:
   template <typename Instance_T>
-  static consteval decltype(auto) asFnPtr(MemberFunction_Ptr<Instance_T> fct)
+  static consteval decltype(auto) asFnPtr(MemberFunctionPtr<Instance_T> fct)
   {
     return fct;
   }
 
   template <typename Instance_T>
-  static consteval decltype(auto) asFnConstPtr(MemberFunctionConst_Ptr<Instance_T> fct)
+  static consteval decltype(auto) asFnConstPtr(MemberFunctionConstPtr<Instance_T> fct)
   {
     return fct;
   }
@@ -154,8 +154,8 @@ private:
   class ObjectMemFnBinder
   {
     using Type = std::remove_reference_t<Instance_T>;
-    using MemFct_Ptr = MemberFunction_Ptr<Instance_T>;
-    using MemFctConst_Ptr = MemberFunctionConst_Ptr<Instance_T>;
+    using MemFct_Ptr = MemberFunctionPtr<Instance_T>;
+    using MemFctConst_Ptr = MemberFunctionConstPtr<Instance_T>;
 
     template <auto function>
     void setTrampolineFct()

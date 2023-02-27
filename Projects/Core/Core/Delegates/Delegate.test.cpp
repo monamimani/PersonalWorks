@@ -1,5 +1,4 @@
 
-#include <optional>
 
 #include "DelegateCommon.test.h"
 
@@ -8,83 +7,13 @@ namespace DelegateTests
 using namespace DelegateLikeTests;
 
 using Delegate_T = Delegate::Delegate<void(int&)>;
+using DelegateOp1F= OpArity1DelegateLikeTestF<Delegate_T, Delegate_T::Connection>;
+using DelegateOp2F= OpArity2DelegateLikeTestF<Delegate_T, Delegate_T::Connection>;
 
-class DelegateOp1ArgF: public OpArity1DelegateLikeTestF
-{
+INSTANTIATE_TEST_SUITE_P(DelegateOp1Arg, DelegateOp1F, OpAr1Arg, DelegateOp1F::makeTestName);
+INSTANTIATE_TEST_SUITE_P(DelegateOp2Arg, DelegateOp2F, OpAr2Arg, DelegateOp2F::makeTestName);
 
-protected:
-  TestStruct m_testStruct;
-  bool m_isConst = false;
-  bool m_isBindKindEmpty = false;
-  Delegate_T m_delegate;
-  Delegate_T::Connection m_handle;
-  SpecialFunctionCallCounter m_counters;
-
-  void SetUp() override
-  {
-    auto [isLValue, isFctConst, bindKind] = GetParam();
-    m_isConst = isFctConst;
-    m_isBindKindEmpty = bindKind == BindKind::Empty;
-
-    m_handle = bind(m_delegate, m_testStruct, bindKind, isLValue, isFctConst);
-
-    TestStruct::resetStaticCounters();
-  }
-
-  void TearDown() override
-  {
-    m_delegate.unbind();
-    TestStruct::resetStaticCounters();
-  }
-
-private:
-};
-
-class DelegateOp2ArgF: public OpArity2DelegateLikeTestF
-{
-
-protected:
-  TestStruct m_testStruct;
-  Delegate_T m_delegateA;
-  Delegate_T::Connection m_handleA;
-  bool m_isDelegateAConst = false;
-  bool m_isDelegateABindKindEmpty = false;
-
-  Delegate_T m_delegateB;
-  Delegate_T::Connection m_handleB;
-  bool m_isDelegateBConst = false;
-  bool m_isDelegateBBindKindEmpty = false;
-
-  SpecialFunctionCallCounter m_counters;
-
-  void SetUp() override
-  {
-    auto [paramA, paramB] = GetParam();
-
-    auto [isLValueA, isDelegateAConst, bindKindA] = paramA;
-    auto [isLValueB, isDelegateBConst, bindKindB] = paramB;
-
-    m_isDelegateAConst = isDelegateAConst;
-    m_isDelegateBConst = isDelegateBConst;
-    m_isDelegateABindKindEmpty = bindKindA == BindKind::Empty;
-    m_isDelegateBBindKindEmpty = bindKindB == BindKind::Empty;
-
-    m_handleA = bind(m_delegateA, m_testStruct, bindKindA, isLValueA, m_isDelegateAConst);
-    m_handleB = bind(m_delegateB, m_testStruct, bindKindB, isLValueB, m_isDelegateBConst);
-
-    TestStruct::resetStaticCounters();
-  }
-
-  void TearDown() override
-  {
-    TestStruct::resetStaticCounters();
-  }
-};
-
-INSTANTIATE_TEST_SUITE_P(Op1Arg, DelegateOp1ArgF, OpAr1Arg, OpArity1DelegateLikeTestF::makeTestName);
-INSTANTIATE_TEST_SUITE_P(Op2Arg, DelegateOp2ArgF, OpAr2Arg, OpArity2DelegateLikeTestF::makeTestName);
-
-TEST_P(DelegateOp1ArgF, CtorDtor)
+TEST_P(DelegateOp1F, CtorDtor)
 {
   if (!m_isBindKindEmpty)
   {
@@ -94,12 +23,9 @@ TEST_P(DelegateOp1ArgF, CtorDtor)
   {
     ASSERT_FALSE((bool)m_delegate);
   }
-
-  std::destroy_at(&m_delegate);
-  ASSERT_FALSE((bool)m_delegate);
 }
 
-TEST_P(DelegateOp1ArgF, CopyCtor)
+TEST_P(DelegateOp1F, CopyCtor)
 {
   Delegate_T delegateCopy{m_delegate};
 
@@ -121,13 +47,13 @@ TEST_P(DelegateOp1ArgF, CopyCtor)
   ASSERT_EQ(m_delegate, delegateCopy);
 }
 
-TEST_P(DelegateOp1ArgF, MoveCtor)
+TEST_P(DelegateOp1F, MoveCtor)
 {
   Delegate_T delegateMove{std::move(m_delegate)};
 
   if (!m_isBindKindEmpty)
   {
-    ASSERT_TRUE((bool)m_delegate); // This really is a valid unspecified state, because moved from
+    ASSERT_FALSE((bool)m_delegate); // This really is a valid unspecified state, because moved from
     ASSERT_TRUE((bool)delegateMove);
 
     int value = 28;
@@ -141,7 +67,7 @@ TEST_P(DelegateOp1ArgF, MoveCtor)
   }
 }
 
-TEST_P(DelegateOp1ArgF, isBound)
+TEST_P(DelegateOp1F, isBound)
 {
   if (!m_isBindKindEmpty)
   {
@@ -157,7 +83,7 @@ TEST_P(DelegateOp1ArgF, isBound)
   }
 }
 
-TEST_P(DelegateOp1ArgF, operatorEqual)
+TEST_P(DelegateOp1F, operatorEqual)
 {
 
   Delegate_T delegateCopy = m_delegate;
@@ -173,7 +99,7 @@ TEST_P(DelegateOp1ArgF, operatorEqual)
   ASSERT_EQ(m_delegate, delegateCopy);
 }
 
-// TEST_P(DelegateOp1ArgF, reset)
+// TEST_P(DelegateOp1F, reset)
 //{
 //   auto [isLValue, isFctConst, bindKind] = GetParam();
 // auto m_isBindKindEmpty = bindKind == BindKind::Empty;
@@ -198,7 +124,7 @@ TEST_P(DelegateOp1ArgF, operatorEqual)
 //   ASSERT_FALSE(m_delegate);
 // }
 
-TEST_P(DelegateOp1ArgF, unbind)
+TEST_P(DelegateOp1F, unbind)
 {
 
   if (!m_isBindKindEmpty)
@@ -214,7 +140,7 @@ TEST_P(DelegateOp1ArgF, unbind)
   ASSERT_FALSE(m_delegate);
 }
 
-TEST_P(DelegateOp1ArgF, invoke)
+TEST_P(DelegateOp1F, invoke)
 {
 
   int value = 28;
@@ -225,7 +151,7 @@ TEST_P(DelegateOp1ArgF, invoke)
   }
 }
 
-TEST_P(DelegateOp1ArgF, functionalOperator)
+TEST_P(DelegateOp1F, functionalOperator)
 {
 
   int value = 28;
@@ -236,7 +162,7 @@ TEST_P(DelegateOp1ArgF, functionalOperator)
   }
 }
 
-TEST(DelegateOp1ArgF, invokeSafe)
+TEST(DelegateOp1F, invokeSafe)
 {
 
   TestStruct testStruct;
@@ -253,7 +179,7 @@ TEST(DelegateOp1ArgF, invokeSafe)
   ASSERT_EQ(result.value(), TestStruct::m_staticValue);
 }
 
-TEST_P(DelegateOp2ArgF, CopyAssign)
+TEST_P(DelegateOp2F, CopyAssign)
 {
   m_delegateB = m_delegateA;
 
@@ -278,19 +204,16 @@ TEST_P(DelegateOp2ArgF, CopyAssign)
   ASSERT_EQ(m_delegateA, m_delegateB);
 }
 
-TEST_P(DelegateOp2ArgF, MoveAssign)
+TEST_P(DelegateOp2F, MoveAssign)
 {
   m_delegateB = std::move(m_delegateA);
 
   if (!m_isDelegateABindKindEmpty)
   {
-    ASSERT_TRUE((bool)m_delegateA); // This realy is a valid unspecified state, becaused moved from
+    ASSERT_FALSE((bool)m_delegateA); // This realy is a valid unspecified state, becaused moved from
     ASSERT_TRUE((bool)m_delegateB);
 
     int value = 28;
-    m_delegateA.invoke(value);
-    ASSERT_EQ(value, getExpectedTestValue(m_isDelegateAConst));
-
     m_delegateB.invoke(value);
     ASSERT_EQ(value, getExpectedTestValue(m_isDelegateAConst));
   }
@@ -302,7 +225,7 @@ TEST_P(DelegateOp2ArgF, MoveAssign)
   }
 }
 
-TEST_P(DelegateOp2ArgF, Swap)
+TEST_P(DelegateOp2F, Swap)
 {
   Delegate_T delegateACopy = m_delegateA;
   if (!m_isDelegateABindKindEmpty)

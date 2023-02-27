@@ -10,7 +10,6 @@ module;
 export module Delegate;
 
 import CoreConcepts;
-import ErasedStorage;
 import StaticFunction;
 
 namespace Delegate
@@ -66,19 +65,27 @@ private:
 template<typename Ret, typename... Args>
 Connection(std::shared_ptr<Core::StaticFunction<Ret(Args...)>>&&) -> Connection<Ret(Args...)>;
 
+export template<typename Signature>
+class Delegate;
+
+/**
+ * @brief
+ *
+ * lvalues are stored as pointer to the target object and their lifetime is thus not managed by the Delegate class
+ * rvalues up to the size of the storage are allowed and are copied in the aligned storage. The delegate class therefore manages thier lifetime.
+ * rvalues that are bigger than the size of the aligned storage I could allocate memory and store a pointer to it in the aligned storage.
+ * @tparam Ret
+ * @tparam ...Args
+ */
 export template<typename Ret, typename... Args>
-class DelegateBase
+class Delegate<Ret(Args...)> final
 {
 private:
-
-protected:
-  using Function_Sig = Ret(Args...);
-  using StaticFunction_T = Core::StaticFunction<Function_Sig>;
-
-  DelegateBase() = default;
+  using FctSig = Ret(Args...);
+  using StaticFunction_T = Core::StaticFunction<FctSig>;
 
 public:
-  using Connection = Connection<Function_Sig>;
+  using Connection = Connection<FctSig>;
 
   template<typename Instance_T>
   using MemberFunctionPtr = Ret (Instance_T::*)(Args...);
@@ -97,28 +104,6 @@ public:
     return fct;
   }
 
-private:
-};
-
-export template<typename Signature>
-class Delegate;
-
-/**
- * @brief
- *
- * lvalues are stored as pointer to the target object and their lifetime is thus not managed by the Delegate class
- * rvalues up to the size of the storage are allowed and are copied in the aligned storage. The delegate class therefore manages thier lifetime.
- * rvalues that are bigger than the size of the aligned storage I could allocate memory and store a pointer to it in the aligned storage.
- * @tparam Ret
- * @tparam ...Args
- */
-export template<typename Ret, typename... Args>
-class Delegate<Ret(Args...)> final: public DelegateBase<Ret, Args...>
-{
-private:
-  using DelegateBase<Ret, Args...>::StaticFunction_T;
-
-public:
   template<Core::InvocableAndReturn<Ret, Args...> auto function>
   [[nodiscard]] constexpr auto bind()
   {
@@ -182,15 +167,16 @@ public:
     }
   }
 
-  constexpr decltype(auto) invokeSafe(Args&&... args)
-  {
-    if (auto staticFunction = m_staticFunction.lock())
-    {
-      return staticFunction->invokeSafe(std::forward<Args>(args)...);
-    }
+  // Because I store the static function as a weakptr, I kind of don't need this function anymore.
+  // constexpr decltype(auto) invokeSafe(Args&&... args)
+  //{
+  //  if (auto staticFunction = m_staticFunction.lock())
+  //  {
+  //    return staticFunction->invokeSafe(std::forward<Args>(args)...);
+  //  }
 
-    return std::optional<Ret>{};
-  }
+  //  return std::optional<Ret>{};
+  //}
 
   friend bool operator==(const Delegate& lhs, const Delegate& rhs)
   {

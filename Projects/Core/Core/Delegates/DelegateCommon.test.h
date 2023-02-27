@@ -11,10 +11,10 @@ using namespace TestUtilities;
 
 import StaticFunction;
 import Delegate;
+import DelegateMulticast;
 
 namespace DelegateLikeTests
 {
-using namespace Core;
 using namespace TestUtilities;
 
 using IsLValue = bool;
@@ -278,7 +278,7 @@ protected:
 static const auto OpAr1Arg = ::testing::ValuesIn(DelegateLikeTestF::makeDelegateBindKindParamSet());
 static const auto OpAr2Arg = ::testing::Combine(OpAr1Arg, OpAr1Arg);
 
-template<typename DelegateLikeT , typename HandleT>
+template<typename DelegateLikeT, typename HandleT>
 class OpArity1DelegateLikeTestF: public DelegateLikeTestF, public testing::TestWithParam<ParamSetType>
 {
 
@@ -294,7 +294,7 @@ public:
   };
 
 protected:
-  using TestedType = DelegateLikeT;
+  using DelegateLike = DelegateLikeT;
   bool m_isConst = false;
   bool m_isBindKindEmpty = false;
 
@@ -325,7 +325,15 @@ private:
 
   void TearDown() override
   {
-    m_delegate.unbind();
+    if constexpr (requires { m_delegate.unbind(); })
+    {
+      m_delegate.unbind();
+    }
+    else
+    {
+      m_delegate.unbindAll();
+    }
+
     TestStruct::resetStaticCounters();
   }
 };
@@ -346,7 +354,7 @@ public:
   };
 
 protected:
-  using TestedType = DelegateLikeT;
+  using DelegateLike = DelegateLikeT;
 
   bool m_isDelegateAConst = false;
   bool m_isDelegateABindKindEmpty = false;

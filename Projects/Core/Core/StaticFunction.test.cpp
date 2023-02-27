@@ -5,10 +5,10 @@ import StaticFunction;
 
 namespace StaticFunctionTests
 {
-
+using namespace Core;
 using namespace DelegateLikeTests;
 
-using StaticFctT = StaticFunction<void(int&)>;
+using StaticFctT = StaticFunction<FctSignature>;
 using StaticFctOp1F= OpArity1DelegateLikeTestF<StaticFctT, void*>;
 using StaticFctOp2F= OpArity2DelegateLikeTestF<StaticFctT, void*>;
 
@@ -21,7 +21,7 @@ TEST_P(StaticFctOp1F, CtorDtor)
   auto [isLValue, isFctConst, bindKind] = GetParam();
   
   TestStruct testStruct;
-  TestedType staticFunction;
+  DelegateLike staticFunction;
   ASSERT_FALSE((bool)staticFunction);
   bind(staticFunction, testStruct, bindKind, isLValue, isFctConst);
 
@@ -40,11 +40,11 @@ TEST_P(StaticFctOp1F, CopyCtor)
   auto [isLValue, isFctConst, bindKind] = GetParam();
 
   TestStruct testStruct;
-  TestedType staticFunction;
+  DelegateLike staticFunction;
   ASSERT_FALSE((bool)staticFunction);
   bind(staticFunction, testStruct, bindKind, isLValue, isFctConst);
 
-  TestedType staticFunctionCopy{staticFunction};
+  DelegateLike staticFunctionCopy{staticFunction};
 
   if (bindKind != BindKind::Empty)
   {
@@ -70,11 +70,11 @@ TEST_P(StaticFctOp1F, MoveCtor)
   auto [isLValue, isFctConst, bindKind] = GetParam();
 
   TestStruct testStruct;
-  TestedType staticFunction;
+  DelegateLike staticFunction;
   ASSERT_FALSE((bool)staticFunction);
   bind(staticFunction, testStruct, bindKind, isLValue, isFctConst);
 
-  TestedType staticFunctionMove{std::move(staticFunction)};
+  DelegateLike staticFunctionMove{std::move(staticFunction)};
 
   if (bindKind != BindKind::Empty)
   {
@@ -100,7 +100,7 @@ TEST_P(StaticFctOp1F, isBound)
   auto [isLValue, isFctConst, bindKind] = GetParam();
 
   TestStruct testStruct;
-  TestedType staticFunction;
+  DelegateLike staticFunction;
   ASSERT_FALSE((bool)staticFunction);
   bind(staticFunction, testStruct, bindKind, isLValue, isFctConst);
 
@@ -123,10 +123,10 @@ TEST_P(StaticFctOp1F, EqualityOp)
   auto [isLValue, isFctConst, bindKind] = GetParam();
 
   TestStruct testStruct;
-  TestedType staticFunction;
+  DelegateLike staticFunction;
   ASSERT_FALSE((bool)staticFunction);
   bind(staticFunction, testStruct, bindKind, isLValue, isFctConst);
-  TestedType staticFunctionCopy{staticFunction};
+  DelegateLike staticFunctionCopy{staticFunction};
 
   if (bindKind != BindKind::Empty)
   {
@@ -146,7 +146,7 @@ TEST_P(StaticFctOp1F, reset)
   auto [isLValue, isFctConst, bindKind] = GetParam();
 
   TestStruct testStruct;
-  TestedType staticFunction;
+  DelegateLike staticFunction;
   ASSERT_FALSE((bool)staticFunction);
   bind(staticFunction, testStruct, bindKind, isLValue, isFctConst);
 
@@ -168,7 +168,7 @@ TEST_P(StaticFctOp1F, unbind)
   auto [isLValue, isFctConst, bindKind] = GetParam();
 
   TestStruct testStruct;
-  TestedType staticFunction;
+  DelegateLike staticFunction;
   ASSERT_FALSE((bool)staticFunction);
   bind(staticFunction, testStruct, bindKind, isLValue, isFctConst);
 
@@ -190,7 +190,7 @@ TEST_P(StaticFctOp1F, Invoke)
   auto [isLValue, isFctConst, bindKind] = GetParam();
 
   TestStruct testStruct;
-  TestedType staticFunction;
+  DelegateLike staticFunction;
   ASSERT_FALSE((bool)staticFunction);
   bind(staticFunction, testStruct, bindKind, isLValue, isFctConst);
 
@@ -213,7 +213,7 @@ TEST_P(StaticFctOp1F, functionalOperator)
   auto [isLValue, isFctConst, bindKind] = GetParam();
 
   TestStruct testStruct;
-  TestedType staticFunction;
+  DelegateLike staticFunction;
   ASSERT_FALSE((bool)staticFunction);
   bind(staticFunction, testStruct, bindKind, isLValue, isFctConst);
 
@@ -253,12 +253,12 @@ TEST_P(StaticFctOp2F, CopyAssign)
   auto [isLValueB, isFctConstB, bindKindB] = paramB;
 
   TestStruct testStructA;
-  TestedType staticFunctionA;
+  DelegateLike staticFunctionA;
   ASSERT_FALSE((bool)staticFunctionA);
   bind(staticFunctionA, testStructA, bindKindA, isLValueA, isFctConstA);
 
   TestStruct testStructB;
-  TestedType staticFunctionB;
+  DelegateLike staticFunctionB;
   ASSERT_FALSE((bool)staticFunctionB);
 
   staticFunctionB = staticFunctionA;
@@ -291,12 +291,12 @@ TEST_P(StaticFctOp2F, MoveAssign)
   auto [isLValueB, isFctConstB, bindKindB] = paramB;
 
   TestStruct testStructA;
-  TestedType staticFunctionA;
+  DelegateLike staticFunctionA;
   ASSERT_FALSE((bool)staticFunctionA);
   bind(staticFunctionA, testStructA, bindKindA, isLValueA, isFctConstA);
 
   TestStruct testStructB;
-  TestedType staticFunctionB;
+  DelegateLike staticFunctionB;
   ASSERT_FALSE((bool)staticFunctionB);
 
   staticFunctionB = std::move(staticFunctionA);
@@ -328,16 +328,16 @@ TEST_P(StaticFctOp2F, Swap)
   auto [isLValueB, isFctConstB, bindKindB] = paramB;
 
   TestStruct testStructA;
-  TestedType staticFunctionA;
+  DelegateLike staticFunctionA;
   ASSERT_FALSE((bool)staticFunctionA);
   bind(staticFunctionA, testStructA, bindKindA, isLValueA, isFctConstA);
 
   TestStruct testStructB;
-  TestedType staticFunctionB;
+  DelegateLike staticFunctionB;
   ASSERT_FALSE((bool)staticFunctionB);
   bind(staticFunctionB, testStructB, bindKindB, isLValueB, isFctConstB);
 
-  TestedType staticFunctionACopy = staticFunctionA;
+  DelegateLike staticFunctionACopy = staticFunctionA;
   if (bindKindA != BindKind::Empty)
   {
     ASSERT_TRUE((bool)staticFunctionACopy);
@@ -348,7 +348,7 @@ TEST_P(StaticFctOp2F, Swap)
   }
   ASSERT_EQ(staticFunctionA, staticFunctionACopy);
 
-  TestedType staticFunctionBCopy = staticFunctionB;
+  DelegateLike staticFunctionBCopy = staticFunctionB;
   if (bindKindB != BindKind::Empty)
   {
     ASSERT_TRUE((bool)staticFunctionBCopy);

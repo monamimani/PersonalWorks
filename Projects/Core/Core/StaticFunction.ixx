@@ -10,6 +10,7 @@ import ErasedStorage;
 
 namespace Core
 {
+
 export template<typename Signature>
 class StaticFunction;
 
@@ -29,15 +30,10 @@ class StaticFunction<Ret(Args...)> final
   class ObjectMemFnBinder;
 
 public:
-  // template <typename Instance_T>
-  // using InstanceType = std::remove_reference_t<Instance_T>;
   template<typename Instance_T>
   using MemberFunctionPtr = Ret (Instance_T::*)(Args...);
   template<typename Instance_T>
   using MemberFunctionConstPtr = Ret (Instance_T::*)(Args...) const;
-
-  // template <typename Instance_T>
-  // using MemberFunctionConstOrNot_Ptr = std::conditional_t<std::is_const_v<InstanceType<Instance_T>>, MemberFunctionConstPtr<Instance_T>, MemberFunctionPtr<Instance_T>>;
 
   template<typename Instance_T>
   static consteval decltype(auto) asFnPtr(MemberFunctionPtr<Instance_T> fct)
@@ -161,7 +157,6 @@ private:
       return std::invoke_r<Ret>(function, object, std::forward<Args>(args)...);
     };
   }
-
 
   template<typename Instance_T>
   void constructStorage(Instance_T&& instance)

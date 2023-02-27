@@ -148,6 +148,8 @@ static inline void freeFunction(int& value)
   value = TestStruct::m_staticValue;
 }
 
+using FctSignature = void(int&);
+
 #define ExpectSpecialFunctionCallCounter(expectedCounter)                                                   \
   EXPECT_EQ(expectedCounter.m_nbCallDefaultConstructor, TestStruct::m_counters.m_nbCallDefaultConstructor); \
   EXPECT_EQ(expectedCounter.m_nbCallDestructor, TestStruct::m_counters.m_nbCallDestructor);                 \
@@ -158,4 +160,4 @@ static inline void freeFunction(int& value)
   const uint8_t nbConstructorCall = TestStruct::m_counters.m_nbCallDefaultConstructor + TestStruct::m_counters.m_nbCallCopyConstructor + TestStruct::m_counters.m_nbCallMoveConstructor; \
   EXPECT_EQ(nbConstructorCall, expectedCounter.m_nbCallDestructor)
 
-} // namespace Test
+} // namespace TestUtilities

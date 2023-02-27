@@ -12,29 +12,49 @@ namespace Delegate
 {
 
 export template<typename Ret, typename... Args>
-class DelegateMulticastBase: public DelegateBase<Ret, Args...>
+class DelegateMulticastBase
 {
 public:
 protected:
   DelegateMulticastBase() = default;
 
 private:
-  bool m_calling = false;
-  bool m_dirty = false;
+  // bool m_calling = false;
+  // bool m_dirty = false;
 };
 
 export template<typename Signature>
 class DelegateMulticast;
 
 export template<typename Ret, typename... Args>
-class DelegateMulticast<Ret(Args...)> final: public DelegateMulticastBase<Ret, Args...>
+class DelegateMulticast<Ret(Args...)> final
 {
 private:
   static_assert(std::is_same_v<Ret, void>, "Delegate return values other than void are not supported.");
 
-  using DelegateBase<Ret, Args...>::StaticFunction_T;
+  using FctSig = Ret(Args...);
+  using StaticFunction_T = Core::StaticFunction<FctSig>;
 
 public:
+  using Connection = Connection<FctSig>;
+
+  template<typename Instance_T>
+  using MemberFunctionPtr = Ret (Instance_T::*)(Args...);
+  template<typename Instance_T>
+  using MemberFunctionConstPtr = Ret (Instance_T::*)(Args...) const;
+
+  template<typename Instance_T>
+  static consteval decltype(auto) asFnPtr(MemberFunctionPtr<Instance_T> fct)
+  {
+    return fct;
+  }
+
+  template<typename Instance_T>
+  static consteval decltype(auto) asFnConstPtr(MemberFunctionConstPtr<Instance_T> fct)
+  {
+    return fct;
+  }
+
   template<Core::InvocableAndReturn<Ret, Args...> auto function>
   inline constexpr [[nodiscard]] auto bind()
   {
@@ -68,11 +88,11 @@ public:
 
   void operator()(const Args&&... args)
   {
-    return broadcast(std::forward<Args>(args)...);
+    return invoke(std::forward<Args>(args)...);
   }
 
   // function names Broadcast fire execute
-  void broadcast(const Args&&... args)
+  void invoke(const Args&&... args)
   {
     for (auto& staticFunction : m_staticFunctionList)
     {
@@ -83,22 +103,46 @@ public:
     }
   }
 
-  bool isEmpty() const
+  [[nodiscard]] constexpr bool isEmpty() const
   {
     return m_staticFunctionList.empty();
   }
 
-  constexpr explicit operator bool() const
+  [[nodiscard]] constexpr explicit operator bool() const
   {
     return !isEmpty();
   }
 
-  void unbindAll()
+  constexpr void unbindAll()
   {
     m_staticFunctionList.clear();
   }
 
-  bool operator==(const DelegateMulticast&) const = default;
+
+  friend bool operator==(const DelegateMulticast& lhs, const DelegateMulticast& rhs)
+  {
+
+    if (lhs.m_staticFunctionList.size() != rhs.m_staticFunctionList.size())
+    {
+      return false;
+    }
+
+    bool result = true;
+    size_t size = lhs.m_staticFunctionList.size();
+    for (size_t i = 0; i < size; i++)
+    {
+      const auto& wptrLhs = lhs.m_staticFunctionList[i];
+      const auto& wptrRhs = rhs.m_staticFunctionList[i];
+
+      result &= (wptrLhs.expired() && wptrRhs.expired()) || ((!wptrLhs.expired() && !wptrRhs.expired()) && (*wptrLhs.lock() == *wptrRhs.lock()));
+      if (!result)
+      {
+        break;
+      }
+    }
+
+    return result;
+  }
 
 private:
   std::vector<std::weak_ptr<StaticFunction_T>> m_staticFunctionList;

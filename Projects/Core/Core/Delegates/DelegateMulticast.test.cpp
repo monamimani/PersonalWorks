@@ -1,25 +1,10 @@
 
-#include <algorithm>
-#include <array>
-// #include <format>
-#include <ranges>
-#include <tuple>
-#include <type_traits>
+#include "DelegateCommon.test.h"
 
-#include "fmt/format.h"
-
-import Delegate;
 import DelegateMulticast;
 
-#include "DelegateMulticastCommon.test.h"
-#include "TestUtilities/GoogleTest.h"
-
-using namespace TestUtilities;
-
-namespace Delegate
+namespace DelegateMulticastTests
 {
-using DelegateMulticast_T = DelegateMulticast<void(int&)>;
-
 // The various contexts the class can be used in:
 // various function signature.
 // LValue and Rvalue.
@@ -109,540 +94,48 @@ using DelegateMulticast_T = DelegateMulticast<void(int&)>;
 //  ASSERT_EQ(getDelegateList().size(), delegateCount);
 //}
 
-using IsLValue = bool;
-using IsFctConst = bool;
+using namespace DelegateLikeTests;
+using DelegateMulticast_T = Delegate::DelegateMulticast<FctSignature>;
+using DelegateMultiOp1F = OpArity1DelegateLikeTestF<DelegateMulticast_T, DelegateMulticast_T::Connection>;
+using DelegateMultiOp2F = OpArity2DelegateLikeTestF<DelegateMulticast_T, DelegateMulticast_T::Connection>;
 
-enum class BindKind
+INSTANTIATE_TEST_SUITE_P(DelegateMultiOp1Arg, DelegateMultiOp1F, OpAr1Arg, DelegateMultiOp1F::makeTestName);
+INSTANTIATE_TEST_SUITE_P(DelegateMultiOp2Arg, DelegateMultiOp2F, OpAr2Arg, DelegateMultiOp2F::makeTestName);
+
+#define TESTSUITENAME_OP1 DelegateMultiOp1F
+#define TESTSUITENAME_OP2 DelegateMultiOp2F
+#include"Core/Delegates/DelegateCommonTestCode.h"
+
+TEST_P(DelegateMultiOp1F, isEmpty)
 {
-  Empty,
-  FreeFunction,
-  Functor,
-  MemberFct,
-  ObjectMemberFct,
-  MemberFctTemplate,
-  MemberFctConstOverloaded,
-  MemberFctParamOverloaded
-};
-
-typedef DelegateMulticast_T::Connection CreateDelegateMulticast(DelegateMulticast_T&, TestStruct&, IsLValue, IsFctConst);
-
-auto bindEmpty([[maybe_unused]] DelegateMulticast_T&, [[maybe_unused]] TestStruct&, [[maybe_unused]] IsLValue, [[maybe_unused]] IsFctConst)
-{
-}
-
-auto bindFreeFunction(DelegateMulticast_T& delegateMulticast, [[maybe_unused]] TestStruct&, [[maybe_unused]] IsLValue, [[maybe_unused]] IsFctConst)
-{
-  return delegateMulticast.bind<&freeFunction>();
-}
-
-auto bindFunctor(DelegateMulticast_T& delegateMulticast, TestStruct& testStruct, IsLValue isLValue, IsFctConst isFctConst)
-{
-  if (isLValue)
+  if (!m_isBindKindEmpty)
   {
-    if (isFctConst)
-    {
-      return delegateMulticast.bind(const_cast<const TestStruct&>(testStruct));
-    }
-    else
-    {
-      return delegateMulticast.bind(testStruct);
-    }
+    ASSERT_TRUE((bool)m_delegate);
+    ASSERT_FALSE(m_delegate.isEmpty());
+    ASSERT_TRUE(m_delegate);
   }
   else
   {
-    if (isFctConst)
-    {
-      return delegateMulticast.bind(const_cast<const TestStruct&&>(std::move(testStruct)));
-    }
-    else
-    {
-      return delegateMulticast.bind(std::move(testStruct));
-    }
+    ASSERT_FALSE((bool)m_delegate);
+    ASSERT_TRUE(m_delegate.isEmpty());
+    ASSERT_FALSE(m_delegate);
   }
 }
 
-auto bindMemberFct(DelegateMulticast_T& delegateMulticast, TestStruct& testStruct, IsLValue isLValue, IsFctConst isFctConst)
+TEST_P(DelegateMultiOp1F, unbindAll)
 {
-  if (!isLValue)
+
+  if (!m_isBindKindEmpty)
   {
-    if (isFctConst)
-    {
-      return delegateMulticast.bind<&TestStruct::fctConst>(const_cast<const TestStruct&&>(std::move(testStruct)));
-    }
-    else
-    {
-      return delegateMulticast.bind<&TestStruct::fct>(std::move(testStruct));
-    }
+    ASSERT_TRUE(m_delegate);
   }
   else
   {
-    if (isFctConst)
-    {
-      return delegateMulticast.bind<&TestStruct::fctConst>(const_cast<const TestStruct&>(testStruct));
-    }
-    else
-    {
-      return delegateMulticast.bind<&TestStruct::fct>(testStruct);
-    }
+    ASSERT_FALSE(m_delegate);
   }
+
+  m_delegate.unbindAll();
+  ASSERT_TRUE(m_delegate.isEmpty());
 }
 
-auto bindObjectMemberFct(DelegateMulticast_T& delegateMulticast, TestStruct& testStruct, IsLValue isLValue, IsFctConst isFctConst)
-{
-  if (isLValue)
-  {
-    if (isFctConst)
-    {
-      return delegateMulticast.bind<&TestStruct::fctConst>(const_cast<const TestStruct&>(testStruct));
-    }
-    else
-    {
-      return delegateMulticast.bind<&TestStruct::fct>(testStruct);
-    }
-  }
-  else
-  {
-    if (isFctConst)
-    {
-      return delegateMulticast.bind<&TestStruct::fctConst>(const_cast<const TestStruct&&>(std::move(testStruct)));
-    }
-    else
-    {
-      return delegateMulticast.bind<&TestStruct::fct>(std::move(testStruct));
-    }
-  }
-}
-
-auto bindObjectMemberFctTemplate(DelegateMulticast_T& delegateMulticast, TestStruct& testStruct, IsLValue isLValue, IsFctConst isFctConst)
-{
-  if (!isLValue)
-  {
-    if (isFctConst)
-    {
-      return delegateMulticast.bind<DelegateMulticast_T::asFnConstPtr(&TestStruct::fctTemplate<int>)>(const_cast<const TestStruct&&>(std::move(testStruct)));
-    }
-    else
-    {
-      return delegateMulticast.bind<DelegateMulticast_T::asFnPtr(&TestStruct::fctTemplate<int>)>(std::move(testStruct));
-    }
-  }
-  else
-  {
-    if (isFctConst)
-    {
-      return delegateMulticast.bind<DelegateMulticast_T::asFnConstPtr(&TestStruct::fctTemplate<int>)>(const_cast<const TestStruct&>(testStruct));
-    }
-    else
-    {
-      return delegateMulticast.bind<DelegateMulticast_T::asFnPtr(&TestStruct::fctTemplate<int>)>(testStruct);
-    }
-  }
-}
-
-auto bindObjectMemberFctConstOverloaded(DelegateMulticast_T& delegateMulticast, TestStruct& testStruct, IsLValue isLValue, IsFctConst isFctConst)
-{
-  if (!isLValue)
-  {
-    if (isFctConst)
-    {
-      return delegateMulticast.bind<DelegateMulticast_T::asFnConstPtr(&TestStruct::fctConstOverloaded)>(const_cast<const TestStruct&&>(std::move(testStruct)));
-    }
-    else
-    {
-      return delegateMulticast.bind<DelegateMulticast_T::asFnPtr(&TestStruct::fctConstOverloaded)>(std::move(testStruct));
-    }
-  }
-  else
-  {
-    if (isFctConst)
-    {
-      return delegateMulticast.bind<DelegateMulticast_T::asFnConstPtr(&TestStruct::fctConstOverloaded)>(const_cast<const TestStruct&>(testStruct));
-    }
-    else
-    {
-      return delegateMulticast.bind<DelegateMulticast_T::asFnPtr(&TestStruct::fctConstOverloaded)>(testStruct);
-    }
-  }
-}
-
-auto bindObjectMemberFctParamOverloaded(DelegateMulticast_T& delegateMulticast, TestStruct& testStruct, IsLValue isLValue, IsFctConst isFctConst)
-{
-  if (isLValue)
-  {
-    if (!isFctConst)
-    {
-      return delegateMulticast.bind<DelegateMulticast_T::asFnPtr(&TestStruct::fctParamOverloaded)>(testStruct);
-    }
-    else
-    {
-      return delegateMulticast.bind<DelegateMulticast_T::asFnConstPtr(&TestStruct::fctParamOverloaded)>(const_cast<const TestStruct&>(testStruct));
-    }
-  }
-  else
-  {
-    if (isFctConst)
-    {
-      return delegateMulticast.bind<DelegateMulticast_T::asFnConstPtr(&TestStruct::fctParamOverloaded)>(const_cast<const TestStruct&&>(std::move(testStruct)));
-    }
-    else
-    {
-      return delegateMulticast.bind<DelegateMulticast_T::asFnPtr(&TestStruct::fctParamOverloaded)>(std::move(testStruct));
-    }
-  }
-}
-
-auto bindDelegate(DelegateMulticast_T& delegate, TestStruct& testStruct, BindKind bindKind, IsLValue isLValue, IsFctConst isFctConst)
-{
-  switch (bindKind)
-  {
-    case BindKind::Empty:
-      return DelegateMulticast_T::Connection{};
-    case BindKind::FreeFunction:
-      return bindFreeFunction(delegate, testStruct, isLValue, isFctConst);
-    case BindKind::Functor:
-      return bindFunctor(delegate, testStruct, isLValue, isFctConst);
-    case BindKind::MemberFct:
-      return bindMemberFct(delegate, testStruct, isLValue, isFctConst);
-    case BindKind::ObjectMemberFct:
-      return bindObjectMemberFct(delegate, testStruct, isLValue, isFctConst);
-    case BindKind::MemberFctTemplate:
-      return bindObjectMemberFctTemplate(delegate, testStruct, isLValue, isFctConst);
-    case BindKind::MemberFctConstOverloaded:
-      return bindObjectMemberFctConstOverloaded(delegate, testStruct, isLValue, isFctConst);
-    case BindKind::MemberFctParamOverloaded:
-      return bindObjectMemberFctParamOverloaded(delegate, testStruct, isLValue, isFctConst);
-  }
-
-  std::unreachable();
-}
-
-std::string getTestNamePart(IsLValue isLValue, IsFctConst isFctConst, BindKind bindkind)
-{
-  static constexpr auto delegateTypeTuples = std::to_array<std::tuple<BindKind, const char*>>({
-  /*{BindKind::Empty, "Empty"},*/
-      {                  BindKind::FreeFunction,                         "FreeFct"},
-      {                       BindKind::Functor,                         "Functor"},
-      {                     BindKind::MemberFct,                      "BindMemFct"},
-      {               BindKind::ObjectMemberFct,                "BindObjectMemFct"},
-      {       BindKind::MemberFctTemplate,              "BindMemFctTemplate"},
-      {BindKind::MemberFctConstOverloaded, "BindObjectMemFctConstOverloaded"},
-      {BindKind::MemberFctParamOverloaded, "BindObjectMemFctParamOverloaded"}
-  });
-
-  auto isRequestedFactory = [bindkind](const std::tuple<BindKind, const char*>& element)
-  {
-    return bindkind == std::get<0>(element);
-  };
-
-  auto result = std::find_if(delegateTypeTuples.begin(), delegateTypeTuples.end(), isRequestedFactory);
-  auto isLValueStr = isLValue ? "LValue" : "RValue";
-  auto isConstStr = isFctConst ? "Const" : "";
-  auto bindkindStr = (result != delegateTypeTuples.end()) ? std::get<1>(*result) : "Unknown";
-  return fmt::format("{}{}{}", isLValueStr, bindkindStr, isConstStr);
-}
-
-using ParamSetType = std::tuple<IsLValue, IsFctConst, BindKind>;
-class UnaryOpF: public testing::TestWithParam<ParamSetType>
-{
-public:
-  static constexpr auto makeTestName = [](const testing::TestParamInfo<ParamType>& info)
-  {
-    auto [isLValueA, isFctConstA, bindKind] = info.param;
-
-    auto delegateTypeAName = getTestNamePart(isLValueA, isFctConstA, bindKind);
-
-    return delegateTypeAName;
-  };
-
-protected:
-private:
-};
-
-class BinaryOpF: public testing::TestWithParam<std::tuple<ParamSetType, ParamSetType>>
-{
-public:
-  static constexpr auto makeTestName = [](const testing::TestParamInfo<ParamType>& info)
-  {
-    auto [paramA, paramB] = info.param;
-    auto [isLValueA, isFctConstA, delegateBinderA] = paramA;
-    auto [isLValueB, isFctConstB, delegateBinderB] = paramB;
-
-    auto delegateTypeAName = getTestNamePart(isLValueA, isFctConstA, delegateBinderA);
-    auto delegateTypeBName = getTestNamePart(isLValueB, isFctConstB, delegateBinderB);
-
-    return fmt::format("{}{}", delegateTypeAName, delegateTypeBName);
-  };
-
-protected:
-private:
-};
-
-auto makeDelegateTypeParamSet()
-{
-  static constexpr std::array fctConstness = {true, false};
-  static constexpr std::array valueKinds = {true, false};
-  static constexpr std::array memberFctDelegateTypes = { BindKind::Functor, BindKind::MemberFct, BindKind::ObjectMemberFct, BindKind::MemberFctTemplate, BindKind::MemberFctConstOverloaded, BindKind::MemberFctParamOverloaded };
-  static constexpr auto memFctParamSetPartSize = valueKinds.size() * fctConstness.size() * memberFctDelegateTypes.size();
-
-  auto paramSetPart = std::vector<ParamSetType>();
-  paramSetPart.reserve(memFctParamSetPartSize);
-  std::ranges::for_each(memberFctDelegateTypes,
-                        [&paramSetPart](BindKind bindKind)
-                        {
-                          paramSetPart.emplace_back(IsLValue(true), IsFctConst(true), bindKind);
-                          paramSetPart.emplace_back(IsLValue(false), IsFctConst(false), bindKind);
-                          paramSetPart.emplace_back(IsLValue(true), IsFctConst(false), bindKind);
-                          paramSetPart.emplace_back(IsLValue(false), IsFctConst(true), bindKind);
-                        });
-
-  paramSetPart.emplace_back(IsLValue(true), IsFctConst(false), BindKind::FreeFunction);
-  //paramSetPart.emplace_back(IsLValue(true), IsFctConst(false), BindKind::Empty);
-
-  //static constexpr std::array fctDelegateTypes = {&bindFreeFunction};
-  //static constexpr auto fctParamSetPartSize = fctDelegateTypes.size();
-  //auto fctParamSet = std::vector<ParamSetType>();
-  //fctParamSet.reserve(fctParamSetPartSize);
-  //std::ranges::for_each(fctDelegateTypes,
-  //                      [&fctParamSet](CreateDelegateMulticast* createDelegateMulticast)
-  //                      {
-  //                        fctParamSet.emplace_back(IsLValue(true), IsFctConst(false), createDelegateMulticast);
-  //                      });
-
-  //static constexpr auto paramSetPartSize = memFctParamSetPartSize + fctParamSetPartSize;
-  //auto paramSetPart = std::vector<ParamSetType>();
-  //paramSetPart.reserve(paramSetPartSize);
-  //std::copy(fctParamSet.begin(), fctParamSet.end(), std::back_inserter(paramSetPart));
-  //std::copy(memFctParamSet.begin(), memFctParamSet.end(), std::back_inserter(paramSetPart));
-
-  // auto delegateTypesParamSet = std::vector<std::tuple<ParamSetPartType>>(paramSetPartSize*paramSetPartSize);
-
-  return paramSetPart;
-}
-
-// auto memberFctParamSet = ::testing::Combine(::testing::ValuesIn(valueKinds), ::testing::ValuesIn(fctConstness), ::testing::ValuesIn(memberFctDelegateTypes));
-// auto fctParamSet = ::testing::Combine(::testing::Values(true), ::testing::Values(false), ::testing::ValuesIn(fctDelegateTypes));
-// auto delegateTypesParamSetPart = ::testing::Values(fctParamSet, memberFctParamSet);
-
-auto emptyDelegateTypeParamSet = ::testing::Values(std::make_tuple(IsLValue(true), IsFctConst(false), &bindEmpty));
-auto delegateTypesParamSet = ::testing::ValuesIn(makeDelegateTypeParamSet());
-
-INSTANTIATE_TEST_SUITE_P(UnaryOpDelegateMulticast, UnaryOpF, delegateTypesParamSet, UnaryOpF::makeTestName);
-INSTANTIATE_TEST_SUITE_P(BinaryOpDelegateMulticast, BinaryOpF, ::testing::Combine(delegateTypesParamSet, delegateTypesParamSet), BinaryOpF::makeTestName);
-
-TEST_P(UnaryOpF, ConstructBroadcastDestroy)
-{
-  auto [isLValue, isFctConst, bindKind] = GetParam();
-
-  TestStruct testStruct;
-  DelegateMulticast_T delegateMulticast;
-  ASSERT_TRUE((bool)delegateMulticast.isEmpty());
-
-  auto handle = bindDelegate(delegateMulticast, testStruct, bindKind, isLValue, isFctConst);
-
-  ASSERT_FALSE((bool)delegateMulticast.isEmpty());
-
-  int value{};
-  delegateMulticast.broadcast(value);
-  if (isFctConst)
-  {
-    ASSERT_EQ(value, TestStruct::m_staticValueConst);
-  }
-  else
-  {
-    ASSERT_EQ(value, TestStruct::m_staticValue);
-  }
-
-  delegateMulticast.unbindAll();
-  ASSERT_TRUE((bool)delegateMulticast.isEmpty());
-
-  handle = bindDelegate(delegateMulticast, testStruct, bindKind, isLValue, isFctConst);
-  ASSERT_FALSE((bool)delegateMulticast.isEmpty());
-
-  delegateMulticast.~DelegateMulticast();
-  ASSERT_TRUE((bool)delegateMulticast.isEmpty());
-}
-
-TEST_P(UnaryOpF, MoveCopyConstructBroadcast)
-{
-  auto [isLValue, isFctConst, bindKind] = GetParam();
-
-  TestStruct testStruct;
-  DelegateMulticast_T delegateMulticast;
-  ASSERT_TRUE((bool)delegateMulticast.isEmpty());
-
-  auto handle = bindDelegate(delegateMulticast, testStruct, bindKind, isLValue, isFctConst);
-
-  ASSERT_FALSE((bool)delegateMulticast.isEmpty());
-
-  DelegateMulticast_T delegateMulticastMove{std::move(delegateMulticast)};
-  ASSERT_FALSE((bool)delegateMulticastMove.isEmpty());
-  ASSERT_TRUE((bool)delegateMulticast.isEmpty());
-
-  int value{};
-  delegateMulticastMove.broadcast(value);
-  if (isFctConst)
-  {
-    ASSERT_EQ(value, TestStruct::m_staticValueConst);
-  }
-  else
-  {
-    ASSERT_EQ(value, TestStruct::m_staticValue);
-  }
-
-  DelegateMulticast_T delegateMulticastCopy{delegateMulticastMove};
-  ASSERT_FALSE((bool)delegateMulticastCopy.isEmpty());
-
-  // auto test = delegateMulticastMove == delegateMulticastCopy;
-  // ASSERT_EQ(delegateMulticastMove, delegateMulticastCopy);
-
-  value = {};
-  delegateMulticastMove.broadcast(value);
-  if (isFctConst)
-  {
-    ASSERT_EQ(value, TestStruct::m_staticValueConst);
-  }
-  else
-  {
-    ASSERT_EQ(value, TestStruct::m_staticValue);
-  }
-
-  value = {};
-  delegateMulticastCopy.broadcast(value);
-  if (isFctConst)
-  {
-    ASSERT_EQ(value, TestStruct::m_staticValueConst);
-  }
-  else
-  {
-    ASSERT_EQ(value, TestStruct::m_staticValue);
-  }
-}
-
-TEST_P(UnaryOpF, MoveCopyAssignBroadcast)
-{
-  auto [isLValue, isFctConst, bindKind] = GetParam();
-
-  TestStruct testStruct;
-  DelegateMulticast_T delegateMulticast;
-  ASSERT_TRUE((bool)delegateMulticast.isEmpty());
-
-  auto handle = bindDelegate(delegateMulticast, testStruct, bindKind, isLValue, isFctConst);
-
-  ASSERT_FALSE((bool)delegateMulticast.isEmpty());
-
-  DelegateMulticast_T delegateMulticastMove;
-  delegateMulticastMove = std::move(delegateMulticast);
-  ASSERT_FALSE((bool)delegateMulticastMove.isEmpty());
-  ASSERT_TRUE((bool)delegateMulticast.isEmpty());
-
-  int value{};
-  delegateMulticastMove.broadcast(value);
-  if (isFctConst)
-  {
-    ASSERT_EQ(value, TestStruct::m_staticValueConst);
-  }
-  else
-  { 
-    ASSERT_EQ(value, TestStruct::m_staticValue);
-  }
-
-  handle = bindDelegate(delegateMulticast, testStruct, bindKind, isLValue, isFctConst);
-  ASSERT_FALSE((bool)delegateMulticast.isEmpty());
-
-  DelegateMulticast_T delegateMulticastCopy;
-  delegateMulticastCopy = delegateMulticast;
-  ASSERT_FALSE((bool)delegateMulticastCopy.isEmpty());
-
-  value = {};
-  delegateMulticast.broadcast(value);
-  if (isFctConst)
-  {
-    ASSERT_EQ(value, TestStruct::m_staticValueConst);
-  }
-  else
-  {
-    ASSERT_EQ(value, TestStruct::m_staticValue);
-  }
-
-  value = {};
-  delegateMulticastCopy.broadcast(value);
-  if (isFctConst)
-  {
-    ASSERT_EQ(value, TestStruct::m_staticValueConst);
-  }
-  else
-  {
-    ASSERT_EQ(value, TestStruct::m_staticValue);
-  }
-}
-
-TEST_P(BinaryOpF, SpecialFcts)
-{
-  auto [paramA, paramB] = GetParam();
-  auto [isLValueA, isFctConstA, bindKindA] = paramA;
-  auto [isLValueB, isFctConstB, bindKindB] = paramB;
-
-  TestStruct testStructA;
-  DelegateMulticast_T delegateMulticastA;
-  ASSERT_TRUE((bool)delegateMulticastA.isEmpty());
-
-  auto handleA = bindDelegate(delegateMulticastA, testStructA, bindKindA, isLValueA, isFctConstA);
-  ASSERT_FALSE((bool)delegateMulticastA.isEmpty());
-
-  TestStruct testStructB;
-  DelegateMulticast_T delegateMulticastB;
-  ASSERT_TRUE((bool)delegateMulticastB.isEmpty());
-
-  auto handleB = bindDelegate(delegateMulticastB, testStructB, bindKindB, isLValueB, isFctConstB);
-  ASSERT_FALSE((bool)delegateMulticastB.isEmpty());
-}
-
-TEST(DelegateMulticast, LValueFunctor)
-{
-}
-
-TEST(DelegateMulticast, DefaultConstructorDestructor)
-{
-  DelegateMulticast_T delegateMulticast;
-  ASSERT_TRUE((bool)delegateMulticast.isEmpty());
-
-  delegateMulticast.~delegateMulticast();
-  ASSERT_TRUE((bool)delegateMulticast.isEmpty());
-}
-
-// TEST(DelegateMulticast, CopyConstructor)
-//{
-//   TestStruct::resetStaticCounters();
-//   {
-//     DelegateMulticast_T delegateMulticast;
-//     delegateMulticast.Bind<&freeFunction>();
-//     ASSERT_TRUE((bool)delegateMulticast);
-//
-//     DelegateMulticast_T delegateMulticastCopy{delegateMulticast};
-//     ASSERT_TRUE((bool)delegateMulticast);
-//     ASSERT_TRUE((bool)delegateMulticastCopy);
-//
-//     auto value = 1;
-//     delegateMulticastCopy.broadcast(value);
-//     ASSERT_EQ(value, TestStruct::m_staticValue);
-//   }
-//   const uint8_t expectedNbCallDefaultConstructor = 0;
-//   ASSERT_EQ(expectedNbCallDefaultConstructor, TestStruct::m_counters.m_nbCallDefaultConstructor);
-//   const uint8_t expectedNbCallDestructor = 0;
-//   ASSERT_EQ(expectedNbCallDestructor, TestStruct::m_counters.m_nbCallDestructor);
-//   const uint8_t expectedNbCallCopyConstructor = 0;
-//   ASSERT_EQ(expectedNbCallCopyConstructor, TestStruct::m_counters.m_nbCallCopyConstructor);
-//   const uint8_t expectedNbCallMoveConstructor = 0;
-//   ASSERT_EQ(expectedNbCallMoveConstructor, TestStruct::m_counters.m_nbCallMoveConstructor);
-//   const uint8_t nbConstructorCall = TestStruct::m_counters.m_nbCallDefaultConstructor + TestStruct::m_counters.m_nbCallCopyConstructor + TestStruct::m_counters.m_nbCallMoveConstructor;
-//   ASSERT_EQ(nbConstructorCall, TestStruct::m_counters.m_nbCallDestructor);
-//
-//   SpecialFunctionCallCounter expectedCounter;
-//   expectedCounter.m_nbCallDefaultConstructor = 0;
-//   expectedCounter.m_nbCallDestructor = 0;
-//   expectedCounter.m_nbCallCopyConstructor = 0;
-//   expectedCounter.m_nbCallMoveConstructor = 0;
-//   assertSpecialFunctionCallCounter(expectedCounter);
-// }
-
-} // namespace Delegate
+} // namespace DelegateMulticastTests

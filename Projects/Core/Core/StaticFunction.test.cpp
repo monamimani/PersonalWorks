@@ -3,338 +3,27 @@
 #include <optional>
 #include <utility>
 
-#include "fmt/format.h"
-#include "TestUtilities/GoogleTest.h"
-#include "TestUtilities/TestStruct.test.h"
+#include "Delegates/DelegateCommon.test.h"
 
 import StaticFunction;
 
-namespace StaticFunctionTest
-{
-using namespace Core;
-using namespace TestUtilities;
-
-using IsLValue = bool;
-using IsFctConst = bool;
-
-enum class BindKind
-{
-  Empty,
-  FreeFunction,
-  Functor,
-  MemberFct,
-  MemberFctTemplate,
-  MemberFctConstOverloaded,
-  MemberFctParamOverloaded
-};
-
-using ParamSetType = std::tuple<IsLValue, IsFctConst, BindKind>;
-
-static auto bindFreeFunction(auto& delegateLike, [[maybe_unused]] TestStruct&, [[maybe_unused]] IsLValue, [[maybe_unused]] IsFctConst)
-{
-  return delegateLike.bind<&freeFunction>();
-}
-
-static auto bindFunctor(auto& delegateLike, TestStruct& testStruct, IsLValue isLValue, IsFctConst isFctConst)
-{
-  if (isLValue)
-  {
-    if (isFctConst)
-    {
-      return delegateLike.bind(const_cast<const TestStruct&>(testStruct));
-    }
-    else
-    {
-      return delegateLike.bind(testStruct);
-    }
-  }
-  else
-  {
-    if (isFctConst)
-    {
-      return delegateLike.bind(const_cast<const TestStruct&&>(TestStruct{}));
-    }
-    else
-    {
-      return delegateLike.bind(TestStruct{});
-    }
-  }
-}
-
-static auto bindMemberFct(auto& delegateLike, TestStruct& testStruct, IsLValue isLValue, IsFctConst isFctConst)
-{
-  if (!isLValue)
-  {
-    if (isFctConst)
-    {
-      return delegateLike.bind<&TestStruct::fctConst>(const_cast<const TestStruct&&>(TestStruct{}));
-    }
-    else
-    {
-      return delegateLike.bind<&TestStruct::fct>(TestStruct{});
-    }
-  }
-  else
-  {
-    if (isFctConst)
-    {
-      return delegateLike.bind<&TestStruct::fctConst>(const_cast<const TestStruct&>(testStruct));
-    }
-    else
-    {
-      return delegateLike.bind<&TestStruct::fct>(testStruct);
-    }
-  }
-}
-
-template <typename DelegateLikeT>
-static auto bindMemberFctTemplate(DelegateLikeT& delegateLike, TestStruct& testStruct, IsLValue isLValue, IsFctConst isFctConst)
-{
-  if (isLValue)
-  {
-    if (isFctConst)
-    {
-      return delegateLike.bind<DelegateLikeT::asFnConstPtr(&TestStruct::fctTemplate<int>)>(testStruct);
-    }
-    else
-    {
-      return delegateLike.bind<DelegateLikeT::asFnPtr(&TestStruct::fctTemplate<int>)>(testStruct);
-    }
-  }
-  else
-  {
-    if (isFctConst)
-    {
-      return delegateLike.bind<DelegateLikeT::asFnConstPtr(&TestStruct::fctTemplate<int>)>(const_cast<const TestStruct&&>(std::move(testStruct)));
-    }
-    else
-    {
-      return delegateLike.bind<DelegateLikeT::asFnPtr(&TestStruct::fctTemplate<int>)>(std::move(testStruct));
-    }
-  }
-}
-
-template <typename DelegateLikeT>
-static auto bindMemberFctConstOverloaded(DelegateLikeT& delegateLike, TestStruct& testStruct, IsLValue isLValue, IsFctConst isFctConst)
-{
-  if (!isLValue)
-  {
-    if (isFctConst)
-    {
-      return delegateLike.bind<DelegateLikeT::asFnConstPtr(&TestStruct::fctConstOverloaded)>(const_cast<const TestStruct&&>(std::move(testStruct)));
-    }
-    else
-    {
-      return delegateLike.bind<DelegateLikeT::asFnPtr(&TestStruct::fctConstOverloaded)>(std::move(testStruct));
-    }
-  }
-  else
-  {
-    if (isFctConst)
-    {
-      return delegateLike.bind<DelegateLikeT::asFnConstPtr(&TestStruct::fctConstOverloaded)>(testStruct);
-    }
-    else
-    {
-      return delegateLike.bind<DelegateLikeT::asFnPtr(&TestStruct::fctConstOverloaded)>(testStruct);
-    }
-  }
-}
-
-template <typename DelegateLikeT>
-static auto bindMemberFctParamOverloaded(DelegateLikeT& delegateLike, TestStruct& testStruct, IsLValue isLValue, IsFctConst isFctConst)
-{
-  if (isLValue)
-  {
-    if (!isFctConst)
-    {
-      return delegateLike.bind<DelegateLikeT::asFnPtr(&TestStruct::fctParamOverloaded)>(testStruct);
-    }
-    else
-    {
-      return delegateLike.bind<DelegateLikeT::asFnConstPtr(&TestStruct::fctParamOverloaded)>(testStruct);
-    }
-  }
-  else
-  {
-    if (isFctConst)
-    {
-      return delegateLike.bind<DelegateLikeT::asFnConstPtr(&TestStruct::fctParamOverloaded)>(const_cast<const TestStruct&&>(std::move(testStruct)));
-    }
-    else
-    {
-      return delegateLike.bind<DelegateLikeT::asFnPtr(&TestStruct::fctParamOverloaded)>(std::move(testStruct));
-    }
-  }
-}
-
-template <typename DelegateLikeT>
-static auto bind(DelegateLikeT& delegateLike, TestStruct& testStruct, BindKind bindKind, IsLValue isLValue, IsFctConst isFctConst)
-{
-  switch (bindKind)
-  {
-    case BindKind::Empty:
-      if constexpr (requires { typename DelegateLikeT::DelegateRAII; })
-      {
-        return DelegateLikeT::DelegateRAII();
-      }
-      else
-      {
-        return;
-      }
-    case BindKind::FreeFunction:
-      return bindFreeFunction(delegateLike, testStruct, isLValue, isFctConst);
-    case BindKind::Functor:
-      return bindFunctor(delegateLike, testStruct, isLValue, isFctConst);
-    case BindKind::MemberFct:
-      return bindMemberFct(delegateLike, testStruct, isLValue, isFctConst);
-    case BindKind::MemberFctTemplate:
-      return bindMemberFctTemplate(delegateLike, testStruct, isLValue, isFctConst);
-    case BindKind::MemberFctConstOverloaded:
-      return bindMemberFctConstOverloaded(delegateLike, testStruct, isLValue, isFctConst);
-    case BindKind::MemberFctParamOverloaded:
-      return bindMemberFctParamOverloaded(delegateLike, testStruct, isLValue, isFctConst);
-  }
-
-  std::unreachable();
-}
-
-class DelegateLikeTestF
-{
-public:
-  static std::string getTestNamePart(IsLValue isLValue, IsFctConst isFctConst, BindKind bindkind)
-  {
-    static constexpr auto bindkindTuples = std::to_array<std::tuple<BindKind, const char*>>({
-        {                   BindKind::Empty,                     "Empty"},
-        {            BindKind::FreeFunction,                   "FreeFct"},
-        {                 BindKind::Functor,                   "Functor"},
-        {               BindKind::MemberFct,                "BindMemFct"},
-        {       BindKind::MemberFctTemplate,        "BindMemFctTemplate"},
-        {BindKind::MemberFctConstOverloaded, "BindMemFctConstOverloaded"},
-        {BindKind::MemberFctParamOverloaded, "BindMemFctParamOverloaded"}
-    });
-
-    auto isRequestedBindKind = [bindkind](const std::tuple<BindKind, const char*>& element)
-    {
-      return bindkind == std::get<0>(element);
-    };
-
-    auto result = std::find_if(bindkindTuples.begin(), bindkindTuples.end(), isRequestedBindKind);
-    auto isLValueStr = isLValue ? "LValue" : "RValue";
-    auto isConstStr = isFctConst ? "Const" : "";
-    auto bindkindStr = (result != bindkindTuples.end()) ? std::get<1>(*result) : "Unknown";
-    return fmt::format("{}{}{}", isLValueStr, bindkindStr, isConstStr);
-  }
-
-  static auto makeDelegateBindKindParamSet()
-  {
-    static constexpr std::array fctConstness = {true, false};
-    static constexpr std::array valueKinds = {true, false};
-    static constexpr std::array memberFctBindKind = {BindKind::Functor, BindKind::MemberFct, BindKind::MemberFctTemplate, BindKind::MemberFctConstOverloaded, BindKind::MemberFctParamOverloaded};
-    static constexpr auto memFctParamSetPartSize = valueKinds.size() * fctConstness.size() * memberFctBindKind.size();
-
-    auto paramSetPart = std::vector<ParamSetType>();
-    paramSetPart.reserve(memFctParamSetPartSize);
-    std::ranges::for_each(memberFctBindKind,
-                          [&paramSetPart](BindKind bindKind)
-                          {
-                            paramSetPart.emplace_back(IsLValue(true), IsFctConst(true), bindKind);
-                            paramSetPart.emplace_back(IsLValue(false), IsFctConst(false), bindKind);
-                            paramSetPart.emplace_back(IsLValue(true), IsFctConst(false), bindKind);
-                            paramSetPart.emplace_back(IsLValue(false), IsFctConst(true), bindKind);
-                          });
-
-    paramSetPart.emplace_back(IsLValue(true), IsFctConst(false), BindKind::FreeFunction);
-    paramSetPart.emplace_back(IsLValue(true), IsFctConst(false), BindKind::Empty);
-
-    return paramSetPart;
-  }
-};
-
-class OpArity1StaticFctTestF: public DelegateLikeTestF, public testing::TestWithParam<ParamSetType>
-{
-public:
-  static constexpr auto makeTestName = [](const testing::TestParamInfo<ParamType>& info)
-  {
-    auto [isLValueA, isFctConstA, bindKind] = info.param;
-
-    auto delegateTypeAName = getTestNamePart(isLValueA, isFctConstA, bindKind);
-
-    return delegateTypeAName;
-  };
-
-protected:
-  auto getExpectedTestValue() -> decltype(TestStruct::m_staticValue)
-  {
-    auto [isLValueA, isFctConstA, bindKind] = GetParam();
-
-    if (isFctConstA)
-    {
-      return TestStruct::m_staticValueConst;
-    }
-    else
-    {
-      return TestStruct::m_staticValue;
-    }
-  }
-
-private:
-};
-
-class OpArity2StaticFctTestF: public DelegateLikeTestF, public testing::TestWithParam<std::tuple<ParamSetType, ParamSetType>>
+namespace StaticFunctionTests
 {
 
-public:
-  static constexpr auto makeTestName = [](const testing::TestParamInfo<ParamType>& info)
-  {
-    auto [paramA, paramB] = info.param;
-    auto [isLValueA, isFctConstA, delegateBinderA] = paramA;
-    auto [isLValueB, isFctConstB, delegateBinderB] = paramB;
+using namespace DelegateLikeTests;
 
-    auto delegateTypeAName = getTestNamePart(isLValueA, isFctConstA, delegateBinderA);
-    auto delegateTypeBName = getTestNamePart(isLValueB, isFctConstB, delegateBinderB);
+class StaticFctOp1ArgF: public OpArity1DelegateLikeTestF
+{};
 
-    return fmt::format("{}_{}", delegateTypeAName, delegateTypeBName);
-  };
-
-protected:
-  auto getExpectedTestValueA() -> decltype(TestStruct::m_staticValue)
-  {
-    auto [paramA, paramB] = GetParam();
-    auto [isLValueA, isFctConstA, delegateBinderA] = paramA;
-    if (isFctConstA)
-    {
-      return TestStruct::m_staticValueConst;
-    }
-    else
-    {
-      return TestStruct::m_staticValue;
-    }
-  }
-
-  auto getExpectedTestValueB() -> decltype(TestStruct::m_staticValue)
-  {
-    auto [paramA, paramB] = GetParam();
-    auto [isLValueB, isFctConstB, delegateBinderB] = paramB;
-    if (isFctConstB)
-    {
-      return TestStruct::m_staticValueConst;
-    }
-    else
-    {
-      return TestStruct::m_staticValue;
-    }
-  }
-};
+class StaticFctOp2ArgF: public OpArity2DelegateLikeTestF
+{};
 
 using StaticFctT = StaticFunction<void(int&)>;
 
-auto OpArity1BindKinds = ::testing::ValuesIn(DelegateLikeTestF::makeDelegateBindKindParamSet());
-auto OpArity2BindKinds = ::testing::Combine(OpArity1BindKinds, OpArity1BindKinds);
-INSTANTIATE_TEST_SUITE_P(OpArity1StaticFctBindKind, OpArity1StaticFctTestF, OpArity1BindKinds, OpArity1StaticFctTestF::makeTestName);
-INSTANTIATE_TEST_SUITE_P(OpArity2StaticFctBindKind, OpArity2StaticFctTestF, OpArity2BindKinds, OpArity2StaticFctTestF::makeTestName);
+INSTANTIATE_TEST_SUITE_P(Op1Arg, StaticFctOp1ArgF, OpAr1Arg, OpArity1DelegateLikeTestF::makeTestName);
+INSTANTIATE_TEST_SUITE_P(Op2Arg, StaticFctOp2ArgF, OpAr2Arg, OpArity2DelegateLikeTestF::makeTestName);
 
-TEST_P(OpArity1StaticFctTestF, CtorDtor)
+TEST_P(StaticFctOp1ArgF, CtorDtor)
 {
   auto [isLValue, isFctConst, bindKind] = GetParam();
 
@@ -353,7 +42,7 @@ TEST_P(OpArity1StaticFctTestF, CtorDtor)
   }
 }
 
-TEST_P(OpArity1StaticFctTestF, CopyCtor)
+TEST_P(StaticFctOp1ArgF, CopyCtor)
 {
   auto [isLValue, isFctConst, bindKind] = GetParam();
 
@@ -371,10 +60,10 @@ TEST_P(OpArity1StaticFctTestF, CopyCtor)
 
     int value = 28;
     staticFunction.invoke(value);
-    EXPECT_EQ(value, getExpectedTestValue());
+    EXPECT_EQ(value, getExpectedTestValue(isFctConst));
 
     staticFunctionCopy.invoke(value);
-    EXPECT_EQ(value, getExpectedTestValue());
+    EXPECT_EQ(value, getExpectedTestValue(isFctConst));
   }
   else
   {
@@ -383,7 +72,7 @@ TEST_P(OpArity1StaticFctTestF, CopyCtor)
   }
 }
 
-TEST_P(OpArity1StaticFctTestF, MoveCtor)
+TEST_P(StaticFctOp1ArgF, MoveCtor)
 {
   auto [isLValue, isFctConst, bindKind] = GetParam();
 
@@ -401,10 +90,10 @@ TEST_P(OpArity1StaticFctTestF, MoveCtor)
 
     int value = 28;
     staticFunction.invoke(value);
-    EXPECT_EQ(value, getExpectedTestValue());
+    EXPECT_EQ(value, getExpectedTestValue(isFctConst));
 
     staticFunctionMove.invoke(value);
-    EXPECT_EQ(value, getExpectedTestValue());
+    EXPECT_EQ(value, getExpectedTestValue(isFctConst));
   }
   else
   {
@@ -413,7 +102,7 @@ TEST_P(OpArity1StaticFctTestF, MoveCtor)
   }
 }
 
-TEST_P(OpArity1StaticFctTestF, isBound)
+TEST_P(StaticFctOp1ArgF, isBound)
 {
   auto [isLValue, isFctConst, bindKind] = GetParam();
 
@@ -436,7 +125,7 @@ TEST_P(OpArity1StaticFctTestF, isBound)
   }
 }
 
-TEST_P(OpArity1StaticFctTestF, EqualityOp)
+TEST_P(StaticFctOp1ArgF, EqualityOp)
 {
   auto [isLValue, isFctConst, bindKind] = GetParam();
 
@@ -459,7 +148,7 @@ TEST_P(OpArity1StaticFctTestF, EqualityOp)
   EXPECT_EQ(staticFunction, staticFunctionCopy);
 }
 
-TEST_P(OpArity1StaticFctTestF, reset)
+TEST_P(StaticFctOp1ArgF, reset)
 {
   auto [isLValue, isFctConst, bindKind] = GetParam();
 
@@ -481,7 +170,7 @@ TEST_P(OpArity1StaticFctTestF, reset)
   ASSERT_FALSE(staticFunction);
 }
 
-TEST_P(OpArity1StaticFctTestF, unbind)
+TEST_P(StaticFctOp1ArgF, unbind)
 {
   auto [isLValue, isFctConst, bindKind] = GetParam();
 
@@ -503,7 +192,7 @@ TEST_P(OpArity1StaticFctTestF, unbind)
   ASSERT_FALSE(staticFunction);
 }
 
-TEST_P(OpArity1StaticFctTestF, Invoke)
+TEST_P(StaticFctOp1ArgF, Invoke)
 {
   auto [isLValue, isFctConst, bindKind] = GetParam();
 
@@ -518,7 +207,7 @@ TEST_P(OpArity1StaticFctTestF, Invoke)
 
     int value = 28;
     staticFunction.invoke(value);
-    EXPECT_EQ(value, getExpectedTestValue());
+    EXPECT_EQ(value, getExpectedTestValue(isFctConst));
   }
   else
   {
@@ -526,7 +215,7 @@ TEST_P(OpArity1StaticFctTestF, Invoke)
   }
 }
 
-TEST_P(OpArity1StaticFctTestF, functionalOperator)
+TEST_P(StaticFctOp1ArgF, functionalOperator)
 {
   auto [isLValue, isFctConst, bindKind] = GetParam();
 
@@ -541,7 +230,7 @@ TEST_P(OpArity1StaticFctTestF, functionalOperator)
 
     int value = 28;
     staticFunction(value);
-    EXPECT_EQ(value, getExpectedTestValue());
+    EXPECT_EQ(value, getExpectedTestValue(isFctConst));
   }
 }
 
@@ -563,7 +252,7 @@ TEST(StaticFunctionTest, invokeSafe)
   EXPECT_EQ(result.value(), TestStruct::m_staticValue);
 }
 
-TEST_P(OpArity2StaticFctTestF, CopyAssign)
+TEST_P(StaticFctOp2ArgF, CopyAssign)
 {
 
   auto [paramA, paramB] = GetParam();
@@ -588,10 +277,10 @@ TEST_P(OpArity2StaticFctTestF, CopyAssign)
 
     int value = 28;
     staticFunctionA.invoke(value);
-    EXPECT_EQ(value, getExpectedTestValueA());
+    EXPECT_EQ(value, getExpectedTestValue(isFctConstA));
 
     staticFunctionB.invoke(value);
-    EXPECT_EQ(value, getExpectedTestValueA());
+    EXPECT_EQ(value, getExpectedTestValue(isFctConstA));
   }
   else
   {
@@ -602,7 +291,7 @@ TEST_P(OpArity2StaticFctTestF, CopyAssign)
   ASSERT_EQ(staticFunctionA, staticFunctionB);
 }
 
-TEST_P(OpArity2StaticFctTestF, MoveAssign)
+TEST_P(StaticFctOp2ArgF, MoveAssign)
 {
   auto [paramA, paramB] = GetParam();
   auto [isLValueA, isFctConstA, bindKindA] = paramA;
@@ -626,10 +315,10 @@ TEST_P(OpArity2StaticFctTestF, MoveAssign)
 
     int value = 28;
     staticFunctionA.invoke(value);
-    EXPECT_EQ(value, getExpectedTestValueA());
+    EXPECT_EQ(value, getExpectedTestValue(isFctConstA));
 
     staticFunctionB.invoke(value);
-    EXPECT_EQ(value, getExpectedTestValueA());
+    EXPECT_EQ(value, getExpectedTestValue(isFctConstA));
   }
   else
   {
@@ -639,7 +328,7 @@ TEST_P(OpArity2StaticFctTestF, MoveAssign)
   }
 }
 
-TEST_P(OpArity2StaticFctTestF, Swap)
+TEST_P(StaticFctOp2ArgF, Swap)
 {
   auto [paramA, paramB] = GetParam();
   auto [isLValueA, isFctConstA, bindKindA] = paramA;
@@ -685,7 +374,7 @@ TEST_P(OpArity2StaticFctTestF, Swap)
     ASSERT_TRUE((bool)staticFunctionA);
     int value = 28;
     staticFunctionA.invoke(value);
-    EXPECT_EQ(value, getExpectedTestValueB());
+    EXPECT_EQ(value, getExpectedTestValue(isFctConstB));
   }
   else
   {
@@ -697,7 +386,7 @@ TEST_P(OpArity2StaticFctTestF, Swap)
     ASSERT_TRUE((bool)staticFunctionB);
     int value = 28;
     staticFunctionB.invoke(value);
-    EXPECT_EQ(value, getExpectedTestValueA());
+    EXPECT_EQ(value, getExpectedTestValue(isFctConstA));
   }
   else
   {

@@ -278,6 +278,12 @@ protected:
 static const auto OpAr1Arg = ::testing::ValuesIn(DelegateLikeTestF::makeDelegateBindKindParamSet());
 static const auto OpAr2Arg = ::testing::Combine(OpAr1Arg, OpAr1Arg);
 
+template<typename Type>
+struct ValidStateTraits
+{
+  static const bool m_IsMovedFromValid = false;
+};
+
 template<typename DelegateLikeT, typename HandleT>
 class OpArity1DelegateLikeTestF: public DelegateLikeTestF, public testing::TestWithParam<ParamSetType>
 {

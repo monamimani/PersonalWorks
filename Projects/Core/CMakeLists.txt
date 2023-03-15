@@ -70,7 +70,6 @@ set(privateFiles
   ${targetName}/DelegateTypes/EventQueue.cpp
   ${targetName}/Endian.cpp
   ${platform_privateFiles}
-  ${moduleFiles}
 )
 
 set(testFiles 
@@ -79,7 +78,6 @@ set(testFiles
   ${targetName}/Delegates/Delegate.test.cpp
   ${targetName}/Delegates/DelegateCommon.test.h
   ${targetName}/Delegates/DelegateMulticast.test.cpp
-  ${targetName}/Delegates/DelegateMulticastCommon.test.h
   ${targetName}/DelegateTypes/EventDispatcher.test.cpp
   ${targetName}/DelegateTypes/EventQueue.test.cpp
   ${targetName}/ErasedStorage.test.cpp
@@ -100,18 +98,33 @@ set(benchmarkFiles
 
 add_library(${targetName})
 
-target_sources(${targetName}
-  PRIVATE
-    ${privateFiles}
-  #PUBLIC
-  # FILE_SET CXX_MODULES FILES ${moduleFiles}
-  #PUBLIC
-  # FILE_SET CXX_MODULE_HEADER_UNITS FILES ${headerUnitFiles}
-  PUBLIC
-    ${publicFiles}
-  INTERFACE
-    ${interfaceFiles}
-)
+if(CMAKE_VERSION GREATER_EQUAL "3.26.0" )
+  target_sources(${targetName}
+    PRIVATE
+      ${privateFiles}
+    PUBLIC
+     FILE_SET CXX_MODULES FILES ${moduleFiles}
+    PUBLIC
+     FILE_SET CXX_MODULE_HEADER_UNITS FILES ${headerUnitFiles}
+    PUBLIC
+      ${publicFiles}
+    INTERFACE
+      ${interfaceFiles}
+  )
+else()
+  target_sources(${targetName}
+    PRIVATE
+      ${privateFiles}
+    PRIVATE
+      ${moduleFiles}
+    PUBLIC
+      ${publicFiles}
+    PUBLIC
+      ${headerUnitFiles}
+    INTERFACE
+      ${interfaceFiles}
+  )
+endif()
 
 target_include_directories(${targetName}
     PUBLIC
@@ -128,8 +141,8 @@ if(BUILD_TESTS)
    TARGET ${targetName} 
    TESTFILES ${testFiles}
    PRIVATEFILES ${privateFiles}
-   #MODULEFILES ${moduleFiles}
-   #HEADERUNITFILES ${headerUnitFiles}
+   MODULEFILES ${moduleFiles}
+   HEADERUNITFILES ${headerUnitFiles}
    PUBLICFILES ${publicFiles}
    INTERFACEFILES ${interfaceFiles}
    MAINFILE CoreMain.test.cpp)
@@ -140,8 +153,8 @@ if(BUILD_BENCHMARKS)
     TARGET ${targetName} 
     BENCHMARKFILES ${benchmarkFiles}
     PRIVATEFILES ${privateFiles}
-    #MODULEFILES ${moduleFiles}
-    #HEADERUNITFILES ${headerUnitFiles}
+    MODULEFILES ${moduleFiles}
+    HEADERUNITFILES ${headerUnitFiles}
     PUBLICFILES ${publicFiles}
     INTERFACEFILES ${interfaceFiles}
     MAINFILE CoreMain.benchmark.cpp)

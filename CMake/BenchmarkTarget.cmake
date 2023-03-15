@@ -30,22 +30,37 @@ function(add_benchmark_target)
     PUBLIC
         "${CMAKE_CURRENT_SOURCE_DIR}"
   )
-
-  target_sources(${targetNameBenchmarks}
+  
+  if(CMAKE_VERSION GREATER_EQUAL "3.26.0" )
+    target_sources(${targetNameBenchmarks}
     PRIVATE
       ${ADD_BENCHMARK_TARGET_MAINFILE}
       ${ADD_BENCHMARK_TARGET_PRIVATEFILES}
       ${ADD_BENCHMARK_TARGET_BENCHMARKFILES}
     PUBLIC
       ${ADD_BENCHMARK_TARGET_PUBLICFILES}
-    #PUBLIC
-    #  FILE_SET CXX_MODULES FILES ${ADD_TEST_TARGET_MODULEFILES}
-    #PUBLIC
-    #  FILE_SET CXX_MODULE_HEADER_UNITS FILES ${ADD_TEST_TARGET_HEADERUNITFILES}
+    PUBLIC
+      FILE_SET CXX_MODULES FILES ${ADD_BENCHMARK_TARGET_MODULEFILES}
+    PUBLIC
+      FILE_SET CXX_MODULE_HEADER_UNITS FILES ${ADD_BENCHMARK_TARGET_HEADERUNITFILES}
     INTERFACE
       ${ADD_BENCHMARK_TARGET_INTERFACEFILES}
-  )
-  
+    )
+  else()
+    target_sources(${targetNameBenchmarks}
+      PRIVATE
+        ${ADD_BENCHMARK_TARGET_MAINFILE}
+        ${ADD_BENCHMARK_TARGET_PRIVATEFILES}
+        ${ADD_BENCHMARK_TARGET_BENCHMARKFILES}
+        ${ADD_BENCHMARK_TARGET_MODULEFILES}
+      PUBLIC
+        ${ADD_BENCHMARK_TARGET_PUBLICFILES}
+        ${ADD_BENCHMARK_TARGET_HEADERUNITFILES}
+      INTERFACE
+        ${ADD_BENCHMARK_TARGET_INTERFACEFILES}
+    )
+  endif()
+
   target_compile_definitions(${targetNameBenchmarks} PUBLIC BENCHMARK_STATIC_DEFINE) # See https://stackoverflow.com/questions/73494386/lnk2001-linker-error-while-linking-google-benchmark-lib
 
   target_link_libraries(${targetNameBenchmarks}

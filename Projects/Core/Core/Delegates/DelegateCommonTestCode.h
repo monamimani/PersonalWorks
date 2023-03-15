@@ -55,7 +55,8 @@ TEST_P(TESTSUITENAME_OP1, MoveCtor)
 
   if (!m_isBindKindEmpty)
   {
-    ASSERT_FALSE((bool)m_delegate); // This really is a valid unspecified state, because moved from
+    ASSERT_EQ((bool)m_delegate, ValidStateTraits<DelegateLike>::m_IsMovedFromValid); // This really is a valid unspecified state, because moved from
+    //ASSERT_FALSE((bool)m_delegate); // This really is a valid unspecified state, because moved from
     ASSERT_TRUE((bool)delegateMove);
 
     int value = 28;
@@ -64,6 +65,7 @@ TEST_P(TESTSUITENAME_OP1, MoveCtor)
   }
   else
   {
+    //ASSERT_EQ((bool)m_delegate, ValidStateTraits<DelegateLike>::m_IsMovedFromValid); // This really is a valid unspecified state, because moved from
     ASSERT_FALSE((bool)m_delegate); // This really is a valid unspecified state, because moved from
     ASSERT_FALSE((bool)delegateMove);
   }
@@ -166,7 +168,8 @@ TEST_P(TESTSUITENAME_OP2, MoveAssign)
 
   if (!m_isDelegateABindKindEmpty)
   {
-    ASSERT_FALSE((bool)m_delegateA); // This realy is a valid unspecified state, becaused moved from
+    ASSERT_EQ((bool)m_delegateA, ValidStateTraits<DelegateLike>::m_IsMovedFromValid); // This really is a valid unspecified state, because moved from
+    //ASSERT_FALSE((bool)m_delegateA); // This realy is a valid unspecified state, becaused moved from
     ASSERT_TRUE((bool)m_delegateB);
 
     int value = 28;

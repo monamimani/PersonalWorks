@@ -146,6 +146,8 @@ if(BUILD_TESTS)
    PUBLICFILES ${publicFiles}
    INTERFACEFILES ${interfaceFiles}
    MAINFILE CoreMain.test.cpp)
+
+  #set_target_properties(${targetName}Tests PROPERTIES VS_DEBUGGER_COMMAND_ARGUMENTS "--gtest_filter=ErasedStorageTestStructF*")
 endif()
 
 if(BUILD_BENCHMARKS)

@@ -2,11 +2,11 @@
 # https://clang.llvm.org/docs/ClangFormatStyleOptions.html
 
 Language: Cpp
-Standard: c++20
+Standard: Latest
 
 UseTab: Never
 IndentWidth: 2
-ColumnLimit: 256
+ColumnLimit: 160
 MaxEmptyLinesToKeep: 1
 InsertNewlineAtEOF: True
 
@@ -49,6 +49,7 @@ PackConstructorInitializers : Never
 AlwaysBreakTemplateDeclarations: Yes
 BreakConstructorInitializers : BeforeComma
 BreakAfterAttributes: Leave
+BreakBeforeBinaryOperators :  NonAssignment
 EmptyLineBeforeAccessModifier: LogicalBlock
 BreakBeforeConceptDeclarations: Always
 RequiresClausePosition: OwnLine

@@ -44,24 +44,30 @@ endif()
 include(CMake/DefaultProjectSettings.cmake)
 
 
+if(CMAKE_VERSION GREATER_EQUAL "3.26.0" )
+  # CMAKE experimental C++ module
+  set(CMAKE_EXPERIMENTAL_CXX_MODULE_CMAKE_API "2182bf5c-ef0d-489a-91da-49dbc3090d2a")
+  set(CMAKE_EXPERIMENTAL_CXX_MODULE_DYNDEP 1)
 
-# CMAKE experimental C++ module
-set(CMAKE_EXPERIMENTAL_CXX_MODULE_CMAKE_API "2182bf5c-ef0d-489a-91da-49dbc3090d2a")
-set(CMAKE_EXPERIMENTAL_CXX_MODULE_DYNDEP 1)
-
-if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   
-  string(CONCAT CMAKE_EXPERIMENTAL_CXX_SCANDEP_SOURCE
-    "<CMAKE_CXX_COMPILER> <DEFINES> <INCLUDES> <FLAGS> <SOURCE>"
-    " -MT <DYNDEP_FILE> -MD -MF <DEP_FILE>"
-    " ${flags_to_scan_deps} -fdep-file=<DYNDEP_FILE> -fdep-output=<OBJECT>"
-    )
+    string(CONCAT CMAKE_EXPERIMENTAL_CXX_SCANDEP_SOURCE
+      "<CMAKE_CXX_COMPILER> <DEFINES> <INCLUDES> <FLAGS> <SOURCE>"
+      " -MT <DYNDEP_FILE> -MD -MF <DEP_FILE>"
+      " ${flags_to_scan_deps} -fdep-file=<DYNDEP_FILE> -fdep-output=<OBJECT>"
+      )
 
-  set(CMAKE_EXPERIMENTAL_CXX_MODULE_MAP_FORMAT "gcc")
-  set(CMAKE_EXPERIMENTAL_CXX_MODULE_MAP_FLAG
-    "${compiler_flags_for_module_map} -fmodule-mapper=<MODULE_MAP_FILE>")
+    set(CMAKE_EXPERIMENTAL_CXX_MODULE_MAP_FORMAT "gcc")
+    set(CMAKE_EXPERIMENTAL_CXX_MODULE_MAP_FLAG
+      "${compiler_flags_for_module_map} -fmodule-mapper=<MODULE_MAP_FILE>")
+  endif()
+
+  if (CMAKE_SYSTEM_NAME STREQUAL Linux)
+    add_compile_options( -fmodules-ts )
+    add_link_options( -fmodules-ts )
+  endif()
+
 endif()
-
 
 option(BUILD_TESTS "Builds the tests" ON)
 CMAKE_DEPENDENT_OPTION(BUILD_TESTS_COVERAGE "Build the project with code coverage support for tests" OFF "BUILD_TESTS" OFF)
@@ -73,11 +79,6 @@ option(BUILD_BENCHMARKS "Builds the benchmarks" ON)
 option(BUILD_DOCUMENTATION "Build the documentation of the Beyond game engine" OFF)
 if (BUILD_DOCUMENTATION)
   include("doxygen")
-endif()
-
-if (CMAKE_SYSTEM_NAME STREQUAL Linux)
-  add_compile_options( -fmodules-ts )
-  add_link_options( -fmodules-ts )
 endif()
 
 # Docs only available if this is the main app

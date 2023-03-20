@@ -1,4 +1,7 @@
 
+#include <array>
+
+#include "TestUtilities/BasicTests.h"
 #include "TestUtilities/GoogleTest.h"
 #include "TestUtilities/TestStruct.test.h"
 using namespace TestUtilities;
@@ -6,8 +9,27 @@ using namespace TestUtilities;
 import Core;
 import ErasedStorage;
 
-namespace Core
+namespace CoreTests
 {
+  using namespace Core;
+
+class ErasedStorageF
+{
+public:
+  //template<typename ObjT>
+  //testing::AssertionResult isValid(const ObjT& obj)
+  //{
+  //  const auto& typedPtr = obj.asTypedPtr<ErasedTypedStoredType>();
+  //  if ((typedPtr != nullptr) && (*typedPtr).m_value == TestStruct::m_staticValue)
+  //  {
+  //    testing::AssertionSuccess();
+  //  }
+  //  return testing::AssertionFailure()
+  //}
+};
+
+//using ErasedStorage_T = ErasedStorage<sizeof(ErasedType), alignof(ErasedType)>;
+//auto test = RegistratorCommonTests<ErasedStorageF, TEST_TYPE(TestStruct), TEST_TYPE(const TestStruct)>{};
 
 // TEST(ErasedStorageTest, EmptyStorage)
 //{
@@ -25,6 +47,32 @@ namespace Core
 //   ErasedStorage_T storage;
 //   storage.construct<ErasedType&>(testStruct);
 // }
+
+// Special test for DefaultCtor empty
+// TYPED_TEST(ErasedStorageTestStructF, DefaultCtor)
+//{
+//  using ErasedStorage_T = TestFixture::ErasedStorage_T;
+//  using ErasedType = TestFixture::ErasedType;
+//  using ErasedTypedStoredType = TestFixture::ErasedTypedStoredType;
+//  using ErasedTypeByte = TestFixture::ErasedTypeByte;
+//
+//  {
+//    // Default Constructor
+//    ErasedStorage_T storage;
+//    const auto& typedPtr = storage.asTypedPtr<ErasedTypedStoredType>();
+//
+//    // I think this is UB because we are accessing the storage before any object was constructed in it.
+//    // Or it isn't because std::byte is special.
+//    ASSERT_EQ(reinterpret_cast<const ErasedTypeByte&>(*typedPtr), std::byte{});
+//
+//    // Destructor
+//    storage.~ErasedStorage();
+//    ASSERT_EQ(reinterpret_cast<const ErasedTypeByte&>(*typedPtr), std::byte{});
+//  }
+//
+//  ExpectSpecialFunctionCallCounter(this->m_counters);
+//  ExpectConstructorsAndDestructorsCount(this->m_counters);
+//}
 
 template<typename T>
 class ErasedStorageTestStructF: public testing::Test
@@ -68,7 +116,16 @@ private:
 };
 
 using ErasedTypes_T = ::testing::Types<TestStruct, const TestStruct, TestStruct&&>;
-TYPED_TEST_SUITE(ErasedStorageTestStructF, ErasedTypes_T);
+
+struct ErasedTypesNameGenerator {
+  template <typename T>
+  static std::string GetName(int i) {
+    static const std::array names= {"TestStruct", "constTestStruct", "TestStruct&&"};
+    return names[i];
+  }
+};
+
+TYPED_TEST_SUITE(ErasedStorageTestStructF, ErasedTypes_T, ErasedTypesNameGenerator);
 
 TYPED_TEST(ErasedStorageTestStructF, DefaultCtor)
 {

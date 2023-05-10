@@ -1,4 +1,4 @@
- # file(GLOB_RECURSE sources CONFIGURE_DEPENDS "*.cpp" "*.cxx" "*.ixx")
+# file(GLOB_RECURSE sources CONFIGURE_DEPENDS "*.cpp" "*.cxx" "*.ixx")
 # file(GLOB_RECURSE headers CONFIGURE_DEPENDS "*.h" "*.hpp")
 
 # Optionally glob, but only for CMake 3.12 or later: file(GLOB HEADER_LIST
@@ -18,10 +18,11 @@ set(publicFiles
   ${targetName}/GoogleTest.h
   ${targetName}/GoogleBenchmark.h
   ${targetName}/TestStruct.benchmark.h
+
   ${targetName}/BasicTests.h
 )
 
-set(moduleFiles 
+set(publicModuleFiles 
 )
 
 set(privateFiles 
@@ -37,22 +38,15 @@ set(testFiles
 set(benchmarkFiles 
 )
 
-add_library(${targetName} INTERFACE )
-
-target_sources(${targetName}
-  INTERFACE
-    ${privateFiles}
-    ${moduleFiles}
-    ${publicFiles}
-    ${interfaceFiles}
-)
+#add_library(${targetName} INTERFACE ) # To use interface ${targetName}/TestStruct.benchmark.cpp has to be in publicFiles.
+add_library(${targetName})
 
 if(CMAKE_VERSION GREATER_EQUAL "3.26.0" )
   target_sources(${targetName}
     PRIVATE
       ${privateFiles}
     PUBLIC
-     FILE_SET CXX_MODULES FILES ${moduleFiles}
+     FILE_SET CXX_MODULES FILES ${publicModuleFiles}
     PUBLIC
      FILE_SET CXX_MODULE_HEADER_UNITS FILES ${headerUnitFiles}
     PUBLIC
@@ -60,22 +54,11 @@ if(CMAKE_VERSION GREATER_EQUAL "3.26.0" )
     INTERFACE
       ${interfaceFiles}
   )
-  target_sources(${targetName}
-  INTERFACE
-    ${privateFiles}
-    ${moduleFiles}
-    ${publicFiles}
-    ${interfaceFiles}
-   INTERFACE
-    FILE_SET CXX_MODULES FILES ${moduleFiles}
-   INTERFACE
-    FILE_SET CXX_MODULE_HEADER_UNITS FILES ${headerUnitFiles}
-)
 else()
   target_sources(${targetName}
     INTERFACE
       ${privateFiles}
-      ${moduleFiles}
+      ${publicModuleFiles}
       ${publicFiles}
       ${interfaceFiles}
       ${headerUnitFiles}

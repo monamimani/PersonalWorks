@@ -43,6 +43,7 @@ jobs:
 
   build-tools:
     runs-on: ubuntu-latest
+    if: ${{ false }}
 
     steps:
     - name: Foresight Collect Workflow Telemetry
@@ -81,6 +82,7 @@ jobs:
 
   updatedb_personalworks:
     runs-on: ubuntu-latest
+    if: ${{ false }}
     #needs: [build-tools, tests-personalworks, benchamrks-personalworks]
     needs: [ci-cd]
     concurrency: updatedb_personalworks
@@ -185,9 +187,9 @@ jobs:
 
   Cleanup:
     runs-on: ubuntu-latest
+    if: ${{ false }}
     #needs: [build-personalworks, tests-personalworks, benchamrks-personalworks, updatedb_personalworks]
     needs: [ci-cd, updatedb_personalworks]
-    if: ${{ always() }}
 
     steps:
     - name: Foresight Collect Workflow Telemetry

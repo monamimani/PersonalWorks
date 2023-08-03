@@ -27,6 +27,7 @@ function LauncheVsDevShell
 {
     $vsPath= GetVsInstallationPath
     $vcvarsallPath = [IO.Path]::Combine($vsPath, "Common7", "Tools", "Launch-VsDevShell.ps1")
+    & $vcvarsallPath
 }
 
 function GetVsInstallationPath

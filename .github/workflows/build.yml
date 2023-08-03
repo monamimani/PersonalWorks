@@ -69,7 +69,9 @@ jobs:
       - name: Cmake Configure
         run: |
           Get-ChildItem env:
+          Set-PSRepository -Name "PSGallery" -InstallationPolicy Trusted 
           Install-Module VSSetup -Scope CurrentUser
+          Set-PSRepository -Name "PSGallery" -InstallationPolicy UnTrusted 
           $vsPath =Get-VSSetupInstance | Select-VSSetupInstance -Require 'Microsoft.VisualStudio.Component.VC.Tools.x86.x64' -Latest
           WriteConsole($vsPath)
           cmake --preset ${{ env.configurePreset }}

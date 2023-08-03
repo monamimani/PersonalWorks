@@ -68,7 +68,7 @@ jobs:
 
       - name: Cmake Configure
         run: |
-          $env
+          Get-ChildItem env:
           cmake --preset ${{ env.configurePreset }}
 
       - name: Cmake Build

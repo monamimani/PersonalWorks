@@ -70,6 +70,7 @@ jobs:
         run: |
           cmake --version
           & { . Scripts\Build\InvokeVcVarsAll.ps1; InvokeVcVarsAll }
+          cmake --version
           cmake --preset ${{ env.configurePreset }}
 
       - name: Cmake Build

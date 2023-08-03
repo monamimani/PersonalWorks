@@ -69,6 +69,9 @@ jobs:
       - name: Cmake Configure
         run: |
           Get-ChildItem env:
+          Install-Module VSSetup -Scope CurrentUser
+          $vsPath =Get-VSSetupInstance | Select-VSSetupInstance -Require 'Microsoft.VisualStudio.Component.VC.Tools.x86.x64' -Latest
+          WriteConsole($vsPath)
           cmake --preset ${{ env.configurePreset }}
 
       - name: Cmake Build

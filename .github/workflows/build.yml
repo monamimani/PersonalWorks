@@ -70,7 +70,7 @@ jobs:
         run: |
           cmake --version
           (gcm cmake).Path
-          & { . Scripts\Build\InvokeVcVarsAll.ps1; InvokeVcVarsAll }
+          & { . Scripts\Build\VsEnvironment.ps1; LauncheVsDevShell }
           cmake --version
           (gcm cmake).Path
           cmake --preset ${{ env.configurePreset }}

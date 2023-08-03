@@ -68,6 +68,7 @@ jobs:
 
       - name: Cmake Configure
         run: |
+          $env
           cmake --preset ${{ env.configurePreset }}
 
       - name: Cmake Build

@@ -1,0 +1,54 @@
+{
+  "configurePresets": [
+    {
+      "name": "Cl",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "cl",
+        "CMAKE_CXX_COMPILER": "cl",
+        "CMAKE_CXX_FLAGS": "/DWIN32 /D_WINDOWS /W4 /EHsc /MP /permissive-",
+        "CMAKE_C_FLAGS": "/DWIN32 /D_WINDOWS /W4 /EHsc /MP /permissive-"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    //{
+    //  "name": "ClangCl",
+    //  "hidden": true,
+    //  "cacheVariables": {
+    //    "CMAKE_C_COMPILER": "clang-cl",
+    //    "CMAKE_CXX_COMPILER": "clang-cl",
+    //    "CMAKE_CXX_FLAGS": "/DWIN32 /D_WINDOWS /W4 /EHsc /MP /permissive-",
+    //    "CMAKE_C_FLAGS": "/DWIN32 /D_WINDOWS /W4 /EHsc /MP /permissive-"
+    //  },
+    //  "condition": {
+    //    "type": "inList",
+    //    "string": "${hostSystemName}",
+    //    "list": [ "Windows", "Linux" ]
+    //  },
+    //  "vendor": {
+    //    "microsoft.com/VisualStudioSettings/CMake/1.0": {
+    //      "intelliSenseMode": "windows-clang-x64"
+    //    }
+    //  }
+    //},
+    {
+      "name": "Gcc",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "gcc-11",
+        "CMAKE_CXX_COMPILER": "g++-11",
+        "CMAKE_CXX_FLAGS": "-Wpedantic -Wall -Wextra",
+        "CMAKE_C_FLAGS": "-Wpedantic -Wall -Wextra"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      }
+    }
+  ]
+}

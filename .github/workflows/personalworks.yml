@@ -12,9 +12,9 @@ jobs:
           - os: windows-latest
             genertor: windows-vs2022
             experimental: false
-          - os: ubuntu-latest
-            genertor: linux-ninja-multi-config
-            experimental: true
+          # - os: ubuntu-latest
+          #   genertor: linux-ninja
+          #   experimental: true
         architecture: [x64]
         buildConfig: [
           { 

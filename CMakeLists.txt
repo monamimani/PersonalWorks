@@ -30,16 +30,14 @@ if(NOT PROCESSOR_COUNT EQUAL 0)
 endif()
 
 include(CMakeDependentOption)
+include(CMake/PreventInSourceBuilds.cmake)
 include(CMake/StaticAnalizers.cmake)
 include(CMake/ClangFormat.cmake)
 include(CMake/Sanitizers.cmake)
 include(CMake/TestTarget.cmake)
 include(CMake/BenchmarkTarget.cmake)
 
-# Prevent in-source builds.
-if ( ${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR} )
-  message( FATAL_ERROR “In-source builds not allowed! Create a build directory and run CMake from there. ” )
-endif()
+
 
 include(CMake/DefaultProjectSettings.cmake)
 
@@ -48,6 +46,7 @@ if(CMAKE_VERSION GREATER_EQUAL "3.26.0" )
   # CMAKE experimental C++ module
   set(CMAKE_EXPERIMENTAL_CXX_MODULE_CMAKE_API "2182bf5c-ef0d-489a-91da-49dbc3090d2a")
   set(CMAKE_EXPERIMENTAL_CXX_MODULE_DYNDEP 1)
+  set(CMAKE_CXX_SCAN_FOR_MODULES 1)
 
   if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   

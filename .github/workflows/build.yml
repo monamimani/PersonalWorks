@@ -69,8 +69,10 @@ jobs:
       - name: Cmake Configure
         run: |
           cmake --version
+          (gcm cmake).Path
           & { . Scripts\Build\InvokeVcVarsAll.ps1; InvokeVcVarsAll }
           cmake --version
+          (gcm cmake).Path
           cmake --preset ${{ env.configurePreset }}
 
       - name: Cmake Build

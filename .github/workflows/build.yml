@@ -94,7 +94,7 @@ jobs:
             OpenCppCoverage.config.txt
           key: CacheBuild-${{ github.run_id }}-${{ runner.os }}-${{ env.configurePreset }}-${{ env.buildConfig }}
 
-      - name: Upload Build Artifacts ${{ env.buildConfig }}
+      - name: 'Upload Build Artifacts ${{ env.buildConfig }}'
         uses: actions/upload-artifact@v3
         if: always()
         with:

@@ -37,7 +37,8 @@ jobs:
     with:
       os: ${{ matrix.platform.os }}
       buildConfig: ${{ matrix.buildConfig.optimization }}
-      configurePreset: ${{ matrix.platform.genertor }}
+      #configurePreset: ${{ matrix.platform.genertor }}
+      configurePreset: ${{ matrix.platform.genertor }}-${{ matrix.architecture }}-${{ matrix.buildConfig.name }}
       buildPreset: ${{ matrix.platform.genertor }}-${{ matrix.architecture }}-${{ matrix.buildConfig.name }}
       testPreset: ${{ matrix.platform.genertor }}-${{ matrix.architecture }}-${{ matrix.buildConfig.name }}
       experimental: ${{ matrix.platform.experimental }}

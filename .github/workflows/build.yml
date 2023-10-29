@@ -80,10 +80,15 @@ jobs:
           (gcm cmake).Path
           cmake --preset ${{ env.configurePreset }}
 
-      - name: Cmake Build
-        if: runner.os == 'Windows'
+      - name: Cmake Build Multiconfig
+        if: ${{ runner.os == 'Windows' }} && ${{contains( env.configurePreset , 'vs2022' )}}
         run: |
           cmake --build --preset ${{ env.buildPreset }}
+
+      - name: Cmake Build
+        if: ${{ runner.os == 'Windows' }} && ${{contains( env.configurePreset , 'ninja' )}}
+        run: |
+          cmake --build
 
       - name: Cache Build
         id: cache-build

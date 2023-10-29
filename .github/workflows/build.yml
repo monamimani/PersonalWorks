@@ -61,10 +61,15 @@ jobs:
       - name: Install Linux packages
         if: runner.os == 'Linux'
         run: |
+          sudo add-apt-repository ppa:ubuntu-toolchain-r/test
           sudo apt update
-          sudo apt install gcc-11 g++-11
-          sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 110 --slave /usr/bin/g++ g++ /usr/bin/g++-11
+          sudo apt upgrade
+          sudo apt dist-upgrade
+          sudo apt install build-essential software-properties-common
+          sudo apt install gcc-14 g++-14
+          sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-114 140 --slave /usr/bin/g++ g++ /usr/bin/g++-14
           sudo apt-get install ninja-build
+          gcc -v
 
       - name: Cmake Configure
         run: |

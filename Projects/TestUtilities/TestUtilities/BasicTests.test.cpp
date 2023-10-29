@@ -1,4 +1,4 @@
-#include "TestUtilities/BasicTests.h"
+#include "TestUtilities/BasicTestsGenerator.h"
 
 #include <array>
 #include <utility>

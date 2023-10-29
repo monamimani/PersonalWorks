@@ -26,7 +26,7 @@ private:
 public:
   T& getInstance() const
   {
-    inline static constinit T instance = {};
+    static constinit T instance = {};
     return instance;
   }
 

@@ -18,8 +18,8 @@ set(publicFiles
   ${targetName}/GoogleTest.h
   ${targetName}/GoogleBenchmark.h
   ${targetName}/TestStruct.benchmark.h
-
-  ${targetName}/BasicTests.h
+  ${targetName}/BasicTestsGenerator.h
+  ${targetName}/BasicTestsFriend.h
 )
 
 set(publicModuleFiles 
@@ -28,7 +28,7 @@ set(publicModuleFiles
 set(privateFiles 
   ${targetName}/TestStruct.test.cpp
   ${targetName}/TestStruct.benchmark.cpp
-  ${targetName}/BasicTests.cpp
+  ${targetName}/BasicTestsGenerator.cpp
 )
 
 set(testFiles 
@@ -38,7 +38,6 @@ set(testFiles
 set(benchmarkFiles 
 )
 
-#add_library(${targetName} INTERFACE ) # To use interface ${targetName}/TestStruct.benchmark.cpp has to be in publicFiles.
 add_library(${targetName})
 
 if(CMAKE_VERSION GREATER_EQUAL "3.26.0" )
@@ -47,8 +46,8 @@ if(CMAKE_VERSION GREATER_EQUAL "3.26.0" )
       ${privateFiles}
     PUBLIC
      FILE_SET CXX_MODULES FILES ${publicModuleFiles}
-    PUBLIC
-     FILE_SET CXX_MODULE_HEADER_UNITS FILES ${headerUnitFiles}
+    #PUBLIC
+     #FILE_SET CXX_MODULE_HEADER_UNITS FILES ${headerUnitFiles}
     PUBLIC
       ${publicFiles}
     INTERFACE
@@ -67,7 +66,7 @@ endif()
 
 
 target_include_directories(${targetName}
-    INTERFACE
+    PUBLIC
         "${CMAKE_CURRENT_SOURCE_DIR}"
 )
 

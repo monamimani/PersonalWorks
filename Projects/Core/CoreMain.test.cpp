@@ -24,17 +24,21 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char* argv[])
   auto cmdLine = std::vector<char*>(argv, argv + argc);
   
 #ifdef _DEBUG
-  std::string breakOnFaillure = "--gtest_break_on_failure";
-  cmdLine.push_back(&breakOnFaillure[0]);
-  
-  std::string notCatchException = "--gtest_catch_exceptions=0";
-  cmdLine.push_back(notCatchException.data());
+  //std::string breakOnFaillure = "--gtest_break_on_failure";
+  //cmdLine.push_back(&breakOnFaillure[0]);
+  //
+  //std::string notCatchException = "--gtest_catch_exceptions=0";
+  //cmdLine.push_back(notCatchException.data());
 #endif // _DEBUG
   cmdLine.emplace_back();
 
   int argCount = static_cast<int>(cmdLine.size() - 1);
   auto argsPtr = cmdLine.data();
   ::testing::InitGoogleTest(&argCount, argsPtr);
+
+  // ::testing::GTEST_FLAG(filter) = "SpclMbFct*";
+  //::testing::GTEST_FLAG(filter) = "OpArity1DelegateLikeTestF*";
+
   if (RUN_ALL_TESTS() == EXIT_FAILURE)
   {
     return EXIT_FAILURE;

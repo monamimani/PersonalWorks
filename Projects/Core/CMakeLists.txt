@@ -46,6 +46,8 @@ set(publicFiles
   ${targetName}/NonCopyable.h
   ${targetName}/PathUtils.h
   ${targetName}/Pimpl.h
+  ${targetName}/Overloaded.h
+  ${targetName}/Exception.h
   ${targetName}/BuildConfig/BuildConfig.hunit.h
   ${targetName}/BuildConfig/BuildConfigArchitecture.hunit.h
   ${targetName}/BuildConfig/BuildConfigCompiler.hunit.h
@@ -104,8 +106,8 @@ if(CMAKE_VERSION GREATER_EQUAL "3.26.0" )
       ${privateFiles}
     PUBLIC
      FILE_SET CXX_MODULES FILES ${moduleFiles}
-    PUBLIC
-     FILE_SET CXX_MODULE_HEADER_UNITS FILES ${headerUnitFiles}
+    #PUBLIC
+     #FILE_SET CXX_MODULE_HEADER_UNITS FILES ${headerUnitFiles}
     PUBLIC
       ${publicFiles}
     INTERFACE
@@ -133,6 +135,7 @@ target_include_directories(${targetName}
 
 target_link_libraries(${targetName}
   PRIVATE
+    TestUtilities
   PUBLIC
 )
 

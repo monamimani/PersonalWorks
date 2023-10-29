@@ -62,7 +62,7 @@ Cpp11BracedListStyle: True
 SpaceBeforeInheritanceColon : False
 SpaceAfterTemplateKeyword: False
 
-IndentRequires: False
+IndentRequiresClause: False
 IndentCaseLabels: True
 IndentPPDirectives: BeforeHash
 NamespaceIndentation: Inner

@@ -1,10 +1,11 @@
-cmake_minimum_required(VERSION 3.24)
+cmake_minimum_required(VERSION 3.26)
 
 set(VCPKG_INSTALLED_DIR  ${CMAKE_BINARY_DIR}/../vcpkg_installed)
 
 #set(CMAKE_VERBOSE_MAKEFILE ON)
 
 include(CMakePrintHelpers)
+# cmake_print_variables(CMAKE_VERSION)
 # cmake_print_variables(CMAKE_MODULE_PATH)
 
 get_filename_component(WorkspaceName ${CMAKE_SOURCE_DIR} NAME)
@@ -15,7 +16,11 @@ if(NOT EXISTS  ${CMAKE_TOOLCHAIN_FILE})
     message(FATAL_ERROR "CMAKE_TOOLCHAIN_FILE does not exist: CMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE}")
 endif()
 
-project(${WorkspaceName})
+project(${WorkspaceName} 
+    VERSION 0.0.1
+    #DESCRIPTION ""
+    #HOMEPAGE_URL "%%myurl%%"
+    LANGUAGES CXX)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_BINARY_DIR}")
@@ -44,9 +49,9 @@ include(CMake/DefaultProjectSettings.cmake)
 
 if(CMAKE_VERSION GREATER_EQUAL "3.26.0" )
   # CMAKE experimental C++ module
-  set(CMAKE_EXPERIMENTAL_CXX_MODULE_CMAKE_API "2182bf5c-ef0d-489a-91da-49dbc3090d2a")
-  set(CMAKE_EXPERIMENTAL_CXX_MODULE_DYNDEP 1)
-  set(CMAKE_CXX_SCAN_FOR_MODULES 1)
+  set(CMAKE_EXPERIMENTAL_CXX_MODULE_CMAKE_API "aa1f7df0-828a-4fcd-9afc-2dc80491aca7")
+  # set(CMAKE_EXPERIMENTAL_CXX_MODULE_DYNDEP 1)
+  # set(CMAKE_CXX_SCAN_FOR_MODULES 1)
 
   if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   
@@ -101,7 +106,6 @@ include(FetchContent)
 #FetchContent_MakeAvailable(fmtlib)
 
 
-find_package(GTest CONFIG REQUIRED)
 find_package(benchmark CONFIG REQUIRED)
 
 find_package(fmt CONFIG REQUIRED)
@@ -129,6 +133,7 @@ link_libraries(fmt::fmt)
 # in the main CMakeLists since it calls enable_testing, which must be in the
 # main CMakeLists.
 if (BUILD_TESTS)
+  find_package(GTest CONFIG REQUIRED)
   enable_testing()
   include(GoogleTest)
 

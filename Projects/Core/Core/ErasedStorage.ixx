@@ -9,10 +9,14 @@ module;
 #include <type_traits>
 #include <utility>
 
+#include "TestUtilities/BasicTestsFriend.h"
+
 export module ErasedStorage;
 
 import CoreUtility;
 import CoreConcepts;
+
+TEST_FIXTURE_FORWARD_DECLARE_NS(CoreTests, ErasedStorageF);
 
 namespace Core
 {
@@ -82,6 +86,7 @@ public:
   }
 
   ErasedStorage(const ErasedStorage& other) noexcept(noexcept(copy(*this, other)))
+  : m_storage{}
   {
     copy(*this, other);
   }
@@ -132,6 +137,7 @@ public:
   {
     static_assert(sizeof(ErasedType) <= size);
     static_assert(alignof(ErasedType) <= alignment);
+    static_assert(std::is_same<typename std::remove_cv<ErasedType>::type, ErasedType>::value, "ErasedType must be a non-const, non-volatile type");
 
     auto* storagePtr = start_lifetime_as<ErasedType>(std::addressof(m_storage));
     // auto* storagePtr = reinterpret_cast<ErasedType*>(std::addressof(m_storage));
@@ -141,15 +147,14 @@ public:
     return storageTypedPtr;
   }
 
-  // Clang format has issues with requires clause still
-  // clang-format off
-  template <typename ErasedType, typename... Args>
-  requires std::constructible_from<ErasedType, Args...> && (sizeof...(Args) > 0) && !std::same_as<Base_T<std::tuple_element_t<0, std::tuple<Args...>>>, Base_T<ErasedType>> 
-  constexpr auto* construct(Args && ... args)
-  // clang-format on
+  template<typename ErasedType, typename... Args>
+  requires(std::constructible_from<ErasedType, Args...> && (sizeof...(Args) > 0)
+           && !std::same_as<Base_T<std::tuple_element_t<0, std::tuple<Args...>>>, Base_T<ErasedType>>)
+  constexpr auto* construct(Args&&... args)
   {
     static_assert(sizeof(ErasedType) <= size);
     static_assert(alignof(ErasedType) <= alignment);
+    static_assert(std::is_same<typename std::remove_cv<ErasedType>::type, ErasedType>::value, "ErasedType must be a non-const, non-volatile type");
 
     auto* storagePtr = start_lifetime_as<ErasedType>(std::addressof(m_storage));
     // auto* storagePtr = reinterpret_cast<ErasedType*>(std::addressof(m_storage));
@@ -165,6 +170,7 @@ public:
   {
     static_assert(sizeof(ErasedType) <= size);
     static_assert(alignof(ErasedType) <= alignment);
+    static_assert(std::is_same<typename std::remove_cv<ErasedType>::type, ErasedType>::value, "ErasedType must be a non-const, non-volatile type");
 
     // This will have issues with multiple level of pointer indirection
     using RawType = std::remove_pointer_t<std::remove_reference_t<ErasedType>>;
@@ -311,7 +317,8 @@ private:
   }
 
   template<typename ErasedType>
-  static inline constexpr void moveStorage(ErasedStorage& dst, ErasedStorage& src) noexcept(std::is_trivially_copyable_v<ErasedType> || noexcept(std::construct_at(dst.asTypedPtr<ErasedType>(), std::move(*src.asTypedPtr<ErasedType>()))))
+  static inline constexpr void moveStorage(ErasedStorage& dst, ErasedStorage& src) noexcept(
+      std::is_trivially_copyable_v<ErasedType> || noexcept(std::construct_at(dst.asTypedPtr<ErasedType>(), std::move(*src.asTypedPtr<ErasedType>()))))
   {
     std::memset(dst.m_storage, 0, size);
     std::construct_at(dst.asTypedPtr<ErasedType>(), std::move(*src.asTypedPtr<ErasedType>()));
@@ -347,17 +354,20 @@ private:
   }
 
   template<typename ErasedType>
-  static constexpr void copyStorage(ErasedStorage& dst, const ErasedStorage& src) noexcept(std::is_trivially_copyable_v<ErasedType> || noexcept(std::construct_at(dst.asTypedPtr<ErasedType>(), *src.asTypedPtr<ErasedType>())))
+  static constexpr void copyStorage(ErasedStorage& dst, const ErasedStorage& src) noexcept(
+      std::is_trivially_copyable_v<ErasedType> || noexcept(std::construct_at(dst.asTypedPtr<ErasedType>(), *src.asTypedPtr<ErasedType>())))
   {
     std::memset(dst.m_storage, 0, size);
     std::construct_at(dst.asTypedPtr<ErasedType>(), *src.asTypedPtr<ErasedType>());
   }
 
-  static_assert(size > 0, "Size must be bigger that 0.");
-  alignas(alignment) std::byte m_storage[size] = {};
+  TEST_FIXTURE_FRIEND_NS(CoreTests, ErasedStorageF);
 
   friend StorageFcts<ErasedStorage>;
   StorageFcts<ErasedStorage> m_storageFcts;
+
+  static_assert(size > 0, "Size must be bigger that 0.");
+  alignas(alignment) std::byte m_storage[size] = {};
 };
 
 } // namespace Core

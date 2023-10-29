@@ -66,7 +66,8 @@ static auto bindFunctor(auto& delegate, TestStruct& testStruct, IsLValue isLValu
   {
     if (isFctConst)
     {
-      return delegate.bind(const_cast<const TestStruct&&>(TestStruct{}));
+      std::unreachable();
+      //return delegate.bind(const_cast<const TestStruct&&>(TestStruct{}));
     }
     else
     {
@@ -81,7 +82,8 @@ static auto bindMemberFct(auto& delegate, TestStruct& testStruct, IsLValue isLVa
   {
     if (isFctConst)
     {
-      return delegate.bind<&TestStruct::fctConst>(const_cast<const TestStruct&&>(TestStruct{}));
+      std::unreachable();
+      //return delegate.bind<&TestStruct::fctConst>(const_cast<const TestStruct&&>(TestStruct{}));
     }
     else
     {
@@ -92,7 +94,8 @@ static auto bindMemberFct(auto& delegate, TestStruct& testStruct, IsLValue isLVa
   {
     if (isFctConst)
     {
-      return delegate.bind<&TestStruct::fctConst>(const_cast<const TestStruct&>(testStruct));
+      std::unreachable();
+      //return delegate.bind<&TestStruct::fctConst>(const_cast<const TestStruct&>(testStruct));
     }
     else
     {
@@ -108,7 +111,8 @@ static auto bindMemberFctTemplate(DelegateLikeT& delegate, TestStruct& testStruc
   {
     if (isFctConst)
     {
-      return delegate.bind<DelegateLikeT::asFnConstPtr(&TestStruct::fctTemplate<int>)>(testStruct);
+      std::unreachable();
+      // return delegate.bind<DelegateLikeT::asFnConstPtr(&TestStruct::fctTemplate<int>)>(testStruct);
     }
     else
     {
@@ -119,7 +123,8 @@ static auto bindMemberFctTemplate(DelegateLikeT& delegate, TestStruct& testStruc
   {
     if (isFctConst)
     {
-      return delegate.bind<DelegateLikeT::asFnConstPtr(&TestStruct::fctTemplate<int>)>(const_cast<const TestStruct&&>(std::move(testStruct)));
+      std::unreachable();
+      //return delegate.bind<DelegateLikeT::asFnConstPtr(&TestStruct::fctTemplate<int>)>(const_cast<const TestStruct&&>(std::move(testStruct)));
     }
     else
     {
@@ -135,7 +140,8 @@ static auto bindMemberFctConstOverloaded(DelegateLikeT& delegate, TestStruct& te
   {
     if (isFctConst)
     {
-      return delegate.bind<DelegateLikeT::asFnConstPtr(&TestStruct::fctConstOverloaded)>(const_cast<const TestStruct&&>(std::move(testStruct)));
+      std::unreachable();
+      //return delegate.bind<DelegateLikeT::asFnConstPtr(&TestStruct::fctConstOverloaded)>(const_cast<const TestStruct&&>(std::move(testStruct)));
     }
     else
     {
@@ -146,6 +152,7 @@ static auto bindMemberFctConstOverloaded(DelegateLikeT& delegate, TestStruct& te
   {
     if (isFctConst)
     {
+      //std::unreachable();
       return delegate.bind<DelegateLikeT::asFnConstPtr(&TestStruct::fctConstOverloaded)>(testStruct);
     }
     else
@@ -162,7 +169,8 @@ static auto bindMemberFctParamOverloaded(DelegateLikeT& delegate, TestStruct& te
   {
     if (!isFctConst)
     {
-      return delegate.bind<DelegateLikeT::asFnPtr(&TestStruct::fctParamOverloaded)>(testStruct);
+      std::unreachable();
+      //return delegate.bind<DelegateLikeT::asFnPtr(&TestStruct::fctParamOverloaded)>(testStruct);
     }
     else
     {
@@ -173,7 +181,8 @@ static auto bindMemberFctParamOverloaded(DelegateLikeT& delegate, TestStruct& te
   {
     if (isFctConst)
     {
-      return delegate.bind<DelegateLikeT::asFnConstPtr(&TestStruct::fctParamOverloaded)>(const_cast<const TestStruct&&>(std::move(testStruct)));
+      std::unreachable();
+      //return delegate.bind<DelegateLikeT::asFnConstPtr(&TestStruct::fctParamOverloaded)>(const_cast<const TestStruct&&>(std::move(testStruct)));
     }
     else
     {
@@ -241,7 +250,8 @@ public:
 
   static auto makeDelegateBindKindParamSet()
   {
-    static constexpr std::array fctConstness = {true, false};
+    // static constexpr std::array fctConstness = {true, false};
+    static constexpr std::array fctConstness = {false};  // Removing because I don't think it makes sense to have a const type for Erased storage
     static constexpr std::array valueKinds = {true, false};
     static constexpr std::array memberFctBindKind = {BindKind::Functor, BindKind::MemberFct, BindKind::MemberFctTemplate, BindKind::MemberFctConstOverloaded, BindKind::MemberFctParamOverloaded};
     static constexpr auto memFctParamSetPartSize = valueKinds.size() * fctConstness.size() * memberFctBindKind.size();
@@ -249,10 +259,10 @@ public:
     auto paramSetPart = std::vector<ParamSetType>();
     paramSetPart.reserve(memFctParamSetPartSize);
     std::ranges::for_each(memberFctBindKind, [&paramSetPart](BindKind bindKind) {
-      paramSetPart.emplace_back(IsLValue(true), IsFctConst(true), bindKind);
+      // paramSetPart.emplace_back(IsLValue(true), IsFctConst(true), bindKind); // Removing because I don't think it makes sense to have a const type for Erased storage
       paramSetPart.emplace_back(IsLValue(false), IsFctConst(false), bindKind);
       paramSetPart.emplace_back(IsLValue(true), IsFctConst(false), bindKind);
-      paramSetPart.emplace_back(IsLValue(false), IsFctConst(true), bindKind);
+      // paramSetPart.emplace_back(IsLValue(false), IsFctConst(true), bindKind); // Removing because I don't think it makes sense to have a const type for Erased storage
     });
 
     paramSetPart.emplace_back(IsLValue(true), IsFctConst(false), BindKind::FreeFunction);

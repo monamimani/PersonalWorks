@@ -7,13 +7,13 @@
   },
   "configurePresets": [
     {
-      "name": "Cl",
+      "name": "Msvc",
       "hidden": true,
       "cacheVariables": {
         "CMAKE_C_COMPILER": "cl",
         "CMAKE_CXX_COMPILER": "cl",
-        "CMAKE_CXX_FLAGS": "/DWIN32 /D_WINDOWS /W4 /EHsc /MP /permissive-",
-        "CMAKE_C_FLAGS": "/DWIN32 /D_WINDOWS /W4 /EHsc /MP /permissive-"
+        "CMAKE_CXX_FLAGS": "/DWIN32 /D_WINDOWS /W4 /EHsc /MP /permissive- /Zc:preprocessor",
+        "CMAKE_C_FLAGS": "/DWIN32 /D_WINDOWS /W4 /EHsc /MP /permissive- /Zc:preprocessor",
       },
       "condition": {
         "type": "equals",
@@ -25,8 +25,8 @@
       "name": "Gcc",
       "hidden": true,
       "cacheVariables": {
-        "CMAKE_C_COMPILER": "gcc-11",
-        "CMAKE_CXX_COMPILER": "g++-11",
+        "CMAKE_C_COMPILER": "gcc-14",
+        "CMAKE_CXX_COMPILER": "g++-14",
         "CMAKE_CXX_FLAGS": "-Wpedantic -Wall -Wextra",
         "CMAKE_C_FLAGS": "-Wpedantic -Wall -Wextra"
       },
@@ -83,21 +83,20 @@
       "hidden": true,
       "cacheVariables": {
         "USE_ASAN": false,
-        "ENABLE_CPPCHECK": true,
+        //"ENABLE_CPPCHECK": true,
         "ENABLE_CLANG_TIDY": true
       },
       "vendor": {
         "microsoft.com/VisualStudioSettings/CMake/1.0": {
-          "enableClangTidyCodeAnalysis": true,
-          "enableMicrosoftCodeAnalysis": true,
-          "codeAnalysisRuleset": "AllRules.ruleset"
+          //"enableClangTidyCodeAnalysis": true,
+          //"enableMicrosoftCodeAnalysis": true,
+          //"codeAnalysisRuleset": "AllRules.ruleset",
         }
       }
     },
     {
       "name": "Windows",
       "hidden": true,
-      "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
       "cacheVariables": {
         "VCPKG_TARGET_TRIPLET": "x64-windows"
       },
@@ -135,50 +134,50 @@
     },
     {
       "name": "windows-vs2022",
-      "inherits": [ "Common", "Windows", "Cl", "Vs2022" ]
+      "inherits": [ "Common", "Windows", "Msvc", "Vs2022" ]
     },
     {
       "name": "windows-vs2022-checkers",
-      "inherits": [ "Common", "checkers", "Windows", "Cl", "Vs2022" ]
+      "inherits": [ "Common", "checkers", "Windows", "Msvc", "Vs2022" ]
     },
     {
       "name": "windows-ninja-x64-debug",
-      "inherits": [ "Common", "Windows", "Cl", "ninja" ],
+      "inherits": [ "Common", "Windows", "Msvc", "ninja" ],
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug"
       }
     },
     {
-      "name": "windows-ninja-x64-relwithdebinfo",
-      "inherits": [ "Common", "Windows", "Cl", "ninja" ],
+      "name": "windows-ninja-x64-release",
+      "inherits": [ "Common", "Windows", "Msvc", "ninja" ],
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "RelWithDebInfo"
       }
     },
     {
-      "name": "windows-ninja-x64-release",
-      "inherits": [ "Common", "Windows", "Cl", "ninja" ],
+      "name": "windows-ninja-x64-shipping",
+      "inherits": [ "Common", "Windows", "Msvc", "ninja" ],
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release"
       }
     },
     {
       "name": "windows-ninja-checkers-x64-debug",
-      "inherits": [ "Common", "checkers", "Windows", "Cl", "ninja" ],
+      "inherits": [ "Common", "checkers", "Windows", "Msvc", "ninja" ],
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug"
       }
     },
     {
-      "name": "windows-ninja-checkers-x64-relwithdebinfo",
-      "inherits": [ "Common", "checkers", "Windows", "Cl", "ninja" ],
+      "name": "windows-ninja-checkers-x64-release",
+      "inherits": [ "Common", "checkers", "Windows", "Msvc", "ninja" ],
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "RelWithDebInfo"
       }
     },
     {
-      "name": "windows-ninja-checkers-x64-release",
-      "inherits": [ "Common", "checkers", "Windows", "Cl", "ninja" ],
+      "name": "windows-ninja-checkers-x64-shipping",
+      "inherits": [ "Common", "checkers", "Windows", "Msvc", "ninja" ],
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release"
       }

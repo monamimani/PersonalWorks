@@ -1,7 +1,10 @@
 
 #include <array>
+#include <span>
+#include <source_location>
 
-#include "TestUtilities/BasicTests.h"
+#include "fmt/format.h"
+#include "TestUtilities/BasicTestsGenerator.h"
 #include "TestUtilities/GoogleTest.h"
 #include "TestUtilities/TestStruct.test.h"
 using namespace TestUtilities;
@@ -11,68 +14,123 @@ import ErasedStorage;
 
 namespace CoreTests
 {
-  using namespace Core;
+using namespace Core;
 
-class ErasedStorageF
+template<typename TestedType>
+class ErasedStorageF: public testing::Test
 {
 public:
-  //template<typename ObjT>
-  //testing::AssertionResult isValid(const ObjT& obj)
+  auto getDefaultObj()
+  {
+    return TestedType{};
+  }
+
+  auto AreStorageFctsNullptr(const TestedType& obj) const
+  {
+    return obj.m_storageFcts.m_destroy == nullptr && obj.m_storageFcts.m_copy == nullptr && obj.m_storageFcts.m_move == nullptr;
+  }
+
+  auto IsStorage0Initialized(const TestedType& obj) const
+  {
+    std::array<std::byte, TestedType::SizeT> defaultStorageBytes{};
+    return std::ranges::equal(obj.m_storage, defaultStorageBytes);
+  }
+
+  template<TestUtilities::BasicTestsObjOps basicTestsObjOp>
+  testing::AssertionResult testDefaultObj(const TestedType& obj) const
+  {
+
+    if (AreStorageFctsNullptr(obj) && IsStorage0Initialized(obj))
+    {
+      return testing::AssertionSuccess();
+    }
+
+    return testing::AssertionFailure();
+  }
+
+  static const auto ObjAExpectedVal = 42;
+  static const auto ObjBExpectedVal = 151;
+
+  TestedType getObjA()
+  {
+    auto objA = TestedType{};
+    objA.construct(TestStruct{ObjAExpectedVal});
+    return objA;
+  }
+
+  template<TestUtilities::BasicTestsObjOps basicTestsObjOp>
+  testing::AssertionResult testObjA(const TestedType& objA) const
+  {
+    // if constexpr (basicTestsObjOp != TestUtilities::BasicTestsObjOps::Dtor)
+    //{
+
+    //}
+    // else
+    {
+      // if (AreStorageFctsNullptr(objA) && IsStorage0Initialized(objA))
+      //{
+      //   return testing::AssertionSuccess();
+      // }
+
+      auto objBytes = TestUtilities::objAsBytes(objA);
+      std::array<std::byte, sizeof(TestedType)> ObjAExpectedValAsBytes{(std::byte)ObjAExpectedVal};
+      if ((objBytes.size() == ObjAExpectedValAsBytes.size()) && std::ranges::equal(objBytes, ObjAExpectedValAsBytes))
+      {
+        return testing::AssertionSuccess();
+      }
+    }
+
+    //SCOPED_TRACE(fmt::format("Failed Operation: {}", GetBasicTestsObjOpsStr(basicTestsObjOp)));
+    auto sl = std::source_location::current();
+    return testing::AssertionFailure() << fmt::format(
+               "Failed Operation: {}, {}({}:{}) {}", GetBasicTestsObjOpsStr(basicTestsObjOp), sl.file_name(), sl.line(), sl.column(), sl.function_name());
+  }
+
+  // TestedType getObjB()
   //{
-  //  const auto& typedPtr = obj.asTypedPtr<ErasedTypedStoredType>();
-  //  if ((typedPtr != nullptr) && (*typedPtr).m_value == TestStruct::m_staticValue)
-  //  {
-  //    testing::AssertionSuccess();
-  //  }
-  //  return testing::AssertionFailure()
-  //}
+  //   return TestedType{};
+  // }
+
+  template<TestUtilities::BasicTestsObjOps basicTestsObjOp>
+  testing::AssertionResult testObjB(const TestedType& objB) const
+  {
+    // if constexpr (basicTestsObjOp != TestUtilities::BasicTestsObjOps::Dtor)
+    //{
+    //   if (!(bool)objB)
+    //   {
+    //     ADD_FAILURE();
+    //     return testing::AssertionFailure();
+    //   }
+
+    //  if (objB.a != ObjBExpectedVal)
+    //  {
+    //    ADD_FAILURE() << "Error here";
+    //    return testing::AssertionFailure();
+    //  }
+    //}
+    // else
+    //{
+    //  auto objBytes = TestUtilities::objAsBytes(objB);
+    //  std::array<std::byte, sizeof(TestedType)> ObjBExpectedValAsBytes{(std::byte)ObjBExpectedVal};
+    //  if ((objBytes.size() == ObjBExpectedValAsBytes.size()) && std::ranges::equal(objBytes, ObjBExpectedValAsBytes))
+    //  {
+    //    return testing::AssertionSuccess();
+    //  }
+    //}
+
+    // return testing::AssertionSuccess();
+
+    return testing::AssertionFailure();
+  }
 };
 
-//using ErasedStorage_T = ErasedStorage<sizeof(ErasedType), alignof(ErasedType)>;
-//auto test = RegistratorCommonTests<ErasedStorageF, TEST_TYPE(TestStruct), TEST_TYPE(const TestStruct)>{};
-
-// TEST(ErasedStorageTest, EmptyStorage)
-//{
-//   // This should not compile
-//   ErasedStorage<0, 1> storage;
-// }
-
-// TEST(ErasedStorageTest, ConstructWithLValueReference)
-//{
-//   using ErasedType = TestStruct;
-//   using ErasedStorage_T = ErasedStorage<sizeof(ErasedType), alignof(ErasedType)>;
-//
-//   // This should not compile
-//   ErasedType testStruct;
-//   ErasedStorage_T storage;
-//   storage.construct<ErasedType&>(testStruct);
-// }
-
-// Special test for DefaultCtor empty
-// TYPED_TEST(ErasedStorageTestStructF, DefaultCtor)
-//{
-//  using ErasedStorage_T = TestFixture::ErasedStorage_T;
-//  using ErasedType = TestFixture::ErasedType;
-//  using ErasedTypedStoredType = TestFixture::ErasedTypedStoredType;
-//  using ErasedTypeByte = TestFixture::ErasedTypeByte;
-//
-//  {
-//    // Default Constructor
-//    ErasedStorage_T storage;
-//    const auto& typedPtr = storage.asTypedPtr<ErasedTypedStoredType>();
-//
-//    // I think this is UB because we are accessing the storage before any object was constructed in it.
-//    // Or it isn't because std::byte is special.
-//    ASSERT_EQ(reinterpret_cast<const ErasedTypeByte&>(*typedPtr), std::byte{});
-//
-//    // Destructor
-//    storage.~ErasedStorage();
-//    ASSERT_EQ(reinterpret_cast<const ErasedTypeByte&>(*typedPtr), std::byte{});
-//  }
-//
-//  ExpectSpecialFunctionCallCounter(this->m_counters);
-//  ExpectConstructorsAndDestructorsCount(this->m_counters);
-//}
+template<typename ErasedType>
+using ErasedStorage_T = ErasedStorage<sizeof(ErasedType), alignof(ErasedType)>;
+auto typedTest = TestUtilities::RegistratorCommonTests<ErasedStorageF,
+                                                       TEST_TYPE(ErasedStorage_T<TestStruct>),
+                                                       // TEST_TYPE(ErasedStorage_T<const TestStruct>),  // Removing because I don't think it makes sense to
+                                                       // have a const type for Erased storage
+                                                       TEST_TYPE(ErasedStorage_T<TestStruct&&>)>{};
 
 template<typename T>
 class ErasedStorageTestStructF: public testing::Test
@@ -115,12 +173,14 @@ protected:
 private:
 };
 
-using ErasedTypes_T = ::testing::Types<TestStruct, const TestStruct, TestStruct&&>;
+using ErasedTypes_T = ::testing::Types<TestStruct, TestStruct&&>;
 
-struct ErasedTypesNameGenerator {
-  template <typename T>
-  static std::string GetName(int i) {
-    static const std::array names= {"TestStruct", "constTestStruct", "TestStruct&&"};
+struct ErasedTypesNameGenerator
+{
+  template<typename T>
+  static std::string GetName(int i)
+  {
+    static const std::array names = {"TestStruct", "TestStruct&&"};
     return names[i];
   }
 };
@@ -454,7 +514,7 @@ protected:
 private:
 };
 
-using ErasedTypesCompound_T = ::testing::Types<TestStruct*, const TestStruct*, TestStruct* const, void*>;
+using ErasedTypesCompound_T = ::testing::Types<TestStruct*, const TestStruct* /*, TestStruct* const*/, void*>;
 TYPED_TEST_SUITE(ErasedStorageTestStructPtrF, ErasedTypesCompound_T);
 
 TYPED_TEST(ErasedStorageTestStructPtrF, DefaultCtor)
@@ -651,4 +711,4 @@ TEST(ErasedStorageTestStructArrayConst, SpecialMemberFcts)
   }
 }
 
-} // namespace Core
+} // namespace CoreTests

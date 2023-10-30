@@ -52,11 +52,12 @@ jobs:
           path: _Out/build/vcpkg_installed
           key: ${{ runner.os }}-${{ env.configurePreset }}-vcpkg-${{ hashFiles('**/vcpkg.json') }}
 
-      # - name: Set environmental variables
-      #   shell: bash
-      #   run: |
-      #     # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#adding-a-system-path
-      #     echo "VCPKG_ROOT=$VCPKG_INSTALLATION_ROOT" >> $GITHUB_ENV
+      - name: Set environmental variables
+        if: runner.os == 'Linux' # On Windows VCPKG_ROOT is set by the MSVC dev environment
+        shell: bash
+        run: |
+          # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#adding-a-system-path
+          echo "VCPKG_ROOT=$VCPKG_INSTALLATION_ROOT" >> $GITHUB_ENV
 
       - name: Install Linux packages
         if: runner.os == 'Linux'

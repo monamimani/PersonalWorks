@@ -79,6 +79,11 @@ jobs:
           cmake --version
           cmake --preset ${{ env.configurePreset }}-x64-${{ env.buildConfig }}
 
+      - name: Cmake Build
+        if: runner.os == 'Linux'
+        run: |
+          cmake --build --preset ${{ env.configurePreset }}-x64-${{ env.buildConfig }}
+
       - name: Cmake Configure
         if: runner.os == 'Windows'
         run: |
@@ -87,10 +92,10 @@ jobs:
           & { . Scripts\Build\VsEnvironment.ps1; LauncheVsDevShell }
           cmake --version
           (gcm cmake).Path
-          cmake --preset ${{ env.configurePreset }}-x64-${{ env.buildConfig }}
+          cmake --preset ${{ env.configurePreset }}
 
       - name: Cmake Build
-        if: ${{ runner.os == 'Windows' }}
+        if: runner.os == 'Windows'
         run: |
           cmake --build --preset ${{ env.buildPreset }}
 

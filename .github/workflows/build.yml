@@ -74,6 +74,13 @@ jobs:
           sudo update-alternatives --install /usr/bin/gcc gcc /opt/gcc-latest/bin/g++ 140 --slave /usr/bin/g++ g++ /opt/gcc-latest/bin/g++
 
       - name: Cmake Configure
+        if: runner.os == 'Linux'
+        run: |
+          cmake --version
+          cmake --preset ${{ env.configurePreset }}
+
+      - name: Cmake Configure
+        if: runner.os == 'Windows'
         run: |
           cmake --version
           (gcm cmake).Path

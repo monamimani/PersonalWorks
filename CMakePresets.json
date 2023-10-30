@@ -234,6 +234,18 @@
       "name": "windows-vs2022-x64-checkers-shipping",
       "configurePreset": "windows-vs2022-checkers",
       "configuration": "Release"
+    },
+    {
+      "name": "windows-ninja-x64-debug",
+      "configurePreset": "windows-ninja-x64-debug"
+    },
+    {
+      "name": "windows-ninja-x64-release",
+      "configurePreset": "windows-ninja-x64-release"
+    },
+    {
+      "name": "windows-ninja-x64-shipping",
+      "configurePreset": "windows-ninja-x64-shipping"
     }
   ] //,
   //"testPresets": [

@@ -70,7 +70,7 @@ jobs:
           sudo apt update -y
           sudo apt install -y build-essential wget ninja-build
           wget --quiet https://kayari.org/gcc-latest/gcc-latest.deb
-          dpkg -i gcc-latest.deb
+          sudo dpkg -i gcc-latest.deb
           sudo update-alternatives --install /usr/bin/gcc gcc /opt/gcc-latest/bin/g++ 140 --slave /usr/bin/g++ g++ /opt/gcc-latest/bin/g++
 
       - name: Cmake Configure

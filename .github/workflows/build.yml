@@ -82,7 +82,7 @@ jobs:
           (gcm cmake).Path
           cmake --preset ${{ env.configurePreset }}
 
-      - name: Cmake Build Multiconfig
+      - name: Cmake Build
         if: ${{ runner.os == 'Windows' }}
         run: |
           cmake --build --preset ${{ env.buildPreset }}

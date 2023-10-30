@@ -63,13 +63,14 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           # sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-          # sudo apt update
+          # sudo apt update -y
           # sudo apt install gcc-14 g++-14
           # sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-114 140 --slave /usr/bin/g++ g++ /usr/bin/g++-14
           # sudo apt-get install ninja-build
           # gcc -v
           sudo apt update -y
-          sudo apt install -y build-essential wget ninja-build
+          sudo apt upgrade -y
+          sudo apt install -y build-essential wget ninja-build cmake
           wget --quiet https://kayari.org/gcc-latest/gcc-latest.deb
           sudo dpkg -i gcc-latest.deb
           sudo update-alternatives --install /usr/bin/gcc gcc /opt/gcc-latest/bin/g++ 140 --slave /usr/bin/g++ g++ /opt/gcc-latest/bin/g++

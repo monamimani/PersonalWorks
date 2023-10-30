@@ -10,8 +10,8 @@ jobs:
       matrix:
         platform:
           - os: windows-latest
-            #genertor: windows-vs2022
-            genertor: windows-ninja
+            genertor: windows-vs2022
+            #genertor: windows-ninja
             experimental: false
           - os: ubuntu-latest
             genertor: linux-ninja

@@ -25,8 +25,8 @@
       "name": "Gcc",
       "hidden": true,
       "cacheVariables": {
-        "CMAKE_C_COMPILER": "gcc-14",
-        "CMAKE_CXX_COMPILER": "g++-14",
+        "CMAKE_C_COMPILER": "gcc",
+        "CMAKE_CXX_COMPILER": "g++",
         "CMAKE_CXX_FLAGS": "-Wpedantic -Wall -Wextra",
         "CMAKE_C_FLAGS": "-Wpedantic -Wall -Wextra"
       },

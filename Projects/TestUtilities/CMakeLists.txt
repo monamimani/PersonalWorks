@@ -22,7 +22,7 @@ set(publicFiles
   ${targetName}/BasicTestsFriend.h
 )
 
-set(publicModuleFiles 
+set(moduleFiles 
 )
 
 set(privateFiles 
@@ -40,56 +40,27 @@ set(benchmarkFiles
 
 add_library(${targetName})
 
-if(CMAKE_VERSION GREATER_EQUAL "3.26.0" )
-  target_sources(${targetName}
-    PRIVATE
-      ${privateFiles}
-    PUBLIC
-     FILE_SET CXX_MODULES FILES ${publicModuleFiles}
-    #PUBLIC
-     #FILE_SET CXX_MODULE_HEADER_UNITS FILES ${headerUnitFiles}
-    PUBLIC
-      ${publicFiles}
-    INTERFACE
-      ${interfaceFiles}
-  )
-else()
-  target_sources(${targetName}
-    INTERFACE
-      ${privateFiles}
-      ${publicModuleFiles}
-      ${publicFiles}
-      ${interfaceFiles}
-      ${headerUnitFiles}
-  )
-endif()
-
-
 target_include_directories(${targetName}
     PUBLIC
         "${CMAKE_CURRENT_SOURCE_DIR}"
 )
 
-target_link_libraries(${targetName}
-  PRIVATE
-  PUBLIC
-  INTERFACE
-    GTest::gmock 
-    GTest::gtest
-    benchmark::benchmark
-)
-
-
-if(BUILD_TESTS)
- add_test_target(
-   TARGET ${targetName} 
-   TESTFILES ${testFiles}
+add_target_sources(${targetName} 
    PRIVATEFILES ${privateFiles}
    MODULEFILES ${moduleFiles}
-   HEADERUNITFILES ${headerUnitFiles}
    PUBLICFILES ${publicFiles}
-   INTERFACEFILES ${interfaceFiles})
-endif()
+   HEADERUNITFILES ${headerUnitFiles}
+   INTERFACEFILES ${interfaceFiles}
+   TESTFILES ${testFiles}
+   BENCHMARKFILES ${benchmarkFiles}
+   )
 
-if(BUILD_BENCHMARKS)
-endif()
+set(interfaceLibs
+  GTest::gmock 
+  GTest::gtest
+  benchmark::benchmark
+)
+
+add_target_link_libraries(${targetName}
+  INTERFACELIBS ${interfaceLibs}
+)

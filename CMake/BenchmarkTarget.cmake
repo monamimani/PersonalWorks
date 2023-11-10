@@ -195,6 +195,7 @@ function(add_benchmark_target_link_libraries TARGETNAME)
       ${ARG_PRIVATELIBS}
       ${LinkGBenchmarkMain}
       #$<$<NOT:$<BOOL:${ARG_MAINFILE}>>:GBenchmark::gbenchmark_main>
+      #BenchmarkUtilities
       TestUtilities
       SanitizersConfiguration
     PUBLIC

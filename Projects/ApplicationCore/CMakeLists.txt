@@ -92,8 +92,8 @@ target_include_directories(${targetName}
 
 target_link_libraries(${targetName}
   PRIVATE
-  PUBLIC
     Core
+  PUBLIC
 )
 
 if(BUILD_TESTS)

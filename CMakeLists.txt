@@ -1,11 +1,12 @@
-cmake_minimum_required(VERSION 3.26)
+cmake_minimum_required(VERSION 3.26 FATAL_ERROR)
 
 set(VCPKG_INSTALLED_DIR  ${CMAKE_BINARY_DIR}/../vcpkg_installed)
 
 #set(CMAKE_VERBOSE_MAKEFILE ON)
 
 include(CMakePrintHelpers)
-# cmake_print_variables(CMAKE_VERSION)
+
+cmake_print_variables(CMAKE_VERSION)
 # cmake_print_variables(CMAKE_MODULE_PATH)
 
 get_filename_component(WorkspaceName ${CMAKE_SOURCE_DIR} NAME)
@@ -22,9 +23,6 @@ project(${WorkspaceName}
     #HOMEPAGE_URL "%%myurl%%"
     LANGUAGES CXX)
 
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_BINARY_DIR}")
-
 include(ProcessorCount)
 ProcessorCount(PROCESSOR_COUNT)
 
@@ -39,6 +37,7 @@ include(CMake/PreventInSourceBuilds.cmake)
 include(CMake/StaticAnalizers.cmake)
 include(CMake/ClangFormat.cmake)
 include(CMake/Sanitizers.cmake)
+include(CMake/TargetSources.cmake)
 include(CMake/TestTarget.cmake)
 include(CMake/BenchmarkTarget.cmake)
 

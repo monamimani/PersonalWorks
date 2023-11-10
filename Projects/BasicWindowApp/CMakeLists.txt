@@ -28,8 +28,14 @@ endif()
 set(interfaceFiles 
 )
 
+set(headerUnitFiles 
+)
+
 set(publicFiles 
   ${targetName}/BasicWindowApp.h
+)
+
+set(moduleFiles 
 )
 
 set(privateFiles 
@@ -43,38 +49,29 @@ set(testFiles
 set(benchmarkFiles 
 )
 
-add_executable(${targetName})
-
-target_sources(${targetName}
-  PRIVATE
-    ${privateFiles}
-    ${platform_privateFiles}
-    main.cpp
-  PUBLIC
-    ${publicFiles}
-  INTERFACE
-    ${interfaceFiles}
-)
+add_executable(${targetName} main.cpp)
 
 target_include_directories(${targetName}
     PUBLIC
         "${CMAKE_CURRENT_SOURCE_DIR}"
 )
 
-target_link_libraries(${targetName}
-  PRIVATE
-  PUBLIC
-    Core
-    ApplicationCore
+add_target_sources(${targetName} 
+   PRIVATEFILES ${privateFiles} ${platform_privateFiles}
+   MODULEFILES ${moduleFiles}
+   PUBLICFILES ${publicFiles}
+   HEADERUNITFILES ${headerUnitFiles}
+   INTERFACEFILES ${interfaceFiles}
+   TESTFILES ${testFiles}
+   MAINTESTFILE BasicWindowAppMain.test.cpp
+   BENCHMARKFILES ${benchmarkFiles}
+   )
+
+set(privateLibs
+  Core
+  ApplicationCore
 )
 
-if(BUILD_TESTS)
-  add_test_target(
-    TARGET ${targetName} 
-    TESTFILES ${testFiles}
-    PRIVATEFILES ${privateFiles}
-    PUBLICFILES ${publicFiles}
-    INTERFACEFILES ${interfaceFiles}
-    MAINFILE BasicWindowAppMain.test.cpp
+add_target_link_libraries(${targetName}
+  PRIVATELIBS ${privateLibs}
 )
-endif()

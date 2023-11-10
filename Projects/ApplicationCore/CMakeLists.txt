@@ -43,6 +43,9 @@ endif()
 set(interfaceFiles 
 )
 
+set(headerUnitFiles 
+)
+
 set(publicFiles 
   ${targetName}/Application/Application.h
   ${targetName}/Application/ApplicationEventMediator.h
@@ -53,6 +56,9 @@ set(publicFiles
   ${targetName}/Window/WindowDesc.h
   ${targetName}/Window/WindowImpl.h
   ${platform_publicFiles}
+)
+
+set(moduleFiles 
 )
 
 set(privateFiles 
@@ -76,32 +82,25 @@ set(benchmarkFiles
 
 add_library(${targetName})
 
-target_sources(${targetName}
-  PRIVATE
-    ${privateFiles}
-  PUBLIC
-    ${publicFiles}
-  INTERFACE
-    ${interfaceFiles}
-)
-
 target_include_directories(${targetName}
     PUBLIC
         "${CMAKE_CURRENT_SOURCE_DIR}"
 )
 
-target_link_libraries(${targetName}
-  PRIVATE
-    Core
-  PUBLIC
+add_target_sources(${targetName} 
+   PRIVATEFILES ${privateFiles}
+   MODULEFILES ${moduleFiles}
+   PUBLICFILES ${publicFiles}
+   HEADERUNITFILES ${headerUnitFiles}
+   INTERFACEFILES ${interfaceFiles}
+   TESTFILES ${testFiles}
+   BENCHMARKFILES ${benchmarkFiles}
+   )
+
+set(privateLibs
+  Core
 )
 
-if(BUILD_TESTS)
-  add_test_target(
-    TARGET ${targetName} 
-    TESTFILES ${testFiles}
-    PRIVATEFILES ${privateFiles}
-    PUBLICFILES ${publicFiles}
-    INTERFACEFILES ${interfaceFiles}
-    LINKLIBS Core)
-endif()
+add_target_link_libraries(${targetName}
+  PRIVATELIBS ${privateLibs}
+)

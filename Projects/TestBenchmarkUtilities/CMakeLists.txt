@@ -27,8 +27,16 @@ endif()
 set(interfaceFiles 
 )
 
-set(publicFiles 
+set(headerUnitFiles 
+)
+
+set(publicFiles
+  ${targetName}/GoogleTest.h
+  ${targetName}/GoogleBenchmark.h
   ${platform_publicFiles}
+)
+
+set(moduleFiles 
 )
 
 set(privateFiles 
@@ -38,65 +46,29 @@ set(privateFiles
 set(testFiles 
 )
 
-
 set(benchmarkFiles 
 )
 
 add_library(${targetName})
-
-target_sources(${targetName}
-  PRIVATE
-    ${privateFiles}
-  PUBLIC
-    ${publicFiles}
-  INTERFACE
-    ${interfaceFiles}
-)
 
 target_include_directories(${targetName}
     PUBLIC
         "${CMAKE_CURRENT_SOURCE_DIR}"
 )
 
-target_link_libraries(${targetName}
-  PRIVATE
-  PUBLIC
+add_target_sources(${targetName} 
+   PRIVATEFILES ${privateFiles}
+   MODULEFILES ${moduleFiles}
+   PUBLICFILES ${publicFiles}
+   HEADERUNITFILES ${headerUnitFiles}
+   INTERFACEFILES ${interfaceFiles}
+   TESTFILES ${testFiles}
+   BENCHMARKFILES ${benchmarkFiles}
+   )
+
+set(privateLibs
 )
 
-#source_group(
-#  TREE "${PROJECT_SOURCE_DIR}/include"
-#  PREFIX "Header Files"
-#  FILES ${HEADER_LIST})
-
-if(BUILD_TESTS)
-  set(targetNameTests ${targetName}Tests )
-  add_executable(${targetNameTests} 
-    ${testFiles}
-  )
-  set_target_properties(${targetNameTests} PROPERTIES FOLDER Tests)
-
-  target_link_libraries(${targetNameTests}
-  PRIVATE 
-    ${targetName}
-    GTest::gmock 
-    GTest::gtest
-  )
-
-  gtest_discover_tests(${targetNameTests}
-    WORKING_DIRECTORY ${PROJECT_DIR}
-    PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${PROJECT_DIR}"
-    DISCOVERY_MODE PRE_TEST
-  )
-
-
-if(RUN_TESTS_AFTER_BUILD)
-  add_custom_command(TARGET ${targetNameTests}
-    # Run after all other rules within the target have been executed
-    POST_BUILD
-    COMMAND ${targetNameTests}
-    COMMENT "Running Google Test"
-    VERBATIM
-  )
-endif()
-
-endif()
+add_target_link_libraries(${targetName}
+  PRIVATELIBS ${privateLibs}
+)

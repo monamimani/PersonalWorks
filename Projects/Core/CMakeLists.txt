@@ -100,67 +100,31 @@ set(benchmarkFiles
 
 add_library(${targetName})
 
-if(CMAKE_VERSION GREATER_EQUAL "3.26.0" )
-  target_sources(${targetName}
-    PRIVATE
-      ${privateFiles}
-    PUBLIC
-     FILE_SET CXX_MODULES FILES ${moduleFiles}
-    #PUBLIC
-     #FILE_SET CXX_MODULE_HEADER_UNITS FILES ${headerUnitFiles}
-    PUBLIC
-      ${publicFiles}
-    INTERFACE
-      ${interfaceFiles}
-  )
-else()
-  target_sources(${targetName}
-    PRIVATE
-      ${privateFiles}
-    PRIVATE
-      ${moduleFiles}
-    PUBLIC
-      ${publicFiles}
-    PUBLIC
-      ${headerUnitFiles}
-    INTERFACE
-      ${interfaceFiles}
-  )
-endif()
-
 target_include_directories(${targetName}
     PUBLIC
         "${CMAKE_CURRENT_SOURCE_DIR}"
 )
 
-target_link_libraries(${targetName}
-  PRIVATE
-    TestUtilities
-  PUBLIC
-)
-
-if(BUILD_TESTS)
- add_test_target(
-   TARGET ${targetName} 
-   TESTFILES ${testFiles}
+add_target_sources(${targetName} 
    PRIVATEFILES ${privateFiles}
    MODULEFILES ${moduleFiles}
-   HEADERUNITFILES ${headerUnitFiles}
    PUBLICFILES ${publicFiles}
+   HEADERUNITFILES ${headerUnitFiles}
    INTERFACEFILES ${interfaceFiles}
-   MAINFILE CoreMain.test.cpp)
+   TESTFILES ${testFiles}
+   MAINTESTFILE CoreMain.test.cpp
+   BENCHMARKFILES ${benchmarkFiles}
+   MAINBENCHMARKFILE CoreMain.benchmark.cpp
+   )
 
-  #set_target_properties(${targetName}Tests PROPERTIES VS_DEBUGGER_COMMAND_ARGUMENTS "--gtest_filter=ErasedStorageTestStructF*")
-endif()
+set(privateLibs
+  TestUtilities
+)
 
-if(BUILD_BENCHMARKS)
-  add_benchmark_target(
-    TARGET ${targetName} 
-    BENCHMARKFILES ${benchmarkFiles}
-    PRIVATEFILES ${privateFiles}
-    MODULEFILES ${moduleFiles}
-    HEADERUNITFILES ${headerUnitFiles}
-    PUBLICFILES ${publicFiles}
-    INTERFACEFILES ${interfaceFiles}
-    MAINFILE CoreMain.benchmark.cpp)
-endif()
+add_target_link_libraries(${targetName}
+  PRIVATELIBS ${privateLibs}
+)
+
+#if(BUILD_TESTS)
+#  #set_target_properties(${targetName}Tests PROPERTIES VS_DEBUGGER_COMMAND_ARGUMENTS "--gtest_filter=ErasedStorageTestStructF*")
+#endif()

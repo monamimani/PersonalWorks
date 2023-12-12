@@ -1,6 +1,6 @@
 name: Personalworks
 
-on: [push, pull_request, release]
+on: [workflow_dispatch, push, pull_request, release]
 
 jobs:
 

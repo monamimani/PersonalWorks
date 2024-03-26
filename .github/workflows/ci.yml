@@ -28,18 +28,18 @@ jobs:
         compiler: [ Gcc, Clang, Clang-cl, Msvc]
         generator: [Ninja]
         build_type: [Debug, Release]
-        build_kind: [Dev, QA, Profile, Shipping]
+        #build_kind: [Dev, QA, Profile, Shipping]
 
         exclude: #Becasue they don't make sense or no Cmake preset created.
           - platform: {name: Linux}
             compiler: Msvc
           - platform: {name: Windows}
             compiler: Clang
-          - build_kind: QA
-            build_type: Debug
-          - build_kind: Shipping
-            build_type: Debug
-          - build_kind: Profile
+          # - build_kind: QA
+          #   build_type: Debug
+          # - build_kind: Shipping
+          #   build_type: Debug
+          # - build_kind: Profile
           - compiler: Gcc
           - compiler: Clang-cl
           
@@ -48,12 +48,12 @@ jobs:
             compiler: Clang
             generator: NinjaMultiConfig
             build_type: Debug
-            build_kind: Dev
+            #build_kind: Dev
           - platform: {name: Windows, os: windows-latest }
             compiler: Msvc
             generator: Vs2022
             build_type: Debug
-            build_kind: Dev
+            #build_kind: Dev
         
     
     name: ${{matrix.platform.name}}-${{matrix.compiler}}-${{matrix.generator}}-${{matrix.build_type}}-${{matrix.build_kind}}

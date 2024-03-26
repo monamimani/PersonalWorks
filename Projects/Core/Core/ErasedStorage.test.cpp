@@ -7,7 +7,9 @@
 #include "TestUtilities/BasicTestsGenerator.h"
 #include "TestUtilities/GoogleTest.h"
 #include "TestUtilities/TestStruct.test.h"
+#include "TestUtilities/TestsFriend.h"
 using namespace TestUtilities;
+
 
 import Core;
 import ErasedStorage;
@@ -27,6 +29,9 @@ public:
 
   auto AreStorageFctsNullptr(const TestedType& obj) const
   {
+    //using TF_T = TestUtilities::TestFriend;
+    //const auto& storageFct = TF_T::get<&TestedType::m_storageFcts>(obj);
+    //return (storageFct.m_destroy == nullptr) && (storageFct.m_copy == nullptr) && (storageFct.m_move == nullptr);
     return obj.m_storageFcts.m_destroy == nullptr && obj.m_storageFcts.m_copy == nullptr && obj.m_storageFcts.m_move == nullptr;
   }
 

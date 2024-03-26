@@ -1,7 +1,4 @@
-if(prevent_in_source_builds_included)
-    return()
-endif()
-set(prevent_in_source_builds_included true)
+include_guard(GLOBAL)
 
 function(check_in_source_builds)
   # make sure the user doesn't play dirty with symlinks

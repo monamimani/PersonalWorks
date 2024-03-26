@@ -1,4 +1,11 @@
 {
+  "$schema": "https://cmake.org/cmake/help/v3.28/_downloads/3e2d73bff478d88a7de0de736ba5e361/schema.json",
+  "version": 8,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 28,
+    "patch": 0
+  },
   "configurePresets": [
     {
       "name": "Vs2022",
@@ -11,15 +18,20 @@
       "toolset": {
         "value": "host=x64",
         "strategy": "set"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
       }
     },
     {
-      "name": "ninja-multi-config",
+      "name": "NinjaMultiConfig",
       "hidden": true,
       "generator": "Ninja Multi-Config"
     },
     {
-      "name": "ninja",
+      "name": "Ninja",
       "hidden": true,
       "generator": "Ninja",
       "architecture": {

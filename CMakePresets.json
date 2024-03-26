@@ -1,81 +1,39 @@
 {
-  "version": 6,
+  "$schema": "https://cmake.org/cmake/help/v3.28/_downloads/3e2d73bff478d88a7de0de736ba5e361/schema.json",
+  "version": 8,
   "cmakeMinimumRequired": {
     "major": 3,
-    "minor": 26,
+    "minor": 28,
     "patch": 0
   },
+  "include": [
+    "CMakePresets/BuildVariant.json",
+    "CMakePresets/Generators.json",
+    "CMakePresets/Platforms.json",
+    "CMakePresets/Toolchain.json"
+
+  ],
   "configurePresets": [
     {
-      "name": "Msvc",
-      "hidden": true,
-      "cacheVariables": {
-        "CMAKE_C_COMPILER": "cl",
-        "CMAKE_CXX_COMPILER": "cl",
-        "CMAKE_CXX_FLAGS": "/DWIN32 /D_WINDOWS /W4 /EHsc /MP /permissive- /Zc:preprocessor",
-        "CMAKE_C_FLAGS": "/DWIN32 /D_WINDOWS /W4 /EHsc /MP /permissive- /Zc:preprocessor"
-      },
-      "condition": {
-        "type": "equals",
-        "lhs": "${hostSystemName}",
-        "rhs": "Windows"
-      }
-    },
-    {
-      "name": "Gcc",
-      "hidden": true,
-      "cacheVariables": {
-        "CMAKE_C_COMPILER": "gcc",
-        "CMAKE_CXX_COMPILER": "g++",
-        "CMAKE_CXX_FLAGS": "-Wpedantic -Wall -Wextra",
-        "CMAKE_C_FLAGS": "-Wpedantic -Wall -Wextra"
-      },
-      "condition": {
-        "type": "equals",
-        "lhs": "${hostSystemName}",
-        "rhs": "Linux"
-      }
-    },
-    {
-      "name": "Vs2022",
-      "hidden": true,
-      "generator": "Visual Studio 17 2022",
-      "architecture": {
-        "value": "x64",
-        "strategy": "set"
-      },
-      "toolset": {
-        "value": "host=x64",
-        "strategy": "set"
-      }
-    },
-    {
-      "name": "ninja-multi-config",
-      "hidden": true,
-      "generator": "Ninja Multi-Config"
-    },
-    {
-      "name": "ninja",
-      "hidden": true,
-      "generator": "Ninja",
-      "architecture": {
-        "value": "x64",
-        "strategy": "external"
-      },
-      "toolset": {
-        "value": "x64",
-        "strategy": "external"
-      }
+      "name": "Preset-Name-Template",
+      "description": "%Platform%-%Compiler%-%Generator%-[%OtherConfigOptions,...%]-%BuildType%-%BuildKind%",
+      "hidden": true
     },
     {
       "name": "Common",
       "hidden": true,
       "binaryDir": "${sourceDir}/_Out/build/${presetName}",
       "installDir": "${sourceDir}/_Out/install/${presetName}",
-      "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+      "warnings": {
+        "uninitialized": true,
+        "dev": false,
+        "deprecated": true
+      },
+      "trace": {
+        "mode": "off",
+        "format": "human"
+      },
       "cacheVariables": {
-        "CMAKE_CXX_STANDARD": "23",
-        "CMAKE_CXX_STANDARD_REQUIRED": "YES"
       }
     },
     {
@@ -95,157 +53,120 @@
       }
     },
     {
-      "name": "Windows",
-      "hidden": true,
+      "name": "Linux-Clang-NinjaMultiConfig-Debug",
+      "inherits": [
+        "Common",
+        "Linux",
+        "Clang",
+        "NinjaMultiConfig"
+      ],
       "cacheVariables": {
-        "VCPKG_TARGET_TRIPLET": "x64-windows"
-      },
-      "condition": {
-        "type": "equals",
-        "lhs": "${hostSystemName}",
-        "rhs": "Windows"
-      },
-      "vendor": {
-        "microsoft.com/VisualStudioSettings/CMake/1.0": {
-          "hostOS": [ "Windows" ]
-        }
+        // "CMAKE_BUILD_TYPE": "Debug" Commented because multiconfig generator don't use that CMake variable
       }
     },
     {
-      "name": "Linux",
-      "hidden": true,
-      "cacheVariables": {
-        "VCPKG_TARGET_TRIPLET": "x64-linux"
-      },
-      "condition": {
-        "type": "equals",
-        "lhs": "${hostSystemName}",
-        "rhs": "Linux"
-      },
-      "vendor": {
-        "microsoft.com/VisualStudioSettings/CMake/1.0": {
-          "hostOS": [ "Linux" ],
-          "intelliSenseMode": "linux-gcc-x64"
-        },
-        "microsoft.com/VisualStudioRemoteSettings/CMake/1.0": {
-          "sourceDir": "$env{HOME}/.vs/$ms{projectDirName}"
-        }
-      }
-    },
-    {
-      "name": "windows-vs2022",
-      "inherits": [ "Common", "Windows", "Msvc", "Vs2022" ]
-    },
-    {
-      "name": "windows-vs2022-checkers",
-      "inherits": [ "Common", "checkers", "Windows", "Msvc", "Vs2022" ]
-    },
-    {
-      "name": "windows-ninja-x64-debug",
-      "inherits": [ "Common", "Windows", "Msvc", "ninja" ],
+      "name": "Linux-Clang-Ninja-Debug",
+      "inherits": [
+        "Common",
+        "Linux",
+        "Clang",
+        "Ninja"
+      ],
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug"
       }
     },
     {
-      "name": "windows-ninja-x64-release",
-      "inherits": [ "Common", "Windows", "Msvc", "ninja" ],
+      "name": "Linux-Clang-Ninja-Release",
+      "inherits": [
+        "Common",
+        "Linux",
+        "Clang",
+        "Ninja"
+      ],
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "RelWithDebInfo"
       }
     },
     {
-      "name": "windows-ninja-x64-shipping",
-      "inherits": [ "Common", "Windows", "Msvc", "ninja" ],
+      "name": "Windows-Msvc-Vs2022-Debug",
+      "inherits": [
+        "Common",
+        "Windows",
+        "Msvc",
+        "Vs2022"
+      ],
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Release"
+        // "CMAKE_BUILD_TYPE": "Debug" Commented because multiconfig generator don't use that CMake variable
       }
     },
     {
-      "name": "windows-ninja-checkers-x64-debug",
-      "inherits": [ "Common", "checkers", "Windows", "Msvc", "ninja" ],
+      "name": "Windows-ClangCl-Ninja-Debug",
+      "inherits": [
+        "Common",
+        "Windows",
+        "ClangCl",
+        "Ninja"
+      ],
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug"
       }
     },
     {
-      "name": "windows-ninja-checkers-x64-release",
-      "inherits": [ "Common", "checkers", "Windows", "Msvc", "ninja" ],
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "RelWithDebInfo"
-      }
-    },
-    {
-      "name": "windows-ninja-checkers-x64-shipping",
-      "inherits": [ "Common", "checkers", "Windows", "Msvc", "ninja" ],
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Release"
-      }
-    },
-    {
-      "name": "linux-ninja-x64-debug",
-      "inherits": [ "Common", "Linux", "Gcc", "ninja" ],
+      "name": "Windows-Msvc-Ninja-Debug",
+      "inherits": [
+        "Common",
+        "Windows",
+        "Msvc",
+        "Ninja"
+      ],
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug"
       }
     },
     {
-      "name": "linux-ninja-x64-release",
-      "inherits": [ "Common", "Linux", "Gcc", "ninja" ],
+      "name": "Windows-Msvc-Ninja-Release",
+      "inherits": [
+        "Common",
+        "Windows",
+        "Msvc",
+        "Ninja"
+      ],
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "RelWithDebInfo"
-      }
-    },
-    {
-      "name": "linux-ninja-x64-shipping",
-      "inherits": [ "Common", "Linux", "Gcc", "ninja" ],
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Release"
       }
     }
   ],
   "buildPresets": [
     {
-      "name": "windows-vs2022-x64-debug",
-      "configurePreset": "windows-vs2022",
+      "name": "Linux-Clang-NinjaMultiConfig-Debug",
+      "configurePreset": "Linux-Clang-NinjaMultiConfig-Debug",
       "configuration": "Debug"
     },
     {
-      "name": "windows-vs2022-x64-release",
-      "configurePreset": "windows-vs2022",
-      "configuration": "RelWithDebInfo"
+      "name": "Linux-Clang-Ninja-Debug",
+      "configurePreset": "Linux-Clang-Ninja-Debug"
     },
     {
-      "name": "windows-vs2022-x64-shipping",
-      "configurePreset": "windows-vs2022",
-      "configuration": "Release"
+      "name": "Linux-Clang-Ninja-Release",
+      "configurePreset": "Linux-Clang-Ninja-Release"
     },
     {
-      "name": "windows-vs2022-x64-checkers-debug",
-      "configurePreset": "windows-vs2022-checkers",
+      "name": "Windows-Msvc-Vs2022-Debug",
+      "configurePreset": "Windows-Msvc-Vs2022-Debug",
       "configuration": "Debug"
     },
     {
-      "name": "windows-vs2022-x64-checkers-release",
-      "configurePreset": "windows-vs2022-checkers",
-      "configuration": "RelWithDebInfo"
+      "name": "Windows-ClangCl-Ninja-Debug",
+      "configurePreset": "Windows-ClangCl-Ninja-Debug"
     },
     {
-      "name": "windows-vs2022-x64-checkers-shipping",
-      "configurePreset": "windows-vs2022-checkers",
-      "configuration": "Release"
+      "name": "Windows-Msvc-Ninja-Debug",
+      "configurePreset": "Windows-Msvc-Ninja-Debug"
     },
     {
-      "name": "windows-ninja-x64-debug",
-      "configurePreset": "windows-ninja-x64-debug"
-    },
-    {
-      "name": "windows-ninja-x64-release",
-      "configurePreset": "windows-ninja-x64-release"
-    },
-    {
-      "name": "windows-ninja-x64-shipping",
-      "configurePreset": "windows-ninja-x64-shipping"
+      "name": "Windows-Msvc-Ninja-Release",
+      "configurePreset": "Windows-Msvc-Ninja-Release"
     }
   ] //,
   //"testPresets": [
@@ -297,6 +218,7 @@
   //    "configurePreset": "linux-ninja-multi-config",
   //    "configuration": "Release"
   //  }
-
-  //]
+  //],
+  //"packagePresets": [],
+  //"workflowPresets": []
 }

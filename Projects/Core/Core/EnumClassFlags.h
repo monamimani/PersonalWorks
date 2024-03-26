@@ -5,8 +5,37 @@
 namespace Core
 {
 // if ((Flags & EFlags::Flag1) != EFlags::None)
+template <typename Enum>
+requires std::is_enum_v<Enum>
+constexpr bool enumHasFlags(Enum flags, Enum contains)
+{
+  return (std::to_underlying(flags) & std::to_underlying(contains)) == std::to_underlying(contains);
+}
 
-// Defenition enum classes bitwise operators so they can be used as bit flags
+template <typename Enum>
+requires std::is_enum_v<Enum>
+constexpr bool enumHasAnyFlags(Enum flags, Enum contains)
+{
+  return (std::to_underlying(flags) & std::to_underlying(contains)) != 0;
+}
+
+template <typename Enum>
+requires std::is_enum_v<Enum>
+constexpr void enumAddFlags(Enum& flags, Enum flagsToAdd)
+{
+  flags |= flagsToAdd;
+}
+
+template <typename Enum>
+requires std::is_enum_v<Enum>
+constexpr void enumRemoveFlags(Enum& flags, Enum flagsToRemove)
+{
+  flags &= static_cast<Enum>(~flagsToRemove);
+}
+
+} // namespace Core
+
+// Definition enum classes bitwise operators so they can be used as bit flags
 #define ENUM_CLASS_FLAGS(Enum)                                                         \
   inline constexpr Enum& operator|=(Enum& lhs, Enum rhs)                               \
   {                                                                                    \
@@ -50,7 +79,7 @@ namespace Core
   }
 
 // Friends all bitwise operators for enum classes so the definition can be kept private / protected.
-#define FRIEND_ENUM_CLASS_FLAGS(Enum)                  \
+#define FRIEND_ENUM_CLASS_FLAGS(Enum)                        \
   friend Enum& operator|=(Enum& lhs, Enum rhs);        \
   friend Enum& operator&=(Enum& lhs, Enum rhs);        \
   friend Enum& operator^=(Enum& lhs, Enum rhs);        \
@@ -59,33 +88,3 @@ namespace Core
   friend constexpr Enum operator^(Enum lhs, Enum rhs); \
   friend constexpr bool operator!(Enum E);             \
   friend constexpr Enum operator~(Enum E);
-
-template <typename Enum>
-requires std::is_enum_v<Enum>
-constexpr bool enumHasFlags(Enum flags, Enum contains)
-{
-  return (std::to_underlying(flags) & std::to_underlying(contains)) == std::to_underlying(contains);
-}
-
-template <typename Enum>
-requires std::is_enum_v<Enum>
-constexpr bool enumHasAnyFlags(Enum flags, Enum contains)
-{
-  return (std::to_underlying(flags) & std::to_underlying(contains)) != 0;
-}
-
-template <typename Enum>
-requires std::is_enum_v<Enum>
-constexpr void enumAddFlags(Enum& flags, Enum flagsToAdd)
-{
-  flags |= flagsToAdd;
-}
-
-template <typename Enum>
-requires std::is_enum_v<Enum>
-constexpr void enumRemoveFlags(Enum& flags, Enum flagsToRemove)
-{
-  flags &= static_cast<Enum>(~flagsToRemove);
-}
-
-} // namespace Core

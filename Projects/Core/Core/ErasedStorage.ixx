@@ -9,7 +9,7 @@ module;
 #include <type_traits>
 #include <utility>
 
-#include "TestUtilities/BasicTestsFriend.h"
+#include "TestUtilities/TestsFriend.h"
 
 export module ErasedStorage;
 
@@ -362,6 +362,7 @@ private:
   }
 
   TEST_FIXTURE_FRIEND_NS(CoreTests, ErasedStorageF);
+  friend class TestUtilities::TestFriend;
 
   friend StorageFcts<ErasedStorage>;
   StorageFcts<ErasedStorage> m_storageFcts;

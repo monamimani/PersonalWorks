@@ -6,11 +6,12 @@ Standard: Latest
 
 UseTab: Never
 IndentWidth: 2
+PPIndentWidth: 2
 ColumnLimit: 160
 MaxEmptyLinesToKeep: 1
 InsertNewlineAtEOF: True
 
-SortIncludes: CaseInsensitive
+SortIncludes: CaseSensitive
 IncludeBlocks: Regroup
 IncludeCategories: 
   - Regex:           ^<.*\.h>
@@ -21,10 +22,14 @@ IncludeCategories:
     Priority:        3
 IncludeIsMainRegex: ([-_](test|unittest))?$
 
+PenaltyReturnTypeOnItsOwnLine: 99999
+
 FixNamespaceComments: True
 ReflowComments: True
 
+QualifierAlignment: Left
 PointerAlignment: Left
+ReferenceAlignment: Left
 IntegerLiteralSeparator:
   Binary: 4
   Decimal: 3

@@ -2,7 +2,6 @@
 #include <string>
 #include "TestUtilities/GoogleTest.h"
 
-
 // Google test sanitizer integration.
 extern "C" {
 void __ubsan_on_report() {

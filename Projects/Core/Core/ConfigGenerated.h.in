@@ -1,0 +1,8 @@
+#pragma once
+
+#define CORE_IS_DEBUG ${BUILD_KIND_IS_DEBUG}
+#define CORE_IS_RELEASE ${BUILD_KIND_IS_RELEASE}
+#define CORE_IS_SHIPPING ${BUILD_KIND_IS_SHIPPING}
+#define CORE_TESTS_ENABLED ${CMAKE_TESTING_ENABLED}
+
+//static_assert((CORE_IS_DEBUG + CORE_IS_RELEASE + CORE_IS_SHIPPING) == 1, "Only one Configuration can be enable at a time.");

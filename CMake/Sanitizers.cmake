@@ -1,58 +1,95 @@
-if(sanitizers_included)
-    return()
-endif()
-set(sanitizers_included true)
+include_guard()
 
-# Link this 'library' to use the sanitizers
-add_library(SanitizersConfiguration INTERFACE)
+set(SUPPORTS_UBSAN OFF)
+set(SUPPORTS_ASAN OFF)
 
-option(USE_ASAN "Enable the Address Sanitizers" OFF)
-if(USE_ASAN)
-  message("Enable Address Sanitizer")
-  if(MSVC)
-    target_compile_options(SanitizersConfiguration INTERFACE
-            /fsanitize=address /Oy)
-    target_link_libraries(SanitizersConfiguration INTERFACE
-            /fsanitize=address)
-  else()
-    target_compile_options(SanitizersConfiguration INTERFACE
-        -fsanitize=address -fno-omit-frame-pointer)
-    target_link_libraries(SanitizersConfiguration INTERFACE
-            -fsanitize=address)
+if(WIN32)
+  if(CMAKE_CXX_COMPILER_ID MATCHES ".*Clang|GNU")
+    set(SUPPORTS_ASAN ON)
   endif()
 endif()
 
-option(USE_TSAN "Enable the Thread Sanitizers" OFF)
-if(USE_TSAN)
-  message("Enable Thread Sanitizer")
-  if(MSVC)
-  else()
-    target_compile_options(SanitizersConfiguration INTERFACE  -fsanitize=thread)
-    target_link_libraries(SanitizersConfiguration INTERFACE
-            -fsanitize=thread)
+if(LINUX)
+  if(CMAKE_CXX_COMPILER_ID MATCHES ".*Clang|GNU")
+    set(SUPPORTS_UBSAN ON)
+    set(SUPPORTS_ASAN ON)
   endif()
 endif()
 
-option(USE_MSAN "Enable the Memory Sanitizers" OFF)
-if(USE_MSAN)
-  message("Enable Memory Sanitizer")
-   if(MSVC)
-  else()
-    target_compile_options(SanitizersConfiguration INTERFACE
-            -fsanitize=memory -fno-omit-frame-pointer)
-    target_link_libraries(SanitizersConfiguration INTERFACE
-            -fsanitize=memory)
-  endif()
-endif()
+function(
+  add_target_interface_sanitizers
+  TARGET_NAME
+  ENABLE_SANITIZER_ADDRESS
+  ENABLE_SANITIZER_LEAK
+  ENABLE_SANITIZER_UNDEFINED_BEHAVIOR
+  ENABLE_SANITIZER_THREAD
+  ENABLE_SANITIZER_MEMORY)
+  if(CMAKE_CXX_COMPILER_ID MATCHES ".*Clang|GNU")
+    set(SANITIZERS "")
 
-option(USE_UBSAN "Enable the Undefined Behavior Sanitizers" OFF)
-if(USE_UBSAN)
-  message("Enable Undefined Behavior Sanitizer")
-  if(MSVC)
-  else()
-    target_compile_options(SanitizersConfiguration INTERFACE
-            -fsanitize=undefined)
-    target_link_libraries(SanitizersConfiguration INTERFACE
-            -fsanitize=undefined)
+    if(${ENABLE_SANITIZER_ADDRESS})
+      list(APPEND SANITIZERS "address")
+    endif()
+
+    if(${ENABLE_SANITIZER_LEAK})
+      list(APPEND SANITIZERS "leak")
+    endif()
+
+    if(${ENABLE_SANITIZER_UNDEFINED_BEHAVIOR})
+      list(APPEND SANITIZERS "undefined")
+    endif()
+
+    if(${ENABLE_SANITIZER_THREAD})
+      if("address" IN_LIST SANITIZERS OR "leak" IN_LIST SANITIZERS)
+        message(WARNING "Thread sanitizer does not work with Address and Leak sanitizer enabled")
+      else()
+        list(APPEND SANITIZERS "thread")
+      endif()
+    endif()
+
+    if(${ENABLE_SANITIZER_MEMORY} AND CMAKE_CXX_COMPILER_ID MATCHES ".*Clang")
+      message(WARNING
+        "Memory sanitizer requires all the code (including libc++) to be MSan-instrumented otherwise it reports false positives"
+      )
+
+      if("address" IN_LIST SANITIZERS OR "thread" IN_LIST SANITIZERS OR "leak" IN_LIST SANITIZERS)
+        message(WARNING "Memory sanitizer does not work with Address, Thread or Leak sanitizer enabled")
+      else()
+        list(APPEND SANITIZERS "memory")
+      endif()
+    endif()
+  elseif(MSVC)
+    if(${ENABLE_SANITIZER_ADDRESS})
+      list(APPEND SANITIZERS "address")
+    endif()
+
+    if(${ENABLE_SANITIZER_LEAK} OR ${ENABLE_SANITIZER_UNDEFINED_BEHAVIOR} OR ${ENABLE_SANITIZER_THREAD} OR ${ENABLE_SANITIZER_MEMORY})
+      message(WARNING "MSVC only supports address sanitizer")
+    endif()
   endif()
-endif()
+
+  list(JOIN SANITIZERS "," LIST_OF_SANITIZERS)
+
+  if(LIST_OF_SANITIZERS)
+    # if(NOT "${LIST_OF_SANITIZERS}" STREQUAL "")
+    if(NOT MSVC)
+      target_compile_options(${TARGET_NAME} INTERFACE "-fsanitize=${LIST_OF_SANITIZERS}")
+      target_link_options(${TARGET_NAME} INTERFACE "-fsanitize=${LIST_OF_SANITIZERS}")
+    else()
+      string(FIND "$ENV{PATH}" "$ENV{VSINSTALLDIR}" index_of_vs_install_dir)
+
+      if("${index_of_vs_install_dir}" STREQUAL "-1")
+        message(
+          SEND_ERROR
+          "Using MSVC sanitizers requires setting the MSVC environment before building the project. Please manually open the MSVC command prompt and rebuild the project."
+        )
+      endif()
+
+      target_compile_options(${TARGET_NAME} INTERFACE "/fsanitize=${LIST_OF_SANITIZERS} /Zi /INCREMENTAL:NO")
+      target_compile_definitions(${TARGET_NAME} INTERFACE "_DISABLE_VECTOR_ANNOTATION _DISABLE_STRING_ANNOTATION")
+      target_link_options(${TARGET_NAME} INTERFACE "/INCREMENTAL:NO")
+    endif()
+
+    # endif()
+  endif()
+endfunction()

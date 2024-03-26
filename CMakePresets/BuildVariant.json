@@ -1,0 +1,39 @@
+{
+  "$schema": "https://cmake.org/cmake/help/v3.28/_downloads/3e2d73bff478d88a7de0de736ba5e361/schema.json",
+  "version": 8,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 28,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "Dev",
+      "hidden": true,
+      "cacheVariables": {
+        "BUILD_KIND": "Dev"
+      }
+    },
+    {
+      "name": "QA",
+      "hidden": true,
+      "cacheVariables": {
+        "BUILD_KIND": "QA"
+      }
+    },
+    {
+      "name": "Profile",
+      "hidden": true,
+      "cacheVariables": {
+        "BUILD_KIND": "Profile"
+      }
+    },
+    {
+      "name": "Shipping",
+      "hidden": true,
+      "cacheVariables": {
+        "BUILD_KIND": "Shipping"
+      }
+    }
+  ]
+}

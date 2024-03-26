@@ -1,0 +1,62 @@
+#pragma once
+
+#include <string_view>
+
+/**
+#cmakedefine BUILD_KIND_DEV
+#cmakedefine BUILD_KIND_QA
+#cmakedefine BUILD_KIND_PROFILE
+#cmakedefine BUILD_KIND_SHIPPING
+
+#if not(defined(BUILD_KIND_DEV) or defined(BUILD_KIND_QA) or defined(BUILD_KIND_PROFILE) or defined(BUILD_KIND_SHIPPING))
+  #define BUILD_KIND_DEV
+  #warning "No BUILD_KIND defined, defining BUILD_KIND_DEV."
+#endif
+**/
+
+namespace PersonalWorks::Config
+{
+inline constexpr std::string_view projectName = "${PROJECT_NAME}";
+inline constexpr std::string_view projectVersion = "${PROJECT_VERSION}";
+inline constexpr int projectVersionMajor{${PROJECT_VERSION_MAJOR}};
+inline constexpr int projectVersionMinor{${PROJECT_VERSION_MINOR}};
+inline constexpr int projectVersionPatch{${PROJECT_VERSION_PATCH}};
+inline constexpr int projectVersionTweak{${PROJECT_VERSION_TWEAK}};
+
+inline constexpr std::string_view gitSHA = "@GIT_SHA@";
+
+enum class BuildKind
+{
+  Development,
+  QA,
+  Profile,
+  Shipping
+};
+
+#ifndef NDEBUG
+  #define BUILD_DEBUG
+inline constexpr auto isDebugBuild = true;
+#else
+inline constexpr auto isDebugBuild = false;
+#endif
+
+inline constexpr auto isOptimizedBuild = !isDebugBuild;
+
+/**
+#ifdef BUILD_KIND_DEV
+inline constexpr auto buildKind = BuildKind::Development;
+#endif
+
+#ifdef BUILD_KIND_QA
+inline constexpr auto buildKind = BuildKind::QA;
+#endif
+
+#ifdef BUILD_KIND_PROFILE
+inline constexpr auto buildKind = BuildKind::Profile;
+#endif
+
+#ifdef BUILD_KIND_SHIPPING
+inline constexpr auto buildKind = BuildKind::Shipping;
+#endif
+**/
+} // namespace PersonalWorks::Config

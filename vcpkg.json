@@ -1,11 +1,10 @@
 {
   "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg/master/scripts/vcpkg.schema.json",
-  "name": "personal-works",
-  "version-string": "0.1.0-dev",
   "dependencies": [
     "fmt",
     "benchmark",
-    "gtest"
-  ],
-  "builtin-baseline": "06c79a9afa6f99f02f44d20df9e0848b2a56bf1b"
+    "gtest",
+    "catch2",
+    "spdlog"
+  ]
 }

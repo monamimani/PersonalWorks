@@ -1,0 +1,118 @@
+name: ci
+
+on:
+  workflow_dispatch:
+  pull_request:
+  release:
+    types: [published]
+  push:
+    branches:
+      - main
+      - dev
+
+jobs:
+  build-test:
+    if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
+    runs-on: ${{matrix.platform.os}}
+    container:
+      image:  ${{ matrix.platform.name == 'Linux' && 'ghcr.io/monamimani-builds/cpp-devcontainer:v5.0.0' || '' }}
+    strategy:
+      fail-fast: false
+
+      # CMake preset name template: "%Platform%-%Compiler%-%Generator%-%BuildType%-%BuildKind%"
+      matrix:
+        platform: [
+          {name: Linux, os: ubuntu-latest},
+          {name: Windows, os: windows-latest }
+          ]
+        compiler: [ Gcc, Clang, Clang-cl, Msvc]
+        generator: [Ninja]
+        build_type: [Debug, Release]
+        build_kind: [Dev, QA, Profile, Shipping]
+
+        exclude: #Becasue they don't make sense or no Cmake preset created.
+          - platform: {name: Linux}
+            compiler: Msvc
+          - platform: {name: Windows}
+            compiler: Clang
+          - build_kind: QA
+            build_type: Debug
+          - build_kind: Shipping
+            build_type: Debug
+          - build_kind: Profile
+          - compiler: Gcc
+          - compiler: Clang-cl
+          
+        include: # combinasions that are one off
+          - platform: {name: Linux, os: ubuntu-latest}
+            compiler: Clang
+            generator: NinjaMultiConfig
+            build_type: Debug
+            build_kind: Dev
+          - platform: {name: Windows, os: windows-latest }
+            compiler: Msvc
+            generator: Vs2022
+            build_type: Debug
+            build_kind: Dev
+        
+    
+    name: ${{matrix.platform.name}}-${{matrix.compiler}}-${{matrix.generator}}-${{matrix.build_type}}-${{matrix.build_kind}}
+
+    env:
+      CMAKE_PRESET: ${{matrix.platform.name}}-${{matrix.compiler}}-${{matrix.generator}}-${{matrix.build_type}}-${{matrix.build_kind}}
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Env variable
+      shell: bash
+      run: | 
+        printenv
+        # echo "VCPKG_ROOT=$VCPKG_INSTALLATION_ROOT" >> $GITHUB_ENV
+
+    - name: Set ownership
+      shell: bash
+      run: |
+        # this is to fix GIT not liking owner of the checkout dir
+        #chown -R $(id -u):$(id -g) $PWD
+        git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+    - name: Vcpkg Cache
+      uses: ./.github/actions/vcpkg_cache
+
+    - name: CPM Cache
+      id: cache-cpm
+      uses: actions/cache@v4
+      with:
+        path: _Out/cpm_sources
+        key: ${{ runner.os }}-cpm-${{ hashFiles('**/') }}
+        restore-keys: |
+          ${{ runner.os }}-cpm-
+
+    - name: Setup Cache
+      uses: ./.github/actions/setup_cache
+      with:
+        compiler: ${{ matrix.compiler }}
+        build_type: ${{ matrix.build_type }}
+        packaging_maintainer_mode: false
+        generator: ${{ matrix.generator }}
+
+
+    - name: "[Windows] CMake Configure & Build"
+      if: runner.os == 'Windows'
+      run: |
+        & { . Scripts\Build\VsEnvironment.ps1; LaunchVsDevShell }
+        cmake --preset ${{env.CMAKE_PRESET}} -DGIT_SHA:STRING=${{ github.sha }}
+
+        cmake --build --preset ${{env.CMAKE_PRESET}}
+
+    - name: "[Linux] CMake Configure & Build"
+      if: runner.os == 'Linux'
+      run: |
+        cmake --preset ${{env.CMAKE_PRESET}} -DGIT_SHA:STRING=${{ github.sha }}
+
+        cmake --build --preset ${{env.CMAKE_PRESET}}
+
+    # - name: Tests
+    #   run: |
+    #     cmake --build --preset $CMAKE_PRESET

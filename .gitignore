@@ -16,6 +16,9 @@ _Bin
 _BinIntermediate
 _Tmp
 
+#Fuzztest output in the source folder ignoring it for now.
+/dist
+
 CPTCMakeBuild
 CompileCommands
 
@@ -25,14 +28,7 @@ packages
 
 CMakeUserPresets.json
 
-*.sln
-*.vcxproj
-*.vcxproj.user
-*.filters
 
 /vc140.pdb
-
 /Tools/GBenchmarkTool/code/gbench/__pycache__
-
-/Tools/UploadDataToMongoDb/upload_data_mongodb/target
-SendToMongoDb.exe
+/Tools/UploadDataToMongoDb

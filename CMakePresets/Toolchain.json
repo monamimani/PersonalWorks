@@ -1,53 +1,97 @@
 {
+  "$schema": "https://cmake.org/cmake/help/v3.28/_downloads/3e2d73bff478d88a7de0de736ba5e361/schema.json",
+  "version": 8,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 28,
+    "patch": 0
+  },
   "configurePresets": [
     {
-      "name": "Cl",
+      "name": "Msvc",
       "hidden": true,
+      "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
       "cacheVariables": {
         "CMAKE_C_COMPILER": "cl",
         "CMAKE_CXX_COMPILER": "cl",
-        "CMAKE_CXX_FLAGS": "/DWIN32 /D_WINDOWS /W4 /EHsc /MP /permissive-",
-        "CMAKE_C_FLAGS": "/DWIN32 /D_WINDOWS /W4 /EHsc /MP /permissive-"
+        //"CMAKE_CXX_FLAGS": "/EHsc /MP",
+        //"CMAKE_C_FLAGS": "/EHsc /MP",
+        "PersonalWorks_ENABLE_CLANG_TIDY": false
       },
       "condition": {
         "type": "equals",
         "lhs": "${hostSystemName}",
         "rhs": "Windows"
+      },
+      "vendor": {
+        "microsoft.com/VisualStudioSettings/CMake/1.0": {
+          //"clangTidyChecks": "clang-analyzer-*",
+          "enableMicrosoftCodeAnalysis": false,
+          "enableClangTidyCodeAnalysis": false
+        }
       }
     },
-    //{
-    //  "name": "ClangCl",
-    //  "hidden": true,
-    //  "cacheVariables": {
-    //    "CMAKE_C_COMPILER": "clang-cl",
-    //    "CMAKE_CXX_COMPILER": "clang-cl",
-    //    "CMAKE_CXX_FLAGS": "/DWIN32 /D_WINDOWS /W4 /EHsc /MP /permissive-",
-    //    "CMAKE_C_FLAGS": "/DWIN32 /D_WINDOWS /W4 /EHsc /MP /permissive-"
-    //  },
-    //  "condition": {
-    //    "type": "inList",
-    //    "string": "${hostSystemName}",
-    //    "list": [ "Windows", "Linux" ]
-    //  },
-    //  "vendor": {
-    //    "microsoft.com/VisualStudioSettings/CMake/1.0": {
-    //      "intelliSenseMode": "windows-clang-x64"
-    //    }
-    //  }
-    //},
     {
-      "name": "Gcc",
+      "name": "Clang",
       "hidden": true,
+      "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
       "cacheVariables": {
-        "CMAKE_C_COMPILER": "gcc-11",
-        "CMAKE_CXX_COMPILER": "g++-11",
-        "CMAKE_CXX_FLAGS": "-Wpedantic -Wall -Wextra",
-        "CMAKE_C_FLAGS": "-Wpedantic -Wall -Wextra"
+        "CMAKE_C_COMPILER": "clang",
+        "CMAKE_CXX_COMPILER": "clang++"
+        // "VCPKG_VERBOSE": true,
+        // "VCPKG_INSTALL_OPTIONS": "--clean-after-build;--binarysource=clear",
+        // "VCPKG_CHAINLOAD_TOOLCHAIN_FILE": "${sourceDir}/Vcpkg/ChainloadToolchains/linux-clang.chainload.cmake",
+        // "VCPKG_TARGET_TRIPLET": "x64-linux-clang-libcxx"
       },
       "condition": {
         "type": "equals",
         "lhs": "${hostSystemName}",
         "rhs": "Linux"
+      },
+      "vendor": {
+        "microsoft.com/VisualStudioSettings/CMake/1.0": {
+          "intelliSenseMode": "linux-clang-x64"
+        }
+      }
+    },
+    {
+      "name": "ClangCl",
+      "hidden": true,
+      "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "clang-cl",
+        "CMAKE_CXX_COMPILER": "clang-cl"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      },
+      "vendor": {
+        "microsoft.com/VisualStudioSettings/CMake/1.0": {
+          "intelliSenseMode": "windows-clang-x64"
+        }
+      }
+    },
+    {
+      "name": "Gcc",
+      "hidden": true,
+      "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "gcc",
+        "CMAKE_CXX_COMPILER": "g++",
+        "CMAKE_CXX_FLAGS": "",
+        "CMAKE_C_FLAGS": ""
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      },
+      "vendor": {
+        "microsoft.com/VisualStudioSettings/CMake/1.0": {
+          "intelliSenseMode": "linux-gcc-x64"
+        }
       }
     }
   ]

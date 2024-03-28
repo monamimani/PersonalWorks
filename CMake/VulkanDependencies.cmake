@@ -1,9 +1,15 @@
 include_guard()
 
-find_package(Vulkan COMPONENTS dxc SPIRV-Tools REQUIRED)
+#find_package(Vulkan COMPONENTS dxc SPIRV-Tools REQUIRED)
+find_package(VulkanHeaders CONFIG REQUIRED)
+find_package(VulkanLoader CONFIG REQUIRED)
 
-if (NOT Vulkan_FOUND)
-  message(FATAL_ERROR "Vulkan not found.")
+if (NOT VulkanHeaders_FOUND)
+  message(FATAL_ERROR "VulkanHeaders not found.")
+endif()
+
+if (NOT VulkanLoader_FOUND)
+  message(FATAL_ERROR "VulkanLoader not found.")
 endif()
 
 add_library(VulkanHppModule INTERFACE)
@@ -14,4 +20,5 @@ add_library(VulkanHppModule INTERFACE)
 #)
 target_compile_definitions(VulkanHppModule INTERFACE VULKAN_HPP_DISPATCH_LOADER_DYNAMIC=1 VULKAN_HPP_NO_STRUCT_CONSTRUCTORS) 
 
-target_link_libraries(VulkanHppModule INTERFACE Vulkan::Vulkan)
+target_link_libraries(VulkanHppModule INTERFACE Vulkan::Headers Vulkan::Loader)
+

@@ -10,7 +10,6 @@ include(CMakePrintHelpers)
 include(CMake/PreventInSourceBuilds.cmake)
 include(CMake/ValidateVcpkgToolchain.cmake)
 include(CMake/GetCPM.cmake)
-include(CMake/VulkanDependencies.cmake)
 
 cmake_print_variables(CMAKE_VERSION)
 # cmake_print_variables(CMAKE_MODULE_PATH)
@@ -23,6 +22,9 @@ project(PersonalWorks
   DESCRIPTION ""
   HOMEPAGE_URL "https://github.com/monamimani/PersonalWorks"
   LANGUAGES CXX C)
+
+include(CMake/VulkanDependencies.cmake)
+
 
 include(CMakeProjectOptions.cmake)
 PersonalWorks_declare_options()

@@ -5,6 +5,8 @@
     "benchmark",
     "gtest",
     "catch2",
-    "spdlog"
+    "spdlog",
+    "vulkan-headers",
+    "vulkan-loader"
   ]
 }

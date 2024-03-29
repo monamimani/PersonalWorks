@@ -28,11 +28,12 @@
         "dev": false,
         "deprecated": true
       },
-      "trace": {
-        "mode": "off",
-        "format": "human"
-      },
-      "cacheVariables": {}
+      //"trace": {
+      //  "mode": false,
+      //  "format": "human"
+      //},
+      "cacheVariables": {
+      }
     },
     {
       "name": "checkers",

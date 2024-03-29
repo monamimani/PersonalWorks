@@ -36,7 +36,7 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
 endif()
 
 if(MSVC)
-  add_compile_options("/stdc++:latest")
+  add_compile_options("/std:c++latest")
 endif()
 
 include(CMake/VulkanDependencies.cmake)

@@ -519,7 +519,7 @@ template<class Delegate_T>
 void DelegateCompare_Bind_FunctorRValueOOL(benchmark::State& state)
 {
   auto delegate = Delegate_T{};
-  auto delegateRAII = delegate.template bind(BMStructOutOfLine{});
+  auto delegateRAII = delegate.bind(BMStructOutOfLine{});
   benchmark::DoNotOptimize(delegate);
 
   int value = 0;

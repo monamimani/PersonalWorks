@@ -31,9 +31,9 @@ get_target_property("${TARGETNAME}DefaultModuleSet" ${TARGETNAME} CXX_MODULE_SET
 get_target_property("${TARGETNAME}Libraires" ${TARGETNAME} LINK_LIBRARIES)
 
 
-cmake_print_variables(${TARGETNAME}Sources)
-cmake_print_variables(${TARGETNAME}ModuleSets)
-cmake_print_variables(${TARGETNAME}DefaultModuleSet)
+#cmake_print_variables(${TARGETNAME}Sources)
+#cmake_print_variables(${TARGETNAME}ModuleSets)
+#cmake_print_variables(${TARGETNAME}DefaultModuleSet)
 
 set(targetNameTests ${TARGETNAME}Tests)
 

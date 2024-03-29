@@ -108,7 +108,7 @@ public:
   [[nodiscard]] constexpr auto bind()
   {
     auto staticFunction = std::make_shared<StaticFunction_T>();
-    staticFunction->bind<function>();
+    staticFunction->template bind<function>();
     m_staticFunction = std::weak_ptr<StaticFunction_T>{staticFunction};
     return Connection{std::move(staticFunction)};
   }
@@ -127,7 +127,7 @@ public:
   [[nodiscard]] constexpr auto bind(Instance_T&& instance)
   {
     auto staticFunction = std::make_shared<StaticFunction_T>();
-    staticFunction->bind<function>(std::forward<Instance_T>(instance));
+    staticFunction->template bind<function>(std::forward<Instance_T>(instance));
     m_staticFunction = std::weak_ptr<StaticFunction_T>{staticFunction};
     return Connection{std::move(staticFunction)};
   }
@@ -180,7 +180,8 @@ public:
 
   friend bool operator==(const Delegate& lhs, const Delegate& rhs)
   {
-    return (lhs.m_staticFunction.expired() && rhs.m_staticFunction.expired()) || ((!lhs.m_staticFunction.expired() && !rhs.m_staticFunction.expired()) && (*lhs.m_staticFunction.lock() == *rhs.m_staticFunction.lock()));
+    return (lhs.m_staticFunction.expired() && rhs.m_staticFunction.expired())
+        || ((!lhs.m_staticFunction.expired() && !rhs.m_staticFunction.expired()) && (*lhs.m_staticFunction.lock() == *rhs.m_staticFunction.lock()));
   }
 
 private:

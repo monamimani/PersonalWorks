@@ -7,6 +7,9 @@
     "catch2",
     "spdlog",
     "vulkan-headers",
-    "vulkan-loader"
+    {
+      "name": "vulkan-loader",
+      "platform": "windows"
+    }
   ]
 }

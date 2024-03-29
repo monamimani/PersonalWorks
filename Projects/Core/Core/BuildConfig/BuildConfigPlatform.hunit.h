@@ -4,7 +4,7 @@
 
 namespace BuildConfig
 {
-//Should I rename to OS since it represent more the operating system and the platform.
+// Should I rename to OS since it represent more the operating system and the platform.
 enum class Platform
 {
   Android,
@@ -14,8 +14,7 @@ enum class Platform
 
 #ifdef __linux__
 constexpr auto platformStr = std::string_view{"Linux"};
-constexpr auto platform = Platform::Linux
-};
+constexpr auto platform = Platform::Linux;
 #elif defined __ANDROID__
 constexpr auto platformStr = std::string_view{"Android"};
 constexpr auto platform = Platform::Android;
@@ -26,4 +25,4 @@ constexpr auto platform = Platform::Windows;
   #error Platform not supported.
 #endif
 
-}
+} // namespace BuildConfig

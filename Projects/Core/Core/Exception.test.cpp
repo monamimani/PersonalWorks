@@ -1,19 +1,17 @@
 
-#include <string>
-
-#include "fmt/format.h"
-
 #include "Core/Exception.h"
 
+#include <string>
+
 #include "TestUtilities/GoogleTest.h"
+#include "fmt/format.h"
 
 namespace CoreTests
 {
-  struct Foo
-  {
-    uint32_t m_value{42};
-  };
-
+struct Foo
+{
+  uint32_t m_value{42};
+};
 
 TEST(ExceptionType, DataException)
 {
@@ -39,7 +37,7 @@ TEST(ExceptionType, DataException)
 
 TEST(ExceptionType, VoidException)
 {
-  using VoidError = Core::Exception;
+  using VoidError = Core::Exception<void>;
 
   const auto msg = "Error";
   auto error = VoidError{msg};
@@ -52,4 +50,4 @@ TEST(ExceptionType, VoidException)
   const auto errorMsg = fmt::format("{}{}", msg, suffix);
   ASSERT_STRCASEEQ(error.what().c_str(), errorMsg.c_str());
 }
-}
+} // namespace CoreTests

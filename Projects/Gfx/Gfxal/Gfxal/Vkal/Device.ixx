@@ -5,4 +5,4 @@ export module Device;
 export namespace GfxHAL
 {}
 
-module :private;
+// module :private;

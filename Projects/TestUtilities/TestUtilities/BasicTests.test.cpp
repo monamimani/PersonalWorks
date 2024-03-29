@@ -1,7 +1,7 @@
-#include "TestUtilities/BasicTestsGenerator.h"
-
 #include <array>
 #include <utility>
+
+#include "TestUtilities/BasicTestsGenerator.h"
 
 namespace TestUtilitiesTests
 {
@@ -251,12 +251,13 @@ private:
   Sample m_sampleB;
 };
 
-using Sample_T = Sample;
-auto typedTest = TestUtilities::RegistratorCommonTests<SampleTestF, TEST_TYPE(Sample_T), TEST_TYPE(const Sample_T)>{};
+// typedef Sample Sample_T;
+constexpr auto testDesc = TEST_TYPE(Sample);
+auto typedTest = TestUtilities::RegistratorCommonTests<SampleTestF, testDesc, testDesc>{};
 
-static const auto paramA = ::testing::Values(Sample_T{42}, Sample_T{16});
-static const auto paramB = ::testing::Values(Sample_T{151});
+static const auto paramA = ::testing::Values(Sample{42}, Sample{16});
+static const auto paramB = ::testing::Values(Sample{151});
 static const auto paramGenerator = ::testing::Combine(paramA, paramB);
-auto parametricTest = TestUtilities::RegistratorCommonTests<SampleParamTestF, TEST_TYPE(Sample_T)>{paramGenerator, SampleParamTestF<Sample_T>::makeTestName};
+auto parametricTest = TestUtilities::RegistratorCommonTests<SampleParamTestF, testDesc>{paramGenerator, SampleParamTestF<Sample>::makeTestName};
 
 } // namespace TestUtilitiesTests

@@ -5,9 +5,7 @@ module;
 
 export module GfxHAL;
 
-
 export namespace GfxHAL
-{
-}
+{}
 
-module :private;
+// module :private;

@@ -196,4 +196,4 @@ inline void swap(Delegate<Signature>& d1, Delegate<Signature>& d2)
 
 } // namespace Delegate
 
-module :private;
+// module :private;

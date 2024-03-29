@@ -101,4 +101,4 @@ private:
 };
 } // namespace VkHal
 
-module :private;
+// module :private;

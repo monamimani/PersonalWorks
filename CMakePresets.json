@@ -32,8 +32,7 @@
       //  "mode": false,
       //  "format": "human"
       //},
-      "cacheVariables": {
-      }
+      "cacheVariables": {}
     },
     {
       "name": "checkers",
@@ -85,6 +84,18 @@
       ],
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "RelWithDebInfo"
+      }
+    },
+    {
+      "name": "Linux-Gcc-Ninja-Debug",
+      "inherits": [
+        "Common",
+        "Linux",
+        "Gcc",
+        "Ninja"
+      ],
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
       }
     },
     {
@@ -149,6 +160,10 @@
     {
       "name": "Linux-Clang-Ninja-Release",
       "configurePreset": "Linux-Clang-Ninja-Release"
+    },
+    {
+      "name": "Linux-Gcc-Ninja-Debug",
+      "configurePreset": "Linux-Gcc-Ninja-Debug"
     },
     {
       "name": "Windows-Msvc-Vs2022-Debug",

@@ -10,9 +10,9 @@
 #include <type_traits>
 #include <utility>
 
-#include "fmt/format.h"
 #include "TestUtilities/GoogleTest.h"
 #include "TestUtilities/TestStruct.test.h"
+#include "fmt/format.h"
 
 namespace TestUtilities
 {
@@ -758,10 +758,12 @@ struct RegistratorCommonTests
   }
 };
 
+#define xstr(s) str(s)
+#define str(s) #s
 #define TEST_TYPE(TestedType)              \
   TestUtilities::TypedTestDesc<TestedType> \
   {                                        \
-    #TestedType                            \
+    xstr(TestedType)                       \
   }
 
 } // namespace TestUtilities

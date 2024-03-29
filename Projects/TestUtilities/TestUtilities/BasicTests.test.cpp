@@ -252,7 +252,9 @@ private:
 };
 
 // typedef Sample Sample_T;
-constexpr auto testDesc = TEST_TYPE(Sample);
+// constexpr auto testDesc = TEST_TYPE(Sample);
+constexpr const char* sampleStr = "Sample";
+constexpr auto testDesc = TestUtilities::TypedTestDesc<Sample>{.m_typeName = sampleStr};
 auto typedTest = TestUtilities::RegistratorCommonTests<SampleTestF, testDesc, testDesc>{};
 
 static const auto paramA = ::testing::Values(Sample{42}, Sample{16});

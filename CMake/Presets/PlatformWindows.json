@@ -1,0 +1,85 @@
+{
+  "$schema": "https://cmake.org/cmake/help/v3.28/_downloads/3e2d73bff478d88a7de0de736ba5e361/schema.json",
+  "version": 8,
+  "configurePresets": [
+    {
+      "name": "Windows",
+      "hidden": true,
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      },
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "x64-windows"
+      }
+    },
+    {
+      "name": "Windows-Msvc-Vs2022-Debug",
+      "inherits": [
+        "Common",
+        "Windows",
+        "Msvc",
+        "Vs2022"
+      ],
+      "cacheVariables": {
+        // "CMAKE_BUILD_TYPE": "Debug" Commented because multiconfig generator don't use that CMake variable
+      }
+    },
+    {
+      "name": "Windows-ClangCl-Ninja-Debug",
+      "inherits": [
+        "Common",
+        "Windows",
+        "ClangCl",
+        "Ninja"
+      ],
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "Windows-Msvc-Ninja-Debug",
+      "inherits": [
+        "Common",
+        "Windows",
+        "Msvc",
+        "Ninja"
+      ],
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "Windows-Msvc-Ninja-Release",
+      "inherits": [
+        "Common",
+        "Windows",
+        "Msvc",
+        "Ninja"
+      ],
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "Windows-Msvc-Vs2022-Debug",
+      "configurePreset": "Windows-Msvc-Vs2022-Debug",
+      "configuration": "Debug"
+    },
+    {
+      "name": "Windows-ClangCl-Ninja-Debug",
+      "configurePreset": "Windows-ClangCl-Ninja-Debug"
+    },
+    {
+      "name": "Windows-Msvc-Ninja-Debug",
+      "configurePreset": "Windows-Msvc-Ninja-Debug"
+    },
+    {
+      "name": "Windows-Msvc-Ninja-Release",
+      "configurePreset": "Windows-Msvc-Ninja-Release"
+    }
+  ]
+}

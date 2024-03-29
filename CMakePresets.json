@@ -7,182 +7,21 @@
     "patch": 0
   },
   "include": [
-    "CMakePresets/BuildVariant.json",
-    "CMakePresets/Generators.json",
-    "CMakePresets/Platforms.json",
-    "CMakePresets/Toolchain.json"
+    "CMake/Presets/Common.json",
+    "CMake/Presets/BuildVariant.json",
+    "CMake/Presets/Generators.json",
+    "CMake/Presets/Toolchain.json",
+    "CMake/Presets/PlatformWindows.json",
+    "CMake/Presets/PlatformLinux.json"
   ],
   "configurePresets": [
     {
       "name": "Preset-Name-Template",
       "description": "%Platform%-%Compiler%-%Generator%-[%OtherConfigOptions,...%]-%BuildType%-%BuildKind%",
       "hidden": true
-    },
-    {
-      "name": "Common",
-      "hidden": true,
-      "binaryDir": "${sourceDir}/_Out/build/${presetName}",
-      "installDir": "${sourceDir}/_Out/install/${presetName}",
-      "warnings": {
-        "uninitialized": true,
-        "dev": false,
-        "deprecated": true
-      },
-      //"trace": {
-      //  "mode": false,
-      //  "format": "human"
-      //},
-      "cacheVariables": {}
-    },
-    {
-      "name": "checkers",
-      "hidden": true,
-      "cacheVariables": {
-        "USE_ASAN": false,
-        //"ENABLE_CPPCHECK": true,
-        "ENABLE_CLANG_TIDY": true
-      },
-      "vendor": {
-        "microsoft.com/VisualStudioSettings/CMake/1.0": {
-          //"enableClangTidyCodeAnalysis": true,
-          //"enableMicrosoftCodeAnalysis": true,
-          //"codeAnalysisRuleset": "AllRules.ruleset",
-        }
-      }
-    },
-    {
-      "name": "Linux-Clang-NinjaMultiConfig-Debug",
-      "inherits": [
-        "Common",
-        "Linux",
-        "Clang",
-        "NinjaMultiConfig"
-      ],
-      "cacheVariables": {
-        // "CMAKE_BUILD_TYPE": "Debug" Commented because multiconfig generator don't use that CMake variable
-      }
-    },
-    {
-      "name": "Linux-Clang-Ninja-Debug",
-      "inherits": [
-        "Common",
-        "Linux",
-        "Clang",
-        "Ninja"
-      ],
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Debug"
-      }
-    },
-    {
-      "name": "Linux-Clang-Ninja-Release",
-      "inherits": [
-        "Common",
-        "Linux",
-        "Clang",
-        "Ninja"
-      ],
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "RelWithDebInfo"
-      }
-    },
-    {
-      "name": "Linux-Gcc-Ninja-Debug",
-      "inherits": [
-        "Common",
-        "Linux",
-        "Gcc",
-        "Ninja"
-      ],
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Debug"
-      }
-    },
-    {
-      "name": "Windows-Msvc-Vs2022-Debug",
-      "inherits": [
-        "Common",
-        "Windows",
-        "Msvc",
-        "Vs2022"
-      ],
-      "cacheVariables": {
-        // "CMAKE_BUILD_TYPE": "Debug" Commented because multiconfig generator don't use that CMake variable
-      }
-    },
-    {
-      "name": "Windows-ClangCl-Ninja-Debug",
-      "inherits": [
-        "Common",
-        "Windows",
-        "ClangCl",
-        "Ninja"
-      ],
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Debug"
-      }
-    },
-    {
-      "name": "Windows-Msvc-Ninja-Debug",
-      "inherits": [
-        "Common",
-        "Windows",
-        "Msvc",
-        "Ninja"
-      ],
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Debug"
-      }
-    },
-    {
-      "name": "Windows-Msvc-Ninja-Release",
-      "inherits": [
-        "Common",
-        "Windows",
-        "Msvc",
-        "Ninja"
-      ],
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "RelWithDebInfo"
-      }
     }
   ],
-  "buildPresets": [
-    {
-      "name": "Linux-Clang-NinjaMultiConfig-Debug",
-      "configurePreset": "Linux-Clang-NinjaMultiConfig-Debug",
-      "configuration": "Debug"
-    },
-    {
-      "name": "Linux-Clang-Ninja-Debug",
-      "configurePreset": "Linux-Clang-Ninja-Debug"
-    },
-    {
-      "name": "Linux-Clang-Ninja-Release",
-      "configurePreset": "Linux-Clang-Ninja-Release"
-    },
-    {
-      "name": "Linux-Gcc-Ninja-Debug",
-      "configurePreset": "Linux-Gcc-Ninja-Debug"
-    },
-    {
-      "name": "Windows-Msvc-Vs2022-Debug",
-      "configurePreset": "Windows-Msvc-Vs2022-Debug",
-      "configuration": "Debug"
-    },
-    {
-      "name": "Windows-ClangCl-Ninja-Debug",
-      "configurePreset": "Windows-ClangCl-Ninja-Debug"
-    },
-    {
-      "name": "Windows-Msvc-Ninja-Debug",
-      "configurePreset": "Windows-Msvc-Ninja-Debug"
-    },
-    {
-      "name": "Windows-Msvc-Ninja-Release",
-      "configurePreset": "Windows-Msvc-Ninja-Release"
-    }
-  ] //,
+  "buildPresets": [ ] //,
   //"testPresets": [
   //  {
   //    "name": "test-base",

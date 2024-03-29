@@ -6,12 +6,25 @@ if(NOT DEFINED CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD 23)
 endif()
 
+include(CheckCXXCompilerFlag)
+
+if(CMAKE_CXX_COMPILER_ID MATCHES ".*Clang")
+  add_compile_options("-std=c++2c")
+elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+  add_compile_options("-std=c++26")
+endif()
+
+if(MSVC)
+  add_compile_options("/stdc++:latest")
+endif()
+
 include(CMakePrintHelpers)
 include(CMake/PreventInSourceBuilds.cmake)
 include(CMake/ValidateVcpkgToolchain.cmake)
 include(CMake/GetCPM.cmake)
 
 cmake_print_variables(CMAKE_VERSION)
+
 # cmake_print_variables(CMAKE_MODULE_PATH)
 # set(CMAKE_VERBOSE_MAKEFILE ON)
 
@@ -24,7 +37,6 @@ project(PersonalWorks
   LANGUAGES CXX C)
 
 include(CMake/VulkanDependencies.cmake)
-
 
 include(CMakeProjectOptions.cmake)
 PersonalWorks_declare_options()
@@ -44,8 +56,6 @@ if(PROJECT_IS_TOP_LEVEL)
   endif()
 endif()
 
-
-
 add_subdirectory(Projects/Config)
 add_subdirectory(Projects/TestUtilities)
 add_subdirectory(Projects/Core)
@@ -57,8 +67,8 @@ add_subdirectory(Projects/BasicWindowApp)
 set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT CoreTests)
 
 # foreach(ITEM ${PROJECT_CONTENTS})
-#   if(IS_DIRECTORY ${ITEM})
-#     file(RELATIVE_PATH FOLDER "${CMAKE_CURRENT_SOURCE_DIR}/Projects/" ${ITEM})
-#     add_subdirectory(Projects/${FOLDER})
-#   endif()
+# if(IS_DIRECTORY ${ITEM})
+# file(RELATIVE_PATH FOLDER "${CMAKE_CURRENT_SOURCE_DIR}/Projects/" ${ITEM})
+# add_subdirectory(Projects/${FOLDER})
+# endif()
 # endforeach()

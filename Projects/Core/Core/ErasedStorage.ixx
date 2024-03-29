@@ -1,6 +1,7 @@
 module;
 
 #include <concepts>
+#include <cstring>
 #include <functional>
 #include <memory>
 #include <mutex>

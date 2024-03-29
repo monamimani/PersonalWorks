@@ -56,17 +56,17 @@ public:
   }
 
   template<Core::InvocableAndReturn<Ret, Args...> auto function>
-  inline constexpr [[nodiscard]] auto bind()
+  [[nodiscard]] inline constexpr auto bind()
   {
     auto staticFunction = std::make_shared<StaticFunction_T>();
-    staticFunction->bind<function>();
+    staticFunction->template bind<function>();
 
     m_staticFunctionList.emplace_back(staticFunction);
     return Connection{std::move(staticFunction)};
   }
 
   template<Core::FunctorAndReturn<Ret, Args...> Instance_T>
-  inline constexpr [[nodiscard]] auto bind(Instance_T&& functor)
+  [[nodiscard]] inline constexpr auto bind(Instance_T&& functor)
   {
     auto staticFunction = std::make_shared<StaticFunction_T>();
     staticFunction->bind(std::forward<Instance_T>(functor));
@@ -77,7 +77,7 @@ public:
 
   template<auto function, typename Instance_T>
   requires Core::InvocableAndReturn<decltype(function), Ret, Instance_T, Args...>
-  inline constexpr [[nodiscard]] auto bind(Instance_T&& instance)
+  [[nodiscard]] inline constexpr auto bind(Instance_T&& instance)
   {
     auto staticFunction = std::make_shared<StaticFunction_T>();
     staticFunction->bind<function>(std::forward<Instance_T>(instance));
@@ -117,7 +117,6 @@ public:
   {
     m_staticFunctionList.clear();
   }
-
 
   friend bool operator==(const DelegateMulticast& lhs, const DelegateMulticast& rhs)
   {

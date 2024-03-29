@@ -1,9 +1,9 @@
 #pragma once
 
 #include "Core/Config.h"
-#include "Core/Win32/WindowsHeader.h"
 
 #if defined(CORE_PLATFORM_WINDOWS)
+  #include "Core/Win32/WindowsHeader.h"
   #define VK_USE_PLATFORM_WIN32_KHR
 #endif
 

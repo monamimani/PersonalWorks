@@ -101,15 +101,6 @@ struct fmt::formatter<std::source_location>: fmt::formatter<std::string_view>
 };
 
 template<>
-struct fmt::formatter<std::source_location>: fmt::formatter<std::string_view>
-{
-  auto format(const std::source_location& location, format_context& ctx) const
-  {
-    return std::format_to(ctx.out(), "{}({},{}), function `{}`\n", location.file_name(), location.line(), location.column(), location.function_name());
-  }
-};
-
-template<>
 struct fmt::formatter<std::stacktrace_entry>: fmt::formatter<std::string_view>
 {
   auto format(const std::stacktrace_entry& entry, format_context& ctx) const

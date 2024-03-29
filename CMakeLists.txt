@@ -8,16 +8,6 @@ endif()
 
 include(CheckCXXCompilerFlag)
 
-if(CMAKE_CXX_COMPILER_ID MATCHES ".*Clang")
-  add_compile_options("-std=c++2c")
-elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
-  add_compile_options("-std=c++26")
-endif()
-
-if(MSVC)
-  add_compile_options("/stdc++:latest")
-endif()
-
 include(CMakePrintHelpers)
 include(CMake/PreventInSourceBuilds.cmake)
 include(CMake/ValidateVcpkgToolchain.cmake)
@@ -35,6 +25,19 @@ project(PersonalWorks
   DESCRIPTION ""
   HOMEPAGE_URL "https://github.com/monamimani/PersonalWorks"
   LANGUAGES CXX C)
+
+if(CMAKE_CXX_COMPILER_ID MATCHES ".*Clang")
+  add_compile_options(-std=c++2c)
+
+  add_compile_options(-D__cpp_concepts=202002 -Wno-builtin-macro-redefined)
+  add_link_options("-lstdc++exp")
+elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+  add_compile_options("-std=c++26")
+endif()
+
+if(MSVC)
+  add_compile_options("/stdc++:latest")
+endif()
 
 include(CMake/VulkanDependencies.cmake)
 

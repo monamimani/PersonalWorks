@@ -1,0 +1,90 @@
+{
+  "$schema": "https://cmake.org/cmake/help/v3.28/_downloads/3e2d73bff478d88a7de0de736ba5e361/schema.json",
+  "version": 8,
+  "configurePresets": [
+    {
+      "name": "Linux",
+      "hidden": true,
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      },
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "x64-linux"
+      },
+      "vendor": {
+        "microsoft.com/VisualStudioRemoteSettings/CMake/1.0": {
+          "sourceDir": "$env{HOME}/.vs/$ms{projectDirName}"
+        }
+      }
+    },
+    {
+      "name": "Linux-Clang-NinjaMultiConfig-Debug",
+      "inherits": [
+        "Common",
+        "Linux",
+        "Clang",
+        "NinjaMultiConfig"
+      ],
+      "cacheVariables": {
+        // "CMAKE_BUILD_TYPE": "Debug" Commented because multiconfig generator don't use that CMake variable
+      }
+    },
+    {
+      "name": "Linux-Clang-Ninja-Debug",
+      "inherits": [
+        "Common",
+        "Linux",
+        "Clang",
+        "Ninja"
+      ],
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "Linux-Clang-Ninja-Release",
+      "inherits": [
+        "Common",
+        "Linux",
+        "Clang",
+        "Ninja"
+      ],
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo"
+      }
+    },
+    {
+      "name": "Linux-Gcc-Ninja-Debug",
+      "inherits": [
+        "Common",
+        "Linux",
+        "Gcc",
+        "Ninja"
+      ],
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "Linux-Clang-NinjaMultiConfig-Debug",
+      "configurePreset": "Linux-Clang-NinjaMultiConfig-Debug",
+      "configuration": "Debug"
+    },
+    {
+      "name": "Linux-Clang-Ninja-Debug",
+      "configurePreset": "Linux-Clang-Ninja-Debug"
+    },
+    {
+      "name": "Linux-Clang-Ninja-Release",
+      "configurePreset": "Linux-Clang-Ninja-Release"
+    },
+    {
+      "name": "Linux-Gcc-Ninja-Debug",
+      "configurePreset": "Linux-Gcc-Ninja-Debug"
+    }
+  ]
+}

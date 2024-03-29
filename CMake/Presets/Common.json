@@ -1,0 +1,38 @@
+{
+  "$schema": "https://cmake.org/cmake/help/v3.28/_downloads/3e2d73bff478d88a7de0de736ba5e361/schema.json",
+  "version": 8,
+  "configurePresets": [
+    {
+      "name": "Common",
+      "hidden": true,
+      "binaryDir": "${sourceDir}/_Out/build/${presetName}",
+      "installDir": "${sourceDir}/_Out/install/${presetName}",
+      "warnings": {
+        "uninitialized": true,
+        "dev": false,
+        "deprecated": true
+      },
+      //"trace": {
+      //  "mode": false,
+      //  "format": "human"
+      //},
+      "cacheVariables": {}
+    },
+    {
+      "name": "checkers",
+      "hidden": true,
+      "cacheVariables": {
+        "USE_ASAN": false,
+        //"ENABLE_CPPCHECK": true,
+        "ENABLE_CLANG_TIDY": true
+      },
+      "vendor": {
+        "microsoft.com/VisualStudioSettings/CMake/1.0": {
+          //"enableClangTidyCodeAnalysis": true,
+          //"enableMicrosoftCodeAnalysis": true,
+          //"codeAnalysisRuleset": "AllRules.ruleset",
+        }
+      }
+    }
+  ]
+}

@@ -29,10 +29,10 @@
         "dev": false,
         "deprecated": true
       },
-      "trace": {
-        "mode": "off",
-        "format": "human"
-      },
+      //"trace": {
+      //  "mode": false,
+      //  "format": "human"
+      //},
       "cacheVariables": {
       }
     },

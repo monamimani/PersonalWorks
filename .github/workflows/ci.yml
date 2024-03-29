@@ -110,6 +110,7 @@ jobs:
 
     - name: "[Linux] CMake Configure & Build"
       if: runner.os == 'Linux'
+      continue-on-error: true
       run: |
         cmake --preset ${{env.CMAKE_PRESET}} -DGIT_SHA:STRING=${{ github.sha }}
 

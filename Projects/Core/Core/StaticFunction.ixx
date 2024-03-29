@@ -139,7 +139,8 @@ private:
   template<typename Instance_T>
   void setTrampolineFct()
   {
-    using Type = std::conditional_t<std::is_lvalue_reference_v<Instance_T&&>, std::add_pointer_t<std::remove_reference_t<Instance_T>>, std::remove_reference_t<Instance_T>>;
+    using Type = std::
+        conditional_t<std::is_lvalue_reference_v<Instance_T&&>, std::add_pointer_t<std::remove_reference_t<Instance_T>>, std::remove_reference_t<Instance_T>>;
 
     m_function = [](Storage_T& storage, Args&&... args) -> Ret {
       auto* object = storage.asTypedPtr<Type>();
@@ -150,7 +151,8 @@ private:
   template<typename Instance_T, auto function>
   void setTrampolineFct()
   {
-    using Type = std::conditional_t<std::is_lvalue_reference_v<Instance_T&&>, std::add_pointer_t<std::remove_reference_t<Instance_T>>, std::remove_reference_t<Instance_T>>;
+    using Type = std::
+        conditional_t<std::is_lvalue_reference_v<Instance_T&&>, std::add_pointer_t<std::remove_reference_t<Instance_T>>, std::remove_reference_t<Instance_T>>;
 
     m_function = [](Storage_T& storage, Args&&... args) -> Ret {
       auto* object = storage.asTypedPtr<Type>();
@@ -175,7 +177,11 @@ private:
     }
     else
     {
+#if defined(_MSC_VER) && !defined(__clang__) // MSVC
       std::unreachable();
+#else // GCC, Clang
+      __builtin_unreachable();
+#endif
     }
   }
 

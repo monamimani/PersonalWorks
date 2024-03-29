@@ -7,34 +7,35 @@ import CoreConcepts;
 
 namespace Delegate
 {
-template <typename F>
+template<typename F>
 class DelegateStdFunction;
 
-template <class R, class... Args>
+template<class R, class... Args>
 class DelegateStdFunction<R(Args...)>
 {
   using Function_Sig = R(Args...);
   using Function_Ptr = std::add_pointer_t<Function_Sig>;
 
-  //template <typename Instance_T>
-  //using InstanceType = std::remove_reference_t<Instance_T>;
   // template <typename Instance_T>
-  // using MemberFunction_Sig = Ret(InstanceType<Instance_T>&, Args...);
-  template <typename Instance_T>
+  // using InstanceType = std::remove_reference_t<Instance_T>;
+  //  template <typename Instance_T>
+  //  using MemberFunction_Sig = Ret(InstanceType<Instance_T>&, Args...);
+  template<typename Instance_T>
   using MemberFunctionPtr = R (Instance_T::*)(Args...);
-  template <typename Instance_T>
+  template<typename Instance_T>
   using MemberFunctionConstPtr = R (Instance_T::*)(Args...) const;
   // template <typename Instance_T>
-  // using MemberFunctionConstOrNot_Ptr = std::conditional_t<std::is_const_v<InstanceType<Instance_T>>, MemberFunctionConstPtr<Instance_T>, MemberFunctionPtr<Instance_T>>;
+  // using MemberFunctionConstOrNot_Ptr = std::conditional_t<std::is_const_v<InstanceType<Instance_T>>, MemberFunctionConstPtr<Instance_T>,
+  // MemberFunctionPtr<Instance_T>>;
 
 public:
-  template <typename Instance_T>
+  template<typename Instance_T>
   static consteval decltype(auto) asFnPtr(MemberFunctionPtr<Instance_T> fct)
   {
     return fct;
   }
 
-  template <typename Instance_T>
+  template<typename Instance_T>
   static consteval decltype(auto) asFnConstPtr(MemberFunctionConstPtr<Instance_T> fct)
   {
     return fct;
@@ -48,10 +49,11 @@ public:
 
   public:
     [[deprecated("Remove when DelegateRAII is properly implemented.")]] DelegateRAII() = default;
+
     DelegateRAII(Delegate_T* const delegate)
     : m_delegate{delegate}
-    {
-    }
+    {}
+
     ~DelegateRAII()
     {
       if (m_delegate)
@@ -61,40 +63,37 @@ public:
     }
   };
 
-  template <Core::InvocableAndReturn<R, Args...> auto F>
-  inline constexpr [[nodiscard]] auto bind()
+  template<Core::InvocableAndReturn<R, Args...> auto F>
+  [[nodiscard]] inline constexpr auto bind()
   {
     m_fct = F;
 
     return DelegateRAII{};
   }
 
-  template <Core::FunctorAndReturn<R, Args...> Instance_T>
-  inline constexpr [[nodiscard]] auto bind(Instance_T&& functor)
+  template<Core::FunctorAndReturn<R, Args...> Instance_T>
+  [[nodiscard]] inline constexpr auto bind(Instance_T&& functor)
   {
-    m_fct = [&functor](Args... args) -> R
-    {
+    m_fct = [&functor](Args... args) -> R {
       return std::invoke(functor, std::forward<Args>(args)...);
     };
 
     return DelegateRAII{};
   }
 
-  template <auto F, typename Instance_T>
+  template<auto F, typename Instance_T>
   requires Core::InvocableAndReturnNTTP<F, R, Instance_T, Args...>
-  inline constexpr [[nodiscard]] auto bind(Instance_T&& instance)
+  [[nodiscard]] inline constexpr auto bind(Instance_T&& instance)
   {
     if constexpr (std::is_lvalue_reference_v<Instance_T&&>)
     {
-      m_fct = [&instance](Args... args) -> R
-      {
+      m_fct = [&instance](Args... args) -> R {
         return std::invoke(F, instance, std::forward<Args>(args)...);
       };
     }
     else if constexpr (std::is_rvalue_reference_v<Instance_T&&>)
     {
-      m_fct = [instance_ = std::move(instance)](Args... args) mutable -> R
-      {
+      m_fct = [instance_ = std::move(instance)](Args... args) mutable -> R {
         return std::invoke(F, instance_, std::forward<Args>(args)...);
       };
     }
@@ -102,7 +101,7 @@ public:
     return DelegateRAII{};
   }
 
-  template <typename Instance_T>
+  template<typename Instance_T>
   [[nodiscard]] constexpr decltype(auto) bindObject(Instance_T&& instance)
   {
     return ObjectMemFnBinder<Instance_T>{this, std::forward<Instance_T>(instance)};
@@ -148,37 +147,32 @@ public:
   bool operator==(const DelegateStdFunction&) const = default;
 
 private:
-
-
-  template <typename Instance_T>
+  template<typename Instance_T>
   class ObjectMemFnBinder
   {
     using Type = std::remove_reference_t<Instance_T>;
     using MemFct_Ptr = MemberFunctionPtr<Instance_T>;
     using MemFctConst_Ptr = MemberFunctionConstPtr<Instance_T>;
 
-    template <auto function>
+    template<auto function>
     void setTrampolineFct()
     {
       if constexpr (std::is_lvalue_reference_v<Instance_T&&>)
       {
-        m_delegate->m_fct = [&instance = m_instance](Args... args) -> R
-        {
+        m_delegate->m_fct = [&instance = m_instance](Args... args) -> R {
           return std::invoke(function, instance, std::forward<Args>(args)...);
         };
       }
       else if constexpr (std::is_rvalue_reference_v<Instance_T&&>)
       {
-        m_delegate->m_fct = [instance_ = std::move(m_instance)](Args... args) mutable -> R
-        {
+        m_delegate->m_fct = [instance_ = std::move(m_instance)](Args... args) mutable -> R {
           return std::invoke(function, instance_, std::forward<Args>(args)...);
         };
       }
     }
 
   public:
-
-    template <MemFct_Ptr function>
+    template<MemFct_Ptr function>
     [[nodiscard]] auto memFn()
     {
       setTrampolineFct<function>();
@@ -187,7 +181,7 @@ private:
       return DelegateRAII{};
     }
 
-    template <MemFctConst_Ptr function>
+    template<MemFctConst_Ptr function>
     [[nodiscard]] auto memFnConst()
     {
       setTrampolineFct<function>();
@@ -203,7 +197,7 @@ private:
   std::function<R(Args...)> m_fct;
 };
 
-template <typename Signature>
+template<typename Signature>
 inline void swap(DelegateStdFunction<Signature>& d1, DelegateStdFunction<Signature>& d2)
 {
   d1.swap(d2);

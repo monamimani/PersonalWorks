@@ -101,7 +101,7 @@ struct fmt::formatter<std::source_location>: fmt::formatter<std::string_view>
 };
 
 template<>
-struct std::formatter<std::source_location>: std::formatter<std::string_view>
+struct fmt::formatter<std::source_location>: fmt::formatter<std::string_view>
 {
   auto format(const std::source_location& location, format_context& ctx) const
   {

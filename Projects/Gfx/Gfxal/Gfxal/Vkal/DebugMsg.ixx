@@ -1,12 +1,11 @@
 module;
 
 #include <format>
-#include <print>
 #include <ranges>
 #include <string>
 
-#include "fmt/format.h"
 #include "Gfxal/Vkal/Vk.h"
+#include "fmt/format.h"
 
 export module Vkal.DebugMsg;
 

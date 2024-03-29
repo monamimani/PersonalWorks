@@ -1,6 +1,12 @@
 
 get_filename_component(targetName ${CMAKE_CURRENT_LIST_DIR} NAME)
 
+if(NOT MSVC)
+  message(WARNING "BasicWindowApp need to be ported for Linux.")
+  return()
+endif(NOT MSVC)
+return()
+
 list(APPEND interfaceSources
 )
 list(APPEND publicSources
@@ -19,8 +25,8 @@ list(APPEND testsSources
 list(APPEND benchamrksSources
 )
 
-list(APPEND interfaceLibraries )
-list(APPEND publicLibraries )
+list(APPEND interfaceLibraries)
+list(APPEND publicLibraries)
 list(APPEND privateLibraries
   PersonalWorks::PersonalWorks_options
   PersonalWorks::PersonalWorks_warnings
@@ -28,15 +34,14 @@ list(APPEND privateLibraries
   PersonalWorks::Config
   PersonalWorks::Core
   PersonalWorks::ApplicationCore
-
 )
 
 add_executable(${targetName})
 add_executable(PersonalWorks::${targetName} ALIAS ${targetName})
 
 target_include_directories(${targetName}
-    PUBLIC
-        "${CMAKE_CURRENT_SOURCE_DIR}"
+  PUBLIC
+  "${CMAKE_CURRENT_SOURCE_DIR}"
 )
 
 target_sources(${targetName}
@@ -61,7 +66,7 @@ if(BUILD_TESTING AND GTest_FOUND AND testsSources)
 
   target_include_directories(${targetNameTest}
     PUBLIC
-      "${CMAKE_CURRENT_SOURCE_DIR}"
+    "${CMAKE_CURRENT_SOURCE_DIR}"
   )
 
   target_sources(${targetNameTest}
@@ -77,9 +82,9 @@ if(BUILD_TESTING AND GTest_FOUND AND testsSources)
     INTERFACE ${interfaceLibraries}
     PUBLIC ${publicLibraries}
     PRIVATE
-      ${privateLibraries}
-      PersonalWorks::TestUtilities
-      fmt::fmt
+    ${privateLibraries}
+    PersonalWorks::TestUtilities
+    fmt::fmt
   )
   gtest_discover_tests(${targetNameTest})
 
@@ -102,7 +107,7 @@ if(BUILD_TESTING AND benchmark_FOUND AND benchamrksSources)
 
   target_include_directories(${targetNameBenchmark}
     PUBLIC
-      "${CMAKE_CURRENT_SOURCE_DIR}"
+    "${CMAKE_CURRENT_SOURCE_DIR}"
   )
 
   target_sources(${targetNameBenchmark}
@@ -117,9 +122,9 @@ if(BUILD_TESTING AND benchmark_FOUND AND benchamrksSources)
     INTERFACE ${interfaceLibraries}
     PUBLIC ${publicLibraries}
     PRIVATE
-      ${privateLibraries}
-      PersonalWorks::TestUtilities
-      fmt::fmt
-      benchmark::benchmark_main
+    ${privateLibraries}
+    PersonalWorks::TestUtilities
+    fmt::fmt
+    benchmark::benchmark_main
   )
 endif()

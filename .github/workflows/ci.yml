@@ -15,7 +15,7 @@ jobs:
     if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
     runs-on: ${{matrix.platform.os}}
     container:
-      image:  ${{ matrix.platform.name == 'Linux' && 'ghcr.io/monamimani-builds/cpp-devcontainer:v7.0.0' || '' }}
+      image:  ${{ matrix.platform.name == 'Linux' && 'ghcr.io/monamimani-builds/cpp-devcontainer:a524189b6082de6c08216ef1f3ea2544a9cdf5a4' || '' }}
     strategy:
       fail-fast: false
 

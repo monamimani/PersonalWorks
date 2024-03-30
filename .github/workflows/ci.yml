@@ -20,56 +20,11 @@ jobs:
       fail-fast: false
 
       # CMake preset name template: "%Platform%-%Compiler%-%Generator%-%BuildType%-%BuildKind%"
-      # matrix:
-      #   platform: [
-      #     {name: Linux, os: ubuntu-latest},
-      #     {name: Windows, os: windows-latest }
-      #     ]
-      #   compiler: [Gcc, Clang, Clang-cl, Msvc]
-      #   generator: [{name: Ninja, isMultiConfig: false}]
-      #   build_type: [Debug, Release]
-      #   #build_kind: [Dev, QA, Profile, Shipping]
-
-      #   exclude: #Becasue they don't make sense or no Cmake preset created.
-      #     - platform: {name: Linux}
-      #       compiler: Msvc
-      #     - platform: {name: Linux}
-      #       compiler: Clang-cl
-      #     - platform: {name: Windows}
-      #       compiler: Clang
-      #     - platform: {name: Windows}
-      #       compiler: Gcc
-      #     # - build_kind: QA
-      #     #   build_type: Debug
-      #     # - build_kind: Shipping
-      #     #   build_type: Debug
-      #     # - build_kind: Profile
-          
-      #   include: # combinasions that are one off
-      #     - platform: {name: Linux, os: ubuntu-latest}
-      #       compiler: Clang
-      #       generator: [{name: NinjaMultiConfig, isMultiConfig: true}]
-      #       build_type: Debug
-      #       #build_kind: Dev
-      #     - platform: {name: Windows, os: windows-latest }
-      #       compiler: Msvc
-      #       generator: [{name: Vs2022, isMultiConfig: true}]
-      #       build_type: Debug
-      #       #build_kind: Dev
-      #     - platform: {name: Windows, os: windows-latest }
-      #       compiler: Msvc
-      #       generator: [{name: NinjaMultiConfig, isMultiConfig: true}]
-      #       build_type: Debug
-      #       #build_kind: Dev
-
       matrix:
         include:
           - os: ubuntu-latest
             configure-preset: "Linux-Clang-Ninja-Debug"
             build-preset: "Linux-Clang-Ninja-Debug"
-          - os: ubuntu-latest
-            configure-preset: "Linux-Clang-Ninja-ReleaseWithDebugInfo"
-            build-preset: "Linux-Clang-Ninja-ReleaseWithDebugInfo"
           - os: ubuntu-latest
             configure-preset: "Linux-Clang-Ninja-Release"
             build-preset: "Linux-Clang-Ninja-Release"   
@@ -77,29 +32,14 @@ jobs:
             configure-preset: "Linux-Gcc-Ninja-Debug"
             build-preset: "Linux-Gcc-Ninja-Debug"
           - os: ubuntu-latest
-            configure-preset: "Linux-Gcc-Ninja-ReleaseWithDebugInfo"
-            build-preset: "Linux-Gcc-Ninja-ReleaseWithDebugInfo"
-          - os: ubuntu-latest
             configure-preset: "Linux-Gcc-Ninja-Release"
             build-preset: "Linux-Gcc-Ninja-Release"    
           - os: ubuntu-latest
             configure-preset: "Linux-Clang-NinjaMultiConfig-Debug"
-            build-preset: "Linux-Clang-NinjaMultiConfig-Debug"
-          - os: ubuntu-latest
-            configure-preset: "Linux-Clang-NinjaMultiConfig-ReleaseWithDebugInfo"
-            build-preset: "Linux-Clang-NinjaMultiConfig-ReleaseWithDebugInfo"          
-          - os: ubuntu-latest
-            configure-preset: "Linux-Gcc-NinjaMultiConfig-Debug"
-            build-preset: "Linux-Gcc-NinjaMultiConfig-Debug"
-          - os: ubuntu-latest
-            configure-preset: "Linux-Gcc-NinjaMultiConfig-ReleaseWithDebugInfo"
-            build-preset: "Linux-Gcc-NinjaMultiConfig-ReleaseWithDebugInfo"  
+            build-preset: "Linux-Clang-NinjaMultiConfig-Debug"         
           - os: windows-latest
             configure-preset: "Windows-Msvc-Ninja-Debug"
             build-preset: "Windows-Msvc-Ninja-Debug"
-          - os: windows-latest
-            configure-preset: "Windows-Msvc-Ninja-ReleaseWithDebugInfo"
-            build-preset: "Windows-Msvc-Ninja-ReleaseWithDebugInfo"
           - os: windows-latest
             configure-preset: "Windows-Msvc-Ninja-Release"
             build-preset: "Windows-Msvc-Ninja-Release"        
@@ -107,14 +47,8 @@ jobs:
             configure-preset: "Windows-Msvc-NinjaMultiConfig"
             build-preset: "Windows-Msvc-NinjaMultiConfig-Debug"
           - os: windows-latest
-            configure-preset: "Windows-Msvc-NinjaMultiConfig"
-            build-preset: "Windows-Msvc-NinjaMultiConfig-ReleaseWithDebugInfo"
-          - os: windows-latest
             configure-preset: "Windows-Msvc-Vs2022"
             build-preset: "Windows-Msvc-Vs2022-Debug"
-          - os: windows-latest
-            configure-preset: "Windows-Msvc-Vs2022"
-            build-preset: "Windows-Msvc-Vs2022-ReleaseWithDebugInfo"
 
 
     name: ${{matrix.build-preset}}

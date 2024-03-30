@@ -1,0 +1,53 @@
+{
+  "$schema": "https://cmake.org/cmake/help/v3.28/_downloads/3e2d73bff478d88a7de0de736ba5e361/schema.json",
+  "version": 8,
+  "include": [
+    "./PlatformLinux.configure.json"
+  ],
+  "buildPresets": [
+    {
+      "name": "Linux-Clang-Ninja-Debug",
+      "configurePreset": "Linux-Clang-Ninja-Debug"
+    },
+    {
+      "name": "Linux-Clang-Ninja-ReleaseWithDebugInfo",
+      "configurePreset": "Linux-Clang-Ninja-ReleaseWithDebugInfo"
+    },
+    {
+      "name": "Linux-Clang-Ninja-Release",
+      "configurePreset": "Linux-Clang-Ninja-Release"
+    },
+    {
+      "name": "Linux-Gcc-Ninja-Debug",
+      "configurePreset": "Linux-Gcc-Ninja-Debug"
+    },
+    {
+      "name": "Linux-Gcc-Ninja-ReleaseWithDebugInfo",
+      "configurePreset": "Linux-Gcc-Ninja-ReleaseWithDebugInfo"
+    },
+    {
+      "name": "Linux-Gcc-Ninja-Release",
+      "configurePreset": "Linux-Gcc-Ninja-Release"
+    },
+    {
+      "name": "Linux-Clang-NinjaMultiConfig-Debug",
+      "configurePreset": "Linux-Clang-NinjaMultiConfig",
+      "configuration": "Debug"
+    },
+    {
+      "name": "Linux-Clang-NinjaMultiConfig-ReleaseWithDebugInfo",
+      "configurePreset": "Linux-Clang-NinjaMultiConfig",
+      "configuration": "RelWithDebInfo"
+    },
+    {
+      "name": "Linux-Gcc-NinjaMultiConfig-Debug",
+      "configurePreset": "Linux-Gcc-NinjaMultiConfig",
+      "configuration": "Debug"
+    },
+    {
+      "name": "Linux-Gcc-NinjaMultiConfig-ReleaseWithDebugInfo",
+      "configurePreset": "Linux-Gcc-NinjaMultiConfig",
+      "configuration": "RelWithDebInfo"
+    }
+  ]
+}

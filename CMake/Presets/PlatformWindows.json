@@ -2,91 +2,129 @@
   "$schema": "https://cmake.org/cmake/help/v3.28/_downloads/3e2d73bff478d88a7de0de736ba5e361/schema.json",
   "version": 8,
   "include": [
-    "./Common.json",
-    "./BuildVariant.json",
-    "./Generators.json",
-    "./Toolchain.json"
+    "./PlatformWindows.build.json"
   ],
-  "configurePresets": [
-    {
-      "name": "Windows",
-      "hidden": true,
-      "condition": {
-        "type": "equals",
-        "lhs": "${hostSystemName}",
-        "rhs": "Windows"
-      },
-      "cacheVariables": {
-        "VCPKG_TARGET_TRIPLET": "x64-windows"
-      }
-    },
-    {
-      "name": "Windows-Msvc-Vs2022-Debug",
-      "inherits": [
-        "Common",
-        "Windows",
-        "Msvc",
-        "Vs2022"
-      ],
-      "cacheVariables": {
-        // "CMAKE_BUILD_TYPE": "Debug" Commented because multiconfig generator don't use that CMake variable
-      }
-    },
-    {
-      "name": "Windows-ClangCl-Ninja-Debug",
-      "inherits": [
-        "Common",
-        "Windows",
-        "ClangCl",
-        "Ninja"
-      ],
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Debug"
-      }
-    },
+  "configurePresets": [],
+  "buildPresets": [],
+  "testPresets": [],
+  "packagePresets": [],
+  "workflowPresets": [
     {
       "name": "Windows-Msvc-Ninja-Debug",
-      "inherits": [
-        "Common",
-        "Windows",
-        "Msvc",
-        "Ninja"
-      ],
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Debug"
-      }
+      "steps": [
+        {
+          "type": "configure",
+          "name": "Windows-Msvc-Ninja-Debug"
+        },
+        {
+          "type": "build",
+          "name": "Windows-Msvc-Ninja-Debug"
+        }
+      ]
+    },
+    {
+      "name": "Windows-Msvc-Ninja-ReleaseWithDebugInfo",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "Windows-Msvc-Ninja-ReleaseWithDebugInfo"
+        },
+        {
+          "type": "build",
+          "name": "Windows-Msvc-Ninja-ReleaseWithDebugInfo"
+        }
+      ]
     },
     {
       "name": "Windows-Msvc-Ninja-Release",
-      "inherits": [
-        "Common",
-        "Windows",
-        "Msvc",
-        "Ninja"
-      ],
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "RelWithDebInfo"
-      }
-    }
-  ],
-  "buildPresets":
-  [
-    {
-      "name": "Windows-Msvc-Vs2022-Debug",
-      "configurePreset": "Windows-Msvc-Vs2022-Debug",
-      "configuration": "Debug"
+      "steps": [
+        {
+          "type": "configure",
+          "name": "Windows-Msvc-Ninja-Release"
+        },
+        {
+          "type": "build",
+          "name": "Windows-Msvc-Ninja-Release"
+        }
+      ]
     },
     {
       "name": "Windows-ClangCl-Ninja-Debug",
-      "configurePreset": "Windows-ClangCl-Ninja-Debug"
+      "steps": [
+        {
+          "type": "configure",
+          "name": "Windows-ClangCl-Ninja-Debug"
+        },
+        {
+          "type": "build",
+          "name": "Windows-ClangCl-Ninja-Debug"
+        }
+      ]
     },
     {
-      "name": "Windows-Msvc-Ninja-Debug",
-      "configurePreset": "Windows-Msvc-Ninja-Debug"
+      "name": "Windows-ClangCl-Ninja-ReleaseWithDebugInfo",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "Windows-ClangCl-Ninja-ReleaseWithDebugInfo"
+        },
+        {
+          "type": "build",
+          "name": "Windows-ClangCl-Ninja-ReleaseWithDebugInfo"
+        }
+      ]
     },
     {
-      "name": "Windows-Msvc-Ninja-Release",
-      "configurePreset": "Windows-Msvc-Ninja-Release"
+      "name": "Windows-Msvc-NinjaMultiConfig-Debug",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "Windows-Msvc-NinjaMultiConfig"
+        },
+        {
+          "type": "build",
+          "name": "Windows-Msvc-NinjaMultiConfig-Debug"
+        }
+      ]
+    },
+    {
+      "name": "Windows-Msvc-NinjaMultiConfig-ReleaseWithDebugInfo",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "Windows-Msvc-NinjaMultiConfig"
+        },
+        {
+          "type": "build",
+          "name": "Windows-Msvc-NinjaMultiConfig-ReleaseWithDebugInfo"
+        }
+      ]
+    },
+    {
+      "name": "Windows-Msvc-Vs2022-Debug",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "Windows-Msvc-Vs2022"
+        },
+        {
+          "type": "build",
+          "name": "Windows-Msvc-Vs2022-Debug"
+        }
+      ]
+    },
+    {
+      "name": "Windows-Msvc-Vs2022-ReleaseWithDebugInfo",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "Windows-Msvc-Vs2022"
+        },
+        {
+          "type": "build",
+          "name": "Windows-Msvc-Vs2022-ReleaseWithDebugInfo"
+        }
+      ]
     }
   ]
 }

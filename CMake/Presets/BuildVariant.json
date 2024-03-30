@@ -3,28 +3,36 @@
   "version": 8,
   "configurePresets": [
     {
-      "name": "Dev",
+      "name": "DebugBuild",
+      "description": "DebugBuild variant, I am adding Build as a postfix so that it doesn't clash with the preset name Debug'",
       "hidden": true,
       "cacheVariables": {
         "BUILD_KIND": "Dev"
       }
     },
     {
-      "name": "QA",
+      "name": "DevBuild",
+      "hidden": true,
+      "cacheVariables": {
+        "BUILD_KIND": "Dev"
+      }
+    },
+    {
+      "name": "QABuild",
       "hidden": true,
       "cacheVariables": {
         "BUILD_KIND": "QA"
       }
     },
     {
-      "name": "Profile",
+      "name": "ProfileBuild",
       "hidden": true,
       "cacheVariables": {
         "BUILD_KIND": "Profile"
       }
     },
     {
-      "name": "Shipping",
+      "name": "ShippingBuild",
       "hidden": true,
       "cacheVariables": {
         "BUILD_KIND": "Shipping"

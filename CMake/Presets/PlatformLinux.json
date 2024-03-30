@@ -2,95 +2,142 @@
   "$schema": "https://cmake.org/cmake/help/v3.28/_downloads/3e2d73bff478d88a7de0de736ba5e361/schema.json",
   "version": 8,
   "include": [
-    "./Common.json",
-    "./BuildVariant.json",
-    "./Generators.json",
-    "./Toolchain.json"
+    "./PlatformLinux.build.json"
   ],
-  "configurePresets": [
+  "configurePresets": [],
+  "buildPresets": [],
+  "testPresets": [],
+  "packagePresets": [],
+  "workflowPresets": [
     {
-      "name": "Linux",
-      "hidden": true,
-      "condition": {
-        "type": "equals",
-        "lhs": "${hostSystemName}",
-        "rhs": "Linux"
-      },
-      "cacheVariables": {
-        "VCPKG_TARGET_TRIPLET": "x64-linux"
-      },
-      "vendor": {
-        "microsoft.com/VisualStudioRemoteSettings/CMake/1.0": {
-          "sourceDir": "$env{HOME}/.vs/$ms{projectDirName}"
+      "name": "Linux-Clang-Ninja-Debug",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "Linux-Clang-Ninja-Debug"
+        },
+        {
+          "type": "build",
+          "name": "Linux-Clang-Ninja-Debug"
         }
-      }
+      ]
     },
     {
-      "name": "Linux-Clang-NinjaMultiConfig-Debug",
-      "inherits": [
-        "Common",
-        "Linux",
-        "Clang",
-        "NinjaMultiConfig"
-      ],
-      "cacheVariables": {
-        // "CMAKE_BUILD_TYPE": "Debug" Commented because multiconfig generator don't use that CMake variable
-      }
-    },
-    {
-      "name": "Linux-Clang-Ninja-Debug",
-      "inherits": [
-        "Common",
-        "Linux",
-        "Clang",
-        "Ninja"
-      ],
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Debug"
-      }
+      "name": "Linux-Clang-Ninja-ReleaseWithDebugInfo",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "Linux-Clang-Ninja-ReleaseWithDebugInfo"
+        },
+        {
+          "type": "build",
+          "name": "Linux-Clang-Ninja-ReleaseWithDebugInfo"
+        }
+      ]
     },
     {
       "name": "Linux-Clang-Ninja-Release",
-      "inherits": [
-        "Common",
-        "Linux",
-        "Clang",
-        "Ninja"
-      ],
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "RelWithDebInfo"
-      }
+      "steps": [
+        {
+          "type": "configure",
+          "name": "Linux-Clang-Ninja-Release"
+        },
+        {
+          "type": "build",
+          "name": "Linux-Clang-Ninja-Release"
+        }
+      ]
     },
     {
       "name": "Linux-Gcc-Ninja-Debug",
-      "inherits": [
-        "Common",
-        "Linux",
-        "Gcc",
-        "Ninja"
-      ],
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Debug"
-      }
-    }
-  ],
-  "buildPresets": [
+      "steps": [
+        {
+          "type": "configure",
+          "name": "Linux-Gcc-Ninja-Debug"
+        },
+        {
+          "type": "build",
+          "name": "Linux-Gcc-Ninja-Debug"
+        }
+      ]
+    },
+    {
+      "name": "Linux-Gcc-Ninja-ReleaseWithDebugInfo",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "Linux-Gcc-Ninja-ReleaseWithDebugInfo"
+        },
+        {
+          "type": "build",
+          "name": "Linux-Gcc-Ninja-ReleaseWithDebugInfo"
+        }
+      ]
+    },
+    {
+      "name": "Linux-Gcc-Ninja-Release",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "Linux-Gcc-Ninja-Release"
+        },
+        {
+          "type": "build",
+          "name": "Linux-Gcc-Ninja-Release"
+        }
+      ]
+    },
     {
       "name": "Linux-Clang-NinjaMultiConfig-Debug",
-      "configurePreset": "Linux-Clang-NinjaMultiConfig-Debug",
-      "configuration": "Debug"
+      "steps": [
+        {
+          "type": "configure",
+          "name": "Linux-Clang-NinjaMultiConfig"
+        },
+        {
+          "type": "build",
+          "name": "Linux-Clang-NinjaMultiConfig-Debug"
+        }
+      ]
     },
     {
-      "name": "Linux-Clang-Ninja-Debug",
-      "configurePreset": "Linux-Clang-Ninja-Debug"
+      "name": "Linux-Clang-NinjaMultiConfig-ReleaseWithDebugInfo",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "Linux-Clang-NinjaMultiConfig"
+        },
+        {
+          "type": "build",
+          "name": "Linux-Clang-NinjaMultiConfig-ReleaseWithDebugInfo"
+        }
+      ]
     },
     {
-      "name": "Linux-Clang-Ninja-Release",
-      "configurePreset": "Linux-Clang-Ninja-Release"
+      "name": "Linux-Gcc-NinjaMultiConfig-Debug",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "Linux-Gcc-NinjaMultiConfig"
+        },
+        {
+          "type": "build",
+          "name": "Linux-Gcc-NinjaMultiConfig-Debug"
+        }
+      ]
     },
     {
-      "name": "Linux-Gcc-Ninja-Debug",
-      "configurePreset": "Linux-Gcc-Ninja-Debug"
+      "name": "Linux-Gcc-NinjaMultiConfig-ReleaseWithDebugInfo",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "Linux-Gcc-NinjaMultiConfig"
+        },
+        {
+          "type": "build",
+          "name": "Linux-Gcc-NinjaMultiConfig-ReleaseWithDebugInfo"
+        }
+      ]
     }
   ]
 }

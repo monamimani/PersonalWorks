@@ -20,7 +20,7 @@ function(add_test_target TARGETNAME)
   #cmake_print_variables(ARG_KEYWORDS_MISSING_VALUES)
 
 
-if(NOT BUILD_TESTING OR NOT GTest_FOUND)
+if(NOT PersonalWorks_BUILD_TESTS OR NOT GTest_FOUND)
   return()
 endif()
 
@@ -101,7 +101,7 @@ function(add_benchmark_target TARGETNAME)
   #cmake_print_variables(ARG_PREFIX_UNPARSED_ARGUMENTS)
   #cmake_print_variables(ARG_KEYWORDS_MISSING_VALUES)
 
-if(NOT BUILD_TESTING OR NOT benchmark_FOUND)
+if(NOT PersonalWorks_BUILD_TESTS OR NOT benchmark_FOUND)
   return()
 endif()
 

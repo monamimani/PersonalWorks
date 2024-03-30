@@ -48,9 +48,9 @@ PersonalWorks_target_options()
 find_package(fmt CONFIG REQUIRED)
 
 # If this project is consumed by another, don't setup tests.
-if(PROJECT_IS_TOP_LEVEL)
+if(PROJECT_IS_TOP_LEVEL AND PersonalWorks_BUILD_TESTS)
+  enable_testing()
   include(CMake/TestDependencies.cmake)
-  include(CMake/TestTarget.cmake)
 
   if(NOT PROCESSOR_COUNT EQUAL 0)
     set(CTEST_BUILD_FLAGS -j${PROCESSOR_COUNT})

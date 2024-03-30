@@ -58,7 +58,7 @@ target_link_libraries(${targetName}
   PRIVATE ${privateLibraries}
 )
 
-if(BUILD_TESTING AND GTest_FOUND AND testsSources)
+if(PersonalWorks_BUILD_TESTS AND GTest_FOUND AND testsSources)
   set(targetNameTest ${targetName}Tests)
   add_executable(${targetNameTest})
   add_executable(PersonalWorks::${targetNameTest} ALIAS ${targetNameTest})
@@ -99,7 +99,7 @@ if(BUILD_TESTING AND GTest_FOUND AND testsSources)
   # set_tests_properties(cli.version_matches PROPERTIES PASS_REGULAR_EXPRESSION "${PROJECT_VERSION}")
 endif()
 
-if(BUILD_TESTING AND benchmark_FOUND AND benchamrksSources)
+if(PersonalWorks_BUILD_TESTS AND benchmark_FOUND AND benchamrksSources)
   set(targetNameBenchmark ${targetName}Benchmarks)
   add_executable(${targetNameBenchmark})
   add_executable(PersonalWorks::${targetNameBenchmark} ALIAS ${targetNameBenchmark})

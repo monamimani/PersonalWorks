@@ -4,7 +4,7 @@ if(PersonalWorks_BUILD_BENCHMARKS)
   find_package(benchmark CONFIG REQUIRED)
 endif()
 
-if(BUILD_TESTING) # or if(PersonalWorks_BUILD_TESTS)
+if(PersonalWorks_BUILD_TESTS)
   find_package(Catch2 3 CONFIG REQUIRED)
   include(Catch)
 

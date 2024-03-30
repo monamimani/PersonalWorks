@@ -13,62 +13,122 @@ on:
 jobs:
   build-test:
     if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
-    runs-on: ${{matrix.platform.os}}
+    runs-on: ${{matrix.os}}
     container:
-      image:  ${{ matrix.platform.name == 'Linux' && 'ghcr.io/monamimani-builds/cpp-devcontainer:a524189b6082de6c08216ef1f3ea2544a9cdf5a4' || '' }}
+      image:  ${{ runner.os == 'Linux' && 'ghcr.io/monamimani-builds/cpp-devcontainer:a524189b6082de6c08216ef1f3ea2544a9cdf5a4' || '' }}
     strategy:
       fail-fast: false
 
       # CMake preset name template: "%Platform%-%Compiler%-%Generator%-%BuildType%-%BuildKind%"
-      matrix:
-        platform: [
-          {name: Linux, os: ubuntu-latest},
-          {name: Windows, os: windows-latest }
-          ]
-        compiler: [Gcc, Clang, Clang-cl, Msvc]
-        generator: [{name: Ninja, isMultiConfig: false}]
-        build_type: [Debug, Release]
-        #build_kind: [Dev, QA, Profile, Shipping]
+      # matrix:
+      #   platform: [
+      #     {name: Linux, os: ubuntu-latest},
+      #     {name: Windows, os: windows-latest }
+      #     ]
+      #   compiler: [Gcc, Clang, Clang-cl, Msvc]
+      #   generator: [{name: Ninja, isMultiConfig: false}]
+      #   build_type: [Debug, Release]
+      #   #build_kind: [Dev, QA, Profile, Shipping]
 
-        exclude: #Becasue they don't make sense or no Cmake preset created.
-          - platform: {name: Linux}
-            compiler: Msvc
-          - platform: {name: Linux}
-            compiler: Clang-cl
-          - platform: {name: Windows}
-            compiler: Clang
-          - platform: {name: Windows}
-            compiler: Gcc
-          # - build_kind: QA
-          #   build_type: Debug
-          # - build_kind: Shipping
-          #   build_type: Debug
-          # - build_kind: Profile
+      #   exclude: #Becasue they don't make sense or no Cmake preset created.
+      #     - platform: {name: Linux}
+      #       compiler: Msvc
+      #     - platform: {name: Linux}
+      #       compiler: Clang-cl
+      #     - platform: {name: Windows}
+      #       compiler: Clang
+      #     - platform: {name: Windows}
+      #       compiler: Gcc
+      #     # - build_kind: QA
+      #     #   build_type: Debug
+      #     # - build_kind: Shipping
+      #     #   build_type: Debug
+      #     # - build_kind: Profile
           
-        include: # combinasions that are one off
-          - platform: {name: Linux, os: ubuntu-latest}
-            compiler: Clang
-            generator: [{name: NinjaMultiConfig, isMultiConfig: true}]
-            build_type: Debug
-            #build_kind: Dev
-          - platform: {name: Windows, os: windows-latest }
-            compiler: Msvc
-            generator: [{name: Vs2022, isMultiConfig: true}]
-            build_type: Debug
-            #build_kind: Dev
-          - platform: {name: Windows, os: windows-latest }
-            compiler: Msvc
-            generator: [{name: NinjaMultiConfig, isMultiConfig: true}]
-            build_type: Debug
-            #build_kind: Dev
-        
-    
-    name: ${{matrix.platform.name}}-${{matrix.compiler}}-${{matrix.generator}}-${{matrix.build_type}}
+      #   include: # combinasions that are one off
+      #     - platform: {name: Linux, os: ubuntu-latest}
+      #       compiler: Clang
+      #       generator: [{name: NinjaMultiConfig, isMultiConfig: true}]
+      #       build_type: Debug
+      #       #build_kind: Dev
+      #     - platform: {name: Windows, os: windows-latest }
+      #       compiler: Msvc
+      #       generator: [{name: Vs2022, isMultiConfig: true}]
+      #       build_type: Debug
+      #       #build_kind: Dev
+      #     - platform: {name: Windows, os: windows-latest }
+      #       compiler: Msvc
+      #       generator: [{name: NinjaMultiConfig, isMultiConfig: true}]
+      #       build_type: Debug
+      #       #build_kind: Dev
+
+      matrix:
+        include:
+          - os: ubuntu-latest
+            configure-preset: "Linux-Clang-Ninja-Debug"
+            build-preset: "Linux-Clang-Ninja-Debug"
+          - os: ubuntu-latest
+            configure-preset: "Linux-Clang-Ninja-ReleaseWithDebugInfo"
+            build-preset: "Linux-Clang-Ninja-ReleaseWithDebugInfo"
+          - os: ubuntu-latest
+            configure-preset: "Linux-Clang-Ninja-Release"
+            build-preset: "Linux-Clang-Ninja-Release"   
+          - os: ubuntu-latest
+            configure-preset: "Linux-Gcc-Ninja-Debug"
+            build-preset: "Linux-Gcc-Ninja-Debug"
+          - os: ubuntu-latest
+            configure-preset: "Linux-Gcc-Ninja-ReleaseWithDebugInfo"
+            build-preset: "Linux-Gcc-Ninja-ReleaseWithDebugInfo"
+          - os: ubuntu-latest
+            configure-preset: "Linux-Gcc-Ninja-Release"
+            build-preset: "Linux-Gcc-Ninja-Release"    
+          - os: ubuntu-latest
+            configure-preset: "Linux-Clang-NinjaMultiConfig-Debug"
+            build-preset: "Linux-Clang-NinjaMultiConfig-Debug"
+          - os: ubuntu-latest
+            configure-preset: "Linux-Clang-NinjaMultiConfig-ReleaseWithDebugInfo"
+            build-preset: "Linux-Clang-NinjaMultiConfig-ReleaseWithDebugInfo"          
+          - os: ubuntu-latest
+            configure-preset: "Linux-Gcc-NinjaMultiConfig-Debug"
+            build-preset: "Linux-Gcc-NinjaMultiConfig-Debug"
+          - os: ubuntu-latest
+            configure-preset: "Linux-Gcc-NinjaMultiConfig-ReleaseWithDebugInfo"
+            build-preset: "Linux-Gcc-NinjaMultiConfig-ReleaseWithDebugInfo"  
+          - os: windows-latest
+            configure-preset: "Windows-Msvc-Ninja-Debug"
+            build-preset: "Windows-Msvc-Ninja-Debug"
+          - os: windows-latest
+            configure-preset: "Windows-Msvc-Ninja-ReleaseWithDebugInfo"
+            build-preset: "Windows-Msvc-Ninja-ReleaseWithDebugInfo"
+          - os: windows-latest
+            configure-preset: "Windows-Msvc-Ninja-Release"
+            build-preset: "Windows-Msvc-Ninja-Release" 
+          - os: windows-latest
+            configure-preset: "Windows-ClangCl-Ninja-Debug"
+            build-preset: "Windows-ClangCl-Ninja-Debug"
+          - os: windows-latest
+            configure-preset: "Windows-ClangCl-Ninja-ReleaseWithDebugInfo"
+            build-preset: "Windows-ClangCl-Ninja-ReleaseWithDebugInfo"          
+          - os: windows-latest
+            configure-preset: "Windows-Msvc-NinjaMultiConfig"
+            build-preset: "Windows-Msvc-NinjaMultiConfig-Debug"
+          - os: windows-latest
+            configure-preset: "Windows-Msvc-NinjaMultiConfig"
+            build-preset: "Windows-Msvc-NinjaMultiConfig-ReleaseWithDebugInfo"
+          - os: windows-latest
+            configure-preset: "Windows-Msvc-Vs2022"
+            build-preset: "Windows-Msvc-Vs2022-Debug"
+          - os: windows-latest
+            configure-preset: "Windows-Msvc-Vs2022"
+            build-preset: "Windows-Msvc-Vs2022-ReleaseWithDebugInfo"
+
+
+    name: ${{matrix.build-preset}}
+    # name: ${{matrix.platform.name}}-${{matrix.compiler}}-${{matrix.generator}}-${{matrix.build_type}}
     #-${{matrix.build_kind}}
 
     env:
-      CMAKE_CONFIGURE_PRESET: ${{matrix.platform.name}}-${{matrix.compiler}}-${{matrix.generator}}
-      CMAKE_PRESET: ${{matrix.platform.name}}-${{matrix.compiler}}-${{matrix.generator}}-${{matrix.build_type}}
+      # CMAKE_PRESET: ${{matrix.platform.name}}-${{matrix.compiler}}-${{matrix.generator}}-${{matrix.build_type}}
       #-${{matrix.build_kind}}
 
     steps:
@@ -99,13 +159,13 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-cpm-
 
-    - name: Setup Cache
-      uses: ./.github/actions/setup_cache
-      with:
-        compiler: ${{ matrix.compiler }}
-        build_type: ${{ matrix.build_type }}
-        packaging_maintainer_mode: false
-        generator: ${{ matrix.generator }}
+    # - name: Setup Cache
+    #   uses: ./.github/actions/setup_cache
+    #   with:
+    #     compiler: ${{ matrix.compiler }}
+    #     build_type: ${{ matrix.build_type }}
+    #     packaging_maintainer_mode: false
+    #     generator: ${{ matrix.generator }}
 
 
     - name: "[Windows] CMake Configure & Build"
@@ -113,16 +173,16 @@ jobs:
       run: |
         & { . Scripts\Build\VsEnvironment.ps1; LaunchVsDevShell }
 
-        cmake --preset ${{env.CMAKE_PRESET}} -DGIT_SHA:STRING=${{ github.sha }}
-        cmake --build --preset ${{env.CMAKE_PRESET}}
+        cmake --preset ${{matrix.configure-preset}} -DGIT_SHA:STRING=${{ github.sha }}
+        cmake --build --preset ${{matrix.build-preset}}
 
     - name: "[Linux] CMake Configure & Build"
       if: runner.os == 'Linux'
       continue-on-error: true
       run: |
         
-        cmake --preset ${{env.CMAKE_PRESET}} -DGIT_SHA:STRING=${{ github.sha }}
-        cmake --build --preset ${{env.CMAKE_PRESET}}
+        cmake --preset ${{matrix.configure-preset}} -DGIT_SHA:STRING=${{ github.sha }}
+        cmake --build --preset ${{matrix.build-preset}}
 
     # - name: Tests
     #   run: |

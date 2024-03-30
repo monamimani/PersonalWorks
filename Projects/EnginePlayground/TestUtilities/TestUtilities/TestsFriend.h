@@ -1,6 +1,6 @@
 #pragma once
 
-#include "TestUtilities/Config.h"
+#include "Config/Config.h"
 
 #define TEST_FIXTURE_FRIEND(TestFixtureType) \
   template<typename T>                       \
@@ -32,7 +32,7 @@ class TestFriend
 {
 public:
   template<auto MemberPtr>
-  requires isTestBuild
+  requires Config::isTestBuild
   static consteval const auto& get(const auto& obj)
   {
     return obj.*MemberPtr;

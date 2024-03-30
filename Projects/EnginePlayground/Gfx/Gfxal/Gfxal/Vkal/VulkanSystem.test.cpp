@@ -1,4 +1,4 @@
-#include "Core/Config.h"
+#include "Config/Config.h"
 #include "TestUtilities/GoogleTest.h"
 
 import Vkal.VulkanSystem;
@@ -14,8 +14,8 @@ TEST(VulkanSystemTests, CreateVulkanSystem)
 {
   auto systemDesc = VkHal::VulkanSystemDesc{.m_applicationName = "VulkanSystemTests",
                                             .m_engineName = "VulkanSystemTestsEngine",
-                                            .m_applicationVersion = Core::makeVersion(0, 0, 1),
-                                            .m_engineVersion = Core::makeVersion(0, 0, 1),
+                                            .m_applicationVersion = Config::makeVersion(0, 0, 1),
+                                            .m_engineVersion = Config::makeVersion(0, 0, 1),
                                             .m_enableValidation = true,
                                             .m_enableDebugUtils = true,
                                             .m_isVerbose = false};

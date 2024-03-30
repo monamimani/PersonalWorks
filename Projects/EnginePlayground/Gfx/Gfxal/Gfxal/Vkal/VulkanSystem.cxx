@@ -5,7 +5,7 @@ module;
 #include <ranges>
 #include <stdexcept>
 
-#include "Core/Config.h"
+#include "Config/Config.h"
 #include "Gfxal/Vkal/Vk.h"
 #include "fmt/format.h"
 #include "fmt/ranges.h"
@@ -33,7 +33,7 @@ VulkanSystem::VulkanSystem(VulkanSystemDesc desc)
     VULKAN_HPP_DEFAULT_DISPATCHER.init(m_loader);
   }
 
-  if constexpr (Core::isDebugBuild)
+  if constexpr (Config::isDebugBuild)
   {
     printInstanceInfo();
   }
@@ -60,7 +60,7 @@ VulkanSystem::VulkanSystem(VulkanSystemDesc desc)
 
   createPhysicalDevices();
 
-  if constexpr (Core::isDebugBuild)
+  if constexpr (Config::isDebugBuild)
   {
     printDevicesInfo();
   }

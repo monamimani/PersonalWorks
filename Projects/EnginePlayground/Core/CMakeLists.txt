@@ -1,18 +1,6 @@
 
 get_filename_component(targetName ${CMAKE_CURRENT_LIST_DIR} NAME)
 
-set(BUILD_KIND_IS_DEBUG 0)
-set(BUILD_KIND_IS_RELEASE 0)
-set(BUILD_KIND_IS_SHIPPING 0)
-
-if(BUILD_KIND STREQUAL DEBUG)
-set(BUILD_KIND_IS_DEBUG 1)
-elseif(BUILD_KIND STREQUAL RELEASE)
-set(BUILD_KIND_IS_RELEASE 1)
-elseif(BUILD_KIND STREQUAL SHIPPING)
-set(BUILD_KIND_IS_SHIPPING 1)
-endif()
-
 if(CMAKE_SYSTEM_NAME STREQUAL Windows)
   list(APPEND platformInterfaceSources
   )
@@ -51,8 +39,6 @@ list(APPEND publicSources
   ${targetName}/DelegateTypes/EventQueue.h
   ${targetName}/AppFrameTimer.h
   ${targetName}/Assert.h
-  ${targetName}/Config.h
-  ${targetName}/ConfigGenerated.h.in
   ${targetName}/Endian.h
   ${targetName}/EnumClassFlags.h
   ${targetName}/NonCopyable.h
@@ -124,8 +110,6 @@ list(APPEND privateLibraries
 
 add_library(${targetName})
 add_library(PersonalWorks::${targetName} ALIAS ${targetName})
-
-configure_file(${targetName}/ConfigGenerated.h.in ${targetName}/ConfigGenerated.h)
 
 generate_export_header(${targetName} EXPORT_FILE_NAME ${targetName}/${targetName}Exports.h)
 

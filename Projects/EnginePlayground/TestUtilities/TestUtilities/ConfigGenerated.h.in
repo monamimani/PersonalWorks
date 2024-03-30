@@ -1,3 +1,0 @@
-#pragma once
-
-#define CORE_TESTS_ENABLED ${CMAKE_TESTING_ENABLED}

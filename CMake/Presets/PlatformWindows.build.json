@@ -44,6 +44,11 @@
       "name": "Windows-Msvc-Vs2022-ReleaseWithDebugInfo",
       "configurePreset": "Windows-Msvc-Vs2022",
       "configuration": "RelWithDebInfo"
+    },
+    {
+      "name": "Windows-Msvc-Vs2022-Release",
+      "configurePreset": "Windows-Msvc-Vs2022",
+      "configuration": "Release"
     }
   ]
 }

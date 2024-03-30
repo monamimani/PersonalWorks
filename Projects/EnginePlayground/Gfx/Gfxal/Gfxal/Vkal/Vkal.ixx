@@ -106,7 +106,7 @@ public:
 
     m_requestedextensions = getInstanceExtensions();
 
-    if constexpr (Core::BuildKind != Core::BuildKind::Shipping)
+    if constexpr (Config::BuildKind != Config::BuildKind::Shipping)
     {
       static const auto vkLayerKhronosValidationName = "VK_LAYER_KHRONOS_validation";
       // Enable standard validation layer to find as much errors as possible!
@@ -165,7 +165,7 @@ public:
       VULKAN_HPP_DEFAULT_DISPATCHER.init(m_instance.get());
     }
 
-    if constexpr (Core::BuildKind != Core::BuildKind::Shipping)
+    if constexpr (Config::BuildKind != Config::BuildKind::Shipping)
     {
       m_debugMessenger = DebugMessenger(m_instance.get(), true);
     }
@@ -238,7 +238,7 @@ private:
     instanceCreateInfo.setPEnabledLayerNames({static_cast<uint32_t>(layers.size()), layers.data()});
     instanceCreateInfo.setPEnabledExtensionNames({static_cast<uint32_t>(extensions.size()), extensions.data()});
 
-    if constexpr (Core::BuildKind == Core::BuildKind::Shipping)
+    if constexpr (Config::BuildKind == Config::BuildKind::Shipping)
     {
       auto instanceCreateInfoChain = vk::StructureChain<vk::InstanceCreateInfo>{instanceCreateInfo};
 

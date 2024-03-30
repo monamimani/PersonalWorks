@@ -1,0 +1,48 @@
+#pragma once
+
+#include <cstdint>
+#include <string_view>
+
+#cmakedefine CONFIG_TESTS
+
+#cmakedefine BUILD_KIND_DEV
+#cmakedefine BUILD_KIND_QA
+#cmakedefine BUILD_KIND_PROFILE
+#cmakedefine BUILD_KIND_SHIPPING
+
+#if not(defined(BUILD_KIND_DEV) or defined(BUILD_KIND_QA) or defined(BUILD_KIND_PROFILE) or defined(BUILD_KIND_SHIPPING))
+  #define BUILD_KIND_DEV
+  #warning "No BUILD_KIND defined, defining BUILD_KIND_DEV."
+#endif
+
+#cmakedefine CONFIG_DEV
+#cmakedefine CONFIG_QA
+#cmakedefine CONFIG_PROFILE
+#cmakedefine CONFIG_SHIPPING
+
+#if not(defined(CONFIG_DEV) or defined(CONFIG_QA) or defined(CONFIG_PROFILE) or defined(CONFIG_SHIPPING))
+  #define CONFIG_DEV
+  #warning "No BUILD_KIND defined, defining CONFIG_DEV."
+#endif
+
+#ifdef CONFIG_DEBUG
+#define BUILD_TYPE_DEBUG
+#endif
+
+#ifdef CONFIG_RELEASE
+#define BUILD_TYPE_RELEASE
+#endif
+
+namespace Config
+{
+inline constexpr std::string_view projectName = "${PROJECT_NAME}";
+inline constexpr std::string_view projectVersion = "${PROJECT_VERSION}";
+inline constexpr uint32_t projectVersionMajor{${PROJECT_VERSION_MAJOR}};
+inline constexpr uint32_t projectVersionMinor{${PROJECT_VERSION_MINOR}};
+inline constexpr uint32_t projectVersionPatch{${PROJECT_VERSION_PATCH}};
+inline constexpr uint32_t projectVersionTweak{${PROJECT_VERSION_TWEAK}};
+inline constexpr uint32_t projectVersionInt{(projectVersionMajor << 22U) | (projectVersionMinor << 12U) | projectVersionPatch};
+
+inline constexpr std::string_view gitSHA = "@GIT_SHA@";
+
+} // namespace Config

@@ -102,13 +102,7 @@ jobs:
             build-preset: "Windows-Msvc-Ninja-ReleaseWithDebugInfo"
           - os: windows-latest
             configure-preset: "Windows-Msvc-Ninja-Release"
-            build-preset: "Windows-Msvc-Ninja-Release" 
-          - os: windows-latest
-            configure-preset: "Windows-ClangCl-Ninja-Debug"
-            build-preset: "Windows-ClangCl-Ninja-Debug"
-          - os: windows-latest
-            configure-preset: "Windows-ClangCl-Ninja-ReleaseWithDebugInfo"
-            build-preset: "Windows-ClangCl-Ninja-ReleaseWithDebugInfo"          
+            build-preset: "Windows-Msvc-Ninja-Release"        
           - os: windows-latest
             configure-preset: "Windows-Msvc-NinjaMultiConfig"
             build-preset: "Windows-Msvc-NinjaMultiConfig-Debug"

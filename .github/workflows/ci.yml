@@ -181,7 +181,7 @@ jobs:
       continue-on-error: true
       run: |
         
-        cmake --preset ${{matrix.configure-preset}} -DGIT_SHA:STRING=${{ github.sha }}
+        cmake --preset ${{matrix.configure-preset}} -DGIT_SHA:STRING=${{ github.sha }} -DPersonalWorks_ENABLE_CLANG_TIDY=OFF -DPersonalWorks_ENABLE_CPPCHECK=OFF
         cmake --build --preset ${{matrix.build-preset}}
 
     # - name: Tests

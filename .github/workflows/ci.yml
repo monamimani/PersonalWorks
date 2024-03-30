@@ -27,7 +27,7 @@ jobs:
           ]
         compiler: [Gcc, Clang, Clang-cl, Msvc]
         generator: [Ninja]
-        build_type: [Debug, ReleaseWithDebugInfo, Release]
+        build_type: [Debug, Release]
         #build_kind: [Dev, QA, Profile, Shipping]
 
         exclude: #Becasue they don't make sense or no Cmake preset created.
@@ -44,8 +44,6 @@ jobs:
           # - build_kind: Shipping
           #   build_type: Debug
           # - build_kind: Profile
-          # - compiler: Gcc
-          # - compiler: Clang-cl
           
         include: # combinasions that are one off
           - platform: {name: Linux, os: ubuntu-latest}
@@ -114,7 +112,7 @@ jobs:
       run: |
         & { . Scripts\Build\VsEnvironment.ps1; LaunchVsDevShell }
         #cmake --workflow --list-presets
-        cmake -DGIT_SHA:STRING=${{ github.sha }} --workflow --preset ${{env.CMAKE_PRESET}}
+        cmake --workflow -DGIT_SHA:STRING=${{ github.sha }} --preset ${{env.CMAKE_PRESET}}
 
         # cmake --preset ${{env.CMAKE_PRESET}} -DGIT_SHA:STRING=${{ github.sha }}
         # cmake --build --preset ${{env.CMAKE_PRESET}}
@@ -124,7 +122,7 @@ jobs:
       continue-on-error: true
       run: |
         #cmake --workflow --list-presets
-        cmake -DGIT_SHA:STRING=${{ github.sha }} -DPersonalWorks_ENABLE_CLANG_TIDY=OFF -DPersonalWorks_ENABLE_CPPCHECK=OFF --workflow --preset ${{env.CMAKE_PRESET}}
+        cmake --workflow -DGIT_SHA:STRING=${{ github.sha }} -DPersonalWorks_ENABLE_CLANG_TIDY=OFF -DPersonalWorks_ENABLE_CPPCHECK=OFF --preset ${{env.CMAKE_PRESET}}
 
         # cmake --preset ${{env.CMAKE_PRESET}} -DGIT_SHA:STRING=${{ github.sha }}
         # cmake --build --preset ${{env.CMAKE_PRESET}}

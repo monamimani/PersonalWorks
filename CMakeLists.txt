@@ -28,7 +28,6 @@ project(PersonalWorks
 
 if(CMAKE_CXX_COMPILER_ID MATCHES ".*Clang")
   add_compile_options(-std=c++2c)
-
   add_compile_options(-D__cpp_concepts=202002 -Wno-builtin-macro-redefined)
   add_link_options("-lstdc++exp")
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
@@ -60,11 +59,9 @@ if(PROJECT_IS_TOP_LEVEL)
 endif()
 
 add_subdirectory(Projects/Config)
-add_subdirectory(Projects/TestUtilities)
-add_subdirectory(Projects/Core)
-add_subdirectory(Projects/Gfx)
-add_subdirectory(Projects/ApplicationCore)
-add_subdirectory(Projects/BasicWindowApp)
+add_subdirectory(Projects/EnginePlayground)
+add_subdirectory(Projects/CodeIncubator)
+
 
 # set the startup project for the "play" button in MSVC
 set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT CoreTests)

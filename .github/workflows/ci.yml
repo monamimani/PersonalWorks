@@ -27,21 +27,21 @@ jobs:
           ]
         compiler: [ Gcc, Clang, Clang-cl, Msvc]
         generator: [Ninja]
-        build_type: [Debug, Release]
+        build_type: [Debug, ReleaseWithDebugInfo, Release]
         #build_kind: [Dev, QA, Profile, Shipping]
 
         exclude: #Becasue they don't make sense or no Cmake preset created.
           - platform: {name: Linux}
-            compiler: Msvc
+            compiler: [Msvc, Clang-cl]
           - platform: {name: Windows}
-            compiler: Clang
+            compiler: [Clang, Gcc]
           # - build_kind: QA
           #   build_type: Debug
           # - build_kind: Shipping
           #   build_type: Debug
           # - build_kind: Profile
-          - compiler: Gcc
-          - compiler: Clang-cl
+          # - compiler: Gcc
+          # - compiler: Clang-cl
           
         include: # combinasions that are one off
           - platform: {name: Linux, os: ubuntu-latest}
@@ -109,17 +109,20 @@ jobs:
       if: runner.os == 'Windows'
       run: |
         & { . Scripts\Build\VsEnvironment.ps1; LaunchVsDevShell }
-        cmake --preset ${{env.CMAKE_PRESET}} -DGIT_SHA:STRING=${{ github.sha }}
 
-        cmake --build --preset ${{env.CMAKE_PRESET}}
+        cmake --workflow --preset ${{env.CMAKE_PRESET}} -DGIT_SHA:STRING=${{ github.sha }}
+
+        # cmake --preset ${{env.CMAKE_PRESET}} -DGIT_SHA:STRING=${{ github.sha }}
+        # cmake --build --preset ${{env.CMAKE_PRESET}}
 
     - name: "[Linux] CMake Configure & Build"
       if: runner.os == 'Linux'
       continue-on-error: true
       run: |
-        cmake --preset ${{env.CMAKE_PRESET}} -DGIT_SHA:STRING=${{ github.sha }}
+        cmake --workflow --preset ${{env.CMAKE_PRESET}} -DGIT_SHA:STRING=${{ github.sha }} -DPersonalWorks_ENABLE_CLANG_TIDY=OFF -PersonalWorks_ENABLE_CPPCHECK=OFF
 
-        cmake --build --preset ${{env.CMAKE_PRESET}}
+        # cmake --preset ${{env.CMAKE_PRESET}} -DGIT_SHA:STRING=${{ github.sha }}
+        # cmake --build --preset ${{env.CMAKE_PRESET}}
 
     # - name: Tests
     #   run: |

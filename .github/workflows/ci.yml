@@ -54,6 +54,11 @@ jobs:
             generator: Vs2022
             build_type: Debug
             #build_kind: Dev
+          - platform: {name: Windows, os: windows-latest }
+            compiler: Msvc
+            generator: NinjaMultiConfig
+            build_type: Debug
+            #build_kind: Dev
         
     
     name: ${{matrix.platform.name}}-${{matrix.compiler}}-${{matrix.generator}}-${{matrix.build_type}}

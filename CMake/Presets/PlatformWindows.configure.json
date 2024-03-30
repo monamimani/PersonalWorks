@@ -1,0 +1,93 @@
+{
+  "$schema": "https://cmake.org/cmake/help/v3.28/_downloads/3e2d73bff478d88a7de0de736ba5e361/schema.json",
+  "version": 8,
+  "include": [
+    "./Common.json",
+    "./BuildVariant.json",
+    "./BuildType.json",
+    "./Generators.json",
+    "./Toolchain.json"
+  ],
+  "configurePresets": [
+    {
+      "name": "Windows",
+      "hidden": true,
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      },
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "x64-windows"
+      }
+    },
+    {
+      "name": "Windows-Msvc-Ninja-Debug",
+      "inherits": [
+        "Common",
+        "Windows",
+        "Msvc",
+        "Ninja",
+        "Debug"
+      ]
+    },
+    {
+      "name": "Windows-Msvc-Ninja-ReleaseWithDebugInfo",
+      "inherits": [
+        "Common",
+        "Windows",
+        "Msvc",
+        "Ninja",
+        "ReleaseWithDebugInfo"
+      ]
+    },
+    {
+      "name": "Windows-Msvc-Ninja-Release",
+      "inherits": [
+        "Common",
+        "Windows",
+        "Msvc",
+        "Ninja",
+        "Release"
+      ]
+    },
+    {
+      "name": "Windows-ClangCl-Ninja-Debug",
+      "inherits": [
+        "Common",
+        "Windows",
+        "ClangCl",
+        "Ninja",
+        "Debug"
+      ]
+    },
+    {
+      "name": "Windows-ClangCl-Ninja-ReleaseWithDebugInfo",
+      "inherits": [
+        "Common",
+        "Windows",
+        "ClangCl",
+        "Ninja",
+        "ReleaseWithDebugInfo"
+      ]
+    },
+    {
+      "name": "Windows-Msvc-NinjaMultiConfig",
+      "inherits": [
+        "Common",
+        "Windows",
+        "Msvc",
+        "NinjaMultiConfig"
+      ]
+    },
+    {
+      "name": "Windows-Msvc-Vs2022",
+      "inherits": [
+        "Common",
+        "Windows",
+        "Msvc",
+        "Vs2022"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,108 @@
+{
+  "$schema": "https://cmake.org/cmake/help/v3.28/_downloads/3e2d73bff478d88a7de0de736ba5e361/schema.json",
+  "version": 8,
+  "include": [
+    "./Common.json",
+    "./BuildVariant.json",
+    "./BuildType.json",
+    "./Generators.json",
+    "./Toolchain.json"
+  ],
+  "configurePresets": [
+    {
+      "name": "Linux",
+      "hidden": true,
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      },
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "x64-linux"
+      },
+      "vendor": {
+        "microsoft.com/VisualStudioRemoteSettings/CMake/1.0": {
+          "sourceDir": "$env{HOME}/.vs/$ms{projectDirName}"
+        }
+      }
+    },
+    {
+      "name": "Linux-Clang-Ninja-Debug",
+      "inherits": [
+        "Common",
+        "Linux",
+        "Clang",
+        "Ninja",
+        "Debug"
+      ]
+    },
+    {
+      "name": "Linux-Clang-Ninja-ReleaseWithDebugInfo",
+      "inherits": [
+        "Common",
+        "Linux",
+        "Clang",
+        "Ninja",
+        "ReleaseWithDebugInfo"
+      ]
+    },
+    {
+      "name": "Linux-Clang-Ninja-Release",
+      "inherits": [
+        "Common",
+        "Linux",
+        "Clang",
+        "Ninja",
+        "Release"
+      ]
+    },
+    {
+      "name": "Linux-Gcc-Ninja-Debug",
+      "inherits": [
+        "Common",
+        "Linux",
+        "Gcc",
+        "Ninja",
+        "Debug"
+      ]
+    },
+    {
+      "name": "Linux-Gcc-Ninja-ReleaseWithDebugInfo",
+      "inherits": [
+        "Common",
+        "Linux",
+        "Gcc",
+        "Ninja",
+        "ReleaseWithDebugInfo"
+      ]
+    },
+    {
+      "name": "Linux-Gcc-Ninja-Release",
+      "inherits": [
+        "Common",
+        "Linux",
+        "Gcc",
+        "Ninja",
+        "Release"
+      ]
+    },
+    {
+      "name": "Linux-Clang-NinjaMultiConfig",
+      "inherits": [
+        "Common",
+        "Linux",
+        "Clang",
+        "NinjaMultiConfig"
+      ]
+    },
+    {
+      "name": "Linux-Gcc-NinjaMultiConfig",
+      "inherits": [
+        "Common",
+        "Linux",
+        "Gcc",
+        "NinjaMultiConfig"
+      ]
+    }
+  ]
+}

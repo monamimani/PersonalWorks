@@ -15,8 +15,8 @@ Checks: "*,
         -misc-non-private-member-variables-in-classes,
 "
 
-UseColor
-WarningsAsErrors: ''
+UseColor: true 
+WarningsAsErrors: false
 HeaderFilterRegex: ''
 FormatStyle:     none
 

@@ -11,6 +11,19 @@ on:
       - dev
 
 jobs:
+
+  matrix-experiment:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        foo: [
+          {name: Linux, os: ubuntu-latest, configure-preset: [Bar1, Bar2, Bar3]},
+          {name: Windows, os: windows-latest, configure-preset: [Baz1, Baz2, Baz3] }
+          ]
+    
+    name: ${{matrix.foo.name}}-${{matrix.foo.os}}-${{matrix.foo.configure-preset}}
+  
   build-test:
     if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
     runs-on: ${{matrix.os}}
@@ -20,6 +33,47 @@ jobs:
       fail-fast: false
 
       # CMake preset name template: "%Platform%-%Compiler%-%Generator%-%BuildType%-%BuildKind%"
+      # matrix:
+      #   platform: [
+      #     {name: Linux, os: ubuntu-latest},
+      #     {name: Windows, os: windows-latest }
+      #     ]
+      #   compiler: [Gcc, Clang, Clang-cl, Msvc]
+      #   generator: [{name: Ninja, isMultiConfig: false}]
+      #   build_type: [Debug, Release]
+      #   #build_kind: [Dev, QA, Profile, Shipping]
+
+      #   exclude: #Becasue they don't make sense or no Cmake preset created.
+      #     - platform: {name: Linux}
+      #       compiler: Msvc
+      #     - platform: {name: Linux}
+      #       compiler: Clang-cl
+      #     - platform: {name: Windows}
+      #       compiler: Clang
+      #     - platform: {name: Windows}
+      #       compiler: Gcc
+      #     # - build_kind: QA
+      #     #   build_type: Debug
+      #     # - build_kind: Shipping
+      #     #   build_type: Debug
+      #     # - build_kind: Profile
+          
+      #   include: # combinasions that are one off
+      #     - platform: {name: Linux, os: ubuntu-latest}
+      #       compiler: Clang
+      #       generator: [{name: NinjaMultiConfig, isMultiConfig: true}]
+      #       build_type: Debug
+      #       #build_kind: Dev
+      #     - platform: {name: Windows, os: windows-latest }
+      #       compiler: Msvc
+      #       generator: [{name: Vs2022, isMultiConfig: true}]
+      #       build_type: Debug
+      #       #build_kind: Dev
+      #     - platform: {name: Windows, os: windows-latest }
+      #       compiler: Msvc
+      #       generator: [{name: NinjaMultiConfig, isMultiConfig: true}]
+      #       build_type: Debug
+      #       #build_kind: Dev
       matrix:
         include:
           - os: ubuntu-latest

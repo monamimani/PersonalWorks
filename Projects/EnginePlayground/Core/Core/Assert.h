@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Core/Config.h"
+#include "Config/Config.h"
 
 #if defined(__has_builtin)
   #if __has_builtin(__builtin_debugtrap)

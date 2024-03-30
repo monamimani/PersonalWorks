@@ -4,8 +4,6 @@ get_filename_component(targetName ${CMAKE_CURRENT_LIST_DIR} NAME)
 list(APPEND interfaceSources
 )
 list(APPEND publicSources
-  ${targetName}/Config.h
-  ${targetName}/ConfigGenerated.h.in
   ${targetName}/TestStruct.test.h
   ${targetName}/GoogleTest.h
   ${targetName}/GoogleBenchmark.h
@@ -43,8 +41,6 @@ list(APPEND privateLibraries
 
 add_library(${targetName})
 add_library(PersonalWorks::${targetName} ALIAS ${targetName})
-
-configure_file(${targetName}/ConfigGenerated.h.in ${targetName}/ConfigGenerated.h)
 
 generate_export_header(${targetName} EXPORT_FILE_NAME ${targetName}/${targetName}Exports.h)
 

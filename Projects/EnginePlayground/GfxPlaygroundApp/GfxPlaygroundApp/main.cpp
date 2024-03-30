@@ -2,7 +2,7 @@
 
 #include "ApplicationCore/Application/Win32/Win32Application.h"
 #include "ApplicationCore/Window/WindowDesc.h"
-#include "Core/Config.h"
+#include "Config/Config.h"
 #include "Core/Win32/WindowsHeader.h"
 
 namespace GfxPlaground

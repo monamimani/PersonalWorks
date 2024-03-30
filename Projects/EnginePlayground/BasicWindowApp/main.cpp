@@ -4,7 +4,7 @@
 #include "ApplicationCore/Application/Win32/Win32ApplicationMainLoop.h"
 #include "ApplicationCore/Application/Win32/Win32MessageLoop.h"
 #include "ApplicationCore/Window/WindowDesc.h"
-#include "Core/Config.h"
+#include "Config/Config.h"
 #include "Core/Win32/WindowsHeader.h"
 #include <format>
 #include <iostream>

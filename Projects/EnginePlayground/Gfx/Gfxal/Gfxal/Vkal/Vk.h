@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Core/Config.h"
+#include "Config/Config.h"
 
 #if defined(CORE_PLATFORM_WINDOWS)
   #include "Core/Win32/WindowsHeader.h"

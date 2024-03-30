@@ -11,7 +11,7 @@ import Core;
 #include <string>
 #include <vector>
 
-#include "Core/Config.h"
+#include "Config/Config.h"
 
 
 // struct WindowDesc
@@ -41,9 +41,9 @@ private:
   void createInstance()
   {
     auto systemDesc = VkHal::VkSystemDesc{.m_applicationName = "VkCreateInstanceHpp",
-                                          .m_applicationVersion = Core::makeVersion(0, 0, 1),
+                                          .m_applicationVersion = Config::makeVersion(0, 0, 1),
                                           .m_engineName = "VkCreateInstaceHppEngine",
-                                          .m_engineVersion = Core::makeVersion(0, 0, 1)};
+                                          .m_engineVersion = Config::makeVersion(0, 0, 1)};
 
     auto vkSystem = VkHal::VkSystem(systemDesc);
   }
@@ -100,7 +100,7 @@ TEST(VulkanTests, VkCreateInstance)
 
   //ASSERT_TRUE(vkSystem.m_instance);
 
-  //if constexpr (Core::BuildKind != Core::BuildKind::Shipping)
+  //if constexpr (Config::BuildKind != Config::BuildKind::Shipping)
   //{
   //  ASSERT_TRUE(vkSystem.m_debugMessenger.has_value());
   //  ASSERT_TRUE(vkSystem.m_debugMessenger.value().m_debugUtilsMessenger);

@@ -1,35 +1,77 @@
 #pragma once
 
+#include "Config/ConfigGenerated.h"
 #include <cstdint>
-#include <string_view>
 
-#include "Core/ConfigGenerated.h"
-#include "Core/Endian.h"
+#if defined(NDEBUG)
+  #ifdef CONFIG_DEBUG
+    #error "NDEBUG is defined but CONFIG_DEBUG is defined."
+  #endif
 
-namespace Core
+  #ifndef CONFIG_RELEASE
+    #error "NDEBUG is defined but CONFIG_RELEASE is not defined."
+  #endif
+#endif
+
+#if not defined(NDEBUG)
+  #ifndef CONFIG_DEBUG
+    #error "NDEBUG is not defined CONFIG_DEBUG is not defined."
+  #endif
+
+  #ifdef CONFIG_RELEASE
+    #error "NDEBUG is not defined but CONFIG_RELEASE is defined."
+  #endif
+#endif
+
+#if defined(CONFIG_TESTS) and defined(BUILD_KIND_SHIPPING)
+    #error "CONFIG_TESTS is defined in a BUILD_KIND_SHIPPING build."
+#endif
+
+namespace Config
 {
-
 enum class BuildKind
 {
-  Debug,
-  Release,
+  Development,
+  QA,
+  Profile,
   Shipping
 };
 
-#ifdef CORE_IS_DEBUG
-constexpr auto isDebugBuild = true;
-constexpr auto BuildKind = BuildKind::Debug;
-#elif CORE_IS_RELEASE
-constexpr auto isDebugBuild = false;
-constexpr auto BuildKind = BuildKind::Release;
-#elif CORE_IS_SHIPPING
-constexpr auto isDebugBuild = false;
-constexpr auto BuildKind = BuildKind::Shipping;
+enum class BuildType
+{
+  Debug,
+  Release
+};
+
+#ifdef CONFIG_TESTS
+constexpr auto isTestBuild = true;
+#else
+constexpr auto isTestBuild = false;
+#endif
+
+#ifdef CONFIG_DEBUG
+inline constexpr auto isDebugBuild = true;
+inline constexpr auto BuildType = BuildType::Debug;
+#endif
+
+#ifdef CONFIG_RELEASE
+inline constexpr auto isDebugBuild = false;
+inline constexpr auto BuildType = BuildType::Release;
+#endif
+
+inline constexpr auto isOptimizedBuild = !isDebugBuild;
+
+#ifdef CONFIG_DEV
+inline constexpr auto BuildKind = BuildKind::Development;
+#elif CONFIG_QA
+inline constexpr auto BuildKind = BuildKind::QA;
+#elif CONFIG_PROFILE
+inline constexpr auto BuildKind = BuildKind::Profile;
+#elif CONFIG_SHIPPING
+inline constexpr auto BuildKind = BuildKind::Shipping;
 #else
   #error "Build kind is undefined"
 #endif
-
-constexpr auto isOptimizedBuild = !isDebugBuild;
 
 enum class Architecture
 {
@@ -123,4 +165,4 @@ consteval uint32_t makeVersion(uint8_t major, uint8_t minor, uint8_t patch)
   return (static_cast<uint32_t>(major) << 22U) | (static_cast<uint32_t>(minor) << 12U) | static_cast<uint32_t>(patch);
 }
 
-} // namespace Core
+} // namespace Config

@@ -1,6 +1,12 @@
 {
   "$schema": "https://cmake.org/cmake/help/v3.28/_downloads/3e2d73bff478d88a7de0de736ba5e361/schema.json",
   "version": 8,
+  "include": [
+    "./Common.json",
+    "./BuildVariant.json",
+    "./Generators.json",
+    "./Toolchain.json"
+  ],
   "configurePresets": [
     {
       "name": "Windows",
@@ -63,7 +69,8 @@
       }
     }
   ],
-  "buildPresets": [
+  "buildPresets":
+  [
     {
       "name": "Windows-Msvc-Vs2022-Debug",
       "configurePreset": "Windows-Msvc-Vs2022-Debug",

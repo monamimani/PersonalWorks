@@ -7,10 +7,6 @@
     "patch": 0
   },
   "include": [
-    "CMake/Presets/Common.json",
-    "CMake/Presets/BuildVariant.json",
-    "CMake/Presets/Generators.json",
-    "CMake/Presets/Toolchain.json",
     "CMake/Presets/PlatformWindows.json",
     "CMake/Presets/PlatformLinux.json"
   ],
@@ -21,7 +17,7 @@
       "hidden": true
     }
   ],
-  "buildPresets": [ ] //,
+  "buildPresets": [] //,
   //"testPresets": [
   //  {
   //    "name": "test-base",

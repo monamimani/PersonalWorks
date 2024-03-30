@@ -127,7 +127,7 @@ jobs:
     # name: ${{matrix.platform.name}}-${{matrix.compiler}}-${{matrix.generator}}-${{matrix.build_type}}
     #-${{matrix.build_kind}}
 
-    env:
+    #env:
       # CMAKE_PRESET: ${{matrix.platform.name}}-${{matrix.compiler}}-${{matrix.generator}}-${{matrix.build_type}}
       #-${{matrix.build_kind}}
 

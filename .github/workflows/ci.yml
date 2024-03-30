@@ -32,9 +32,11 @@ jobs:
 
         exclude: #Becasue they don't make sense or no Cmake preset created.
           - platform: {name: Linux}
-            compiler: [Msvc, Clang-cl]
+            compiler: Msvc
+            compiler: Clang-cl
           - platform: {name: Windows}
-            compiler: [Clang, Gcc]
+            compiler: Clang
+            compiler: Gcc
           # - build_kind: QA
           #   build_type: Debug
           # - build_kind: Shipping

@@ -26,7 +26,7 @@ jobs:
           {name: Windows, os: windows-latest }
           ]
         compiler: [Gcc, Clang, Clang-cl, Msvc]
-        generator: [Ninja]
+        generator: [{name: Ninja, isMultiConfig: false}]
         build_type: [Debug, Release]
         #build_kind: [Dev, QA, Profile, Shipping]
 
@@ -48,17 +48,17 @@ jobs:
         include: # combinasions that are one off
           - platform: {name: Linux, os: ubuntu-latest}
             compiler: Clang
-            generator: NinjaMultiConfig
+            generator: [{name: NinjaMultiConfig, isMultiConfig: true}]
             build_type: Debug
             #build_kind: Dev
           - platform: {name: Windows, os: windows-latest }
             compiler: Msvc
-            generator: Vs2022
+            generator: [{name: Vs2022, isMultiConfig: true}]
             build_type: Debug
             #build_kind: Dev
           - platform: {name: Windows, os: windows-latest }
             compiler: Msvc
-            generator: NinjaMultiConfig
+            generator: [{name: NinjaMultiConfig, isMultiConfig: true}]
             build_type: Debug
             #build_kind: Dev
         
@@ -67,6 +67,7 @@ jobs:
     #-${{matrix.build_kind}}
 
     env:
+      CMAKE_CONFIGURE_PRESET: ${{matrix.platform.name}}-${{matrix.compiler}}-${{matrix.generator}}
       CMAKE_PRESET: ${{matrix.platform.name}}-${{matrix.compiler}}-${{matrix.generator}}-${{matrix.build_type}}
       #-${{matrix.build_kind}}
 
@@ -111,21 +112,17 @@ jobs:
       if: runner.os == 'Windows'
       run: |
         & { . Scripts\Build\VsEnvironment.ps1; LaunchVsDevShell }
-        #cmake --workflow --list-presets
-        cmake --workflow -DGIT_SHA:STRING=${{ github.sha }} --preset ${{env.CMAKE_PRESET}}
 
-        # cmake --preset ${{env.CMAKE_PRESET}} -DGIT_SHA:STRING=${{ github.sha }}
-        # cmake --build --preset ${{env.CMAKE_PRESET}}
+        cmake --preset ${{env.CMAKE_PRESET}} -DGIT_SHA:STRING=${{ github.sha }}
+        cmake --build --preset ${{env.CMAKE_PRESET}}
 
     - name: "[Linux] CMake Configure & Build"
       if: runner.os == 'Linux'
       continue-on-error: true
       run: |
-        #cmake --workflow --list-presets
-        cmake --workflow -DGIT_SHA:STRING=${{ github.sha }} -DPersonalWorks_ENABLE_CLANG_TIDY=OFF -DPersonalWorks_ENABLE_CPPCHECK=OFF --preset ${{env.CMAKE_PRESET}}
-
-        # cmake --preset ${{env.CMAKE_PRESET}} -DGIT_SHA:STRING=${{ github.sha }}
-        # cmake --build --preset ${{env.CMAKE_PRESET}}
+        
+        cmake --preset ${{env.CMAKE_PRESET}} -DGIT_SHA:STRING=${{ github.sha }}
+        cmake --build --preset ${{env.CMAKE_PRESET}}
 
     # - name: Tests
     #   run: |

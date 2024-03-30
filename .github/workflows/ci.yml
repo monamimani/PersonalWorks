@@ -33,9 +33,11 @@ jobs:
         exclude: #Becasue they don't make sense or no Cmake preset created.
           - platform: {name: Linux}
             compiler: Msvc
+          - platform: {name: Linux}
             compiler: Clang-cl
           - platform: {name: Windows}
             compiler: Clang
+          - platform: {name: Windows}
             compiler: Gcc
           # - build_kind: QA
           #   build_type: Debug
@@ -121,7 +123,7 @@ jobs:
       if: runner.os == 'Linux'
       continue-on-error: true
       run: |
-        cmake --workflow --preset ${{env.CMAKE_PRESET}} -DGIT_SHA:STRING=${{ github.sha }} -DPersonalWorks_ENABLE_CLANG_TIDY=OFF -PersonalWorks_ENABLE_CPPCHECK=OFF
+        cmake --workflow --preset ${{env.CMAKE_PRESET}} -DGIT_SHA:STRING=${{ github.sha }} -DPersonalWorks_ENABLE_CLANG_TIDY=OFF -DPersonalWorks_ENABLE_CPPCHECK=OFF
 
         # cmake --preset ${{env.CMAKE_PRESET}} -DGIT_SHA:STRING=${{ github.sha }}
         # cmake --build --preset ${{env.CMAKE_PRESET}}

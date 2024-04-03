@@ -1,6 +1,6 @@
 include_guard()
 
-function(TEMPLATE_PROJECT_enable_doxygen DOXYGEN_THEME)
+function(PersonalWorks_enable_doxygen DOXYGEN_THEME)
   # If not specified, use the top readme file as the first page
   if((NOT DOXYGEN_USE_MDFILE_AS_MAINPAGE) AND EXISTS "${PROJECT_SOURCE_DIR}/README.md")
     set(DOXYGEN_USE_MDFILE_AS_MAINPAGE "${PROJECT_SOURCE_DIR}/README.md")

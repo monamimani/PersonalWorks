@@ -34,6 +34,12 @@ jobs:
     
     name: ${{matrix.build-preset}}
     steps:
+      - name: Foresight Collect Workflow Telemetry
+        uses: runforesight/foresight-workflow-kit-action@v1
+        if: ${{ always() }}
+        with:
+          api_key: ${{ secrets.FORESIGHT_API_KEY }}
+
       - uses: actions/checkout@v4
   
       - name: Env variable
@@ -74,7 +80,7 @@ jobs:
         run: |
           & { . Scripts\Build\VsEnvironment.ps1; LaunchVsDevShell }
   
-          cmake --preset ${{matrix.configure-preset}} -DGIT_SHA:STRING=${{ github.sha }}
+          cmake --preset ${{matrix.configure-preset}} -DGIT_SHA:STRING=${{ github.sha }} -DPersonalWorks_ENABLE_CLANG_TIDY:OFF
           cmake --build --preset ${{matrix.build-preset}}
   
       # - name: Tests
@@ -108,6 +114,12 @@ jobs:
 
     name: ${{matrix.build-preset}}
     steps:
+    - name: Foresight Collect Workflow Telemetry
+      uses: runforesight/foresight-workflow-kit-action@v1
+      if: ${{ always() }}
+      with:
+        api_key: ${{ secrets.FORESIGHT_API_KEY }}
+
     - uses: actions/checkout@v4
 
     - name: Env variable

@@ -1,7 +1,4 @@
-if(compile_shader_included)
-    return()
-endif()
-set(compile_shader_included true)
+include_guard()
 
 
 find_program(GlslangValidator NAMES glslangValidator DOC "glsl to SPIR-V compiler")

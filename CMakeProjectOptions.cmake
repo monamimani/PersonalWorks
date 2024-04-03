@@ -15,6 +15,8 @@ macro(PersonalWorks_declare_options)
   if(PROJECT_IS_TOP_LEVEL)
     option(BUILD_SHARED_LIBS "Build using shared libraries" OFF)
 
+    option(PersonalWorks_BASIC_BUILD_MODE "Disable most of the nice to have build features." OFF)
+
     cmake_dependent_option(PersonalWorks_ENABLE_CLANG_TIDY "Enable clang-tidy" ON "NOT PersonalWorks_BASIC_BUILD_MODE" OFF)
     cmake_dependent_option(PersonalWorks_ENABLE_CPPCHECK "Enable cpp-check analysis" ON "NOT PersonalWorks_BASIC_BUILD_MODE" OFF)
 
@@ -28,6 +30,7 @@ macro(PersonalWorks_declare_options)
     cmake_dependent_option(PersonalWorks_ENABLE_CACHE "Enable ccache" OFF "NOT PersonalWorks_BASIC_BUILD_MODE" OFF)
     cmake_dependent_option(PersonalWorks_ENABLE_UNITY_BUILD "Enable unity builds" OFF "NOT PersonalWorks_BASIC_BUILD_MODE" OFF)
     cmake_dependent_option(PersonalWorks_ENABLE_COVERAGE "Enable coverage reporting" OFF "NOT PersonalWorks_BASIC_BUILD_MODE" OFF)
+    cmake_dependent_option(PersonalWorks_ENABLE_DOXYGEN "Enable Doxygen generation" OFF "NOT PersonalWorks_BASIC_BUILD_MODE" OFF)
 
     cmake_dependent_option(PersonalWorks_ENABLE_TARGET_CODE_HARDENING "Enable interface target code hardening" ON "NOT PersonalWorks_BASIC_BUILD_MODE" OFF)
     cmake_dependent_option(PersonalWorks_ENABLE_GLOBAL_CODE_HARDENING "Enable global code hardening" ON "PersonalWorks_ENABLE_TARGET_CODE_HARDENING" OFF)
@@ -60,7 +63,6 @@ macro(PersonalWorks_declare_options)
     set(DEFAULT_FUZZER OFF)
   endif()
 
-
   option(PersonalWorks_BUILD_TESTS "Builds the tests" ON)
   option(PersonalWorks_BUILD_BENCHMARKS "Builds the benchmarks" ON)
   option(PersonalWorks_BUILD_FUZZ_TESTS "Enable fuzz testing executable" ${DEFAULT_FUZZER})
@@ -78,6 +80,12 @@ macro(PersonalWorks_global_options)
   if(PersonalWorks_ENABLE_CACHE)
     include(CMake/Cache.cmake)
   endif()
+
+  if(PersonalWorks_ENABLE_DOXYGEN)
+    include(CMake/Doxygen.cmake)
+    PersonalWorks_enable_doxygen("")
+  endif()
+
 endmacro()
 
 macro(PersonalWorks_target_options)

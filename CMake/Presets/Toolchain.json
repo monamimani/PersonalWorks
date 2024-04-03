@@ -8,10 +8,9 @@
       "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
       "cacheVariables": {
         "CMAKE_C_COMPILER": "cl",
-        "CMAKE_CXX_COMPILER": "cl",
+        "CMAKE_CXX_COMPILER": "cl"//,
         //"CMAKE_CXX_FLAGS": "/EHsc /MP",
         //"CMAKE_C_FLAGS": "/EHsc /MP",
-        "PersonalWorks_ENABLE_CLANG_TIDY": false
       },
       "condition": {
         "type": "equals",
@@ -21,8 +20,8 @@
       "vendor": {
         "microsoft.com/VisualStudioSettings/CMake/1.0": {
           //"clangTidyChecks": "clang-analyzer-*",
-          "enableMicrosoftCodeAnalysis": false,
-          "enableClangTidyCodeAnalysis": false
+          //"enableMicrosoftCodeAnalysis": false,
+          //"enableClangTidyCodeAnalysis": false
         }
       }
     },

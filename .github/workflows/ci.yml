@@ -80,7 +80,7 @@ jobs:
         run: |
           & { . Scripts\Build\VsEnvironment.ps1; LaunchVsDevShell }
   
-          cmake --preset ${{matrix.configure-preset}} -DGIT_SHA:STRING=${{ github.sha }} -DPersonalWorks_ENABLE_CLANG_TIDY:OFF
+          cmake --preset ${{matrix.configure-preset}} -DGIT_SHA:STRING=${{ github.sha }} -DPersonalWorks_ENABLE_CLANG_TIDY=OFF
           cmake --build --preset ${{matrix.build-preset}}
   
       # - name: Tests

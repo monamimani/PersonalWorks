@@ -16,22 +16,8 @@
       //  "mode": false,
       //  "format": "human"
       //},
-      "cacheVariables": {}
-    },
-    {
-      "name": "checkers",
-      "hidden": true,
       "cacheVariables": {
-        "USE_ASAN": false,
-        //"ENABLE_CPPCHECK": true,
-        "ENABLE_CLANG_TIDY": true
-      },
-      "vendor": {
-        "microsoft.com/VisualStudioSettings/CMake/1.0": {
-          //"enableClangTidyCodeAnalysis": true,
-          //"enableMicrosoftCodeAnalysis": true,
-          //"codeAnalysisRuleset": "AllRules.ruleset",
-        }
+        //"CMAKE_VERBOSE_MAKEFILE": true
       }
     }
   ]

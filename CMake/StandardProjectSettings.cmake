@@ -4,7 +4,13 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-option(PersonalWorks_BASIC_BUILD_MODE "Disable most of the nice to have build features." OFF)
+# Organize unrelated targets to clean IDE hierarchy.
+set(DEPENDENCY_FOLDER "Thirdparty")
+
+# This will also clean up the CMake ALL_BUILD, INSTALL, RUN_TESTS and ZERO_CHECK projects.
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER ${DEPENDENCY_FOLDER})
+
 
 # https://cmake.org/cmake/help/latest/module/GenerateExportHeader.html
 # used for the function generate_export_header( someLib) that will generate a header file somelib_export.h for exporting symbol from a dynamic library.
@@ -14,6 +20,7 @@ include(FetchContent)
 include(ProcessorCount)
 ProcessorCount(PROCESSOR_COUNT)
 include(GenerateExportHeader)
+include(CMake/Utilities.cmake)
 include(CMake/BuildTypes.cmake)
 include(CMake/BuildOutput.cmake)
 include(CMake/Targets.cmake)

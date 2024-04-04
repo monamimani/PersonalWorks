@@ -10,38 +10,38 @@ namespace Core
 {
 constexpr uint32_t TEST_INT = 42;
 
-enum class EventTypes
-{
-  EventTestA,
-  EventTestB,
-};
-
-struct EventTestA
-{
-  uint32_t value = TEST_INT;
-};
-
-struct EventTestB
-{
-  uint32_t value = 151;
-};
-
-void foo([[maybe_unused]] const EventTestA& eventData)
-{
-}
-
-struct Bar
-{
-  int value[128] = {};
-
-  void barFct([[maybe_unused]]const EventTestB& eventData)
-  {
-  }
-
-  void barFctConst([[maybe_unused]]const EventTestB& eventData) const
-  {
-  }
-};
+//enum class EventTypes
+//{
+//  EventTestA,
+//  EventTestB,
+//};
+//
+//struct EventTestA
+//{
+//  uint32_t value = TEST_INT;
+//};
+//
+//struct EventTestB
+//{
+//  uint32_t value = 151;
+//};
+//
+//void foo([[maybe_unused]] const EventTestA& eventData)
+//{
+//}
+//
+//struct Bar
+//{
+//  int value[128] = {};
+//
+//  void barFct([[maybe_unused]]const EventTestB& eventData)
+//  {
+//  }
+//
+//  void barFctConst([[maybe_unused]]const EventTestB& eventData) const
+//  {
+//  }
+//};
 
 constexpr auto lambdaTest = [](const EventTestA&) {};
 } // namespace Core
@@ -58,23 +58,23 @@ namespace std
 //  }
 //};
 
-template <>
-struct hash<Core::EventTestA>
-{
-  size_t operator()(const Core::EventTestA&) const
-  {
-    return hash<Core::EventTypes>()(Core::EventTypes::EventTestA);
-  }
-};
-
-template <>
-struct hash<Core::EventTestB>
-{
-  size_t operator()(const Core::EventTestB&) const
-  {
-    return hash<Core::EventTypes>()(Core::EventTypes::EventTestB);
-  }
-};
+//template <>
+//struct hash<Core::EventTestA>
+//{
+//  size_t operator()(const Core::EventTestA&) const
+//  {
+//    return hash<Core::EventTypes>()(Core::EventTypes::EventTestA);
+//  }
+//};
+//
+//template <>
+//struct hash<Core::EventTestB>
+//{
+//  size_t operator()(const Core::EventTestB&) const
+//  {
+//    return hash<Core::EventTypes>()(Core::EventTypes::EventTestB);
+//  }
+//};
 } // namespace std
 
 namespace Core

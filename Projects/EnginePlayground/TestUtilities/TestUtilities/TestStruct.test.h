@@ -34,7 +34,7 @@ struct TestStruct
     EXPECT_EQ(nbConstructorCall, m_counters.m_nbCallDestructor);
   }
 
-  TestStruct(uint8_t value = m_staticValue) noexcept
+  explicit TestStruct(uint8_t value = m_staticValue) noexcept
   : m_value{value}
   {
     TestStruct::m_counters.m_nbCallDefaultConstructor++;
@@ -64,19 +64,20 @@ struct TestStruct
     value = m_staticValue;
   }
 
+  // cppcheck-suppress functionConst // needs to be non const for the delegate tests.
   int fctReturn(int& value)
   {
     value = m_value;
     return value;
   }
 
-  testing::AssertionResult fctAssertionresult(int& value)
+  testing::AssertionResult fctAssertionresult(int& value) const
   {
     value = m_value;
     return testing::AssertionSuccess();
-    ;
   }
 
+  // cppcheck-suppress functionConst // needs to be non const for the delegate tests.
   void fct(int& value)
   {
     value = m_value;
@@ -87,6 +88,7 @@ struct TestStruct
     value = m_value + 1;
   }
 
+  // cppcheck-suppress functionConst // needs to be non const for the delegate tests.
   void fctTemplate(auto& value)
   {
     value = m_value;
@@ -97,6 +99,7 @@ struct TestStruct
     value = m_value + 1;
   }
 
+  // cppcheck-suppress functionConst // needs to be non const for the delegate tests.
   void fctParamOverloaded(int& value)
   {
     value = m_value;
@@ -107,6 +110,7 @@ struct TestStruct
     value = m_value + 1;
   }
 
+  // cppcheck-suppress functionConst // needs to be non const for the delegate tests.
   void fctParamOverloaded(double& value)
   {
     value = m_value + 0.5;
@@ -117,6 +121,7 @@ struct TestStruct
     value = (m_value + 0.5) + 1;
   }
 
+  // cppcheck-suppress functionConst // needs to be non const for the delegate tests.
   void fctConstOverloaded(int& value)
   {
     value = m_value;
@@ -127,6 +132,7 @@ struct TestStruct
     value = m_value + 1;
   }
 
+  // cppcheck-suppress functionConst // needs to be non const for the delegate tests.
   void operator()(int& value)
   {
     value = m_value;
@@ -156,8 +162,9 @@ using FctSignature = void(int&);
   EXPECT_EQ(expectedCounter.m_nbCallCopyConstructor, TestStruct::m_counters.m_nbCallCopyConstructor);       \
   EXPECT_EQ(expectedCounter.m_nbCallMoveConstructor, TestStruct::m_counters.m_nbCallMoveConstructor);
 
-#define ExpectConstructorsAndDestructorsCount(expectedCounter)                                                                                                                           \
-  const uint8_t nbConstructorCall = TestStruct::m_counters.m_nbCallDefaultConstructor + TestStruct::m_counters.m_nbCallCopyConstructor + TestStruct::m_counters.m_nbCallMoveConstructor; \
+#define ExpectConstructorsAndDestructorsCount(expectedCounter)                                                                                             \
+  const uint8_t nbConstructorCall =                                                                                                                        \
+      TestStruct::m_counters.m_nbCallDefaultConstructor + TestStruct::m_counters.m_nbCallCopyConstructor + TestStruct::m_counters.m_nbCallMoveConstructor; \
   EXPECT_EQ(nbConstructorCall, expectedCounter.m_nbCallDestructor)
 
 } // namespace TestUtilities

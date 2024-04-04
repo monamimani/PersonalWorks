@@ -10,7 +10,7 @@
 
 #include <mutex>
 
-void stdMutex(benchmark::State& state)
+void stdMutex(benchmark::State& state) // cppcheck-suppress constParameterCallback
 {
   static std::mutex lock;
   benchmark::DoNotOptimize(lock);

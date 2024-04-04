@@ -10,7 +10,8 @@ namespace Core
 using ErasedType = TestStruct;
 using ErasedStorage_T = ErasedStorage<sizeof(ErasedType), alignof(ErasedType)>;
 
-void erasedStorage_DefaultCtor(benchmark::State& state)
+// cppcheck-suppress constParameterCallback
+void erasedStorage_DefaultCtor(benchmark::State& state) 
 {
   for (auto _ : state)
   {
@@ -23,6 +24,7 @@ void erasedStorage_DefaultCtor(benchmark::State& state)
 }
 BENCHMARK(erasedStorage_DefaultCtor);
 
+// cppcheck-suppress constParameterCallback
 void erasedStorage_CopyCtor(benchmark::State& state)
 {
   ErasedStorage_T storage;
@@ -38,6 +40,7 @@ void erasedStorage_CopyCtor(benchmark::State& state)
 }
 BENCHMARK(erasedStorage_CopyCtor);
 
+// cppcheck-suppress constParameterCallback
 void erasedStorage_PtrConstruct(benchmark::State& state)
 {
   TestStruct type;

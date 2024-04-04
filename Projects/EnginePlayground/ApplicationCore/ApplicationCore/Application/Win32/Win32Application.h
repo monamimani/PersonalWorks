@@ -21,7 +21,7 @@ namespace Win32
   class Win32Application : public Application
   {
   public:
-    Win32Application(const Win32ApplicationDesc& appDesc);
+    explicit Win32Application(const Win32ApplicationDesc& appDesc);
     ~Win32Application();
 
     void update() override;
@@ -43,7 +43,7 @@ namespace Win32
   class Win32WindowApplication : public Win32Application
   {
   public:
-    Win32WindowApplication(const Win32ApplicationDesc& appDesc);
+    explicit Win32WindowApplication(const Win32ApplicationDesc& appDesc);
     ~Win32WindowApplication();
 
   protected:

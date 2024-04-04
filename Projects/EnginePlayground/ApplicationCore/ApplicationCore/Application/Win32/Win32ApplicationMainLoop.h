@@ -15,9 +15,10 @@ public:
   static int runMainLoop(Application_T& application, Win32MessageLoop& messageLoop)
   {
     int32_t returnValue = EXIT_SUCCESS;
-    bool isContinue = true;
     if (application.initialize())
     {
+      bool isContinue = true;
+
       // std::tie(isContinue, returnValue) = messageLoop.pump();
       // for (; isContinue; std::tie(isContinue, returnValue) = messageLoop.pump())
       //{

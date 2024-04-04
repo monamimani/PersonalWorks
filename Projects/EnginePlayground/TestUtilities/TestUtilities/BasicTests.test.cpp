@@ -144,7 +144,7 @@ public:
     return name;
   };
 
-  SampleParamTestF(ParamType param)
+  explicit SampleParamTestF(ParamType param)
   {
     std::tie(m_sampleA, m_sampleB) = param;
   }

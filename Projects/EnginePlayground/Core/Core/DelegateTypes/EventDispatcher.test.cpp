@@ -19,10 +19,10 @@ struct EventTest
 
 void foo([[maybe_unused]] const EventTest& eventData) {}
 
-struct Bar
-{
-  int value[128] = {};
-};
+//struct Bar
+//{
+//  int value[128] = {};
+//};
 
 constexpr auto lambdaTest = [](const EventTest&) {};
 

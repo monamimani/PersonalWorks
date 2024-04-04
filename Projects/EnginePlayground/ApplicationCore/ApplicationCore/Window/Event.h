@@ -91,7 +91,7 @@ public:
   };
 
   template <typename T>
-  Event(const T& eventData)
+  explicit Event(const T& eventData)
       : m_eventData{eventData}
   {
   }

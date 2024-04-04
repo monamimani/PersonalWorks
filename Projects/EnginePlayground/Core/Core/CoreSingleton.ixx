@@ -10,7 +10,7 @@ class Singleton
 {
 private:
 public:
-  T& getInstance() const
+  static T& getInstance()
   {
     return m_instance;
   }
@@ -24,7 +24,7 @@ class SingletonLazy
 {
 private:
 public:
-  T& getInstance() const
+  static T& getInstance()
   {
     static constinit T instance = {};
     return instance;

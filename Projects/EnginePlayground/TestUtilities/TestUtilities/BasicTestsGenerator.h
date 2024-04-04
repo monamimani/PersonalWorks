@@ -214,7 +214,7 @@ public:
       TestedType obj = TestFixtureType::getDefaultObj();
       auto objMove{std::move(obj)};
       EXPECT_TRUE(testDefaultObj<BasicTestsObjOps::MoveCtor>(objMove));
-      EXPECT_TRUE(testDefaultObj<BasicTestsObjOps::MovedFrom>(obj));
+      EXPECT_TRUE(testDefaultObj<BasicTestsObjOps::MovedFrom>(obj)); // cppcheck-suppress accessMoved
 
       objMove.~TestedType();
       EXPECT_TRUE(testDefaultObj<BasicTestsObjOps::Dtor>(objMove));
@@ -227,7 +227,7 @@ public:
       auto objA = TestFixtureType::getObjA();
       auto objMove{std::move(objA)};
       EXPECT_TRUE(testObjA<BasicTestsObjOps::MoveCtor>(objMove));
-      EXPECT_TRUE(testObjA<BasicTestsObjOps::MovedFrom>(objA));
+      EXPECT_TRUE(testObjA<BasicTestsObjOps::MovedFrom>(objA)); // cppcheck-suppress accessMoved
 
       objMove.~TestedType();
       EXPECT_TRUE(testObjA<BasicTestsObjOps::Dtor>(objMove));
@@ -329,7 +329,7 @@ public:
       TestedType objMove;
       objMove = std::move(obj);
       EXPECT_TRUE(testDefaultObj<BasicTestsObjOps::MoveAssign>(objMove));
-      EXPECT_TRUE(testDefaultObj<BasicTestsObjOps::MovedFrom>(obj));
+      EXPECT_TRUE(testDefaultObj<BasicTestsObjOps::MovedFrom>(obj)); // cppcheck-suppress accessMoved
 
       objMove.~TestedType();
       EXPECT_TRUE(testDefaultObj<BasicTestsObjOps::Dtor>(objMove));
@@ -343,7 +343,7 @@ public:
       TestedType objMove;
       objMove = std::move(objA);
       EXPECT_TRUE(testObjA<BasicTestsObjOps::MoveAssign>(objMove));
-      EXPECT_TRUE(testObjA<BasicTestsObjOps::MovedFrom>(objA));
+      EXPECT_TRUE(testObjA<BasicTestsObjOps::MovedFrom>(objA)); // cppcheck-suppress accessMoved
 
       objMove.~TestedType();
       EXPECT_TRUE(testObjA<BasicTestsObjOps::Dtor>(objMove));
@@ -505,10 +505,10 @@ public:
   void TestBody() override
   {
 
-    static constexpr bool isLessEqualThanCmp = requires(const TestedType& objA, const TestedType& objB) { objA <= objB; };
-    static constexpr bool isLessThanCmp = requires(const TestedType& objA, const TestedType& objB) { objA < objB; };
-    static constexpr bool isGreaterEqualThanCmp = requires(const TestedType& objA, const TestedType& objB) { objA >= objB; };
-    static constexpr bool isGreaterThanCmp = requires(const TestedType& objA, const TestedType& objB) { objA > objB; };
+    static constexpr bool isLessEqualThanCmp = requires(const TestedType& objA, const TestedType& objB) { objA <= objB; };  // cppcheck-suppress constStatement
+    static constexpr bool isLessThanCmp = requires(const TestedType& objA, const TestedType& objB) { objA < objB; }; // cppcheck-suppress constStatement
+    static constexpr bool isGreaterEqualThanCmp = requires(const TestedType& objA, const TestedType& objB) { objA >= objB; }; // cppcheck-suppress constStatement
+    static constexpr bool isGreaterThanCmp = requires(const TestedType& objA, const TestedType& objB) { objA > objB; }; // cppcheck-suppress constStatement
 
     SCOPED_TRACE("From obj A & B");
 
@@ -676,10 +676,10 @@ void registerTests()
   static_assert(std::derived_from<TestFixtureType<TestedType>, testing::Test>, "Fixture type need to derive from gTest testing::Test");
 
   static constexpr bool isConvertibleToBool = requires(const TestedType& obj) { (bool)obj; };
-  static constexpr bool isLessThanCmp = requires(const TestedType& objA, const TestedType& objB) { objA < objB; };
-  static constexpr bool isLessEqualThanCmp = requires(const TestedType& objA, const TestedType& objB) { objA <= objB; };
-  static constexpr bool isGreaterThanCmp = requires(const TestedType& objA, const TestedType& objB) { objA > objB; };
-  static constexpr bool isGreaterEqualThanCmp = requires(const TestedType& objA, const TestedType& objB) { objA >= objB; };
+  static constexpr bool isLessThanCmp = requires(const TestedType& objA, const TestedType& objB) { objA < objB; }; // cppcheck-suppress constStatement
+  static constexpr bool isLessEqualThanCmp = requires(const TestedType& objA, const TestedType& objB) { objA <= objB; }; // cppcheck-suppress constStatement
+  static constexpr bool isGreaterThanCmp = requires(const TestedType& objA, const TestedType& objB) { objA > objB; }; // cppcheck-suppress constStatement
+  static constexpr bool isGreaterEqualThanCmp = requires(const TestedType& objA, const TestedType& objB) { objA >= objB; }; // cppcheck-suppress constStatement
   static constexpr bool isOrdered = isLessThanCmp || isLessEqualThanCmp || isGreaterThanCmp || isGreaterEqualThanCmp;
   static constexpr bool isEqualityTestable = std::equality_comparable<TestedType> && ObjATestable<FixtureType, TestedType, BasicTestsObjOps::Equal>
                                           && ObjBTestable<FixtureType, TestedType, BasicTestsObjOps::Equal>;
@@ -713,10 +713,10 @@ void registerTests(const auto& testParams, const auto& getTestParamName)
                 "Fixture type need to derive from gTest testing::TestWithParam");
 
   static constexpr bool isConvertibleToBool = requires(const TestedType& obj) { (bool)obj; };
-  static constexpr bool isLessThanCmp = requires(const TestedType& objA, const TestedType& objB) { objA < objB; };
-  static constexpr bool isLessEqualThanCmp = requires(const TestedType& objA, const TestedType& objB) { objA <= objB; };
-  static constexpr bool isGreaterThanCmp = requires(const TestedType& objA, const TestedType& objB) { objA > objB; };
-  static constexpr bool isGreaterEqualThanCmp = requires(const TestedType& objA, const TestedType& objB) { objA >= objB; };
+  static constexpr bool isLessThanCmp = requires(const TestedType& objA, const TestedType& objB) { objA < objB; }; // cppcheck-suppress constStatement
+  static constexpr bool isLessEqualThanCmp = requires(const TestedType& objA, const TestedType& objB) { objA <= objB; }; // cppcheck-suppress constStatement
+  static constexpr bool isGreaterThanCmp = requires(const TestedType& objA, const TestedType& objB) { objA > objB; }; // cppcheck-suppress constStatement
+  static constexpr bool isGreaterEqualThanCmp = requires(const TestedType& objA, const TestedType& objB) { objA >= objB; }; // cppcheck-suppress constStatement
   static constexpr bool isOrdered = isLessThanCmp || isLessEqualThanCmp || isGreaterThanCmp || isGreaterEqualThanCmp;
 
   std::string typeNameNoSpace = TypedTestDesc.m_typeName;

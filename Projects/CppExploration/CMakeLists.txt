@@ -1,5 +1,5 @@
 
-project(CodeIncubator
+project(CppExploration
   LANGUAGES CXX C)
 
 get_filename_component(targetName ${CMAKE_CURRENT_LIST_DIR} NAME)
@@ -9,19 +9,17 @@ list(APPEND interfaceSources
 list(APPEND publicSources
 )
 list(APPEND privateSources
-  CoroErrorManagement/CoroErrorManagementUtilities.h
-  CoroErrorManagement/CoroErrorManagementUtilities.cpp
-  CoroErrorManagement/CoroResult.h
+  StaticDispatch.cpp
 )
 list(APPEND publicCxxModules
 )
 list(APPEND privateCxxModules
 )
 list(APPEND testsSources
-  CoroErrorManagement/CoroErrorManagement.test.cpp
+  LambdaIdioms.cpp
+  CoroutineNigeltao.cpp
 )
 list(APPEND benchamrksSources
-    CoroErrorManagement/CoroErrorManagement.benchmark.cpp
 )
 
 list(APPEND interfaceLibraries )
@@ -37,6 +35,7 @@ list(APPEND privateLibraries
 if((NOT GTest_FOUND) OR (NOT benchmark_FOUND))
   message(FATAL_ERROR "Testing framework not found")
 endif()
+
 
 set(targetNameTest ${targetName}Tests)
 add_executable(${targetNameTest})
@@ -79,30 +78,32 @@ catch_discover_tests(${targetNameTest})
 # set_tests_properties(cli.version_matches PROPERTIES PASS_REGULAR_EXPRESSION "${PROJECT_VERSION}")
 
 
-#set(targetNameBenchmark ${targetName}Benchmarks)
-#add_executable(${targetNameBenchmark})
-#add_executable(PersonalWorks::${targetNameBenchmark} ALIAS ${targetNameBenchmark})
-#set_target_properties(${targetNameBenchmark} PROPERTIES FOLDER Benchmarks)
+#if(${benchamrksSources})
+#  set(targetNameBenchmark ${targetName}Benchmarks)
+#  add_executable(${targetNameBenchmark})
+#  add_executable(PersonalWorks::${targetNameBenchmark} ALIAS ${targetNameBenchmark})
+#  set_target_properties(${targetNameBenchmark} PROPERTIES FOLDER Benchmarks)
 #
-#target_include_directories(${targetNameBenchmark}
-#  PUBLIC
-#    "${CMAKE_CURRENT_SOURCE_DIR}"
-#    "${CMAKE_CURRENT_BINARY_DIR}"
-#)
+#  target_include_directories(${targetNameBenchmark}
+#    PUBLIC
+#      "${CMAKE_CURRENT_SOURCE_DIR}"
+#      "${CMAKE_CURRENT_BINARY_DIR}"
+#  )
 #
-#target_sources(${targetNameBenchmark}
-#  INTERFACE ${interfaceSources}
-#  PUBLIC ${publicSources}
-#  PRIVATE ${privateSources} ${benchamrksSources}
-#  PUBLIC FILE_SET publicCxxModules TYPE CXX_MODULES FILES ${publicCxxModules}
-#  PRIVATE FILE_SET privateCxxModules TYPE CXX_MODULES FILES ${privateCxxModules}
-#)
+#  target_sources(${targetNameBenchmark}
+#    INTERFACE ${interfaceSources}
+#    PUBLIC ${publicSources}
+#    PRIVATE ${privateSources} ${benchamrksSources}
+#    PUBLIC FILE_SET publicCxxModules TYPE CXX_MODULES FILES ${publicCxxModules}
+#    PRIVATE FILE_SET privateCxxModules TYPE CXX_MODULES FILES ${privateCxxModules}
+#  )
 #
-#target_link_libraries(${targetNameBenchmark}
-#  INTERFACE ${interfaceLibraries}
-#  PUBLIC ${publicLibraries}
-#  PRIVATE
-#    ${privateLibraries}
-#    fmt::fmt
-#    benchmark::benchmark_main
-#)
+#  target_link_libraries(${targetNameBenchmark}
+#    INTERFACE ${interfaceLibraries}
+#    PUBLIC ${publicLibraries}
+#    PRIVATE
+#      ${privateLibraries}
+#      fmt::fmt
+#      Catch2::Catch2WithMain
+#  )
+#endif()

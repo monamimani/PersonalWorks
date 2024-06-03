@@ -25,7 +25,7 @@ list(APPEND publicSources
 )
 list(APPEND privateSources
   ${CoroErrorManagementSources}
-  Contracts/Contracts.test.cpp
+  Contracts/ContractsAssertions.test.cpp
 
 )
 list(APPEND publicCxxModules
@@ -33,7 +33,7 @@ list(APPEND publicCxxModules
 list(APPEND privateCxxModules
 )
 list(APPEND testsSources
-  
+
 )
 list(APPEND benchamrksSources
   #CoroErrorManagement/CoroErrorManagement.benchmark.cpp

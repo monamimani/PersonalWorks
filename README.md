@@ -12,7 +12,7 @@
 
 The Config project is common code that other project can use to configure their code. It should probably be in [Engine Playground](#Engine-Playground)
 
-### EnginePlayground
+### Engine Playground
 
 This project is a small engine I am working on (forever). I use it to trry new ideas develop my skills and learn new technics. It is also somewhat opiniated on how I think thing should be.
 But of course, with lack of time most/all of it is not to the standard that I would like it to be. So maybe a desired opinion.
@@ -30,3 +30,8 @@ Project where I can explore and develop new ideas without the burden of a whole 
 
 Projects that contain code to explore and learn new cpp concepts and constructs in the various cpp standards and code that I found on the internet that I find interresting and is a place where I want to keep them.
 I might separate this in another repo oneday.
+
+
+### Onnx Inference App
+
+### OnnxRt

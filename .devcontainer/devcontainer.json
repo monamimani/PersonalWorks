@@ -1,6 +1,6 @@
 {
   "name": "CppDevContainer",
-  "image": "ghcr.io/monamimani-builds/cpp-devcontainer:a524189b6082de6c08216ef1f3ea2544a9cdf5a4",
+  "image": "ghcr.io/monamimani-builds/cpp-devcontainer:d00cc15ecc7492636f46736ed2ae079a43c3a6d5",
   "runArgs": [
     "--name",
     "personalworks-devcontainer",

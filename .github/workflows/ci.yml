@@ -11,53 +11,47 @@ on:
       - dev
 
 jobs:
-  
+
   build-test-windows:
     if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
     runs-on: windows-latest
     strategy:
       fail-fast: false
       matrix:
-        include:       
+        include:
           - os: windows-latest
             configure-preset: "Windows-Msvc-Ninja-Debug"
             build-preset: "Windows-Msvc-Ninja-Debug"
           - os: windows-latest
             configure-preset: "Windows-Msvc-Ninja-Release"
-            build-preset: "Windows-Msvc-Ninja-Release"        
+            build-preset: "Windows-Msvc-Ninja-Release"
           - os: windows-latest
             configure-preset: "Windows-Msvc-NinjaMultiConfig"
             build-preset: "Windows-Msvc-NinjaMultiConfig-Debug"
           - os: windows-latest
             configure-preset: "Windows-Msvc-Vs2022"
             build-preset: "Windows-Msvc-Vs2022-Debug"
-    
+
     name: ${{matrix.build-preset}}
     steps:
-      - name: Foresight Collect Workflow Telemetry
-        uses: runforesight/foresight-workflow-kit-action@v1
-        if: ${{ always() }}
-        with:
-          api_key: ${{ secrets.FORESIGHT_API_KEY }}
-
       - uses: actions/checkout@v4
-  
+
       - name: Env variable
         shell: bash
-        run: | 
+        run: |
           printenv
           # echo "VCPKG_ROOT=$VCPKG_INSTALLATION_ROOT" >> $GITHUB_ENV
-  
+
       - name: Set ownership
         shell: bash
         run: |
           # this is to fix GIT not liking owner of the checkout dir
           #chown -R $(id -u):$(id -g) $PWD
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
-  
+
       - name: Vcpkg Cache
         uses: ./.github/actions/vcpkg_cache
-  
+
       - name: CPM Cache
         id: cache-cpm
         uses: actions/cache@v4
@@ -66,7 +60,7 @@ jobs:
           key: ${{ runner.os }}-cpm-${{ hashFiles('**/') }}
           restore-keys: |
             ${{ runner.os }}-cpm-
-  
+
       # - name: Setup Cache
       #   uses: ./.github/actions/setup_cache
       #   with:
@@ -74,15 +68,15 @@ jobs:
       #     build_type: ${{ matrix.build_type }}
       #     packaging_maintainer_mode: false
       #     generator: ${{ matrix.generator }}
-  
-  
+
+
       - name: "CMake Configure & Build"
         run: |
           & { . Scripts\Build\VsEnvironment.ps1; LaunchVsDevShell }
-  
+
           cmake --preset ${{matrix.configure-preset}} -DGIT_SHA:STRING=${{ github.sha }} -DPersonalWorks_ENABLE_CLANG_TIDY=OFF
           cmake --build --preset ${{matrix.build-preset}}
-  
+
       # - name: Tests
       #   run: |
       #     cmake --build --preset $CMAKE_PRESET
@@ -101,30 +95,24 @@ jobs:
             build-preset: "Linux-Clang-Ninja-Debug"
           - os: ubuntu-latest
             configure-preset: "Linux-Clang-Ninja-Release"
-            build-preset: "Linux-Clang-Ninja-Release"   
+            build-preset: "Linux-Clang-Ninja-Release"
           - os: ubuntu-latest
             configure-preset: "Linux-Gcc-Ninja-Debug"
             build-preset: "Linux-Gcc-Ninja-Debug"
           - os: ubuntu-latest
             configure-preset: "Linux-Gcc-Ninja-Release"
-            build-preset: "Linux-Gcc-Ninja-Release"    
+            build-preset: "Linux-Gcc-Ninja-Release"
           - os: ubuntu-latest
             configure-preset: "Linux-Clang-NinjaMultiConfig-Debug"
             build-preset: "Linux-Clang-NinjaMultiConfig-Debug"
 
     name: ${{matrix.build-preset}}
     steps:
-    - name: Foresight Collect Workflow Telemetry
-      uses: runforesight/foresight-workflow-kit-action@v1
-      if: ${{ always() }}
-      with:
-        api_key: ${{ secrets.FORESIGHT_API_KEY }}
-
     - uses: actions/checkout@v4
 
     - name: Env variable
       shell: bash
-      run: | 
+      run: |
         printenv
         # echo "VCPKG_ROOT=$VCPKG_INSTALLATION_ROOT" >> $GITHUB_ENV
 
@@ -159,7 +147,7 @@ jobs:
       if: runner.os == 'Linux'
       continue-on-error: true
       run: |
-        
+
         cmake --preset ${{matrix.configure-preset}} -DGIT_SHA:STRING=${{ github.sha }} -DPersonalWorks_ENABLE_CLANG_TIDY=OFF -DPersonalWorks_ENABLE_CPPCHECK=OFF
         cmake --build --preset ${{matrix.build-preset}}
 

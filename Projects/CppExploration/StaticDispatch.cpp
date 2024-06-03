@@ -63,7 +63,7 @@ void bar([[maybe_unused]] CFoo auto& foo)
   [[maybe_unused]] auto b = foo.funcB();
 }
 
-TEST(StaticDispatch, BindingInterface)
+TEST_CASE("BindingInterface", "StaticDispatch")
 {
   Foo foo;
   bar(foo);
@@ -87,7 +87,7 @@ private:
   std::variant<Foo_Ts...> m_foo{};
 };
 
-TEST(StaticDispatch, OwningPolymorphicTypeVariant)
+TEST_CASE("OwningPolymorphicTypeVariant", "StaticDispatch")
 {
   using Bar_T = Bar<Foo>;
   Foo foo;
@@ -127,7 +127,7 @@ private:
   std::tuple<std::vector<Foo_Ts>...> m_tuple{};
 };
 
-TEST_CASE("StaticDispatch", "StoringMultipleTypes")
+TEST_CASE("StoringMultipleTypes", "StaticDispatch")
 {
   using Bar_T = BarContainer<Foo, Widget>;
   Foo foo;

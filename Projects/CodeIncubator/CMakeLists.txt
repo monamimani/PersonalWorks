@@ -4,14 +4,27 @@ project(CodeIncubator
 
 get_filename_component(targetName ${CMAKE_CURRENT_LIST_DIR} NAME)
 
+list(APPEND unssuportedSources
+)
+
+if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+  if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL "19.41.33901.0")
+    list(APPEND unssuportedSources
+    CoroErrorManagement/CoroErrorManagementUtilities.h
+    CoroErrorManagement/CoroErrorManagementUtilities.cpp
+    CoroErrorManagement/CoroResult.h
+    )
+  endif()
+endif()
+
+
 list(APPEND interfaceSources
 )
 list(APPEND publicSources
 )
 list(APPEND privateSources
-  CoroErrorManagement/CoroErrorManagementUtilities.h
-  CoroErrorManagement/CoroErrorManagementUtilities.cpp
-  CoroErrorManagement/CoroResult.h
+  ${unssuportedSources}
+
 )
 list(APPEND publicCxxModules
 )

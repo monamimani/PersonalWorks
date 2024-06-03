@@ -15,8 +15,12 @@ include(CMake/GetCPM.cmake)
 
 cmake_print_variables(CMAKE_VERSION)
 
+#if(MSVC)
+#  set_target_properties(LLVMInstallDir PROPERTIES VS_GLOBAL_LLVMInstallDir "C:/Program Files/LLVM/bin")
+#endif()
+
 # cmake_print_variables(CMAKE_MODULE_PATH)
-# set(CMAKE_VERBOSE_MAKEFILE ON)
+#set(CMAKE_VERBOSE_MAKEFILE ON)
 
 # get_filename_component(WorkspaceName ${CMAKE_SOURCE_DIR} NAME)
 # string(REPLACE " " "_" WorkspaceName ${WorkspaceName})

@@ -61,6 +61,7 @@ endif()
 add_subdirectory(Projects/Config)
 add_subdirectory(Projects/EnginePlayground)
 add_subdirectory(Projects/CodeIncubator)
+add_subdirectory(Projects/CppExploration)
 
 
 # set the startup project for the "play" button in MSVC

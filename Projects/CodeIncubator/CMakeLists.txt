@@ -4,15 +4,16 @@ project(CodeIncubator
 
 get_filename_component(targetName ${CMAKE_CURRENT_LIST_DIR} NAME)
 
-list(APPEND unssuportedSources
+list(APPEND CoroErrorManagementSources
 )
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
   if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL "19.41.33901.0")
-    list(APPEND unssuportedSources
+    list(APPEND CoroErrorManagementSources
     CoroErrorManagement/CoroErrorManagementUtilities.h
     CoroErrorManagement/CoroErrorManagementUtilities.cpp
     CoroErrorManagement/CoroResult.h
+    CoroErrorManagement/CoroErrorManagement.test.cpp
     )
   endif()
 endif()
@@ -23,7 +24,8 @@ list(APPEND interfaceSources
 list(APPEND publicSources
 )
 list(APPEND privateSources
-  ${unssuportedSources}
+  ${CoroErrorManagementSources}
+  Contracts/Contracts.test.cpp
 
 )
 list(APPEND publicCxxModules
@@ -31,10 +33,10 @@ list(APPEND publicCxxModules
 list(APPEND privateCxxModules
 )
 list(APPEND testsSources
-  CoroErrorManagement/CoroErrorManagement.test.cpp
+  
 )
 list(APPEND benchamrksSources
-    CoroErrorManagement/CoroErrorManagement.benchmark.cpp
+  #CoroErrorManagement/CoroErrorManagement.benchmark.cpp
 )
 
 list(APPEND interfaceLibraries )

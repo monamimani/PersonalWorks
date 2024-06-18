@@ -7,10 +7,11 @@
   #define VK_USE_PLATFORM_WIN32_KHR
 #endif
 
-// import vulkan_hpp;
-
 #include "vulkan/vulkan.hpp"
-#include "vulkan/vulkan_raii.hpp"
+//#include "vulkan/vulkan_raii.hpp"
+
+//import vulkan_hpp;
+
 
 namespace GfxVk
 {

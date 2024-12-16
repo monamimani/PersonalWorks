@@ -1,6 +1,6 @@
 {
   "name": "CppDevContainer",
-  "image": "ghcr.io/monamimani-builds/cpp-devcontainer:d00cc15ecc7492636f46736ed2ae079a43c3a6d5",
+  "image": "ghcr.io/monamimani-builds/cpp-devcontainer:8653ba36f2bd27db4c1723dbad69aa0a1b899b47",
   "runArgs": [
     "--name",
     "personalworks-devcontainer",
@@ -26,7 +26,7 @@
   },
   // "remoteUser": "vscode",
   "features": {},
-  "postStartCommand": "chmod +x .devcontainer/gitconfig-identity.sh && .devcontainer/gitconfig-identity.sh",
+  "postStartCommand": ".devcontainer/postStartCommand.sh",
   "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/${localWorkspaceFolderBasename},type=bind,consistency=delegated",
   "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}"
 }

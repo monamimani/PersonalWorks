@@ -1,6 +1,6 @@
 {
-  "$schema": "https://cmake.org/cmake/help/v3.28/_downloads/3e2d73bff478d88a7de0de736ba5e361/schema.json",
-  "version": 8,
+  "$schema": "https://cmake.org/cmake/help/v3.30/_downloads/3e2d73bff478d88a7de0de736ba5e361/schema.json",
+  "version": 9,
   "configurePresets": [
     {
       "name": "Msvc",
@@ -8,7 +8,7 @@
       "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
       "cacheVariables": {
         "CMAKE_C_COMPILER": "cl",
-        "CMAKE_CXX_COMPILER": "cl"//,
+        "CMAKE_CXX_COMPILER": "cl" //,
         //"CMAKE_CXX_FLAGS": "/EHsc /MP",
         //"CMAKE_C_FLAGS": "/EHsc /MP",
       },
@@ -19,9 +19,8 @@
       },
       "vendor": {
         "microsoft.com/VisualStudioSettings/CMake/1.0": {
-          //"clangTidyChecks": "clang-analyzer-*",
-          //"enableMicrosoftCodeAnalysis": false,
-          //"enableClangTidyCodeAnalysis": false
+          "enableClangTidyCodeAnalysis": true,
+          "enableMicrosoftCodeAnalysis": true
         }
       }
     },
@@ -54,7 +53,9 @@
       "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
       "cacheVariables": {
         "CMAKE_C_COMPILER": "clang-cl",
-        "CMAKE_CXX_COMPILER": "clang-cl"
+        "CMAKE_CXX_COMPILER": "clang-cl",
+        "CMAKE_CXX_FLAGS": "",
+        "CMAKE_C_FLAGS": ""
       },
       "condition": {
         "type": "equals",

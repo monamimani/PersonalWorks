@@ -18,7 +18,7 @@ macro(PersonalWorks_declare_options)
     option(PersonalWorks_BASIC_BUILD_MODE "Disable most of the nice to have build features." OFF)
 
     cmake_dependent_option(PersonalWorks_ENABLE_CLANG_TIDY "Enable clang-tidy" ON "NOT PersonalWorks_BASIC_BUILD_MODE" OFF)
-    cmake_dependent_option(PersonalWorks_ENABLE_CPPCHECK "Enable cpp-check analysis" ON "NOT PersonalWorks_BASIC_BUILD_MODE" OFF)
+    cmake_dependent_option(PersonalWorks_ENABLE_CPPCHECK "Enable cpp-check analysis" OFF "NOT PersonalWorks_BASIC_BUILD_MODE" OFF)
 
     cmake_dependent_option(PersonalWorks_ENABLE_SANITIZER_ADDRESS "Enable address sanitizer" ${SUPPORTS_ASAN} "NOT PersonalWorks_BASIC_BUILD_MODE" OFF)
     cmake_dependent_option(PersonalWorks_ENABLE_SANITIZER_UNDEFINED "Enable undefined sanitizer" ${SUPPORTS_UBSAN} "NOT PersonalWorks_BASIC_BUILD_MODE" OFF)

@@ -4,9 +4,11 @@ namespace Core
 {
 struct NonCopyable
 {
+protected:
   NonCopyable() = default;
   ~NonCopyable() = default;
 
+public:
   NonCopyable(NonCopyable&&) = default;
   NonCopyable& operator=(NonCopyable&&) = default;
 

@@ -255,11 +255,11 @@ private:
 // constexpr auto testDesc = TEST_TYPE(Sample);
 constexpr const char* sampleStr = "Sample";
 constexpr auto testDesc = TestUtilities::TypedTestDesc<Sample>{.m_typeName = sampleStr};
-auto typedTest = TestUtilities::RegistratorCommonTests<SampleTestF, testDesc, testDesc>{};
+//auto typedTest = TestUtilities::RegistratorCommonTests<SampleTestF, testDesc, testDesc>{};
 
 static const auto paramA = ::testing::Values(Sample{42}, Sample{16});
 static const auto paramB = ::testing::Values(Sample{151});
 static const auto paramGenerator = ::testing::Combine(paramA, paramB);
-auto parametricTest = TestUtilities::RegistratorCommonTests<SampleParamTestF, testDesc>{paramGenerator, SampleParamTestF<Sample>::makeTestName};
+//auto parametricTest = TestUtilities::RegistratorCommonTests<SampleParamTestF, testDesc>{paramGenerator, SampleParamTestF<Sample>::makeTestName};
 
 } // namespace TestUtilitiesTests

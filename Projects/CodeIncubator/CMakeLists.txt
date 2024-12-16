@@ -25,7 +25,7 @@ list(APPEND publicSources
 )
 list(APPEND privateSources
   ${CoroErrorManagementSources}
-  Contracts/ContractsAssertions.test.cpp
+  ContractsAssertions/ContractsAssertions.test.cpp
 
 )
 list(APPEND publicCxxModules
@@ -33,7 +33,7 @@ list(APPEND publicCxxModules
 list(APPEND privateCxxModules
 )
 list(APPEND testsSources
-
+  main.test.cpp
 )
 list(APPEND benchamrksSources
   #CoroErrorManagement/CoroErrorManagement.benchmark.cpp
@@ -42,16 +42,18 @@ list(APPEND benchamrksSources
 list(APPEND interfaceLibraries )
 list(APPEND publicLibraries )
 list(APPEND privateLibraries
-  PersonalWorks::Config
+  #PersonalWorks::Config
   PersonalWorks::Core
   PersonalWorks::PersonalWorks_options
   PersonalWorks::PersonalWorks_warnings
   PersonalWorks::PersonalWorks_sanitizers
 )
 
-if((NOT GTest_FOUND) OR (NOT benchmark_FOUND))
-  message(FATAL_ERROR "Testing framework not found")
-endif()
+#if((NOT GTest_FOUND) OR (NOT benchmark_FOUND))
+#  message(FATAL_ERROR "Testing framework not found")
+#endif()
+
+if(PersonalWorks_BUILD_TESTS)
 
 set(targetNameTest ${targetName}Tests)
 add_executable(${targetNameTest})
@@ -78,10 +80,11 @@ target_link_libraries(${targetNameTest}
   PUBLIC ${publicLibraries}
   PRIVATE
     ${privateLibraries}
-    Catch2::Catch2WithMain
     fmt::fmt
+    Catch2::Catch2
 )
 catch_discover_tests(${targetNameTest})
+endif()
 
 # Provide a simple smoke test to make sure that the CLI works and can display a --help message
 # add_test(NAME cli.has_help COMMAND SampleApp --help)

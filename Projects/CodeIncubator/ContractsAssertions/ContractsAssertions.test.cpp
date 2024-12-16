@@ -1,9 +1,11 @@
-#include <catch2/benchmark/catch_benchmark.hpp>
-#include <catch2/catch_test_macros.hpp>
+#include "catch2/catch_test_macros.hpp"
+#include "catch2/benchmark/catch_benchmark.hpp"
 
-#include <stacktrace>
-#include <source_location>
+
+#include <concepts>
 #include <print>
+#include <source_location>
+#include <stacktrace>
 
 template<>
 struct std::formatter<std::source_location>: std::formatter<std::string_view>
@@ -14,47 +16,175 @@ struct std::formatter<std::source_location>: std::formatter<std::string_view>
   }
 };
 
-//template<>
-//struct std::formatter<std::stacktrace_entry>: std::formatter<std::string_view>
-//{
-//  auto format(const std::stacktrace_entry& entry, format_context& ctx) const
-//  {
-//    return std::format_to(ctx.out(), "{}({}): {}\n", entry.source_file(), entry.source_line(), entry.description());
-//  }
-//};
+#define CONTRACT_ASSERTION_ENABLE
 
-struct ContractViolationDesc
+// #define CONTRACT_ASSERTION_BEHAVIOR_TERMINATE
+#define CONTRACT_ASSERTION_BEHAVIOR_LOG
+//   #define CONTRACT_ASSERTION_BEHAVIOR_NO_OP
+
+#ifdef CONTRACT_ASSERTION_ENABLE
+  #if defined(CONTRACT_ASSERTION_BEHAVIOR_TERMINATE) + defined(CONTRACT_ASSERTION_BEHAVIOR_LOG) + defined(CONTRACT_ASSERTION_BEHAVIOR_NO_OP) > 1
+    #error "Only one CONTRACT_ASSERTION_BEHAVIOR should be defined at a time."
+  #elif !defined(CONTRACT_ASSERTION_BEHAVIOR_TERMINATE) && !defined(CONTRACT_ASSERTION_BEHAVIOR_LOG) && !defined(CONTRACT_ASSERTION_BEHAVIOR_NO_OP)
+    #error "At least one CONTRACT_ASSERTION_BEHAVIOR must be defined."
+  #endif
+#else
+  #if defined(CONTRACT_ASSERTION_BEHAVIOR_TERMINATE) + defined(CONTRACT_ASSERTION_BEHAVIOR_LOG) + defined(CONTRACT_ASSERTION_BEHAVIOR_NO_OP) > 0
+    #error "No CONTRACT_ASSERTION_BEHAVIOR should be defined when CONTRACT_ASSERTION is not enabled."
+  #endif
+#endif // CONTRACT_ASSERTION_ENABLE
+
+namespace ContractsAssertions
 {
-  std::source_location  m_sourceLocation;
-  std::stacktrace m_stacktrace;
+enum class Behavior
+{
+  NoOp,
+  Terminate,
+  Log,
 };
 
-void contract_violation_handler(std::source_location sourceLocation = std::source_location::current(), std::stacktrace stacktrace = std::stacktrace::current())
-{
-  std::print("Source Location: {}", sourceLocation);
-  std::print("Stackstrace: {}", stacktrace);
-}
+#ifdef CONTRACT_ASSERTION_ENABLE
+constexpr auto ContractsAssertionsEnabled = true;
 
-void foo()
-{
-  auto preconditionA = [&]() -> bool {
-    return false;
-  };
+  #ifdef CONTRACT_ASSERTION_BEHAVIOR_TERMINATE
+constexpr auto Behavior = Behavior::Terminate;
+  #endif // CONTRACT_ASSERTION_BEHAVIOR_TERMINATE
 
-  if (!preconditionA())
+  #ifdef CONTRACT_ASSERTION_BEHAVIOR_LOG
+constexpr auto Behavior = Behavior::Log;
+  #endif // CONTRACT_ASSERTION_BEHAVIOR_LOG
+
+  #ifdef CONTRACT_ASSERTION_BEHAVIOR_NO_OP
+constexpr auto Behavior = Behavior::NoOp;
+  #endif // CONTRACT_ASSERTION_BEHAVIOR_NO_OP
+
+#else
+constexpr auto ContractsAssertionsEnabled = false;
+
+constexpr auto Behavior = Behavior::NoOp;
+
+#endif // CONTRAC_ASSERTION_ENABLED
+
+void contract_violation_handler([[maybe_unused]] std::string_view predicateBody,
+                                [[maybe_unused]] const std::source_location& sourceLocation,
+                                [[maybe_unused]] const std::stacktrace& stacktrace)
+{
+  // std::println("Contract body: {}", predicateBody);
+  // std::println("Source Location: {}", sourceLocation);
+  // std::println("Stackstrace: {}", stacktrace);
+
+  if constexpr (Behavior == Behavior::Terminate)
   {
-    contract_violation_handler();
+    std::terminate();
   }
 
+  if constexpr (Behavior == Behavior::Log)
+  {
+    // std::println("Contract failed!");
+  }
+
+  if constexpr (Behavior == Behavior::NoOp)
+  {
+  }
 }
 
+using ContractViolationHandlerPtr = decltype(&contract_violation_handler);
+ContractViolationHandlerPtr contract_violation_handler_ptr = &contract_violation_handler;
+
+void set_contract_violation_handler(ContractViolationHandlerPtr handler)
+{
+  contract_violation_handler_ptr = handler;
+}
+
+} // namespace ContractsAssertions
+
+inline void check_contract(bool predicateResult,
+                           std::string_view predicateBody = "",
+                           std::source_location sourceLocation = std::source_location::current(),
+                           std::stacktrace stacktrace = std::stacktrace::current())
+{
+  if (!predicateResult) [[unlikely]]
+  {
+    ContractsAssertions::contract_violation_handler_ptr(predicateBody, sourceLocation, stacktrace);
+  }
+}
+
+#define ContractAssertion(predicateBody)                           \
+  do                                                               \
+  {                                                                \
+    if constexpr (ContractsAssertions::ContractsAssertionsEnabled) \
+    {                                                              \
+      check_contract(                                              \
+          [&] {                                                    \
+            predicateBody                                          \
+          }(),                                                     \
+          #predicateBody);                                         \
+    }                                                              \
+  }                                                                \
+  while (false)
+
+#define Precondition(predicateBody) ContractAssertion(predicateBody)
+
+#define Postcondition(postConditionName, predicateBody)                         \
+  [[maybe_unused]] auto postConditionName = [&](auto&& returnValue) -> auto&& { \
+    ContractAssertion(predicateBody);                                           \
+    return std::forward<decltype(returnValue)>(returnValue);                    \
+  }
+
+#define PostconditionReturn(postConditionName, returnValue)      \
+  do                                                               \
+  {                                                                \
+  if constexpr (ContractsAssertions::ContractsAssertionsEnabled) \
+  {                                                              \
+    return postConditionName(returnValue);                       \
+  }                                                              \
+  else                                                           \
+  {                                                              \
+    return returnValue;                                          \
+  } \
+  }                                                                \
+  while (false)
+
+void unitTestContractViolationHandler([[maybe_unused]] std::string_view predicateBody,
+                                      [[maybe_unused]] const std::source_location& sourceLocation,
+                                      [[maybe_unused]] const std::stacktrace& stacktrace)
+{
+  // std::println("Contract body: {}", predicateBody);
+  // std::println("Source Location: {}", sourceLocation);
+  // std::println("Stackstrace: {}", stacktrace);
+
+  // FAIL(predicateBody);
+}
+
+int foo(int a)
+{
+  Postcondition(postA, return returnValue > 0;);
+
+  Precondition({ return a == 42; });
+
+  ContractAssertion(return a == 42;);
+
+  check_contract([&] {
+    return a > 0;
+  }());
+
+  PostconditionReturn(postA, a - 100);
+}
 
 TEST_CASE("Contracts", "[Contracts]")
 {
-  foo();
+    ContractsAssertions::set_contract_violation_handler(&unitTestContractViolationHandler);
+
+    foo(42);
 
   SECTION("Success Path")
   {
     REQUIRE(true);
   }
+
+  BENCHMARK("Contracts", i)
+  {
+  //  Precondition({ return i >= 0; });
+    return i;
+  };
 }

@@ -18,6 +18,7 @@ list(APPEND privateCxxModules
 list(APPEND testsSources
   LambdaIdioms.cpp
   CoroutineNigeltao.cpp
+  CommonFilesystemTasks.cpp
 )
 list(APPEND benchamrksSources
 )
@@ -32,11 +33,11 @@ list(APPEND privateLibraries
   PersonalWorks::PersonalWorks_sanitizers
 )
 
-if((NOT GTest_FOUND) OR (NOT benchmark_FOUND))
-  message(FATAL_ERROR "Testing framework not found")
-endif()
+#if((NOT GTest_FOUND) OR (NOT benchmark_FOUND))
+#  message(FATAL_ERROR "Testing framework not found")
+#endif()
 
-
+if(PersonalWorks_BUILD_TESTS)
 set(targetNameTest ${targetName}Tests)
 add_executable(${targetNameTest})
 add_executable(PersonalWorks::${targetNameTest} ALIAS ${targetNameTest})
@@ -66,7 +67,7 @@ target_link_libraries(${targetNameTest}
     fmt::fmt
 )
 catch_discover_tests(${targetNameTest})
-
+endif()
 # Provide a simple smoke test to make sure that the CLI works and can display a --help message
 # add_test(NAME cli.has_help COMMAND SampleApp --help)
 

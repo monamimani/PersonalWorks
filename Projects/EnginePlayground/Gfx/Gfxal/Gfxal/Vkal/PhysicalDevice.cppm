@@ -139,7 +139,7 @@ struct QueueFamilies
                            std::back_inserter(m_queuePropertiesList),
                            [](std::tuple<ptrdiff_t, vk::StructureChain<vk::QueueFamilyProperties2, Ext_T...>> tuple) {
                              const auto& [index, props2] = tuple;
-                             const auto& props = props2.get<vk::QueueFamilyProperties2>().queueFamilyProperties;
+                             const auto& props = props2.template get<vk::QueueFamilyProperties2>().queueFamilyProperties;
                              return QueueProperties{.m_index = static_cast<uint32_t>(index),
                                                     .m_queueFlags = props.queueFlags,
                                                     .m_queueCount = props.queueCount,
@@ -253,8 +253,7 @@ public:
   : m_physicalDevice{physicalDevice}
   , m_extensions{physicalDevice.enumerateDeviceExtensionProperties()}
   , m_queueFamilies{getQueueFamilyPropertiesChain()}
-  {
-  }
+  {}
 
   bool isVulkanVersionSupported(uint32_t requestedVulkanVersion) const
   {

@@ -58,32 +58,20 @@ consteval auto GetBasicTestsObjOpsStr(BasicTestsObjOps basicTestsObjOp)
 
 template<typename TestFixtureType, typename TestedType, BasicTestsObjOps objOps>
 concept DefaultObjTestable = requires(const TestFixtureType& fixtureConst, TestFixtureType& fixture, const TestedType& arg) {
-  {
-    fixtureConst.template testDefaultObj<objOps>(arg)
-  } -> std::same_as<testing::AssertionResult>;
-  {
-    fixture.getDefaultObj()
-  } -> std::same_as<TestedType>;
+  { fixtureConst.template testDefaultObj<objOps>(arg) } -> std::same_as<testing::AssertionResult>;
+  { fixture.getDefaultObj() } -> std::same_as<TestedType>;
 };
 
 template<typename TestFixtureType, typename TestedType, BasicTestsObjOps objOps>
 concept ObjATestable = requires(const TestFixtureType& fixtureConst, TestFixtureType& fixture, const TestedType& arg) {
-  {
-    fixtureConst.template testObjA<objOps>(arg)
-  } -> std::same_as<testing::AssertionResult>;
-  {
-    fixture.getObjA()
-  } -> std::same_as<TestedType>;
+  { fixtureConst.template testObjA<objOps>(arg) } -> std::same_as<testing::AssertionResult>;
+  { fixture.getObjA() } -> std::same_as<TestedType>;
 };
 
 template<typename TestFixtureType, typename TestedType, BasicTestsObjOps objOps>
 concept ObjBTestable = requires(const TestFixtureType& fixtureConst, TestFixtureType& fixture, const TestedType& arg) {
-  {
-    fixtureConst.template testObjB<objOps>(arg)
-  } -> std::same_as<testing::AssertionResult>;
-  {
-    fixture.getObjB()
-  } -> std::same_as<TestedType>;
+  { fixtureConst.template testObjB<objOps>(arg) } -> std::same_as<testing::AssertionResult>;
+  { fixture.getObjB() } -> std::same_as<TestedType>;
 };
 
 inline auto objAsBytes(const auto& obj)
@@ -413,12 +401,8 @@ public:
   void TestBody() override
   {
     static_assert(requires(const TestFixtureType& fixtureConst, TestFixtureType& fixture, const TestedType& arg) {
-      {
-        testDefaultObj<BasicTestsObjOps::ConvertibleBool>(arg)
-      } -> std::same_as<testing::AssertionResult>;
-      {
-        TestFixtureType::getObjA()
-      } -> std::same_as<TestedType>;
+      { testDefaultObj<BasicTestsObjOps::ConvertibleBool>(arg) } -> std::same_as<testing::AssertionResult>;
+      { TestFixtureType::getObjA() } -> std::same_as<TestedType>;
     });
 
     SCOPED_TRACE("From obj A");
@@ -505,9 +489,10 @@ public:
   void TestBody() override
   {
 
-    static constexpr bool isLessEqualThanCmp = requires(const TestedType& objA, const TestedType& objB) { objA <= objB; };  // cppcheck-suppress constStatement
-    static constexpr bool isLessThanCmp = requires(const TestedType& objA, const TestedType& objB) { objA < objB; }; // cppcheck-suppress constStatement
-    static constexpr bool isGreaterEqualThanCmp = requires(const TestedType& objA, const TestedType& objB) { objA >= objB; }; // cppcheck-suppress constStatement
+    static constexpr bool isLessEqualThanCmp = requires(const TestedType& objA, const TestedType& objB) { objA <= objB; }; // cppcheck-suppress constStatement
+    static constexpr bool isLessThanCmp = requires(const TestedType& objA, const TestedType& objB) { objA < objB; };       // cppcheck-suppress constStatement
+    static constexpr bool isGreaterEqualThanCmp =
+        requires(const TestedType& objA, const TestedType& objB) { objA >= objB; };                                     // cppcheck-suppress constStatement
     static constexpr bool isGreaterThanCmp = requires(const TestedType& objA, const TestedType& objB) { objA > objB; }; // cppcheck-suppress constStatement
 
     SCOPED_TRACE("From obj A & B");
@@ -676,9 +661,9 @@ void registerTests()
   static_assert(std::derived_from<TestFixtureType<TestedType>, testing::Test>, "Fixture type need to derive from gTest testing::Test");
 
   static constexpr bool isConvertibleToBool = requires(const TestedType& obj) { (bool)obj; };
-  static constexpr bool isLessThanCmp = requires(const TestedType& objA, const TestedType& objB) { objA < objB; }; // cppcheck-suppress constStatement
-  static constexpr bool isLessEqualThanCmp = requires(const TestedType& objA, const TestedType& objB) { objA <= objB; }; // cppcheck-suppress constStatement
-  static constexpr bool isGreaterThanCmp = requires(const TestedType& objA, const TestedType& objB) { objA > objB; }; // cppcheck-suppress constStatement
+  static constexpr bool isLessThanCmp = requires(const TestedType& objA, const TestedType& objB) { objA < objB; };          // cppcheck-suppress constStatement
+  static constexpr bool isLessEqualThanCmp = requires(const TestedType& objA, const TestedType& objB) { objA <= objB; };    // cppcheck-suppress constStatement
+  static constexpr bool isGreaterThanCmp = requires(const TestedType& objA, const TestedType& objB) { objA > objB; };       // cppcheck-suppress constStatement
   static constexpr bool isGreaterEqualThanCmp = requires(const TestedType& objA, const TestedType& objB) { objA >= objB; }; // cppcheck-suppress constStatement
   static constexpr bool isOrdered = isLessThanCmp || isLessEqualThanCmp || isGreaterThanCmp || isGreaterEqualThanCmp;
   static constexpr bool isEqualityTestable = std::equality_comparable<TestedType> && ObjATestable<FixtureType, TestedType, BasicTestsObjOps::Equal>
@@ -713,9 +698,9 @@ void registerTests(const auto& testParams, const auto& getTestParamName)
                 "Fixture type need to derive from gTest testing::TestWithParam");
 
   static constexpr bool isConvertibleToBool = requires(const TestedType& obj) { (bool)obj; };
-  static constexpr bool isLessThanCmp = requires(const TestedType& objA, const TestedType& objB) { objA < objB; }; // cppcheck-suppress constStatement
-  static constexpr bool isLessEqualThanCmp = requires(const TestedType& objA, const TestedType& objB) { objA <= objB; }; // cppcheck-suppress constStatement
-  static constexpr bool isGreaterThanCmp = requires(const TestedType& objA, const TestedType& objB) { objA > objB; }; // cppcheck-suppress constStatement
+  static constexpr bool isLessThanCmp = requires(const TestedType& objA, const TestedType& objB) { objA < objB; };          // cppcheck-suppress constStatement
+  static constexpr bool isLessEqualThanCmp = requires(const TestedType& objA, const TestedType& objB) { objA <= objB; };    // cppcheck-suppress constStatement
+  static constexpr bool isGreaterThanCmp = requires(const TestedType& objA, const TestedType& objB) { objA > objB; };       // cppcheck-suppress constStatement
   static constexpr bool isGreaterEqualThanCmp = requires(const TestedType& objA, const TestedType& objB) { objA >= objB; }; // cppcheck-suppress constStatement
   static constexpr bool isOrdered = isLessThanCmp || isLessEqualThanCmp || isGreaterThanCmp || isGreaterEqualThanCmp;
 
@@ -758,8 +743,8 @@ struct RegistratorCommonTests
   }
 };
 
+#define str(s)  #s
 #define xstr(s) str(s)
-#define str(s) #s
 #define TEST_TYPE(TestedType)              \
   TestUtilities::TypedTestDesc<TestedType> \
   {                                        \

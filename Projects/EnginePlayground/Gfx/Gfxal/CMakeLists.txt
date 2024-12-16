@@ -12,7 +12,6 @@ list(APPEND privateSources
   ${targetName}/Vkal/Vk.cpp
   ${targetName}/Vkal/VkDefines.h
   ${targetName}/Vkal/VulkanSystem.cxx
-  ${targetName}/Vkal/Utilities.cxx
 )
 list(APPEND publicCxxModules
 )

@@ -1,53 +1,97 @@
 {
-  "$schema": "https://cmake.org/cmake/help/v3.28/_downloads/3e2d73bff478d88a7de0de736ba5e361/schema.json",
-  "version": 8,
+  "$schema": "https://cmake.org/cmake/help/v3.30/_downloads/3e2d73bff478d88a7de0de736ba5e361/schema.json",
+  "version": 9,
   "include": [
     "./PlatformLinux.configure.json"
   ],
   "buildPresets": [
     {
+      "name": "Linux",
+      "hidden": true,
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      },
+      "vendor": {
+        "microsoft.com/VisualStudioRemoteSettings/CMake/1.0": {
+          "sourceDir": "$env{HOME}/.vs/$ms{projectDirName}"
+        }
+      }
+    },
+    {
       "name": "Linux-Clang-Ninja-Debug",
-      "configurePreset": "Linux-Clang-Ninja-Debug"
+      "configurePreset": "Linux-Clang-Ninja-Debug",
+      "inherits": [
+        "Linux"
+      ]
     },
     {
       "name": "Linux-Clang-Ninja-ReleaseWithDebugInfo",
-      "configurePreset": "Linux-Clang-Ninja-ReleaseWithDebugInfo"
+      "configurePreset": "Linux-Clang-Ninja-ReleaseWithDebugInfo",
+      "inherits": [
+        "Linux"
+      ]
     },
     {
       "name": "Linux-Clang-Ninja-Release",
-      "configurePreset": "Linux-Clang-Ninja-Release"
+      "configurePreset": "Linux-Clang-Ninja-Release",
+      "inherits": [
+        "Linux"
+      ]
     },
     {
       "name": "Linux-Gcc-Ninja-Debug",
-      "configurePreset": "Linux-Gcc-Ninja-Debug"
+      "configurePreset": "Linux-Gcc-Ninja-Debug",
+      "inherits": [
+        "Linux"
+      ]
     },
     {
       "name": "Linux-Gcc-Ninja-ReleaseWithDebugInfo",
-      "configurePreset": "Linux-Gcc-Ninja-ReleaseWithDebugInfo"
+      "configurePreset": "Linux-Gcc-Ninja-ReleaseWithDebugInfo",
+      "inherits": [
+        "Linux"
+      ]
     },
     {
       "name": "Linux-Gcc-Ninja-Release",
-      "configurePreset": "Linux-Gcc-Ninja-Release"
+      "configurePreset": "Linux-Gcc-Ninja-Release",
+      "inherits": [
+        "Linux"
+      ]
     },
     {
       "name": "Linux-Clang-NinjaMultiConfig-Debug",
       "configurePreset": "Linux-Clang-NinjaMultiConfig",
-      "configuration": "Debug"
+      "configuration": "Debug",
+      "inherits": [
+        "Linux"
+      ]
     },
     {
       "name": "Linux-Clang-NinjaMultiConfig-ReleaseWithDebugInfo",
       "configurePreset": "Linux-Clang-NinjaMultiConfig",
-      "configuration": "RelWithDebInfo"
+      "configuration": "RelWithDebInfo",
+      "inherits": [
+        "Linux"
+      ]
     },
     {
       "name": "Linux-Gcc-NinjaMultiConfig-Debug",
       "configurePreset": "Linux-Gcc-NinjaMultiConfig",
-      "configuration": "Debug"
+      "configuration": "Debug",
+      "inherits": [
+        "Linux"
+      ]
     },
     {
       "name": "Linux-Gcc-NinjaMultiConfig-ReleaseWithDebugInfo",
       "configurePreset": "Linux-Gcc-NinjaMultiConfig",
-      "configuration": "RelWithDebInfo"
+      "configuration": "RelWithDebInfo",
+      "inherits": [
+        "Linux"
+      ]
     }
   ]
 }

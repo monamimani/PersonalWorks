@@ -1,54 +1,93 @@
 {
-  "$schema": "https://cmake.org/cmake/help/v3.28/_downloads/3e2d73bff478d88a7de0de736ba5e361/schema.json",
-  "version": 8,
+  "$schema": "https://cmake.org/cmake/help/v3.30/_downloads/3e2d73bff478d88a7de0de736ba5e361/schema.json",
+  "version": 9,
   "include": [
     "./PlatformWindows.configure.json"
   ],
   "buildPresets": [
     {
+      "name": "Windows",
+      "hidden": true,
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
       "name": "Windows-Msvc-Ninja-Debug",
-      "configurePreset": "Windows-Msvc-Ninja-Debug"
+      "configurePreset": "Windows-Msvc-Ninja-Debug",
+      "inherits": [
+        "Windows"
+      ]
     },
     {
       "name": "Windows-Msvc-Ninja-ReleaseWithDebugInfo",
-      "configurePreset": "Windows-Msvc-Ninja-ReleaseWithDebugInfo"
+      "configurePreset": "Windows-Msvc-Ninja-ReleaseWithDebugInfo",
+      "inherits": [
+        "Windows"
+      ]
     },
     {
       "name": "Windows-Msvc-Ninja-Release",
-      "configurePreset": "Windows-Msvc-Ninja-Release"
+      "configurePreset": "Windows-Msvc-Ninja-Release",
+      "inherits": [
+        "Windows"
+      ]
     },
     {
       "name": "Windows-ClangCl-Ninja-Debug",
-      "configurePreset": "Windows-ClangCl-Ninja-Debug"
+      "configurePreset": "Windows-ClangCl-Ninja-Debug",
+      "inherits": [
+        "Windows"
+      ]
     },
     {
       "name": "Windows-ClangCl-Ninja-ReleaseWithDebugInfo",
-      "configurePreset": "Windows-ClangCl-Ninja-ReleaseWithDebugInfo"
+      "configurePreset": "Windows-ClangCl-Ninja-ReleaseWithDebugInfo",
+      "inherits": [
+        "Windows"
+      ]
     },
     {
       "name": "Windows-Msvc-NinjaMultiConfig-Debug",
       "configurePreset": "Windows-Msvc-NinjaMultiConfig",
-      "configuration": "Debug"
+      "configuration": "Debug",
+      "inherits": [
+        "Windows"
+      ]
     },
     {
       "name": "Windows-Msvc-NinjaMultiConfig-ReleaseWithDebugInfo",
       "configurePreset": "Windows-Msvc-NinjaMultiConfig",
-      "configuration": "RelWithDebInfo"
+      "configuration": "RelWithDebInfo",
+      "inherits": [
+        "Windows"
+      ]
     },
     {
       "name": "Windows-Msvc-Vs2022-Debug",
       "configurePreset": "Windows-Msvc-Vs2022",
-      "configuration": "Debug"
+      "configuration": "Debug",
+      "inherits": [
+        "Windows"
+      ]
     },
     {
       "name": "Windows-Msvc-Vs2022-ReleaseWithDebugInfo",
       "configurePreset": "Windows-Msvc-Vs2022",
-      "configuration": "RelWithDebInfo"
+      "configuration": "RelWithDebInfo",
+      "inherits": [
+        "Windows"
+      ]
     },
     {
       "name": "Windows-Msvc-Vs2022-Release",
       "configurePreset": "Windows-Msvc-Vs2022",
-      "configuration": "Release"
+      "configuration": "Release",
+      "inherits": [
+        "Windows"
+      ]
     }
   ]
 }

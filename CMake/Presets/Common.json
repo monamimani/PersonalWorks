@@ -1,23 +1,24 @@
 {
-  "$schema": "https://cmake.org/cmake/help/v3.28/_downloads/3e2d73bff478d88a7de0de736ba5e361/schema.json",
-  "version": 8,
+  "$schema": "https://cmake.org/cmake/help/v3.30/_downloads/3e2d73bff478d88a7de0de736ba5e361/schema.json",
+  "version": 9,
   "configurePresets": [
     {
       "name": "Common",
       "hidden": true,
       "binaryDir": "${sourceDir}/_Out/build/${presetName}",
       "installDir": "${sourceDir}/_Out/install/${presetName}",
+      //"graphviz": "${sourceDir}/_Out/Graphviz/${presetName}/",
       "warnings": {
         "uninitialized": true,
         "dev": false,
         "deprecated": true
       },
       //"trace": {
-      //  "mode": false,
+      //  "mode": true,
       //  "format": "human"
       //},
       "cacheVariables": {
-        //"CMAKE_VERBOSE_MAKEFILE": true
+        "CMAKE_VERBOSE_MAKEFILE": false
       }
     }
   ]

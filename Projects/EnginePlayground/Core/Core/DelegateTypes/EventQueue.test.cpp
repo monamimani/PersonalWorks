@@ -43,7 +43,7 @@ constexpr uint32_t TEST_INT = 42;
 //  }
 //};
 
-constexpr auto lambdaTest = [](const EventTestA&) {};
+//constexpr auto lambdaTest = [](const EventTestA&) {};
 } // namespace Core
 
 namespace std

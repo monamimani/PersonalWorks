@@ -59,15 +59,15 @@ list(APPEND privateSources
   ${platformPrivateSources}
 )
 list(APPEND publicCxxModules
-  ${targetName}/BuildConfig/BuildConfig.ixx
-  ${targetName}/Delegates/Delegate.ixx
-  ${targetName}/Delegates/DelegateMulticast.ixx
-  ${targetName}/Core.ixx
-  ${targetName}/CoreConcepts.ixx
-  ${targetName}/CoreSingleton.ixx
-  ${targetName}/CoreUtility.ixx
-  ${targetName}/ErasedStorage.ixx
-  ${targetName}/StaticFunction.ixx
+  ${targetName}/BuildConfig/BuildConfig.cppm
+  ${targetName}/Delegates/Delegate.cppm
+  ${targetName}/Delegates/DelegateMulticast.cppm
+  ${targetName}/Core.cppm
+  ${targetName}/CoreConcepts.cppm
+  ${targetName}/CoreSingleton.cppm
+  ${targetName}/CoreUtility.cppm
+  ${targetName}/ErasedStorage.cppm
+  ${targetName}/StaticFunction.cppm
   ${platformPublicCxxModules}
 )
 list(APPEND privateCxxModules

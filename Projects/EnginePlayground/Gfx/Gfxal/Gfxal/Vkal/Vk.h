@@ -1,5 +1,4 @@
 #pragma once
-
 #include "Config/Config.h"
 
 #if defined(CORE_PLATFORM_WINDOWS)
@@ -10,6 +9,9 @@
 #include "vulkan/vulkan.hpp"
 //#include "vulkan/vulkan_raii.hpp"
 
+//#include "vulkan/vulkan_hpp_macros.hpp"
+//#include "vulkan/vulkan_core.h"
+//#include "vulkan/vulkan.cppm"
 //import vulkan_hpp;
 
 

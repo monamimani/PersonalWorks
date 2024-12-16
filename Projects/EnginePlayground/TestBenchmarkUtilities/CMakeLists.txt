@@ -1,4 +1,4 @@
- # file(GLOB_RECURSE sources CONFIGURE_DEPENDS "*.cpp" "*.cxx" "*.ixx")
+ # file(GLOB_RECURSE sources CONFIGURE_DEPENDS "*.cpp" "*.cxx" "*.cppm")
 # file(GLOB_RECURSE headers CONFIGURE_DEPENDS "*.h" "*.hpp")
 
 # Optionally glob, but only for CMake 3.12 or later: file(GLOB HEADER_LIST

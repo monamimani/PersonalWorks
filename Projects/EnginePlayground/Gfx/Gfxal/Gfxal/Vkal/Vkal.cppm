@@ -15,6 +15,7 @@ export module VkHal;
 
 export import Vkal.DebugMsg;
 export import Vkal.PhysicalDevice;
+export import Vkal.Device;
 
 namespace ranges = std::ranges;
 namespace views = std::ranges::views;

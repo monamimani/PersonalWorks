@@ -1,6 +1,6 @@
 module;
 
-#include "Gfxal/Vkal/Vk.h"
+//#include "Gfxal/Vkal/Vk.h"
 
 export module Vkal.Context;
 

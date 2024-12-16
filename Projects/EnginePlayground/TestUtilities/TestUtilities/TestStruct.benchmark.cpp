@@ -3,6 +3,7 @@
 namespace Test
 {
 
+// NOLINTNEXTLINE(readability-make-member-function-const)
 void BMStructOutOfLine::fct(int& x)
 {
   x = 0;
@@ -21,6 +22,7 @@ void BMStructOutOfLine::fctConst(int& x) const
   }
 }
 
+// NOLINTNEXTLINE(readability-make-member-function-const)
 void BMStructOutOfLine::fctConstOverloaded(int& x)
 {
   x = 0;
@@ -57,6 +59,7 @@ void BMStructOutOfLine::fctParamOverloaded(double& x) const
   }
 }
 
+// NOLINTNEXTLINE(readability-make-member-function-const)
 void BMStructOutOfLine::operator()(int& x)
 {
   x = 0;

@@ -1,7 +1,7 @@
 module;
 #include <cstdint>
 
-#include "Vkal/Vk.h"
+//#include "Vkal/Vk.h"
 
 export module GfxHAL;
 

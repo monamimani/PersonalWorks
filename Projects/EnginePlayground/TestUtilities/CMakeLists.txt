@@ -1,4 +1,8 @@
 
+if(NOT PersonalWorks_BUILD_TESTS)
+return()
+endif()
+
 get_filename_component(targetName ${CMAKE_CURRENT_LIST_DIR} NAME)
 
 list(APPEND interfaceSources

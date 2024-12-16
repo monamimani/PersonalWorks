@@ -80,7 +80,7 @@ public:
   [[nodiscard]] inline constexpr auto bind(Instance_T&& instance)
   {
     auto staticFunction = std::make_shared<StaticFunction_T>();
-    staticFunction->bind<function>(std::forward<Instance_T>(instance));
+    staticFunction->template bind<function>(std::forward<Instance_T>(instance));
 
     m_staticFunctionList.emplace_back(staticFunction);
     return Connection{std::move(staticFunction)};

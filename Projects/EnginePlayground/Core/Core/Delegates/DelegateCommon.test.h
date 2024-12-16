@@ -4,9 +4,9 @@
 #include <array>
 // #include <format>
 
-#include "fmt/format.h"
 #include "TestUtilities/GoogleTest.h"
 #include "TestUtilities/TestStruct.test.h"
+#include "fmt/format.h"
 using namespace TestUtilities;
 
 import StaticFunction;
@@ -46,7 +46,7 @@ using ParamSetType = std::tuple<IsLValue, IsFctConst, BindKind>;
 
 static auto bindFreeFunction(auto& delegate, [[maybe_unused]] TestStruct&, [[maybe_unused]] IsLValue, [[maybe_unused]] IsFctConst)
 {
-  return delegate.bind<&freeFunction>();
+  return delegate.template bind<&freeFunction>();
 }
 
 static auto bindFunctor(auto& delegate, TestStruct& testStruct, IsLValue isLValue, IsFctConst isFctConst)
@@ -67,7 +67,7 @@ static auto bindFunctor(auto& delegate, TestStruct& testStruct, IsLValue isLValu
     if (isFctConst)
     {
       std::unreachable();
-      //return delegate.bind(const_cast<const TestStruct&&>(TestStruct{}));
+      // return delegate.bind(const_cast<const TestStruct&&>(TestStruct{}));
     }
     else
     {
@@ -83,11 +83,11 @@ static auto bindMemberFct(auto& delegate, TestStruct& testStruct, IsLValue isLVa
     if (isFctConst)
     {
       std::unreachable();
-      //return delegate.bind<&TestStruct::fctConst>(const_cast<const TestStruct&&>(TestStruct{}));
+      // return delegate.bind<&TestStruct::fctConst>(const_cast<const TestStruct&&>(TestStruct{}));
     }
     else
     {
-      return delegate.bind<&TestStruct::fct>(TestStruct{});
+      return delegate.template bind<&TestStruct::fct>(TestStruct{});
     }
   }
   else
@@ -95,11 +95,11 @@ static auto bindMemberFct(auto& delegate, TestStruct& testStruct, IsLValue isLVa
     if (isFctConst)
     {
       std::unreachable();
-      //return delegate.bind<&TestStruct::fctConst>(const_cast<const TestStruct&>(testStruct));
+      // return delegate.bind<&TestStruct::fctConst>(const_cast<const TestStruct&>(testStruct));
     }
     else
     {
-      return delegate.bind<&TestStruct::fct>(testStruct);
+      return delegate.template bind<&TestStruct::fct>(testStruct);
     }
   }
 }
@@ -116,7 +116,7 @@ static auto bindMemberFctTemplate(DelegateLikeT& delegate, TestStruct& testStruc
     }
     else
     {
-      return delegate.bind<DelegateLikeT::asFnPtr(&TestStruct::fctTemplate<int>)>(testStruct);
+      return delegate.template bind<DelegateLikeT::asFnPtr(&TestStruct::fctTemplate<int>)>(testStruct);
     }
   }
   else
@@ -124,11 +124,11 @@ static auto bindMemberFctTemplate(DelegateLikeT& delegate, TestStruct& testStruc
     if (isFctConst)
     {
       std::unreachable();
-      //return delegate.bind<DelegateLikeT::asFnConstPtr(&TestStruct::fctTemplate<int>)>(const_cast<const TestStruct&&>(std::move(testStruct)));
+      // return delegate.bind<DelegateLikeT::asFnConstPtr(&TestStruct::fctTemplate<int>)>(const_cast<const TestStruct&&>(std::move(testStruct)));
     }
     else
     {
-      return delegate.bind<DelegateLikeT::asFnPtr(&TestStruct::fctTemplate<int>)>(std::move(testStruct));
+      return delegate.template bind<DelegateLikeT::asFnPtr(&TestStruct::fctTemplate<int>)>(std::move(testStruct));
     }
   }
 }
@@ -141,23 +141,23 @@ static auto bindMemberFctConstOverloaded(DelegateLikeT& delegate, TestStruct& te
     if (isFctConst)
     {
       std::unreachable();
-      //return delegate.bind<DelegateLikeT::asFnConstPtr(&TestStruct::fctConstOverloaded)>(const_cast<const TestStruct&&>(std::move(testStruct)));
+      // return delegate.bind<DelegateLikeT::asFnConstPtr(&TestStruct::fctConstOverloaded)>(const_cast<const TestStruct&&>(std::move(testStruct)));
     }
     else
     {
-      return delegate.bind<DelegateLikeT::asFnPtr(&TestStruct::fctConstOverloaded)>(std::move(testStruct));
+      return delegate.template bind<DelegateLikeT::asFnPtr(&TestStruct::fctConstOverloaded)>(std::move(testStruct));
     }
   }
   else
   {
     if (isFctConst)
     {
-      //std::unreachable();
-      return delegate.bind<DelegateLikeT::asFnConstPtr(&TestStruct::fctConstOverloaded)>(testStruct);
+      // std::unreachable();
+      return delegate.template bind<DelegateLikeT::asFnConstPtr(&TestStruct::fctConstOverloaded)>(testStruct);
     }
     else
     {
-      return delegate.bind<DelegateLikeT::asFnPtr(&TestStruct::fctConstOverloaded)>(testStruct);
+      return delegate.template bind<DelegateLikeT::asFnPtr(&TestStruct::fctConstOverloaded)>(testStruct);
     }
   }
 }
@@ -170,11 +170,11 @@ static auto bindMemberFctParamOverloaded(DelegateLikeT& delegate, TestStruct& te
     if (!isFctConst)
     {
       std::unreachable();
-      //return delegate.bind<DelegateLikeT::asFnPtr(&TestStruct::fctParamOverloaded)>(testStruct);
+      // return delegate.bind<DelegateLikeT::asFnPtr(&TestStruct::fctParamOverloaded)>(testStruct);
     }
     else
     {
-      return delegate.bind<DelegateLikeT::asFnConstPtr(&TestStruct::fctParamOverloaded)>(testStruct);
+      return delegate.template bind<DelegateLikeT::asFnConstPtr(&TestStruct::fctParamOverloaded)>(testStruct);
     }
   }
   else
@@ -182,11 +182,11 @@ static auto bindMemberFctParamOverloaded(DelegateLikeT& delegate, TestStruct& te
     if (isFctConst)
     {
       std::unreachable();
-      //return delegate.bind<DelegateLikeT::asFnConstPtr(&TestStruct::fctParamOverloaded)>(const_cast<const TestStruct&&>(std::move(testStruct)));
+      // return delegate.bind<DelegateLikeT::asFnConstPtr(&TestStruct::fctParamOverloaded)>(const_cast<const TestStruct&&>(std::move(testStruct)));
     }
     else
     {
-      return delegate.bind<DelegateLikeT::asFnPtr(&TestStruct::fctParamOverloaded)>(std::move(testStruct));
+      return delegate.template bind<DelegateLikeT::asFnPtr(&TestStruct::fctParamOverloaded)>(std::move(testStruct));
     }
   }
 }
@@ -199,7 +199,7 @@ static auto bind(DelegateLikeT& delegate, TestStruct& testStruct, BindKind bindK
     case BindKind::Empty:
       if constexpr (requires { typename DelegateLikeT::Connection; })
       {
-        return DelegateLikeT::Connection();
+        return typename DelegateLikeT::Connection();
       }
       else
       {
@@ -251,18 +251,21 @@ public:
   static auto makeDelegateBindKindParamSet()
   {
     // static constexpr std::array fctConstness = {true, false};
-    static constexpr std::array fctConstness = {false};  // Removing because I don't think it makes sense to have a const type for Erased storage
+    static constexpr std::array fctConstness = {false}; // Removing because I don't think it makes sense to have a const type for Erased storage
     static constexpr std::array valueKinds = {true, false};
-    static constexpr std::array memberFctBindKind = {BindKind::Functor, BindKind::MemberFct, BindKind::MemberFctTemplate, BindKind::MemberFctConstOverloaded, BindKind::MemberFctParamOverloaded};
+    static constexpr std::array memberFctBindKind = {
+        BindKind::Functor, BindKind::MemberFct, BindKind::MemberFctTemplate, BindKind::MemberFctConstOverloaded, BindKind::MemberFctParamOverloaded};
     static constexpr auto memFctParamSetPartSize = valueKinds.size() * fctConstness.size() * memberFctBindKind.size();
 
     auto paramSetPart = std::vector<ParamSetType>();
     paramSetPart.reserve(memFctParamSetPartSize);
     std::ranges::for_each(memberFctBindKind, [&paramSetPart](BindKind bindKind) {
-      // paramSetPart.emplace_back(IsLValue(true), IsFctConst(true), bindKind); // Removing because I don't think it makes sense to have a const type for Erased storage
+      // paramSetPart.emplace_back(IsLValue(true), IsFctConst(true), bindKind); // Removing because I don't think it makes sense to have a const type for Erased
+      // storage
       paramSetPart.emplace_back(IsLValue(false), IsFctConst(false), bindKind);
       paramSetPart.emplace_back(IsLValue(true), IsFctConst(false), bindKind);
-      // paramSetPart.emplace_back(IsLValue(false), IsFctConst(true), bindKind); // Removing because I don't think it makes sense to have a const type for Erased storage
+      // paramSetPart.emplace_back(IsLValue(false), IsFctConst(true), bindKind); // Removing because I don't think it makes sense to have a const type for
+      // Erased storage
     });
 
     paramSetPart.emplace_back(IsLValue(true), IsFctConst(false), BindKind::FreeFunction);

@@ -1,15 +1,14 @@
 
 #include <array>
-#include <span>
 #include <source_location>
+#include <span>
 
-#include "fmt/format.h"
 #include "TestUtilities/BasicTestsGenerator.h"
 #include "TestUtilities/GoogleTest.h"
 #include "TestUtilities/TestStruct.test.h"
 #include "TestUtilities/TestsFriend.h"
+#include "fmt/format.h"
 using namespace TestUtilities;
-
 
 import Core;
 import ErasedStorage;
@@ -29,9 +28,9 @@ public:
 
   auto AreStorageFctsNullptr(const TestedType& obj) const
   {
-    //using TF_T = TestUtilities::TestFriend;
-    //const auto& storageFct = TF_T::get<&TestedType::m_storageFcts>(obj);
-    //return (storageFct.m_destroy == nullptr) && (storageFct.m_copy == nullptr) && (storageFct.m_move == nullptr);
+    // using TF_T = TestUtilities::TestFriend;
+    // const auto& storageFct = TF_T::get<&TestedType::m_storageFcts>(obj);
+    // return (storageFct.m_destroy == nullptr) && (storageFct.m_copy == nullptr) && (storageFct.m_move == nullptr);
     return obj.m_storageFcts.m_destroy == nullptr && obj.m_storageFcts.m_copy == nullptr && obj.m_storageFcts.m_move == nullptr;
   }
 
@@ -85,7 +84,7 @@ public:
       }
     }
 
-    //SCOPED_TRACE(fmt::format("Failed Operation: {}", GetBasicTestsObjOpsStr(basicTestsObjOp)));
+    // SCOPED_TRACE(fmt::format("Failed Operation: {}", GetBasicTestsObjOpsStr(basicTestsObjOp)));
     auto sl = std::source_location::current();
     return testing::AssertionFailure() << fmt::format(
                "Failed Operation: {}, {}({}:{}) {}", GetBasicTestsObjOpsStr(basicTestsObjOp), sl.file_name(), sl.line(), sl.column(), sl.function_name());
@@ -164,7 +163,7 @@ protected:
     }
     else
     {
-      m_storage.construct<ErasedType>();
+      m_storage.template construct<ErasedType>();
     }
 
     TestStruct::resetStaticCounters();
@@ -202,7 +201,7 @@ TYPED_TEST(ErasedStorageTestStructF, DefaultCtor)
   {
     // Default Constructor
     ErasedStorage_T storage;
-    const auto& typedPtr = storage.asTypedPtr<ErasedTypedStoredType>();
+    const auto& typedPtr = storage.template asTypedPtr<ErasedTypedStoredType>();
 
     // I think this is UB because we are accessing the storage before any object was constructed in it.
     // Or it isn't because std::byte is special.
@@ -229,7 +228,7 @@ TYPED_TEST(ErasedStorageTestStructF, CopyCtor)
     ErasedStorage_T storage{this->m_storage};
     this->m_counters.m_nbCallCopyConstructor++;
 
-    const auto& typedPtr = storage.asTypedPtr<ErasedTypedStoredType>();
+    const auto& typedPtr = storage.template asTypedPtr<ErasedTypedStoredType>();
 
     ASSERT_NE(typedPtr, nullptr);
     ASSERT_EQ((*typedPtr).m_value, TestStruct::m_staticValue);
@@ -262,7 +261,7 @@ TYPED_TEST(ErasedStorageTestStructF, MoveCtor)
       this->m_counters.m_nbCallCopyConstructor++;
     }
 
-    const auto& typedPtr = storage.asTypedPtr<ErasedTypedStoredType>();
+    const auto& typedPtr = storage.template asTypedPtr<ErasedTypedStoredType>();
 
     ASSERT_NE(typedPtr, nullptr);
     ASSERT_EQ((*typedPtr).m_value, TestStruct::m_staticValue);
@@ -287,7 +286,7 @@ TYPED_TEST(ErasedStorageTestStructF, CopyAssign)
     storage = this->m_storage;
     this->m_counters.m_nbCallCopyConstructor++;
 
-    const auto& typedPtr = storage.asTypedPtr<ErasedTypedStoredType>();
+    const auto& typedPtr = storage.template asTypedPtr<ErasedTypedStoredType>();
 
     ASSERT_NE(typedPtr, nullptr);
     ASSERT_EQ((*typedPtr).m_value, TestStruct::m_staticValue);
@@ -320,7 +319,7 @@ TYPED_TEST(ErasedStorageTestStructF, MoveAssign)
       this->m_counters.m_nbCallCopyConstructor++;
     }
 
-    const auto& typedPtr = storage.asTypedPtr<ErasedTypedStoredType>();
+    const auto& typedPtr = storage.template asTypedPtr<ErasedTypedStoredType>();
 
     ASSERT_NE(typedPtr, nullptr);
     ASSERT_EQ((*typedPtr).m_value, TestStruct::m_staticValue);
@@ -344,7 +343,7 @@ TYPED_TEST(ErasedStorageTestStructF, Swap)
     const uint8_t value = 51;
     ErasedStorage_T storage;
     this->m_counters.m_nbCallDefaultConstructor++;
-    storage.construct<BaseType>(value);
+    storage.template construct<BaseType>(value);
 
     using std::swap;
     swap(storage, this->m_storage);
@@ -361,11 +360,11 @@ TYPED_TEST(ErasedStorageTestStructF, Swap)
       this->m_counters.m_nbCallDestructor += 3;
     }
 
-    const auto& typedPtrA = storage.asTypedPtr<ErasedTypedStoredType>();
+    const auto& typedPtrA = storage.template asTypedPtr<ErasedTypedStoredType>();
     ASSERT_NE(typedPtrA, nullptr);
     ASSERT_EQ((*typedPtrA).m_value, TestStruct::m_staticValue);
 
-    const auto& typedPtrB = this->m_storage.asTypedPtr<ErasedTypedStoredType>();
+    const auto& typedPtrB = this->m_storage.template asTypedPtr<ErasedTypedStoredType>();
     ASSERT_NE(typedPtrB, nullptr);
     ASSERT_EQ((*typedPtrB).m_value, value);
 
@@ -387,13 +386,13 @@ TYPED_TEST(ErasedStorageTestStructF, ConstructDefault)
   {
     // Default Constructor
     ErasedStorage_T storage;
-    const auto& typedPtr = storage.asTypedPtr<ErasedTypedStoredType>();
+    const auto& typedPtr = storage.template asTypedPtr<ErasedTypedStoredType>();
 
     // I think this is UB because we are accessing the storage before any object was constructed in it.
     // Or it isn't because std::byte is special.
     ASSERT_EQ(reinterpret_cast<const ErasedTypeByte&>(*typedPtr), std::byte{});
 
-    const auto* typedStorage = storage.construct<BaseType>();
+    const auto* typedStorage = storage.template construct<BaseType>();
     this->m_counters.m_nbCallDefaultConstructor++;
 
     ASSERT_EQ(typedStorage->m_value, TestStruct::m_staticValue);
@@ -423,13 +422,13 @@ TYPED_TEST(ErasedStorageTestStructF, ConstructWithArgs)
 
     // Parametric Constructor
     ErasedStorage_T storage;
-    const auto& typedPtr = storage.asTypedPtr<ErasedTypedStoredType>();
+    const auto& typedPtr = storage.template asTypedPtr<ErasedTypedStoredType>();
 
     // I think this is UB because we are accessing the storage before any object was constructed in it.
     // Or it isn't because std::byte is special.
     ASSERT_EQ(reinterpret_cast<const ErasedTypeByte&>(*typedPtr), std::byte{});
 
-    const auto* typedStorage = storage.construct<BaseType>(TestStruct::m_staticValue);
+    const auto* typedStorage = storage.template construct<BaseType>(TestStruct::m_staticValue);
     this->m_counters.m_nbCallDefaultConstructor++;
 
     ASSERT_EQ(typedStorage->m_value, TestStruct::m_staticValue);
@@ -456,7 +455,7 @@ TYPED_TEST(ErasedStorageTestStructF, ConstructWithMoveCtor)
 
   {
     ErasedStorage_T storage;
-    const auto& typedPtr = storage.asTypedPtr<ErasedTypedStoredType>();
+    const auto& typedPtr = storage.template asTypedPtr<ErasedTypedStoredType>();
 
     // I think this is UB because we are accessing the storage before any object was constructed in it.
     // Or it isn't because std::byte is special.
@@ -505,7 +504,7 @@ protected:
 
     if constexpr (std::is_pointer_v<ErasedType>)
     {
-      m_storage.construct<ErasedType>(&m_testStruct);
+      m_storage.template construct<ErasedType>(&m_testStruct);
     }
 
     TestStruct::resetStaticCounters();
@@ -531,7 +530,7 @@ TYPED_TEST(ErasedStorageTestStructPtrF, DefaultCtor)
   {
     // Default Constructor
     ErasedStorage_T storage;
-    const auto& typedPtr = storage.asTypedPtr<ErasedType>();
+    const auto& typedPtr = storage.template asTypedPtr<ErasedType>();
 
     // I think this is UB because we are accessing the storage before any object was constructed in it.
     // Or it isn't because std::byte is special.
@@ -556,7 +555,7 @@ TYPED_TEST(ErasedStorageTestStructPtrF, CopyCtor)
     // Copy Constructor
     ErasedStorage_T storage{this->m_storage};
 
-    const auto& typedPtr = storage.asTypedPtr<ErasedType>();
+    const auto& typedPtr = storage.template asTypedPtr<ErasedType>();
 
     ASSERT_NE(typedPtr, nullptr);
     ASSERT_EQ(typedPtr, &(this->m_testStruct));
@@ -577,7 +576,7 @@ TYPED_TEST(ErasedStorageTestStructPtrF, MoveCtor)
     // Move Constructor
     ErasedStorage_T storage{std::move(this->m_storage)};
 
-    const auto& typedPtr = storage.asTypedPtr<ErasedType>();
+    const auto& typedPtr = storage.template asTypedPtr<ErasedType>();
 
     ASSERT_NE(typedPtr, nullptr);
     ASSERT_EQ(typedPtr, &(this->m_testStruct));
@@ -598,7 +597,7 @@ TYPED_TEST(ErasedStorageTestStructPtrF, CopyAssign)
     // Copy Assignment
     ErasedStorage_T storage;
     storage = this->m_storage;
-    const auto& typedPtr = storage.asTypedPtr<ErasedType>();
+    const auto& typedPtr = storage.template asTypedPtr<ErasedType>();
 
     ASSERT_NE(typedPtr, nullptr);
     ASSERT_EQ(typedPtr, &(this->m_testStruct));
@@ -619,7 +618,7 @@ TYPED_TEST(ErasedStorageTestStructPtrF, MoveAssign)
     // Move Assignment
     ErasedStorage_T storage;
     storage = std::move(this->m_storage);
-    const auto& typedPtr = storage.asTypedPtr<ErasedType>();
+    const auto& typedPtr = storage.template asTypedPtr<ErasedType>();
 
     ASSERT_NE(typedPtr, nullptr);
     ASSERT_EQ(typedPtr, &(this->m_testStruct));
@@ -640,17 +639,17 @@ TYPED_TEST(ErasedStorageTestStructPtrF, Swap)
   {
     TestStruct value(51);
     ErasedStorage_T storage;
-    storage.construct<ErasedType>(&value);
+    storage.template construct<ErasedType>(&value);
     this->m_counters.m_nbCallDefaultConstructor++;
 
     using std::swap;
     swap(storage, this->m_storage);
 
-    const auto& typedPtrA = storage.asTypedPtr<ErasedType>();
+    const auto& typedPtrA = storage.template asTypedPtr<ErasedType>();
     ASSERT_NE(typedPtrA, nullptr);
     ASSERT_EQ((*typedPtrA), this->m_testStruct);
 
-    const auto& typedPtrB = this->m_storage.asTypedPtr<ErasedType>();
+    const auto& typedPtrB = this->m_storage.template asTypedPtr<ErasedType>();
     ASSERT_NE(typedPtrB, nullptr);
     ASSERT_EQ((typedPtrB), &value);
     ASSERT_EQ((*typedPtrB), value);
@@ -679,7 +678,7 @@ TYPED_TEST(ErasedStorageTestStructPtrF, ConstructWithCopyCtor)
 
     ASSERT_EQ(typedStorage->m_value, TestStruct::m_staticValue);
 
-    const auto& typedPtr = storage.asTypedPtr<ErasedType>();
+    const auto& typedPtr = storage.template asTypedPtr<ErasedType>();
     ASSERT_NE(typedPtr, nullptr);
     ASSERT_EQ((*typedPtr).m_value, TestStruct::m_staticValue);
 

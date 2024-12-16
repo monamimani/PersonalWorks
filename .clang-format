@@ -91,3 +91,6 @@ BraceWrapping:
   SplitEmptyFunction: False
   SplitEmptyRecord: False
   SplitEmptyNamespace: False
+
+
+AlignConsecutiveMacros: Consecutive

@@ -15,10 +15,15 @@ Checks: "*,
         -misc-non-private-member-variables-in-classes,
 "
 
-UseColor: true 
+ImplementationFileExtensions: ['c','cc','cpp','cxx', 'ixx']
+
+UseColor: true
 WarningsAsErrors: false
-HeaderFilterRegex: ''
-FormatStyle:     none
+FormatStyle: 'file'
+ExtraArgs:
+#  - '-Wno-unknown-warning-option'
+#  - '-Wno-ignored-optimization-argument'
+#  - '-Wno-unused-command-line-argument'
 
 CheckOptions:
   - key: readability-identifier-length.IgnoredVariableNames

@@ -3,6 +3,8 @@ include_guard()
 find_program(CPPCHECK cppcheck)
 find_program(CLANGTIDY clang-tidy)
 
+#cmake_print_variables(SUPPRESS_EXIT_CODE_SCRIPT)
+
 macro(
   PersonalWorks_enable_cppcheck
   WARNINGS_AS_ERRORS
@@ -61,24 +63,31 @@ endmacro()
 
 macro(
   PersonalWorks_enable_clang_tidy
-  WARNINGS_AS_ERRORS
-)
+  WARNINGS_AS_ERRORS)
+
   if(CLANGTIDY)
-    # Clang Tidy can't handle GCC PCH file.
     set(CLANG_TIDY_OPTIONS
       ${CLANGTIDY}
-      -extra-arg=-Wno-unknown-warning-option
-      -extra-arg=-Wno-ignored-optimization-argument
-      -extra-arg=-Wno-unused-command-line-argument
-      -p
+      #--enable-module-headers-parsing
+      # -fms-extensions
+      #-fms-compatibility
+      # -fdelayed-template-parsing
+      -p=${CMAKE_BINARY_DIR}
     )
 
     # set standard
     if(NOT "${CMAKE_CXX_STANDARD}" STREQUAL "")
       if(CMAKE_CXX_COMPILER_ID MATCHES ".*MSVC")
-        set(CLANG_TIDY_OPTIONS ${CLANG_TIDY_OPTIONS} -extra-arg=/std:c++${CMAKE_CXX_STANDARD})
+
+        set(CLANG_TIDY_OPTIONS ${CLANG_TIDY_OPTIONS}
+          --extra-arg=/EHsc
+          --extra-arg=-v
+          --extra-arg-before=-v
+        )
+
+        #set(CLANG_TIDY_OPTIONS ${CLANG_TIDY_OPTIONS} --extra-arg-before=/std:c++${CMAKE_CXX_STANDARD})
       else()
-        set(CLANG_TIDY_OPTIONS ${CLANG_TIDY_OPTIONS} -extra-arg=-std=c++${CMAKE_CXX_STANDARD})
+        #set(CLANG_TIDY_OPTIONS ${CLANG_TIDY_OPTIONS} --extra-arg=-std=c++${CMAKE_CXX_STANDARD})
       endif()
     endif()
 

@@ -28,6 +28,10 @@
       "name": "Clang",
       "hidden": true,
       "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+       "environment": {
+        "CC": "/usr/bin/clang",
+        "CCX": "/usr/bin/clang++"
+      },
       "cacheVariables": {
         "CMAKE_C_COMPILER": "clang",
         "CMAKE_CXX_COMPILER": "clang++" //,
@@ -72,6 +76,10 @@
       "name": "Gcc",
       "hidden": true,
       "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+      "environment": {
+        "CC": "/usr/bin/gcc",
+        "CCX": "/usr/bin/gcc++"
+      },
       "cacheVariables": {
         "CMAKE_C_COMPILER": "gcc",
         "CMAKE_CXX_COMPILER": "g++",

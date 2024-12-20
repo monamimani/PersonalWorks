@@ -4,6 +4,10 @@
 .venv
 .env
 
+# clangd cache
+.cache
+
+
 # Ignore generated credentials from google-github-actions/auth
 gha-creds-*.json
 
@@ -21,6 +25,7 @@ _Tmp
 
 CPTCMakeBuild
 CompileCommands
+compile_commands.json
 
 ExternalsVcpkg
 ThirdpartyVcpkg

@@ -4,12 +4,12 @@ get_filename_component(targetName ${CMAKE_CURRENT_LIST_DIR} NAME)
 if(CMAKE_SYSTEM_NAME STREQUAL Windows)
   list(APPEND platformInterfaceSources
   )
-  list(APPEND platformPublicSources 
+  list(APPEND platformPublicSources
     ${targetName}/Win32/StringUtils.h
     ${targetName}/Win32/Win32Utility.h
     ${targetName}/Win32/WindowsHeader.h
   )
-  list(APPEND platformPrivateSources 
+  list(APPEND platformPrivateSources
     ${targetName}/Win32/StringUtils.cpp
   )
   list(APPEND platformPublicCxxModules
@@ -20,15 +20,14 @@ if(CMAKE_SYSTEM_NAME STREQUAL Windows)
 elseif(CMAKE_SYSTEM_NAME STREQUAL Linux)
   list(APPEND platformInterfaceSources
   )
-  list(APPEND platformPublicSources 
+  list(APPEND platformPublicSources
   )
-  list(APPEND platformPrivateSources 
+  list(APPEND platformPrivateSources
   )
   list(APPEND platformPublicCxxModules
   )
   list(APPEND platformPrivateCxxModules
   )
-
 endif()
 
 list(APPEND interfaceSources
@@ -68,6 +67,7 @@ list(APPEND publicCxxModules
   ${targetName}/CoreUtility.cppm
   ${targetName}/ErasedStorage.cppm
   ${targetName}/StaticFunction.cppm
+  ${targetName}/StringLiteral.cppm
   ${platformPublicCxxModules}
 )
 list(APPEND privateCxxModules
@@ -97,8 +97,8 @@ list(APPEND benchamrksSources
   ${targetName}/StaticFunction.benchmark.cpp
 )
 
-list(APPEND interfaceLibraries )
-list(APPEND publicLibraries )
+list(APPEND interfaceLibraries)
+list(APPEND publicLibraries)
 list(APPEND privateLibraries
   PersonalWorks::PersonalWorks_options
   PersonalWorks::PersonalWorks_warnings
@@ -119,9 +119,9 @@ if(NOT BUILD_SHARED_LIBS)
 endif()
 
 target_include_directories(${targetName}
-    PUBLIC
-        "${CMAKE_CURRENT_SOURCE_DIR}"
-        "${CMAKE_CURRENT_BINARY_DIR}"
+  PUBLIC
+  "${CMAKE_CURRENT_SOURCE_DIR}"
+  "${CMAKE_CURRENT_BINARY_DIR}"
 )
 
 target_sources(${targetName}
@@ -146,7 +146,7 @@ if(PersonalWorks_BUILD_TESTS AND GTest_FOUND AND testsSources)
 
   target_include_directories(${targetNameTest}
     PUBLIC
-      "${CMAKE_CURRENT_SOURCE_DIR}"
+    "${CMAKE_CURRENT_SOURCE_DIR}"
   )
 
   target_sources(${targetNameTest}
@@ -162,9 +162,9 @@ if(PersonalWorks_BUILD_TESTS AND GTest_FOUND AND testsSources)
     INTERFACE ${interfaceLibraries}
     PUBLIC ${publicLibraries}
     PRIVATE
-      ${privateLibraries}
-      PersonalWorks::TestUtilities
-      fmt::fmt
+    ${privateLibraries}
+    PersonalWorks::TestUtilities
+    fmt::fmt
   )
   gtest_discover_tests(${targetNameTest})
 
@@ -187,7 +187,7 @@ if(PersonalWorks_BUILD_TESTS AND benchmark_FOUND AND benchamrksSources)
 
   target_include_directories(${targetNameBenchmark}
     PUBLIC
-      "${CMAKE_CURRENT_SOURCE_DIR}"
+    "${CMAKE_CURRENT_SOURCE_DIR}"
   )
 
   target_sources(${targetNameBenchmark}
@@ -202,8 +202,8 @@ if(PersonalWorks_BUILD_TESTS AND benchmark_FOUND AND benchamrksSources)
     INTERFACE ${interfaceLibraries}
     PUBLIC ${publicLibraries}
     PRIVATE
-      ${privateLibraries}
-      PersonalWorks::TestUtilities
-      fmt::fmt
+    ${privateLibraries}
+    PersonalWorks::TestUtilities
+    fmt::fmt
   )
 endif()

@@ -12,7 +12,7 @@
     "vscode": {
       "settings": {
         "cmake.configureOnOpen": false,
-        "editor.formatOnSave": true
+        "editor.formatOnSave": false
       },
       "extensions": [
         "github.vscode-github-actions",

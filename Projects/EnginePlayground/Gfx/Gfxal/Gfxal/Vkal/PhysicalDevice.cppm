@@ -249,16 +249,9 @@ class PhysicalDevice
 public:
   PhysicalDevice() = default;
 
-  PhysicalDevice(const vk::PhysicalDevice& physicalDevice)
-  : m_physicalDevice{physicalDevice}
-  , m_extensions{physicalDevice.enumerateDeviceExtensionProperties()}
-  , m_queueFamilies{getQueueFamilyPropertiesChain()}
-  {}
+  PhysicalDevice(const vk::PhysicalDevice& physicalDevice);
 
-  bool isVulkanVersionSupported(uint32_t requestedVulkanVersion) const
-  {
-    return getProperties().apiVersion > requestedVulkanVersion;
-  }
+  bool isVulkanVersionSupported(uint32_t requestedVulkanVersion) const;
 
   [[nodiscard]] auto areExtensionsSuported(std::span<std::string_view> requestedExtensions) const
   {
@@ -347,7 +340,7 @@ private:
   }
 
   template<typename... Ext_T>
-  [[nodiscard]] auto getQueueFamilyPropertiesChain() const
+  [[nodiscard]] decltype(auto) getQueueFamilyPropertiesChain() const
   {
     using ChainType = vk::StructureChain<vk::QueueFamilyProperties2, Ext_T...>;
     using AllocatorType = std::vector<ChainType>::allocator_type;
@@ -361,6 +354,17 @@ private:
   std::vector<vk::ExtensionProperties> m_extensions;
   QueueFamilies m_queueFamilies;
 };
+
+PhysicalDevice::PhysicalDevice(const vk::PhysicalDevice& physicalDevice)
+: m_physicalDevice{physicalDevice}
+, m_extensions{physicalDevice.enumerateDeviceExtensionProperties()}
+, m_queueFamilies{getQueueFamilyPropertiesChain()}
+{}
+
+bool PhysicalDevice::isVulkanVersionSupported(uint32_t requestedVulkanVersion) const
+{
+  return getProperties().apiVersion > requestedVulkanVersion;
+}
 
 inline auto PhysicalDevice::getFirstDeviceLocalHeapSize() const
 {

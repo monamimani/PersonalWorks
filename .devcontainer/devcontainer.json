@@ -19,6 +19,7 @@
         "ms-azuretools.vscode-docker",
         "ms-vscode.cmake-tools",
         "ms-vscode.cpptools",
+        "llvm-vs-code-extensions.vscode-clangd",
         "ms-vscode.cpptools-extension-pack",
         "josetr.cmake-language-support-vscode"
       ]

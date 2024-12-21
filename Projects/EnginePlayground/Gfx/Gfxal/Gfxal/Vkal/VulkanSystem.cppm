@@ -61,7 +61,7 @@ private:
   static constexpr uint32_t m_targetVulkanVersion = VK_API_VERSION_1_3;
 
 #if (VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1)
-  VULKAN_HPP_DEFAULT_DISPATCHER_TYPE m_loader;
+  VULKAN_HPP_NAMESPACE::detail::DynamicLoader m_loader;
 #endif
 
   vk::UniqueInstance m_instance;

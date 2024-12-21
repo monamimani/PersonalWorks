@@ -8,7 +8,7 @@
     "spdlog",
     "vulkan-headers-tmp",
     {
-      "name": "vulkan-loader",
+      "name": "vulkan-loader-tmp",
       "platform": "windows"
     }
   ]

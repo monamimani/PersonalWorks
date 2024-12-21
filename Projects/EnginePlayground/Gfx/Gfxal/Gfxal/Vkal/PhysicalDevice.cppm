@@ -275,7 +275,7 @@ public:
 
   void printDeviceInfo() const;
 
-  friend auto operator==(const PhysicalDevice& lhs, const PhysicalDevice& rhs);
+  friend bool operator==(const PhysicalDevice& lhs, const PhysicalDevice& rhs);
   friend auto operator<=>(const PhysicalDevice& lhs, const PhysicalDevice& rhs);
 
 private:
@@ -420,8 +420,9 @@ void PhysicalDevice::printDeviceInfo() const
   m_queueFamilies.printQueFamiliesInfo();
 }
 
-auto operator==(const PhysicalDevice& lhs, const PhysicalDevice& rhs)
+bool operator==(const PhysicalDevice& lhs, const PhysicalDevice& rhs)
 {
+  using vk::operator==;
   return lhs.m_physicalDevice == rhs.m_physicalDevice;
 }
 

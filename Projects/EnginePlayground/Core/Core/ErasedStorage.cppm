@@ -17,7 +17,7 @@ export module ErasedStorage;
 import CoreUtility;
 import CoreConcepts;
 
-TEST_FIXTURE_FORWARD_DECLARE_NS(CoreTests, ErasedStorageF);
+// TEST_FIXTURE_FORWARD_DECLARE_NS(CoreTests, ErasedStorageF);
 
 namespace Core
 {
@@ -362,7 +362,8 @@ private:
     std::construct_at(dst.asTypedPtr<ErasedType>(), *src.asTypedPtr<ErasedType>());
   }
 
-  TEST_FIXTURE_FRIEND_NS(CoreTests, ErasedStorageF);
+  // TEST_FIXTURE_FRIEND_NS(CoreTests, ErasedStorageF);
+
   friend class TestUtilities::TestFriend;
 
   friend StorageFcts<ErasedStorage>;

@@ -6,7 +6,7 @@
     "gtest",
     "catch2",
     "spdlog",
-    "vulkan-headers",
+    "vulkan-headers-tmp",
     {
       "name": "vulkan-loader",
       "platform": "windows"

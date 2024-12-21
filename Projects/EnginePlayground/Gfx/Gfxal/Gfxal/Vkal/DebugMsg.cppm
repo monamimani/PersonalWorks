@@ -9,11 +9,12 @@ module;
 
 export module Vkal.DebugMsg;
 
+
 namespace VkHal
 {
-VKAPI_ATTR VkBool32 VKAPI_CALL debugMsgCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
-                                                VkDebugUtilsMessageTypeFlagsEXT messageType,
-                                                const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
+VKAPI_ATTR vk::Bool32 VKAPI_CALL debugMsgCallback(vk::DebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
+                                                vk::DebugUtilsMessageTypeFlagsEXT messageType,
+                                                const vk::DebugUtilsMessengerCallbackDataEXT* pCallbackData,
                                                 void*)
 {
   namespace ranges = std::ranges;

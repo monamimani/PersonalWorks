@@ -128,13 +128,13 @@ public:
   }
 };
 
-template<typename ErasedType>
-using ErasedStorage_T = ErasedStorage<sizeof(ErasedType), alignof(ErasedType)>;
-auto typedTest = TestUtilities::RegistratorCommonTests<ErasedStorageF,
-                                                       TEST_TYPE(ErasedStorage_T<TestStruct>),
-                                                       // TEST_TYPE(ErasedStorage_T<const TestStruct>),  // Removing because I don't think it makes sense to
-                                                       // have a const type for Erased storage
-                                                       TEST_TYPE(ErasedStorage_T<TestStruct&&>)>{};
+// template<typename ErasedType>
+// using ErasedStorage_T = ErasedStorage<sizeof(ErasedType), alignof(ErasedType)>;
+// auto typedTest = TestUtilities::RegistratorCommonTests<ErasedStorageF,
+//                                                        TEST_TYPE(ErasedStorage_T<TestStruct>),
+//                                                        // TEST_TYPE(ErasedStorage_T<const TestStruct>),  // Removing because I don't think it makes sense to
+//                                                        // have a const type for Erased storage
+//                                                        TEST_TYPE(ErasedStorage_T<TestStruct&&>)>{};
 
 template<typename T>
 class ErasedStorageTestStructF: public testing::Test

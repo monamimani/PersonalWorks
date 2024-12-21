@@ -20,7 +20,7 @@ export import Vkal.Device;
 namespace ranges = std::ranges;
 namespace views = std::ranges::views;
 
-TEST_FRIEND_FORWARD_DECLARE_NS(GfxTest, BasicVulkanTestsF, VkCreateInstance);
+//TEST_FRIEND_FORWARD_DECLARE_NS(GfxTest, BasicVulkanTestsF, VkCreateInstance);
 
 namespace VkHal
 {
@@ -81,96 +81,12 @@ struct VkSystemDesc
 
 class VkSystem
 {
-  TEST_FRIEND_NS(GfxTest, BasicVulkanTestsF, VkCreateInstance);
+  //TEST_FRIEND_NS(GfxTest, BasicVulkanTestsF, VkCreateInstance);
 
 public:
   VkSystem() = default;
 
-  VkSystem(const VkSystemDesc& systemDesc)
-  {
-    if constexpr (GfxVk::vkDispathDynamic)
-    {
-      VULKAN_HPP_DEFAULT_DISPATCHER.init();
-    }
-
-    const vk::ApplicationInfo appInfo = {.pApplicationName = systemDesc.m_applicationName.data(),
-                                         .applicationVersion = systemDesc.m_applicationVersion,
-                                         .pEngineName = systemDesc.m_engineName.data(),
-                                         .engineVersion = systemDesc.m_engineVersion,
-                                         .apiVersion = m_targetVulkanVersion};
-
-    m_instanceExtensionProperties = vk::enumerateInstanceExtensionProperties();
-    ranges::sort(m_instanceExtensionProperties, ranges::less(), g_vkExtensionProjName);
-
-    m_instanceLayerProperties = vk::enumerateInstanceLayerProperties();
-    ranges::sort(m_instanceLayerProperties, ranges::less(), g_vkLayerProjName);
-
-    m_requestedextensions = getInstanceExtensions();
-
-    if constexpr (Config::BuildKind != Config::BuildKind::Shipping)
-    {
-      static const auto vkLayerKhronosValidationName = "VK_LAYER_KHRONOS_validation";
-      // Enable standard validation layer to find as much errors as possible!
-      if (std::none_of(m_requestedlayers.begin(), m_requestedlayers.end(), [](std::string_view layer) {
-            return layer == vkLayerKhronosValidationName;
-          }))
-      {
-        m_requestedlayers.push_back(vkLayerKhronosValidationName);
-      }
-
-      static const auto vkExtDebugUtilsExtName = VK_EXT_DEBUG_UTILS_EXTENSION_NAME;
-      if (std::none_of(m_requestedextensions.begin(), m_requestedextensions.end(), [](std::string_view layer) {
-            return layer == vkExtDebugUtilsExtName;
-          }))
-      {
-        m_requestedextensions.push_back(vkExtDebugUtilsExtName);
-      }
-    }
-
-    std::tie(m_supportedLayers, m_unsupportedLayers) = validateLayers(m_requestedlayers);
-
-    if (!m_unsupportedLayers.empty())
-    {
-      std::terminate();
-    }
-
-    std::vector<const char*> layersView;
-    layersView.reserve(m_requestedlayers.size());
-    ranges::copy(views::transform(m_supportedLayers,
-                                  [](std::string_view layerName) {
-                                    return layerName.data();
-                                  }),
-                 std::back_inserter(layersView));
-
-    std::tie(m_supportedExtensions, m_unsupportedExtensions) = gatherSuportedAndUnsuportedExtensions(m_requestedextensions);
-
-    if (!m_unsupportedExtensions.empty())
-    {
-      std::terminate();
-    }
-
-    std::vector<const char*> extensionsView;
-    extensionsView.reserve(m_supportedExtensions.size());
-    ranges::copy(views::transform(m_supportedExtensions,
-                                  [](std::string_view extName) {
-                                    return extName.data();
-                                  }),
-                 std::back_inserter(extensionsView));
-
-    const auto instanceInfoChain = makeInstanceCreateInfoChain(appInfo, layersView, extensionsView);
-
-    m_instance = vk::createInstanceUnique(instanceInfoChain.get<vk::InstanceCreateInfo>());
-
-    if constexpr (GfxVk::vkDispathDynamic)
-    {
-      VULKAN_HPP_DEFAULT_DISPATCHER.init(m_instance.get());
-    }
-
-    if constexpr (Config::BuildKind != Config::BuildKind::Shipping)
-    {
-      m_debugMessenger = DebugMessenger(m_instance.get(), true);
-    }
-  }
+  VkSystem(const VkSystemDesc& systemDesc);
 
 private:
   [[nodiscard]] auto validateExtension(std::vector<std::string> requestedExtensions)
@@ -270,5 +186,91 @@ private:
   vk::UniqueInstance m_instance = {};
   std::optional<VkHal::DebugMessenger> m_debugMessenger;
 };
+
+VkSystem::VkSystem(const VkSystemDesc& systemDesc)
+{
+  if constexpr (GfxVk::vkDispathDynamic)
+  {
+    VULKAN_HPP_DEFAULT_DISPATCHER.init();
+  }
+
+  const vk::ApplicationInfo appInfo = {.pApplicationName = systemDesc.m_applicationName.data(),
+                                       .applicationVersion = systemDesc.m_applicationVersion,
+                                       .pEngineName = systemDesc.m_engineName.data(),
+                                       .engineVersion = systemDesc.m_engineVersion,
+                                       .apiVersion = m_targetVulkanVersion};
+
+  m_instanceExtensionProperties = vk::enumerateInstanceExtensionProperties();
+  ranges::sort(m_instanceExtensionProperties, ranges::less(), g_vkExtensionProjName);
+
+  m_instanceLayerProperties = vk::enumerateInstanceLayerProperties();
+  ranges::sort(m_instanceLayerProperties, ranges::less(), g_vkLayerProjName);
+
+  m_requestedextensions = getInstanceExtensions();
+
+  if constexpr (Config::BuildKind != Config::BuildKind::Shipping)
+  {
+    static const auto vkLayerKhronosValidationName = "VK_LAYER_KHRONOS_validation";
+    // Enable standard validation layer to find as much errors as possible!
+    if (std::none_of(m_requestedlayers.begin(), m_requestedlayers.end(), [](std::string_view layer) {
+          return layer == vkLayerKhronosValidationName;
+        }))
+    {
+      m_requestedlayers.push_back(vkLayerKhronosValidationName);
+    }
+
+    static const auto vkExtDebugUtilsExtName = VK_EXT_DEBUG_UTILS_EXTENSION_NAME;
+    if (std::none_of(m_requestedextensions.begin(), m_requestedextensions.end(), [](std::string_view layer) {
+          return layer == vkExtDebugUtilsExtName;
+        }))
+    {
+      m_requestedextensions.push_back(vkExtDebugUtilsExtName);
+    }
+  }
+
+  std::tie(m_supportedLayers, m_unsupportedLayers) = validateLayers(m_requestedlayers);
+
+  if (!m_unsupportedLayers.empty())
+  {
+    std::terminate();
+  }
+
+  std::vector<const char*> layersView;
+  layersView.reserve(m_requestedlayers.size());
+  ranges::copy(views::transform(m_supportedLayers,
+                                [](std::string_view layerName) {
+                                  return layerName.data();
+                                }),
+               std::back_inserter(layersView));
+
+  std::tie(m_supportedExtensions, m_unsupportedExtensions) = gatherSuportedAndUnsuportedExtensions(m_requestedextensions);
+
+  if (!m_unsupportedExtensions.empty())
+  {
+    std::terminate();
+  }
+
+  std::vector<const char*> extensionsView;
+  extensionsView.reserve(m_supportedExtensions.size());
+  ranges::copy(views::transform(m_supportedExtensions,
+                                [](std::string_view extName) {
+                                  return extName.data();
+                                }),
+               std::back_inserter(extensionsView));
+
+  const auto instanceInfoChain = makeInstanceCreateInfoChain(appInfo, layersView, extensionsView);
+
+  m_instance = vk::createInstanceUnique(instanceInfoChain.get<vk::InstanceCreateInfo>());
+
+  if constexpr (GfxVk::vkDispathDynamic)
+  {
+    VULKAN_HPP_DEFAULT_DISPATCHER.init(m_instance.get());
+  }
+
+  if constexpr (Config::BuildKind != Config::BuildKind::Shipping)
+  {
+    m_debugMessenger = DebugMessenger(m_instance.get(), true);
+  }
+}
 
 } // namespace VkHal

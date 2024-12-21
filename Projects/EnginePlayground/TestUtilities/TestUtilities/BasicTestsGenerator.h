@@ -6,6 +6,7 @@
 #include <functional>
 #include <source_location>
 #include <span>
+#include <string>
 #include <string_view>
 #include <type_traits>
 #include <utility>
@@ -107,10 +108,10 @@ public:
     static_assert(DefaultObjTestable<TestFixtureType, TestedType, BasicTestsObjOps::DefaultCtor>);
 
     TestedType obj = TestFixtureType::getDefaultObj();
-    EXPECT_TRUE(testDefaultObj<BasicTestsObjOps::DefaultCtor>(obj));
+    EXPECT_TRUE(TestFixtureType::template testDefaultObj<BasicTestsObjOps::DefaultCtor>(obj));
 
     obj.~TestedType();
-    EXPECT_TRUE(testDefaultObj<BasicTestsObjOps::Dtor>(obj)); // TODO: Maybe it would be best to have a function dedicated to test obj after the destructor and
+    EXPECT_TRUE(TestFixtureType::template testDefaultObj<BasicTestsObjOps::Dtor>(obj)); // TODO: Maybe it would be best to have a function dedicated to test obj after the destructor and
                                                               // have a concept to detect if the Fixture type has the function
   }
 
@@ -147,10 +148,10 @@ public:
 
       TestedType obj = TestFixtureType::getDefaultObj();
       auto objCopy{obj};
-      EXPECT_TRUE(TestFixtureType::testDefaultObj<BasicTestsObjOps::CopyCtor>(objCopy));
+      EXPECT_TRUE(TestFixtureType::template testDefaultObj<BasicTestsObjOps::CopyCtor>(objCopy));
 
       objCopy.~TestedType();
-      EXPECT_TRUE(TestFixtureType::testDefaultObj<BasicTestsObjOps::Dtor>(objCopy));
+      EXPECT_TRUE(TestFixtureType::template testDefaultObj<BasicTestsObjOps::Dtor>(objCopy));
     }
 
     if constexpr (ObjATestable<TestFixtureType, TestedType, BasicTestsObjOps::CopyCtor>)
@@ -158,10 +159,10 @@ public:
       SCOPED_TRACE("From obj A");
 
       auto objCopy{TestFixtureType::getObjA()};
-      EXPECT_TRUE(TestFixtureType::testObjA<BasicTestsObjOps::CopyCtor>(objCopy));
+      EXPECT_TRUE(TestFixtureType::template testObjA<BasicTestsObjOps::CopyCtor>(objCopy));
 
       objCopy.~TestedType();
-      EXPECT_TRUE(TestFixtureType::testObjA<BasicTestsObjOps::Dtor>(objCopy));
+      EXPECT_TRUE(TestFixtureType::template testObjA<BasicTestsObjOps::Dtor>(objCopy));
     }
   }
 
@@ -201,11 +202,11 @@ public:
 
       TestedType obj = TestFixtureType::getDefaultObj();
       auto objMove{std::move(obj)};
-      EXPECT_TRUE(testDefaultObj<BasicTestsObjOps::MoveCtor>(objMove));
-      EXPECT_TRUE(testDefaultObj<BasicTestsObjOps::MovedFrom>(obj)); // cppcheck-suppress accessMoved
+      EXPECT_TRUE(TestFixtureType::template testDefaultObj<BasicTestsObjOps::MoveCtor>(objMove));
+      EXPECT_TRUE(TestFixtureType::template testDefaultObj<BasicTestsObjOps::MovedFrom>(obj)); // cppcheck-suppress accessMoved
 
       objMove.~TestedType();
-      EXPECT_TRUE(testDefaultObj<BasicTestsObjOps::Dtor>(objMove));
+      EXPECT_TRUE(TestFixtureType::template testDefaultObj<BasicTestsObjOps::Dtor>(objMove));
     }
 
     if constexpr (ObjATestable<TestFixtureType, TestedType, BasicTestsObjOps::MoveCtor>)
@@ -214,11 +215,11 @@ public:
 
       auto objA = TestFixtureType::getObjA();
       auto objMove{std::move(objA)};
-      EXPECT_TRUE(testObjA<BasicTestsObjOps::MoveCtor>(objMove));
-      EXPECT_TRUE(testObjA<BasicTestsObjOps::MovedFrom>(objA)); // cppcheck-suppress accessMoved
+      EXPECT_TRUE(TestFixtureType::template testObjA<BasicTestsObjOps::MoveCtor>(objMove));
+      EXPECT_TRUE(TestFixtureType::template testObjA<BasicTestsObjOps::MovedFrom>(objA)); // cppcheck-suppress accessMoved
 
       objMove.~TestedType();
-      EXPECT_TRUE(testObjA<BasicTestsObjOps::Dtor>(objMove));
+      EXPECT_TRUE(TestFixtureType::template testObjA<BasicTestsObjOps::Dtor>(objMove));
     }
   }
 
@@ -259,10 +260,10 @@ public:
       TestedType obj = TestFixtureType::getDefaultObj();
       TestedType objCopy;
       objCopy = obj;
-      EXPECT_TRUE(testDefaultObj<BasicTestsObjOps::CopyAssign>(objCopy));
+      EXPECT_TRUE(TestFixtureType::template testDefaultObj<BasicTestsObjOps::CopyAssign>(objCopy));
 
       objCopy.~TestedType();
-      EXPECT_TRUE(testDefaultObj<BasicTestsObjOps::Dtor>(objCopy));
+      EXPECT_TRUE(TestFixtureType::template testDefaultObj<BasicTestsObjOps::Dtor>(objCopy));
     }
 
     if constexpr (ObjATestable<TestFixtureType, TestedType, BasicTestsObjOps::CopyAssign>)
@@ -272,10 +273,10 @@ public:
       auto objA = TestFixtureType::getObjA();
       TestedType objCopy;
       objCopy = objA;
-      EXPECT_TRUE(testObjA<BasicTestsObjOps::CopyAssign>(objCopy));
+      EXPECT_TRUE(TestFixtureType::template testObjA<BasicTestsObjOps::CopyAssign>(objCopy));
 
       objCopy.~TestedType();
-      EXPECT_TRUE(testObjA<BasicTestsObjOps::Dtor>(objCopy));
+      EXPECT_TRUE(TestFixtureType::template testObjA<BasicTestsObjOps::Dtor>(objCopy));
     }
   }
 
@@ -316,11 +317,11 @@ public:
       TestedType obj = TestFixtureType::getDefaultObj();
       TestedType objMove;
       objMove = std::move(obj);
-      EXPECT_TRUE(testDefaultObj<BasicTestsObjOps::MoveAssign>(objMove));
-      EXPECT_TRUE(testDefaultObj<BasicTestsObjOps::MovedFrom>(obj)); // cppcheck-suppress accessMoved
+      EXPECT_TRUE(TestFixtureType::template testDefaultObj<BasicTestsObjOps::MoveAssign>(objMove));
+      EXPECT_TRUE(TestFixtureType::template testDefaultObj<BasicTestsObjOps::MovedFrom>(obj)); // cppcheck-suppress accessMoved
 
       objMove.~TestedType();
-      EXPECT_TRUE(testDefaultObj<BasicTestsObjOps::Dtor>(objMove));
+      EXPECT_TRUE(TestFixtureType::template testDefaultObj<BasicTestsObjOps::Dtor>(objMove));
     }
 
     if constexpr (ObjATestable<TestFixtureType, TestedType, BasicTestsObjOps::CopyAssign>)
@@ -330,11 +331,11 @@ public:
       auto objA = TestFixtureType::getObjA();
       TestedType objMove;
       objMove = std::move(objA);
-      EXPECT_TRUE(testObjA<BasicTestsObjOps::MoveAssign>(objMove));
-      EXPECT_TRUE(testObjA<BasicTestsObjOps::MovedFrom>(objA)); // cppcheck-suppress accessMoved
+      EXPECT_TRUE(TestFixtureType::template testObjA<BasicTestsObjOps::MoveAssign>(objMove));
+      EXPECT_TRUE(TestFixtureType::template testObjA<BasicTestsObjOps::MovedFrom>(objA)); // cppcheck-suppress accessMoved
 
       objMove.~TestedType();
-      EXPECT_TRUE(testObjA<BasicTestsObjOps::Dtor>(objMove));
+      EXPECT_TRUE(TestFixtureType::template testObjA<BasicTestsObjOps::Dtor>(objMove));
     }
   }
 
@@ -601,7 +602,8 @@ template<typename TestedType_>
 struct TypedTestDesc
 {
   using TestedType = TestedType_;
-  const char* m_typeName;
+  const char* m_typeName = nullptr;
+  // const char* (*const m_getTypeNameFctPtr)() = nullptr;
 };
 
 template<bool enableTest, typename TestFixture, typename TestType>
@@ -729,7 +731,7 @@ void registerTests(const auto& testParams, const auto& getTestParamName)
 struct Empty
 {};
 
-template<template<typename TestedType> typename TestFixtureType, auto... TypedTestDescList>
+template<template<typename TestedType> typename TestFixtureType, TypedTestDesc... TypedTestDescList>
 struct RegistratorCommonTests
 {
   RegistratorCommonTests()
@@ -743,12 +745,25 @@ struct RegistratorCommonTests
   }
 };
 
+// template<typename TestedType, std::size_t N>
+// static constexpr auto MakeTypedTestDesc(const char (&typeName)[N])
+// {
+//   //static constexpr auto typeName = xstr(TestedType);
+//   return TestUtilities::TypedTestDesc<TestedType>{.m_typeName = &typeName[0]};
+// }
+
 #define str(s)  #s
 #define xstr(s) str(s)
-#define TEST_TYPE(TestedType)              \
-  TestUtilities::TypedTestDesc<TestedType> \
-  {                                        \
-    xstr(TestedType)                       \
+
+// #define MAKE_TEST_TYPE(TestedType) MakeTypedTestDesc<TestedType>(xstr(TestType))
+
+#define TEST_TYPE(TestedType)                              \
+  TestUtilities::TypedTestDesc<TestedType>                 \
+  {                                                        \
+    .m_typeName = []() constexpr {                         \
+      static constexpr char typeName[] = xstr(TestedType); \
+      return typeName;                                     \
+    }()                                                    \
   }
 
 } // namespace TestUtilities

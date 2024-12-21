@@ -1,14 +1,13 @@
 module;
 
 #include <algorithm>
-#include <exception>
+#include <unordered_map>
 #include <ranges>
 #include <stdexcept>
 
 #include "Config/Config.h"
 #include "Gfxal/Vkal/Vk.h"
 #include "fmt/format.h"
-#include "fmt/ranges.h"
 #include "vulkan/vulkan_hpp_macros.hpp"
 
 module Vkal.VulkanSystem;
@@ -21,9 +20,6 @@ namespace VkHal
 {
 VulkanSystem::VulkanSystem(VulkanSystemDesc desc)
 {
-  namespace ranges = std::ranges;
-  namespace views = std::ranges::views;
-
   if constexpr (GfxVk::vkDispathDynamic)
   {
     if (!m_loader.success())
@@ -210,7 +206,7 @@ void VulkanSystem::createDevice(std::span<std::string_view> requestedExtensions)
   }
 }
 
-void VulkanSystem::printInstanceInfo() const
+void VulkanSystem::printInstanceInfo()
 {
   fmt::println("=======================================");
   fmt::println("===== Vulkan Instance Information =====");

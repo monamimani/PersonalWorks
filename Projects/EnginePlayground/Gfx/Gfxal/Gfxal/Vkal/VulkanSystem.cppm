@@ -55,13 +55,13 @@ private:
   void createInstance(VulkanSystemDesc desc, std::span<std::string_view> requestedExtensions, std::span<std::string_view> requestedLayers);
   void createPhysicalDevices();
   void createDevice(std::span<std::string_view> requestedExtensions);
-  void printInstanceInfo() const;
+  static void printInstanceInfo();
   void printDevicesInfo() const;
 
   static constexpr uint32_t m_targetVulkanVersion = VK_API_VERSION_1_3;
 
 #if (VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1)
-  vk::DynamicLoader m_loader;
+  VULKAN_HPP_DEFAULT_DISPATCHER_TYPE m_loader;
 #endif
 
   vk::UniqueInstance m_instance;

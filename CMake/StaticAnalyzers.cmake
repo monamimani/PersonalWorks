@@ -68,10 +68,12 @@ macro(
   if(CLANGTIDY)
     set(CLANG_TIDY_OPTIONS
       ${CLANGTIDY}
-      #--enable-module-headers-parsing
+      #--verify-config
       # -fms-extensions
       #-fms-compatibility
       # -fdelayed-template-parsing
+      #--print-all-options
+      --enable-module-headers-parsing
       -p=${CMAKE_BINARY_DIR}
     )
 

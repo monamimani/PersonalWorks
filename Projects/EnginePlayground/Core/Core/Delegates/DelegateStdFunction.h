@@ -63,7 +63,7 @@ public:
     }
   };
 
-  template<Core::InvocableAndReturn<R, Args...> auto F>
+  template<Core::InvocableAndReturnC<R, Args...> auto F>
   [[nodiscard]] inline constexpr auto bind()
   {
     m_fct = F;
@@ -71,7 +71,7 @@ public:
     return DelegateRAII{};
   }
 
-  template<Core::FunctorAndReturn<R, Args...> Instance_T>
+  template<Core::FunctorAndReturnC<R, Args...> Instance_T>
   [[nodiscard]] inline constexpr auto bind(Instance_T&& functor)
   {
     m_fct = [&functor](Args... args) -> R {
@@ -82,7 +82,7 @@ public:
   }
 
   template<auto F, typename Instance_T>
-  requires Core::InvocableAndReturnNTTP<F, R, Instance_T, Args...>
+  requires Core::InvocableAndReturnNTTPC<F, R, Instance_T, Args...>
   [[nodiscard]] inline constexpr auto bind(Instance_T&& instance)
   {
     if constexpr (std::is_lvalue_reference_v<Instance_T&&>)

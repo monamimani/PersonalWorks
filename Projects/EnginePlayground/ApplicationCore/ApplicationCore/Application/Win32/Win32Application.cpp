@@ -38,7 +38,7 @@ void Win32Application::pumpMessages()
 
   MSG systemMsg{};
 
-  while (::PeekMessage(&systemMsg, nullptr, 0, 0, PM_REMOVE))
+  while (static_cast<bool>(::PeekMessage(&systemMsg, nullptr, 0, 0, PM_REMOVE)))
   {
     // Handle messages
     ::TranslateMessage(&systemMsg);

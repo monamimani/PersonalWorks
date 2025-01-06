@@ -1,20 +1,26 @@
-#include "catch2/catch_test_macros.hpp"
-#include "catch2/benchmark/catch_benchmark.hpp"
-
-
-#include <concepts>
+#include <cstdint>
+#include <format>
 #include <print>
 #include <source_location>
 #include <stacktrace>
+#include <string_view>
 
+#include "catch2/benchmark/catch_benchmark.hpp"
+#include "catch2/catch_test_macros.hpp"
+
+// The standard (C++26) doesn't provide a formatter for std::source_location for the moment, so we need to provide one.
+// NOLINTBEGIN(cert-dcl58-cpp, readability-convert-member-functions-to-static]
+struct std::formatter<std::source_location>: std::formatter<std::string_view>)
 template<>
-struct std::formatter<std::source_location>: std::formatter<std::string_view>
 {
   auto format(const std::source_location& location, format_context& ctx) const
   {
     return std::format_to(ctx.out(), "{}({},{}), function `{}`\n", location.file_name(), location.line(), location.column(), location.function_name());
   }
 };
+
+// NOLINTEND(cert-dcl58-cpp, readability-convert-member-functions-to-static]
+struct std::formatter<std::source_location>: std::formatter<std::string_view>)
 
 #define CONTRACT_ASSERTION_ENABLE
 
@@ -36,7 +42,7 @@ struct std::formatter<std::source_location>: std::formatter<std::string_view>
 
 namespace ContractsAssertions
 {
-enum class Behavior
+enum class Behavior : uint8_t
 {
   NoOp,
   Terminate,
@@ -80,7 +86,7 @@ void contract_violation_handler([[maybe_unused]] std::string_view predicateBody,
 
   if constexpr (Behavior == Behavior::Log)
   {
-    // std::println("Contract failed!");
+    std::println("Contract failed!");
   }
 
   if constexpr (Behavior == Behavior::NoOp)
@@ -131,17 +137,17 @@ inline void check_contract(bool predicateResult,
     return std::forward<decltype(returnValue)>(returnValue);                    \
   }
 
-#define PostconditionReturn(postConditionName, returnValue)      \
+#define PostconditionReturn(postConditionName, returnValue)        \
   do                                                               \
   {                                                                \
-  if constexpr (ContractsAssertions::ContractsAssertionsEnabled) \
-  {                                                              \
-    return postConditionName(returnValue);                       \
-  }                                                              \
-  else                                                           \
-  {                                                              \
-    return returnValue;                                          \
-  } \
+    if constexpr (ContractsAssertions::ContractsAssertionsEnabled) \
+    {                                                              \
+      return postConditionName(returnValue);                       \
+    }                                                              \
+    else                                                           \
+    {                                                              \
+      return returnValue;                                          \
+    }                                                              \
   }                                                                \
   while (false)
 
@@ -156,26 +162,26 @@ void unitTestContractViolationHandler([[maybe_unused]] std::string_view predicat
   // FAIL(predicateBody);
 }
 
-int foo(int a)
+int foo(int m_value)
 {
   Postcondition(postA, return returnValue > 0;);
 
-  Precondition({ return a == 42; });
+  Precondition({ return m_value == 42; });
 
-  ContractAssertion(return a == 42;);
+  ContractAssertion(return m_value == 42;);
 
   check_contract([&] {
-    return a > 0;
+    return m_value > 0;
   }());
 
-  PostconditionReturn(postA, a - 100);
+  PostconditionReturn(postA, m_value - 100);
 }
 
 TEST_CASE("Contracts", "[Contracts]")
 {
-    ContractsAssertions::set_contract_violation_handler(&unitTestContractViolationHandler);
+  ContractsAssertions::set_contract_violation_handler(&unitTestContractViolationHandler);
 
-    foo(42);
+  foo(42);
 
   SECTION("Success Path")
   {
@@ -184,7 +190,7 @@ TEST_CASE("Contracts", "[Contracts]")
 
   BENCHMARK("Contracts", i)
   {
-  //  Precondition({ return i >= 0; });
+    //  Precondition({ return i >= 0; });
     return i;
   };
 }

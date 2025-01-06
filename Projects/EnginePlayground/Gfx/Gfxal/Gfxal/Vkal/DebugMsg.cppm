@@ -14,14 +14,13 @@ namespace VkHal
 {
 VKAPI_ATTR vk::Bool32 VKAPI_CALL debugMsgCallback(vk::DebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
                                                 vk::DebugUtilsMessageTypeFlagsEXT messageType,
-                                                const vk::DebugUtilsMessengerCallbackDataEXT* pCallbackData,
-                                                void*)
+                                                const vk::DebugUtilsMessengerCallbackDataEXT* callbackData,
+                                                  void* /*pUserData*/)
 {
   namespace ranges = std::ranges;
 
-  auto msgServerity = vk::to_string(static_cast<vk::DebugUtilsMessageSeverityFlagBitsEXT>(messageSeverity));
-  auto msgType = vk::to_string(static_cast<vk::DebugUtilsMessageTypeFlagsEXT>(messageType));
-  auto callbackData = reinterpret_cast<const vk::DebugUtilsMessengerCallbackDataEXT*>(pCallbackData);
+  auto msgServerity = vk::to_string(messageSeverity);
+  auto msgType = vk::to_string(messageType);
 
   fmt::println("VULKAN_DEBUG_MSG[{}: {}] MessageId: {:#x}, Name: {}",
                msgServerity,

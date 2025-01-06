@@ -6,6 +6,8 @@
 #include "TestUtilities/GoogleTest.h"
 #include "fmt/format.h"
 
+// NOLINTBEGIN(*-magic-numbers,readability-identifier-length)
+
 namespace CoreTests
 {
 struct Foo
@@ -18,7 +20,7 @@ TEST(ExceptionType, DataException)
   using FooError = Core::Exception<Foo>;
 
   auto foo = Foo{};
-  const auto msg = "Error";
+  const auto* const msg = "Error";
   auto error = FooError{foo, msg};
 
   ASSERT_STRCASEEQ(error.what().c_str(), msg);
@@ -28,7 +30,7 @@ TEST(ExceptionType, DataException)
   error.data().m_value++;
   ASSERT_EQ(error.data().m_value, 43);
 
-  const auto suffix = " Bar";
+  const auto* const suffix = " Bar";
   error.what() += suffix;
 
   const auto errorMsg = fmt::format("{}{}", msg, suffix);
@@ -39,15 +41,17 @@ TEST(ExceptionType, VoidException)
 {
   using VoidError = Core::Exception<void>;
 
-  const auto msg = "Error";
+  const auto* const msg = "Error";
   auto error = VoidError{msg};
 
   ASSERT_STRCASEEQ(error.what().c_str(), msg);
 
-  const auto suffix = " Bar";
+  const auto* const suffix = " Bar";
   error.what() += suffix;
 
   const auto errorMsg = fmt::format("{}{}", msg, suffix);
   ASSERT_STRCASEEQ(error.what().c_str(), errorMsg.c_str());
 }
 } // namespace CoreTests
+
+// NOLINTEND(*-magic-numbers,readability-identifier-length)

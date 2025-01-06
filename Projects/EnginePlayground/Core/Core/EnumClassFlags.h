@@ -30,7 +30,7 @@ template <typename Enum>
 requires std::is_enum_v<Enum>
 constexpr void enumRemoveFlags(Enum& flags, Enum flagsToRemove)
 {
-  flags &= static_cast<Enum>(~flagsToRemove);
+  flags = static_cast<Enum>(flags & ~std::to_underlying(flagsToRemove));
 }
 
 } // namespace Core
@@ -67,15 +67,15 @@ constexpr void enumRemoveFlags(Enum& flags, Enum flagsToRemove)
     static_assert(std::is_enum_v<Enum>);                                               \
     return static_cast<Enum>(std::to_underlying(lhs) ^ std::to_underlying(rhs));       \
   }                                                                                    \
-  inline constexpr bool operator!(Enum e)                                              \
+  inline constexpr bool operator!(Enum lhs)                                              \
   {                                                                                    \
     static_assert(std::is_enum_v<Enum>);                                               \
-    return !std::to_underlying(e);                                                     \
+    return !std::to_underlying(lhs);                                                     \
   }                                                                                    \
-  inline constexpr Enum operator~(Enum e)                                              \
+  inline constexpr Enum operator~(Enum lhs)                                              \
   {                                                                                    \
     static_assert(std::is_enum_v<Enum>);                                               \
-    return static_cast<Enum>(~std::to_underlying(e));                                  \
+    return static_cast<Enum>(~std::to_underlying(lhs));                                  \
   }
 
 // Friends all bitwise operators for enum classes so the definition can be kept private / protected.
@@ -86,5 +86,5 @@ constexpr void enumRemoveFlags(Enum& flags, Enum flagsToRemove)
   friend constexpr Enum operator|(Enum lhs, Enum rhs); \
   friend constexpr Enum operator&(Enum lhs, Enum rhs); \
   friend constexpr Enum operator^(Enum lhs, Enum rhs); \
-  friend constexpr bool operator!(Enum E);             \
-  friend constexpr Enum operator~(Enum E);
+  friend constexpr bool operator!(Enum lhs);             \
+  friend constexpr Enum operator~(Enum lhs);

@@ -1,6 +1,7 @@
 
 #include "BuildConfig.hunit.h"
-//import BuildConfig;
+
+#include <print>
 
 #include "TestUtilities/GoogleTest.h"
 
@@ -20,11 +21,11 @@ TEST(BuildConfig, IsDebugBuild)
   }
 
 #ifdef BUILDCONFIG_LIB_EXPORT
-  std::cout << "---------------------------BUILDCONFIG_LIB_EXPORT\n";
+  std::println("---------------------------BUILDCONFIG_LIB_EXPORT");
 #endif
 
 #if BUILDCONFIG_MSVC == 1
-  std::cout << "---------------------------BUILDCONFIG_MSVC\n" << BUILDCONFIG_MSVC << "\n";
+  std::println("---------------------------BUILDCONFIG_MSVC= {}", BUILDCONFIG_MSVC);
 #endif
 }
 

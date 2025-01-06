@@ -10,9 +10,9 @@ namespace Core
 {
 // clang-format off
 template <typename T>
-concept Hashable = requires(T a)
+concept Hashable = requires(T value)
 {
-    { std::hash<T>{}(a) } -> std::convertible_to<std::size_t>;
+    { std::hash<T>{}(value) } -> std::convertible_to<std::size_t>;
 };
 
 template <typename Function_T, typename ReturnType, typename... Args >

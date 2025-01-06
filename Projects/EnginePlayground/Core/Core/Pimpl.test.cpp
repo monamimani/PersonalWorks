@@ -4,6 +4,8 @@
 #include "Core/Pimpl.h"
 #include "gtest/gtest.h"
 
+// NOLINTBEGIN(*-magic-numbers,readability-identifier-length)
+
 namespace CoreUnitTest
 {
 
@@ -15,8 +17,11 @@ struct ImplTest
   ImplTest(const ImplTest&) = default;
   ImplTest& operator=(const ImplTest&) = default;
 
-  ImplTest(int a)
-  : m_a(a)
+  ImplTest(ImplTest&&) = delete;
+  ImplTest& operator=(ImplTest&&) = delete;
+
+  explicit ImplTest(int value)
+  : m_a(value)
   {
   }
 
@@ -27,7 +32,7 @@ struct ImplTest
 
 struct ImplTestB : public ImplTest
 {
-  ImplTestB(int u)
+  explicit ImplTestB(int u)
   : m_u(u)
   {
   }
@@ -117,11 +122,11 @@ TEST(CoreImplPtr, ImplPtr_Utility)
   EXPECT_EQ(implTestB->m_a, 121);
 
   auto implTestToRelease = Core::makeImplPtr<ImplTest>(42);
-  auto ptr = implTestToRelease.get();
-  auto releasedPtr = implTestToRelease.release();
+  auto* ptr = implTestToRelease.get();
+  auto* releasedPtr = implTestToRelease.release();
   EXPECT_EQ(releasedPtr, ptr);
   EXPECT_EQ(implTestToRelease.get(), nullptr);
-  delete releasedPtr;
+  delete releasedPtr; // NOLINT(cppcoreguidelines-owning-memory)
 
   EXPECT_TRUE((bool)implTestB);
   EXPECT_FALSE((bool)Core::ImplPtr<ImplTest>());
@@ -131,3 +136,5 @@ TEST(CoreImplPtr, ImplPtr_Utility)
   EXPECT_EQ(hash, std::hash<typename decltype(implTestA)::const_pointer>()(implTestA.get()));
 }
 } // namespace CoreUnitTest
+
+// NOLINTEND(*-magic-numbers,readability-identifier-length)

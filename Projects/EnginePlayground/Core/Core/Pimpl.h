@@ -8,7 +8,7 @@
 
 namespace Core
 {
-template <typename T>
+template<typename T>
 class ImplPtr
 {
 public:
@@ -20,8 +20,7 @@ public:
 
   constexpr ImplPtr() noexcept
   : m_ptr{nullptr}
-  {
-  }
+  {}
 
   ~ImplPtr() noexcept
   {
@@ -31,8 +30,7 @@ public:
 
   constexpr ImplPtr(std::nullptr_t) noexcept
   : ImplPtr()
-  {
-  }
+  {}
 
   constexpr ImplPtr(pointer p) noexcept
   : m_ptr(std::move(p))
@@ -40,13 +38,15 @@ public:
     p = nullptr;
   }
 
-  constexpr ImplPtr(const ImplPtr& implPtr) noexcept(noexcept(std::is_nothrow_copy_constructible_v<T>)) requires(std::copy_constructible<T>)
+  constexpr ImplPtr(const ImplPtr& implPtr) noexcept(noexcept(std::is_nothrow_copy_constructible_v<T>))
+  requires(std::copy_constructible<T>)
   : m_ptr{nullptr}
   {
     *this = implPtr;
   }
 
-  constexpr ImplPtr& operator=(const ImplPtr& implPtr) noexcept(noexcept(std::is_nothrow_assignable_v<T, T>)) requires(std::is_assignable_v<T, T>)
+  constexpr ImplPtr& operator=(const ImplPtr& implPtr) noexcept(noexcept(std::is_nothrow_assignable_v<T&, T>))
+  requires(std::is_assignable_v<T&, T>)
   {
     if (this != &implPtr)
     {
@@ -58,7 +58,6 @@ public:
       {
         m_ptr = new T{*(implPtr.m_ptr)};
       }
-
     }
     return *this;
   }
@@ -82,13 +81,14 @@ public:
   : m_ptr(u)
   {
   }
-  
+
   // clang-format on
 
   constexpr reference operator*()
   {
     return *m_ptr;
   }
+
   constexpr const_reference operator*() const
   {
     return *m_ptr;
@@ -98,6 +98,7 @@ public:
   {
     return get();
   }
+
   constexpr const_pointer operator->() const noexcept
   {
     return get();
@@ -107,12 +108,13 @@ public:
   {
     return m_ptr;
   }
+
   constexpr const_pointer get() const noexcept
   {
     return m_ptr;
   }
 
-  constexpr void swap(ImplPtr& u) noexcept(noexcept(std::declval<pointer>(), std::declval<ImplPtr::pointer>())) //noexcept(std::is_nothrow_swappable_v<ImplPtr>)
+  constexpr void swap(ImplPtr& u) noexcept(noexcept(std::declval<pointer>(), std::declval<ImplPtr::pointer>())) // noexcept(std::is_nothrow_swappable_v<ImplPtr>)
   {
     using std::swap;
     swap(m_ptr, u.m_ptr);
@@ -136,13 +138,13 @@ private:
   T* m_ptr = nullptr;
 };
 
-template <class T>
+template<class T>
 inline void swap(ImplPtr<T>& lhs, ImplPtr<T>& rhs) noexcept(noexcept(lhs.swap(rhs)))
 {
   lhs.swap(rhs);
 }
 
-template <class T, class... Args>
+template<class T, class... Args>
 inline ImplPtr<T> makeImplPtr(Args&&... args)
 {
   return ImplPtr<T>(new T(std::forward<Args>(args)...));
@@ -151,7 +153,7 @@ inline ImplPtr<T> makeImplPtr(Args&&... args)
 
 namespace std
 {
-template <typename T>
+template<typename T>
 struct hash<Core::ImplPtr<T>>
 {
   using argument_type = Core::ImplPtr<T>;
@@ -164,7 +166,6 @@ struct hash<Core::ImplPtr<T>>
 };
 } // namespace std
 
-
 /*
 Used this way
 
@@ -176,10 +177,10 @@ public:
     ConcreteType(int a);
 
     ...
-    
+
 private:
     class Impl;
-    Core::ImplPtr<Impl> m_impl; 
+    Core::ImplPtr<Impl> m_impl;
 };
 
 Source file:

@@ -1,8 +1,8 @@
 module;
 #include <algorithm>
-#include <compare>
 #include <cstddef>
 #include <string_view>
+#include <array>
 
 export module CoreStringLiteral;
 
@@ -14,12 +14,12 @@ struct BasicStringLiteral
 {
   consteval BasicStringLiteral() = default;
 
-  consteval BasicStringLiteral(const CharT (&str)[N])
+  consteval explicit BasicStringLiteral(const std::array<CharT, N>& str)
   {
     std::copy_n(str, N, m_data);
   }
 
-  consteval BasicStringLiteral(std::string_view& strView)
+  consteval explicit BasicStringLiteral(std::string_view& strView)
   {
     std::copy_n(strView, m_data);
   }
@@ -36,22 +36,22 @@ struct BasicStringLiteral
 
   [[nodiscard]] constexpr const CharT* data() const
   {
-    return &m_data[0];
+    return &m_data.data();
   }
 
   [[nodiscard]] constexpr CharT* data()
   {
-    return &m_data[0];
+    return &m_data.data();
   }
 
   [[nodiscard]] consteval CharT* begin() const
   {
-    return &m_data[0];
+    return data();
   }
 
   [[nodiscard]] consteval const CharT* cbegin() const
   {
-    return &m_data[0];
+    return data();
   }
 
   [[nodiscard]] consteval CharT* end() const
@@ -66,32 +66,32 @@ struct BasicStringLiteral
 
   friend consteval auto operator<=>(const BasicStringLiteral&, const BasicStringLiteral&) = default;
 
-  CharT m_data[N] = {};
+  std::array<CharT, N> m_data = {};
 };
 
-template<typename CharT, std::size_t A, std::size_t B>
-[[nodiscard]] consteval auto operator+(const BasicStringLiteral<CharT, A>& a, const BasicStringLiteral<CharT, B>& b)
+template<typename CharT, std::size_t LhsSize, std::size_t RhsSize>
+[[nodiscard]] consteval auto operator+(const BasicStringLiteral<CharT, LhsSize>& lhs, const BasicStringLiteral<CharT, RhsSize>& rhs)
 {
-  BasicStringLiteral<CharT, A + B - 1> ret;
-  std::copy_n(a.m_data, a.size(), ret.m_data);
-  std::copy_n(b.m_data, b.size(), ret.m_data + a.size());
+  BasicStringLiteral<CharT, LhsSize + RhsSize - 1> ret;
+  std::copy_n(lhs.m_data, lhs.size(), ret.m_data);
+  std::copy_n(rhs.m_data, rhs.size(), ret.m_data + lhs.size());
   return ret;
 }
 
-template<typename CharT, std::size_t A, std::size_t B>
-[[nodiscard]] consteval auto operator+(const BasicStringLiteral<CharT, A>& a, const char (&b)[B])
+template<typename CharT, std::size_t LhsSize, std::size_t RhsSize>
+[[nodiscard]] consteval auto operator+(const BasicStringLiteral<CharT, LhsSize>& lhs, const std::array<CharT, RhsSize>& rhs)
 {
-  return a + BasicStringLiteral<CharT, B>(b);
+  return lhs + BasicStringLiteral<CharT, RhsSize>(rhs);
 }
 
-template<typename CharT, std::size_t A, std::size_t B>
-[[nodiscard]] consteval auto operator+(const char (&a)[A], const BasicStringLiteral<CharT, B>& b)
+template<typename CharT, std::size_t LhsSize, std::size_t RhsSize>
+[[nodiscard]] consteval auto operator+(const std::array<CharT, LhsSize>& lhs, const BasicStringLiteral<CharT, RhsSize>& rhs)
 {
-  return BasicStringLiteral<CharT, A>(a) + b;
+  return BasicStringLiteral<CharT, LhsSize>(lhs) + rhs;
 }
 
 template<typename CharT, std::size_t N>
-BasicStringLiteral(const CharT (&str)[N]) -> BasicStringLiteral<CharT, N>;
+BasicStringLiteral(const std::array<CharT, N>) -> BasicStringLiteral<CharT, N>;
 } // namespace Core
 
 export namespace Core

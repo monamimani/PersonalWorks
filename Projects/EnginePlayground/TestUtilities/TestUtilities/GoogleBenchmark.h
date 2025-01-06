@@ -5,8 +5,8 @@
 
 #pragma warning(push)
 #pragma warning(disable : ALL_CODE_ANALYSIS_WARNINGS)
-#include "benchmark/benchmark.h"
+#include "benchmark/benchmark.h" // IWYU pragma: export
 #pragma warning(pop)
 #else
-#include "benchmark/benchmark.h"
+#include "benchmark/benchmark.h" // IWYU pragma: export
 #endif

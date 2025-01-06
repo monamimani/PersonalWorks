@@ -1,8 +1,10 @@
 #pragma once
 
+// IWYU pragma: begin_exports
 #include "BuildConfigArchitecture.hunit.h"
 #include "BuildConfigCompiler.hunit.h"
 #include "BuildConfigPlatform.hunit.h"
+// IWYU pragma: end_exports
 
 namespace BuildConfig
 {

@@ -11,8 +11,8 @@ class Win32ApplicationMainLoop
 {
 public:
   // static int runMainLoop(Application& application, Win32MessageLoop& messageLoop)
-  template <Application_C Application_T>
-  static int runMainLoop(Application_T& application, Win32MessageLoop& messageLoop)
+  template <ApplicationC ApplicationT>
+  static int runMainLoop(ApplicationT& application, Win32MessageLoop& messageLoop)
   {
     int32_t returnValue = EXIT_SUCCESS;
     if (application.initialize())

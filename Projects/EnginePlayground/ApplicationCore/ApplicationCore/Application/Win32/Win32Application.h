@@ -34,7 +34,7 @@ namespace Win32
     // virtual void render(const AppContext& context) = 0;
 
   private:
-    void pumpMessages();
+    static void pumpMessages();
 
     HINSTANCE m_appInstance;
     Win32ApplicationDesc m_win32AppDesc;

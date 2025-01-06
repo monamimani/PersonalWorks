@@ -1,24 +1,21 @@
-#ifdef CORE_PLATFORM_WINDOWS
-  #include <codeanalysis\warnings.h>
-  #pragma warning(push)
-  #pragma warning(disable : ALL_CODE_ANALYSIS_WARNINGS)
-#endif
-#include "benchmark/benchmark.h"
-#ifdef CORE_PLATFORM_WINDOWS
-  #pragma warning(pop)
-#endif
+#include "TestUtilities/GoogleBenchmark.h"
 
 #include <mutex>
 
+namespace
+{
 void stdMutex(benchmark::State& state) // cppcheck-suppress constParameterCallback
 {
   static std::mutex lock;
   benchmark::DoNotOptimize(lock);
 
-  for (auto _ : state)
+  for ([[maybe_unused]] auto _ : state)
   {
     auto autoLock = std::scoped_lock{lock};
   }
 }
+} // namespace
 
-BENCHMARK(stdMutex)->ThreadRange(1, 16);
+constexpr auto g_minThread = 1;
+constexpr auto g_maxThread = 16;
+BENCHMARK(stdMutex)->ThreadRange(g_minThread, g_maxThread);

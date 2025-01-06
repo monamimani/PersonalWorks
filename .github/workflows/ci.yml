@@ -85,7 +85,7 @@ jobs:
     if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
     runs-on: ubuntu-latest
     container:
-      image: 'ghcr.io/monamimani-builds/cpp-devcontainer:a524189b6082de6c08216ef1f3ea2544a9cdf5a4'
+      image: 'ghcr.io/monamimani-builds/cpp-devcontainer:c809e86f26e832819975d916f54025098c534a54'
     strategy:
       fail-fast: false
       matrix:

@@ -1,14 +1,14 @@
 // clang-format off
 // Cheeky but need to be before the headers so that classes can use FRIEND_TEST without including gtest_prod.h
 // and that the whole universe depends on gtest.
-#include "gtest/gtest.h"
+//#include "gtest/gtest.h"
 // clang-format on
 
-#include "Core/DelegateTypes/EventQueue.h"
+//#include "Core/DelegateTypes/EventQueue.h"
 
 namespace Core
 {
-constexpr uint32_t TEST_INT = 42;
+//constexpr uint32_t TEST_INT = 42;
 
 //enum class EventTypes
 //{
@@ -46,8 +46,8 @@ constexpr uint32_t TEST_INT = 42;
 //constexpr auto lambdaTest = [](const EventTestA&) {};
 } // namespace Core
 
-namespace std
-{
+//namespace std
+//{
 
 // template <>
 // struct hash<Core::EventTypes>
@@ -75,7 +75,7 @@ namespace std
 //    return hash<Core::EventTypes>()(Core::EventTypes::EventTestB);
 //  }
 //};
-} // namespace std
+//} // namespace std
 
 namespace Core
 {

@@ -7,9 +7,9 @@
 
   #pragma warning(push)
   #pragma warning(disable : ALL_CODE_ANALYSIS_WARNINGS)
-  #include "gtest/gtest.h"
+  #include "gtest/gtest.h" // IWYU pragma: export
   #pragma warning(pop)
 #else
-  #include "gtest/gtest.h"
+  #include "gtest/gtest.h" // IWYU pragma: export
 #endif
 

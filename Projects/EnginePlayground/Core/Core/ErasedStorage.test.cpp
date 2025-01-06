@@ -52,13 +52,13 @@ public:
     return testing::AssertionFailure();
   }
 
-  static const auto ObjAExpectedVal = 42;
-  static const auto ObjBExpectedVal = 151;
+  static const auto objAExpectedVal = 42;
+  static const auto objBExpectedVal = 151;
 
   TestedType getObjA()
   {
     auto objA = TestedType{};
-    objA.construct(TestStruct{ObjAExpectedVal});
+    objA.construct(TestStruct{objAExpectedVal});
     return objA;
   }
 
@@ -77,7 +77,7 @@ public:
       // }
 
       auto objBytes = TestUtilities::objAsBytes(objA);
-      std::array<std::byte, sizeof(TestedType)> ObjAExpectedValAsBytes{(std::byte)ObjAExpectedVal};
+      std::array<std::byte, sizeof(TestedType)> ObjAExpectedValAsBytes{(std::byte)objAExpectedVal};
       if ((objBytes.size() == ObjAExpectedValAsBytes.size()) && std::ranges::equal(objBytes, ObjAExpectedValAsBytes))
       {
         return testing::AssertionSuccess();
@@ -106,7 +106,7 @@ public:
     //     return testing::AssertionFailure();
     //   }
 
-    //  if (objB.a != ObjBExpectedVal)
+    //  if (objB.a != objBExpectedVal)
     //  {
     //    ADD_FAILURE() << "Error here";
     //    return testing::AssertionFailure();
@@ -115,7 +115,7 @@ public:
     // else
     //{
     //  auto objBytes = TestUtilities::objAsBytes(objB);
-    //  std::array<std::byte, sizeof(TestedType)> ObjBExpectedValAsBytes{(std::byte)ObjBExpectedVal};
+    //  std::array<std::byte, sizeof(TestedType)> ObjBExpectedValAsBytes{(std::byte)objBExpectedVal};
     //  if ((objBytes.size() == ObjBExpectedValAsBytes.size()) && std::ranges::equal(objBytes, ObjBExpectedValAsBytes))
     //  {
     //    return testing::AssertionSuccess();

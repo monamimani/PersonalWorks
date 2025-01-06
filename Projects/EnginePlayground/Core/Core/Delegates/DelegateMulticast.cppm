@@ -55,7 +55,7 @@ public:
     return fct;
   }
 
-  template<Core::InvocableAndReturn<Ret, Args...> auto function>
+  template<Core::InvocableAndReturnC<Ret, Args...> auto function>
   [[nodiscard]] inline constexpr auto bind()
   {
     auto staticFunction = std::make_shared<StaticFunction_T>();
@@ -65,7 +65,7 @@ public:
     return Connection{std::move(staticFunction)};
   }
 
-  template<Core::FunctorAndReturn<Ret, Args...> Instance_T>
+  template<Core::FunctorAndReturnC<Ret, Args...> Instance_T>
   [[nodiscard]] inline constexpr auto bind(Instance_T&& functor)
   {
     auto staticFunction = std::make_shared<StaticFunction_T>();
@@ -76,7 +76,7 @@ public:
   }
 
   template<auto function, typename Instance_T>
-  requires Core::InvocableAndReturn<decltype(function), Ret, Instance_T, Args...>
+  requires Core::InvocableAndReturnC<decltype(function), Ret, Instance_T, Args...>
   [[nodiscard]] inline constexpr auto bind(Instance_T&& instance)
   {
     auto staticFunction = std::make_shared<StaticFunction_T>();

@@ -47,7 +47,7 @@ public:
     return fct;
   }
 
-  template<Core::InvocableAndReturn<Ret, Args...> auto function>
+  template<Core::InvocableAndReturnC<Ret, Args...> auto function>
   constexpr void bind()
   {
     reset();
@@ -56,7 +56,7 @@ public:
     };
   }
 
-  template<Core::FunctorAndReturn<Ret, Args...> Instance_T>
+  template<Core::FunctorAndReturnC<Ret, Args...> Instance_T>
   constexpr void bind(Instance_T&& functor)
   {
     reset();
@@ -65,7 +65,7 @@ public:
   }
 
   template<auto function, typename Instance_T>
-  requires Core::InvocableAndReturnNTTP<function, Ret, Instance_T, Args...>
+  requires Core::InvocableAndReturnNTTPC<function, Ret, Instance_T, Args...>
   constexpr void bind(Instance_T&& instance)
   {
     reset();

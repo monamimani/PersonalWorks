@@ -33,6 +33,7 @@ ReferenceAlignment: Left
 IntegerLiteralSeparator:
   Binary: 4
   Decimal: 3
+  DecimalMinDigits: 5
   Hex: 4
 
 AlignAfterOpenBracket: Align
@@ -40,25 +41,38 @@ AlignOperands: AlignAfterOperator
 AlignEscapedNewlines: Left
 AlignArrayOfStructures: Right
 
+AllowShortCaseLabelsOnASingleLine: True
+AlignConsecutiveShortCaseStatements:
+  Enabled: true
+  AcrossEmptyLines: true
+  AcrossComments: true
+  AlignCaseColons: false
+
+AlignTrailingComments:
+  Kind: Always
+  OverEmptyLines: 1
+
 AllowShortBlocksOnASingleLine: Never
-AllowShortCaseLabelsOnASingleLine: False
 AllowShortFunctionsOnASingleLine: None
 AllowShortIfStatementsOnASingleLine: Never
 AllowShortLoopsOnASingleLine: False
 AllowShortLambdasOnASingleLine: None
+AllowShortCompoundRequirementOnASingleLine: True
 
 BinPackArguments: False
 BinPackParameters: False
 PackConstructorInitializers : Never
 
+EmptyLineBeforeAccessModifier: LogicalBlock
+
 AlwaysBreakTemplateDeclarations: Yes
 BreakConstructorInitializers : BeforeComma
 BreakAfterAttributes: Leave
 BreakBeforeBinaryOperators :  NonAssignment
-EmptyLineBeforeAccessModifier: LogicalBlock
 BreakBeforeConceptDeclarations: Always
+
 RequiresClausePosition: OwnLine
-RequiresExpressionIndentation: OuterScope #requires clang-format 16.0
+RequiresExpressionIndentation: OuterScope
 
 SeparateDefinitionBlocks: Always
 

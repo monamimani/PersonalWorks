@@ -59,7 +59,7 @@ static_assert(CFoo<Widget>);
 
 void bar([[maybe_unused]] CFoo auto& foo)
 {
-  [[maybe_unused]] auto a = foo.funcA();
+  [[maybe_unused]] auto m_value = foo.funcA();
   [[maybe_unused]] auto b = foo.funcB();
 }
 
@@ -119,7 +119,7 @@ private:
   {
     for (auto& element: tupleElem)
     {
-      [[maybe_unused]] auto a = element.funcA();
+      [[maybe_unused]] auto m_value = element.funcA();
       [[maybe_unused]] auto b = element.funcB();
     }
   }

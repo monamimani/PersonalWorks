@@ -1,6 +1,6 @@
 #include "Core/Endian.h"
 
-#include <cstdint>
+//#include <cstdint>
 
 namespace Core
 {

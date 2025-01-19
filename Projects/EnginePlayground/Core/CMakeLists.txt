@@ -45,6 +45,7 @@ list(APPEND publicSources
   ${targetName}/Pimpl.h
   ${targetName}/Overloaded.h
   ${targetName}/Exception.h
+  ${targetName}/NoUniqueAddress.h
   ${targetName}/BuildConfig/BuildConfig.hunit.h
   ${targetName}/BuildConfig/BuildConfigArchitecture.hunit.h
   ${targetName}/BuildConfig/BuildConfigCompiler.hunit.h
@@ -78,6 +79,7 @@ list(APPEND testsSources
   ${targetName}/StaticFunction.test.cpp
   ${targetName}/Delegates/Delegate.test.cpp
   ${targetName}/Delegates/DelegateCommon.test.h
+  ${targetName}/Delegates/DelegateCommonTestCode.h
   ${targetName}/Delegates/DelegateMulticast.test.cpp
   ${targetName}/DelegateTypes/EventDispatcher.test.cpp
   ${targetName}/DelegateTypes/EventQueue.test.cpp
@@ -104,7 +106,7 @@ list(APPEND privateLibraries
   PersonalWorks::PersonalWorks_warnings
   PersonalWorks::PersonalWorks_sanitizers
   PersonalWorks::Config
-  PersonalWorks::TestUtilities
+  # PersonalWorks::TestUtilities
   fmt::fmt
 )
 
@@ -179,7 +181,7 @@ if(PersonalWorks_BUILD_TESTS AND GTest_FOUND AND testsSources)
   # set_tests_properties(cli.version_matches PROPERTIES PASS_REGULAR_EXPRESSION "${PROJECT_VERSION}")
 endif()
 
-if(PersonalWorks_BUILD_TESTS AND benchmark_FOUND AND benchamrksSources)
+if(PersonalWorks_BUILD_TESTS AND benchmark_FOUND AND benchamrksSources AND FALSE)
   set(targetNameBenchmark ${targetName}Benchmarks)
   add_executable(${targetNameBenchmark})
   add_executable(PersonalWorks::${targetNameBenchmark} ALIAS ${targetNameBenchmark})

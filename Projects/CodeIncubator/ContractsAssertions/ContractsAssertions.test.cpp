@@ -10,17 +10,15 @@
 
 // The standard (C++26) doesn't provide a formatter for std::source_location for the moment, so we need to provide one.
 // NOLINTBEGIN(cert-dcl58-cpp, readability-convert-member-functions-to-static]
-struct std::formatter<std::source_location>: std::formatter<std::string_view>)
 template<>
+struct std::formatter<std::source_location>: std::formatter<std::string_view>
 {
   auto format(const std::source_location& location, format_context& ctx) const
   {
     return std::format_to(ctx.out(), "{}({},{}), function `{}`\n", location.file_name(), location.line(), location.column(), location.function_name());
   }
 };
-
 // NOLINTEND(cert-dcl58-cpp, readability-convert-member-functions-to-static]
-struct std::formatter<std::source_location>: std::formatter<std::string_view>)
 
 #define CONTRACT_ASSERTION_ENABLE
 
@@ -106,8 +104,8 @@ void set_contract_violation_handler(ContractViolationHandlerPtr handler)
 
 inline void check_contract(bool predicateResult,
                            std::string_view predicateBody = "",
-                           std::source_location sourceLocation = std::source_location::current(),
-                           std::stacktrace stacktrace = std::stacktrace::current())
+                           const std::source_location& sourceLocation = std::source_location::current(),
+                           const std::stacktrace& stacktrace = std::stacktrace::current())
 {
   if (!predicateResult) [[unlikely]]
   {

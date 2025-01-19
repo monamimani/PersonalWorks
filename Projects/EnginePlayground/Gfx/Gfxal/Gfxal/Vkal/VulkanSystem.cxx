@@ -5,16 +5,17 @@ module;
 #include <ranges>
 #include <stdexcept>
 
+#include "fmt/format.h"
+
 #include "Config/Config.h"
 #include "Gfxal/Vkal/Vk.h"
-#include "fmt/format.h"
 #include "vulkan/vulkan_hpp_macros.hpp"
 
 module Vkal.VulkanSystem;
 
 import Vkal.Utilities;
 
-VULKAN_HPP_DEFAULT_DISPATCH_LOADER_DYNAMIC_STORAGE
+//VULKAN_HPP_DEFAULT_DISPATCH_LOADER_DYNAMIC_STORAGE
 
 namespace VkHal
 {

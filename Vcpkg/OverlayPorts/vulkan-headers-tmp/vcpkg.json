@@ -1,6 +1,6 @@
 {
   "name": "vulkan-headers-tmp",
-  "version": "1.4.303",
+  "version": "1.4.304",
   "description": "Vulkan header files and API registry",
   "homepage": "https://github.com/KhronosGroup/Vulkan-Headers",
   "license": "Apache-2.0 OR MIT",

@@ -10,7 +10,7 @@ module;
 #include <type_traits>
 #include <utility>
 
-#include "TestUtilities/TestsFriend.h"
+//#include "TestUtilities/TestsFriend.h"
 
 export module ErasedStorage;
 
@@ -238,10 +238,10 @@ public:
   }
 
   template<typename ErasedType>
-  constexpr const auto asTypedPtr() const
+  constexpr decltype(auto) asTypedPtr() const
   {
     // This will have issues with multiple level of pointer indirection
-    using RawType = std::remove_pointer_t<std::remove_reference_t<ErasedType>>;
+    using RawType = const std::remove_pointer_t<std::remove_reference_t<ErasedType>>;
 
     // TODO std::launder()
     // static_assert(std::is_lvalue_reference_v<ErasedType> == false, "Creating an erased type of a reference to T is illegal, use T* as the erased type.");
@@ -364,7 +364,7 @@ private:
 
   // TEST_FIXTURE_FRIEND_NS(CoreTests, ErasedStorageF);
 
-  friend class TestUtilities::TestFriend;
+  //friend class TestUtilities::TestFriend;
 
   friend StorageFcts<ErasedStorage>;
   StorageFcts<ErasedStorage> m_storageFcts;

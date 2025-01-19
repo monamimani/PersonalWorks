@@ -34,7 +34,7 @@
       },
       "cacheVariables": {
         "CMAKE_C_COMPILER": "clang",
-        "CMAKE_CXX_COMPILER": "clang++" //,
+        "CMAKE_CXX_COMPILER": "clang++"//,
         // "VCPKG_VERBOSE": true,
         // "VCPKG_INSTALL_OPTIONS": "--clean-after-build;--binarysource=clear",
         //"VCPKG_CHAINLOAD_TOOLCHAIN_FILE": "${sourceDir}/Vcpkg/ChainloadToolchains/linux-clang.chainload.cmake",

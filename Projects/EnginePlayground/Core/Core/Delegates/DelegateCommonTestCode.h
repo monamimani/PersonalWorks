@@ -1,4 +1,6 @@
 
+#include <concepts>
+
 #ifndef TESTSUITENAME_OP1
   #error "TESTSUITENAME_OP1 is not defined!"
 #endif // !TESTSUITENAME
@@ -6,6 +8,25 @@
 #ifndef TESTSUITENAME_OP2
   #error "TESTSUITENAME_OP2 is not defined!"
 #endif // !TESTSUITENAME
+
+// template<typename Type>
+// struct ValidStateTraits
+// {
+//   static constexpr bool m_IsMovedFromValid = false;
+// };
+
+// template<typename Type>
+// requires std::same_as<Type, OpArity1DelegateLikeTestFStaticFctT>
+// struct ValidStateTraits<Type>
+// {
+//   static constexpr bool m_IsMovedFromValid = true;
+// };
+
+// template<>
+// struct ValidStateTraits<StaticFctT>
+// {
+//   static constexpr bool m_IsMovedFromValid = true;
+// };
 
 TEST_P(TESTSUITENAME_OP1, CtorDtor)
 {
@@ -55,7 +76,8 @@ TEST_P(TESTSUITENAME_OP1, MoveCtor)
 
   if (!m_isBindKindEmpty)
   {
-    ASSERT_EQ((bool)m_delegate, ValidStateTraits<DelegateLike>::m_IsMovedFromValid); // This really is a valid unspecified state, because moved from
+    //ASSERT_EQ((bool)m_delegate, ValidStateTraits<DelegateLike>::m_IsMovedFromValid); // This really is a valid unspecified state, because moved from
+    ASSERT_EQ((bool)m_delegate, m_IsMovedFromValid); // This really is a valid unspecified state, because moved from
     //ASSERT_FALSE((bool)m_delegate); // This really is a valid unspecified state, because moved from
     ASSERT_TRUE((bool)delegateMove);
 
@@ -168,7 +190,8 @@ TEST_P(TESTSUITENAME_OP2, MoveAssign)
 
   if (!m_isDelegateABindKindEmpty)
   {
-    ASSERT_EQ((bool)m_delegateA, ValidStateTraits<DelegateLike>::m_IsMovedFromValid); // This really is a valid unspecified state, because moved from
+    //ASSERT_EQ((bool)m_delegateA, ValidStateTraits<DelegateLike>::m_IsMovedFromValid); // This really is a valid unspecified state, because moved from
+    ASSERT_EQ((bool)m_delegateA, m_IsMovedFromValid); // This really is a valid unspecified state, because moved from
     //ASSERT_FALSE((bool)m_delegateA); // This realy is a valid unspecified state, becaused moved from
     ASSERT_TRUE((bool)m_delegateB);
 

@@ -69,42 +69,17 @@ struct TypeListElement<0u, TypeList<Type, Other...>>
 template<std::size_t Index, typename ListT>
 using TypeListElementT = typename TypeListElement<Index, ListT>::TypeT;
 
-/**
- * @brief Transcribes the constness of a type to another type.
- * @tparam To The type to which to transcribe the constness.
- * @tparam From The type from which to transcribe the constness.
- */
-template<typename To, typename From>
-struct ConstAs
-{
-  /*! @brief The type resulting from the transcription of the constness. */
-  using TypeT = std::remove_const_t<To>;
-};
 
-/*! @copydoc ConstAs */
-template<typename To, typename From>
-struct ConstAs<To, const From>
-{
-  /*! @brief The type resulting from the transcription of the constness. */
-  using TypeT = std::add_const_t<To>;
-};
+template<class From, class To>
+using ConstAsT = std::conditional_t<std::is_const<From>{}, const To, To>;
+template<class From, class To>
+using VolatileAsT = std::conditional_t<std::is_volatile<From>{}, To volatile, To>;
+template<class From, class To>
+using ConstVolatileAsT = ConstAsT< From, VolatileAsT< From, To>>;
 
-/**
- * @brief Alias template to facilitate the transcription of the constness.
- * @tparam To The type to which to transcribe the constness.
- * @tparam From The type from which to transcribe the constness.
- */
-template<typename To, typename From>
-using ConstAsT = typename ConstAs<To, From>::type;
-
-template<typename U, typename V>
-using CopyConstnessC = std::conditional_t<std::is_const_v<std::remove_reference_t<U>>, const V, V>;
-
-// NOLINTBEGIN(readability-identifier-naming)
 template<typename T>
-concept is_implicit_lifetime = requires {
+concept IsImplicitLifetime = requires {
   std::is_scalar_v<T> || std::is_array_v<T> || (std::is_trivially_destructible_v<T> && std::is_trivially_constructible_v<T> && std::is_aggregate_v<T>);
 };
-// NOLINTEND(readability-identifier-naming)
 
 } // namespace Core

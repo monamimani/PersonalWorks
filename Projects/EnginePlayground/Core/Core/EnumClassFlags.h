@@ -30,7 +30,7 @@ template <typename Enum>
 requires std::is_enum_v<Enum>
 constexpr void enumRemoveFlags(Enum& flags, Enum flagsToRemove)
 {
-  flags = static_cast<Enum>(flags & ~std::to_underlying(flagsToRemove));
+  flags = static_cast<Enum>(flags & ~flagsToRemove);
 }
 
 } // namespace Core

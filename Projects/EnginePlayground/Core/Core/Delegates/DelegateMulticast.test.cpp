@@ -96,8 +96,8 @@ namespace DelegateMulticastTests
 
 using namespace DelegateLikeTests;
 using DelegateMulticast_T = Delegate::DelegateMulticast<FctSignature>;
-using DelegateMultiOp1F = OpArity1DelegateLikeTestF<DelegateMulticast_T, DelegateMulticast_T::Connection>;
-using DelegateMultiOp2F = OpArity2DelegateLikeTestF<DelegateMulticast_T, DelegateMulticast_T::Connection>;
+using DelegateMultiOp1F = OpArity1DelegateLikeTestF<DelegateMulticast_T, DelegateMulticast_T::Connection, false>;
+using DelegateMultiOp2F = OpArity2DelegateLikeTestF<DelegateMulticast_T, DelegateMulticast_T::Connection, false>;
 
 INSTANTIATE_TEST_SUITE_P(DelegateMultiOp1Arg, DelegateMultiOp1F, OpAr1Arg, DelegateMultiOp1F::makeTestName);
 INSTANTIATE_TEST_SUITE_P(DelegateMultiOp2Arg, DelegateMultiOp2F, OpAr2Arg, DelegateMultiOp2F::makeTestName);

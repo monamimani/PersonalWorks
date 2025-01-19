@@ -2,12 +2,12 @@
 #include "Config/Config.h"
 
 #if defined(CORE_PLATFORM_WINDOWS)
-  #include "Core/Win32/WindowsHeader.h"
+  #include "Core/Win32/WindowsHeader.h" // IWYU pragma: export
   #define VK_USE_PLATFORM_WIN32_KHR
 #endif
 
-#include "vulkan/vulkan.hpp"
-//#include "vulkan/vulkan_raii.hpp"
+#include "vulkan/vulkan.hpp" // IWYU pragma: export
+//#include "vulkan/vulkan_raii.hpp" // IWYU pragma: export
 
 //#include "vulkan/vulkan_hpp_macros.hpp"
 //#include "vulkan/vulkan_core.h"

@@ -39,14 +39,12 @@ public:
   }
 
   constexpr ImplPtr(const ImplPtr& implPtr) noexcept(noexcept(std::is_nothrow_copy_constructible_v<T>))
-  requires(std::copy_constructible<T>)
-  : m_ptr{nullptr}
-  {
-    *this = implPtr;
-  }
+  requires(std::is_copy_constructible_v<T>)
+  : m_ptr{new T{*(implPtr.m_ptr)}}
+  {}
 
-  constexpr ImplPtr& operator=(const ImplPtr& implPtr) noexcept(noexcept(std::is_nothrow_assignable_v<T&, T>))
-  requires(std::is_assignable_v<T&, T>)
+  constexpr ImplPtr& operator=(const ImplPtr& implPtr) noexcept(noexcept(std::is_nothrow_copy_assignable_v<T>))
+  requires(std::is_copy_assignable_v<T>)
   {
     if (this != &implPtr)
     {
@@ -75,14 +73,10 @@ public:
     return *this;
   }
 
-  // clang-format off
-  template <std::convertible_to<T*> U>
+  template<std::convertible_to<T*> U>
   constexpr ImplPtr(U* u) noexcept(noexcept(m_ptr(u)))
   : m_ptr(u)
-  {
-  }
-
-  // clang-format on
+  {}
 
   constexpr reference operator*()
   {
@@ -114,7 +108,8 @@ public:
     return m_ptr;
   }
 
-  constexpr void swap(ImplPtr& u) noexcept(noexcept(std::declval<pointer>(), std::declval<ImplPtr::pointer>())) // noexcept(std::is_nothrow_swappable_v<ImplPtr>)
+  constexpr void swap(ImplPtr& u) noexcept(noexcept(std::declval<pointer>(),
+                                                    std::declval<ImplPtr::pointer>())) // noexcept(std::is_nothrow_swappable_v<ImplPtr>)
   {
     using std::swap;
     swap(m_ptr, u.m_ptr);
@@ -132,7 +127,21 @@ public:
     return static_cast<bool>(m_ptr != nullptr);
   }
 
-  auto operator<=>(const ImplPtr<T>&) const = default;
+  friend constexpr auto operator<=>(const ImplPtr<T>& lhs, const ImplPtr<T>& rhs)
+  {
+    return *lhs.m_ptr <=> *rhs.m_ptr;
+  }
+
+  friend constexpr bool operator==(const ImplPtr<T>& lhs, const ImplPtr<T>& rhs)
+  // requires(std::equality_comparable<T>)
+  {
+    if (lhs.m_ptr == rhs.m_ptr)
+    {
+      return true;
+    }
+
+    return (*lhs.m_ptr) == (*rhs.m_ptr);
+  }
 
 private:
   T* m_ptr = nullptr;

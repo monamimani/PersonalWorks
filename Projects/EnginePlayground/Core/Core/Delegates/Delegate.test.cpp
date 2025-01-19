@@ -7,8 +7,8 @@ namespace DelegateTests
 using namespace DelegateLikeTests;
 
 using Delegate_T = Delegate::Delegate<FctSignature>;
-using DelegateOp1F = OpArity1DelegateLikeTestF<Delegate_T, Delegate_T::Connection>;
-using DelegateOp2F = OpArity2DelegateLikeTestF<Delegate_T, Delegate_T::Connection>;
+using DelegateOp1F = OpArity1DelegateLikeTestF<Delegate_T, Delegate_T::Connection, false>;
+using DelegateOp2F = OpArity2DelegateLikeTestF<Delegate_T, Delegate_T::Connection, false>;
 
 INSTANTIATE_TEST_SUITE_P(DelegateOp1Arg, DelegateOp1F, OpAr1Arg, DelegateOp1F::makeTestName);
 INSTANTIATE_TEST_SUITE_P(DelegateOp2Arg, DelegateOp2F, OpAr2Arg, DelegateOp2F::makeTestName);

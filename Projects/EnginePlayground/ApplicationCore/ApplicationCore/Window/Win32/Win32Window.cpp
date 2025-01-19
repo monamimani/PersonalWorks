@@ -160,7 +160,7 @@ Win32Window::Win32Window(const WindowDesc& desc)
     RECT clientRectAdjusted{(int32_t)m_desc.m_x, (int32_t)m_desc.m_y, width, height};
     AdjustWindowRectEx(&clientRectAdjusted, dwStyle, false, dwExStyle);
 
-    auto windowTitle = m_desc.m_title.c_str();
+    //auto windowTitle = m_desc.m_title.c_str();
 
     // Setup m_windowHandle initialization attributes.
     CREATESTRUCT cs;

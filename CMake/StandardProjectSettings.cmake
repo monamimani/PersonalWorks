@@ -27,35 +27,29 @@ include(CMake/Targets.cmake)
 set(GIT_SHA "Unknown" CACHE STRING "SHA this build was generated from")
 string(SUBSTRING "${GIT_SHA}" 0 8 GIT_SHORT_SHA)
 
+if(CMAKE_CXX_COMPILER_ID MATCHES ".*Clang")
+  add_compile_options(-std=c++26)
+  #add_compile_options(-D__cpp_concepts=202002)
+  add_compile_options(-Wno-builtin-macro-redefined)
+  link_libraries(stdc++exp) # for std::stacktrace
+elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+  add_compile_options("-std=c++26")
+  link_libraries(stdc++exp) # for std::stacktrace
+endif()
+
 if(MSVC)
+  add_compile_options("/std:c++latest")
   add_compile_options($<$<CXX_COMPILER_ID:MSVC>:/MP>)
   add_compile_options($<$<CXX_COMPILER_ID:MSVC>:/utf-8>)
 endif()
 
-# Enhance error reporting and compiler messages
 set(CMAKE_COLOR_DIAGNOSTICS ON)
 set(CMAKE_COLOR_MAKEFILE ON)
 
-#if(CMAKE_CXX_COMPILER_ID MATCHES ".*Clang")
-#  if(WIN32)
-#    # On Windows cuda nvcc uses cl and not clang
-#    add_compile_options($<$<COMPILE_LANGUAGE:C>:-fcolor-diagnostics> $<$<COMPILE_LANGUAGE:CXX>:-fcolor-diagnostics>)
-#  else()
-#    add_compile_options(-fcolor-diagnostics)
-#  endif()
-#elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-#  if(WIN32)
-#    # On Windows cuda nvcc uses cl and not gcc
-#    add_compile_options($<$<COMPILE_LANGUAGE:C>:-fdiagnostics-color=always>
-#      $<$<COMPILE_LANGUAGE:CXX>:-fdiagnostics-color=always>)
-#  else()
-#    add_compile_options(-fdiagnostics-color=always)
-#  endif()
-#elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC" AND MSVC_VERSION GREATER 1900)
-#  add_compile_options(/diagnostics:column)
-#else()
-#  message(STATUS "No colored compiler diagnostic set for '${CMAKE_CXX_COMPILER_ID}' compiler.")
-#endif()
+if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC" AND MSVC_VERSION GREATER 1900)
+  #add_compile_options(/diagnostics:column)
+  add_compile_options(/diagnostics:caret)
+endif()
 
 if(MSVC)
   if("$ENV{VSCMD_VER}" STREQUAL "")

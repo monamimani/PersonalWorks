@@ -4,22 +4,22 @@
 import StaticFunction;
 using StaticFctT = Core::StaticFunction<TestUtilities::FctSignature>;
 
-namespace DelegateLikeTests
-{
-template<>
-struct ValidStateTraits<StaticFctT>
-{
-  static const bool m_IsMovedFromValid = true;
-};
-} // namespace DelegateLikeTests
+// namespace DelegateLikeTests
+// {
+// template<>
+// struct ValidStateTraits<StaticFctT>
+// {
+//   static constexpr bool m_IsMovedFromValid = true;
+// };
+// } // namespace DelegateLikeTests
 
 namespace StaticFunctionTests
 {
 using namespace Core;
 using namespace DelegateLikeTests;
 
-using StaticFctOp1F = OpArity1DelegateLikeTestF<StaticFctT, void*>;
-using StaticFctOp2F = OpArity2DelegateLikeTestF<StaticFctT, void*>;
+using StaticFctOp1F = OpArity1DelegateLikeTestF<StaticFctT, void*, true>;
+using StaticFctOp2F = OpArity2DelegateLikeTestF<StaticFctT, void*, true>;
 
 INSTANTIATE_TEST_SUITE_P(StaticFctOp1Arg, StaticFctOp1F, OpAr1Arg, StaticFctOp1F::makeTestName);
 INSTANTIATE_TEST_SUITE_P(StaticFctOp2Arg, StaticFctOp2F, OpAr2Arg, StaticFctOp2F::makeTestName);

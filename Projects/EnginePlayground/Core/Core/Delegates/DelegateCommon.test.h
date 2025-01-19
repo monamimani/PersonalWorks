@@ -291,13 +291,7 @@ protected:
 static const auto OpAr1Arg = ::testing::ValuesIn(DelegateLikeTestF::makeDelegateBindKindParamSet());
 static const auto OpAr2Arg = ::testing::Combine(OpAr1Arg, OpAr1Arg);
 
-template<typename Type>
-struct ValidStateTraits
-{
-  static const bool m_IsMovedFromValid = false;
-};
-
-template<typename DelegateLikeT, typename HandleT>
+template<typename DelegateLikeT, typename HandleT, bool IsMovedFromValid>
 class OpArity1DelegateLikeTestF: public DelegateLikeTestF, public testing::TestWithParam<ParamSetType>
 {
 
@@ -314,6 +308,7 @@ public:
 
 protected:
   using DelegateLike = DelegateLikeT;
+  static constexpr bool m_IsMovedFromValid = IsMovedFromValid;
   bool m_isConst = false;
   bool m_isBindKindEmpty = false;
 
@@ -357,7 +352,7 @@ private:
   }
 };
 
-template<typename DelegateLikeT, typename HandleT>
+template<typename DelegateLikeT, typename HandleT, bool IsMovedFromValid>
 class OpArity2DelegateLikeTestF: public DelegateLikeTestF, public testing::TestWithParam<std::tuple<ParamSetType, ParamSetType>>
 {
 public:
@@ -374,6 +369,7 @@ public:
 
 protected:
   using DelegateLike = DelegateLikeT;
+  static constexpr bool m_IsMovedFromValid = IsMovedFromValid;
 
   bool m_isDelegateAConst = false;
   bool m_isDelegateABindKindEmpty = false;

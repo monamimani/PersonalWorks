@@ -103,7 +103,7 @@ jobs:
             configure-preset: "Linux-Gcc-Ninja-Release"
             build-preset: "Linux-Gcc-Ninja-Release"
           - os: ubuntu-latest
-            configure-preset: "Linux-Clang-NinjaMultiConfig-Debug"
+            configure-preset: "Linux-Clang-NinjaMultiConfig"
             build-preset: "Linux-Clang-NinjaMultiConfig-Debug"
 
     name: ${{matrix.build-preset}}

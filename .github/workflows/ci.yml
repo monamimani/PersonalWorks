@@ -131,7 +131,7 @@ jobs:
       uses: actions/cache@v4
       with:
         path: _Out/cpm_sources
-        key: ${{ runner.os }}-cpm-${{ hashFiles('**/') }}
+        key: ${{ runner.os }}-cpm-${{ hashFiles('_Out/cpm_sources/**/') }}
         restore-keys: |
           ${{ runner.os }}-cpm-
 

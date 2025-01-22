@@ -57,7 +57,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: _Out/cpm_sources
-          key: ${{ runner.os }}-cpm-${{ hashFiles('**/') }}
+          key: ${{ runner.os }}-cpm-${{ hashFiles('_Out/cpm_sources/**/') }}
           restore-keys: |
             ${{ runner.os }}-cpm-
 
@@ -145,7 +145,6 @@ jobs:
 
     - name: "[Linux] CMake Configure & Build"
       if: runner.os == 'Linux'
-      continue-on-error: true
       run: |
 
         cmake --preset ${{matrix.configure-preset}} -DGIT_SHA:STRING=${{ github.sha }} -DPersonalWorks_ENABLE_CLANG_TIDY=OFF -DPersonalWorks_ENABLE_CPPCHECK=OFF

@@ -87,21 +87,23 @@
       ]
     },
     {
-      "name": "Linux-Clang-NinjaMultiConfig",
+      "name": "Linux-Clang-NinjaMultiConfig-Debug",
       "inherits": [
         "Common",
         "Linux",
         "Clang",
-        "NinjaMultiConfig"
+        "NinjaMultiConfig",
+        "Debug"
       ]
     },
     {
-      "name": "Linux-Gcc-NinjaMultiConfig",
+      "name": "Linux-Gcc-NinjaMultiConfig-Debug",
       "inherits": [
         "Common",
         "Linux",
         "Gcc",
-        "NinjaMultiConfig"
+        "NinjaMultiConfig",
+        "Debug"
       ]
     }
   ]

@@ -3,7 +3,7 @@
   "image": "ghcr.io/monamimani-builds/cpp-devcontainer:latest",
   "runArgs": [
     "--name",
-    "personalworks-devcontainer",
+    "personalworks-devcontainer-${devcontainerId}",
     "--cap-add=SYS_PTRACE",
     "--security-opt",
     "seccomp=unconfined"

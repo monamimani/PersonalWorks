@@ -1,10 +1,9 @@
 # Personal Works
+
 [![Build](https://github.com/monamimani/PersonalWorks/actions/workflows/ci.yml/badge.svg)](https://github.com/monamimani/PersonalWorks/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/github/monamimani/PersonalWorks/graph/badge.svg?token=KE8K6BZBEJ)](https://codecov.io/github/monamimani/PersonalWorks)
 
-
-## Code coverage detail
-![codecov, Icicle](https://codecov.io/github/monamimani/PersonalWorks/graphs/icicle.svg?token=KE8K6BZBEJ) ![codecov, Grid](https://codecov.io/github/monamimani/PersonalWorks/graphs/tree.svg?token=KE8K6BZBEJ)
+This repository is a personal C++23 playground for developing and exploring various coding concepts. It is structured as a monorepo, built with CMake, and uses vcpkg for dependency management.
 
 ## Projects
 
@@ -32,6 +31,29 @@ Projects that contain code to explore and learn new cpp concepts and constructs 
 I might separate this in another repo oneday.
 
 
-### Onnx Inference App
+### Onnx Inference App & OnnxRT
 
-### OnnxRt
+Projects related to ONNX model inference.
+
+## Building
+
+The project uses CMake presets for configuration and building.
+
+**Windows (MSVC):**
+```bash
+cmake --preset Windows-Msvc-Ninja-Debug-NoTidy
+cmake --build --preset Windows-Msvc-Ninja-Debug-NoTidy
+```
+
+**Linux (Clang):**
+```bash
+cmake --preset Linux-Clang-Ninja-Debug-NoTidy
+cmake --build --preset Linux-Clang-Ninja-Debug-NoTidy
+```
+
+## Development Conventions
+
+*   **Coding Style:** Enforced using `.editorconfig` and `.clang-format`.
+*   **Dependencies:** Managed with `vcpkg` as defined in `vcpkg.json`.
+*   **Testing:** Unit and performance tests are written using `gtest`, `catch2`, and `benchmark`.
+*   **CI/CD:** All code is built and tested on Windows and Linux via GitHub Actions (`.github/workflows/ci.yml`).

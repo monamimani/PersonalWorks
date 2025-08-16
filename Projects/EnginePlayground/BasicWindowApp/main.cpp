@@ -39,7 +39,7 @@ private:
   // void update([[maybe_unused]] const AppContext& context) override {}
   // void render([[maybe_unused]] const AppContext& context) override {}
 };
-static_assert(ApplicationCore::Application_C<BasicWindowApp>);
+static_assert(ApplicationCore::ApplicationC<BasicWindowApp>);
 
 } // namespace BasicWindowApp
 

@@ -10,10 +10,10 @@
 #include <string_view>
 #include <type_traits>
 #include <utility>
+#include <format>
 
 #include "TestUtilities/GoogleTest.h"
 #include "TestUtilities/TestStruct.test.h"
-#include "fmt/format.h"
 
 namespace TestUtilities
 {
@@ -639,7 +639,7 @@ void registerTest(const std::string& typeName, const auto& testParamGenerator, c
     for (; it != testParamGenerator.end(); it++, i++)
     {
       std::string paramTestName = getTestParamName(testing::TestParamInfo<ParamType>(*it, i));
-      auto testName = fmt::format("{}/{}", std::string{TestType::getTestName()}, paramTestName);
+      auto testName = std::format("{}/{}", std::string{TestType::getTestName()}, paramTestName);
       testing::RegisterTest(("SpclMbFctParam/" + typeName).c_str(),
                             testName.c_str(),
                             typeName.c_str(),

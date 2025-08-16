@@ -1,0 +1,22 @@
+diff --git a/cmake/FuzzTestHelpers.cmake b/cmake/FuzzTestHelpers.cmake
+index b907ff8..f0e4608 100644
+--- a/cmake/FuzzTestHelpers.cmake
++++ b/cmake/FuzzTestHelpers.cmake
+@@ -94,7 +94,7 @@ function(fuzztest_cc_library)
+
+     target_link_libraries(
+       ${_NAME}
+-      PUBLIC
++      PRIVATE
+       ${FUZZTEST_CC_LIB_DEPS}
+       PRIVATE
+       ${FUZZTEST_CC_LIB_LINKOPTS}
+@@ -245,7 +245,7 @@ function(fuzztest_cc_test)
+
+   target_link_libraries(
+     ${_NAME}
+-    PUBLIC
++    PRIVATE
+     ${FUZZTEST_CC_TEST_DEPS}
+     PRIVATE
+     ${FUZZTEST_CC_TEST_LINKOPTS}

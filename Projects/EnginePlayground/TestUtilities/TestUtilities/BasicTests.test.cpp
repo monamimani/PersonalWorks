@@ -1,5 +1,6 @@
 #include <array>
 #include <utility>
+#include <format>
 
 #include "TestUtilities/BasicTestsGenerator.h"
 
@@ -141,7 +142,7 @@ public:
   static constexpr auto makeTestName = [](const testing::TestParamInfo<ParamType>& info) {
     auto [sampleA, sampleB] = info.param;
 
-    const std::string name = fmt::format("SampleAVal{}SampleBVal{}", sampleA.m_value, sampleB.m_value);
+    const std::string name = std::format("SampleAVal{}SampleBVal{}", sampleA.m_value, sampleB.m_value);
 
     return name;
   };

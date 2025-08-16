@@ -1,10 +1,15 @@
 
 get_filename_component(targetName ${CMAKE_CURRENT_LIST_DIR} NAME)
 
+if(NOT CMAKE_SYSTEM_NAME STREQUAL "Windows")
+  message(WARNING "ApplicationCore need to be ported for Linux.")
+  return()
+endif()
+
 if(CMAKE_SYSTEM_NAME STREQUAL Windows)
   list(APPEND platformInterfaceSources
   )
-  list(APPEND platformPublicSources 
+  list(APPEND platformPublicSources
     ${targetName}/Application/Win32/Win32Application.h
     ${targetName}/Application/Win32/Win32ApplicationDesc.h
     ${targetName}/Application/Win32/Win32ApplicationMainLoop.h
@@ -14,7 +19,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL Windows)
     ${targetName}/Window/Win32/Win32Window.h
     ${targetName}/Window/WinRT/WinRTWindow.h
   )
-  list(APPEND platformPrivateSources  
+  list(APPEND platformPrivateSources
     ${targetName}/Application/Win32/Win32Application.cpp
     ${targetName}/Application/Win32/Win32ApplicationMainLoop.cpp
     ${targetName}/Application/Win32/Win32MessageLoop.cpp
@@ -31,9 +36,9 @@ if(CMAKE_SYSTEM_NAME STREQUAL Windows)
 elseif(CMAKE_SYSTEM_NAME STREQUAL Linux)
   list(APPEND platformInterfaceSources
   )
-  list(APPEND platformPublicSources 
+  list(APPEND platformPublicSources
   )
-  list(APPEND platformPrivateSources 
+  list(APPEND platformPrivateSources
   )
   list(APPEND platformPublicCxxModules
   )
@@ -87,7 +92,6 @@ list(APPEND privateLibraries
   PersonalWorks::PersonalWorks_sanitizers
   PersonalWorks::Config
   PersonalWorks::Core
-  fmt::fmt
 )
 
 
@@ -146,7 +150,6 @@ if(PersonalWorks_BUILD_TESTS AND GTest_FOUND AND testsSources)
     PRIVATE
       ${privateLibraries}
       PersonalWorks::TestUtilities
-      fmt::fmt
       GTest::gtest_main
   )
   gtest_discover_tests(${targetNameTest})
@@ -190,7 +193,6 @@ if(PersonalWorks_BUILD_TESTS AND benchmark_FOUND AND benchamrksSources)
     PRIVATE
       ${privateLibraries}
       PersonalWorks::TestUtilities
-      fmt::fmt
       benchmark::benchmark_main
   )
 endif()

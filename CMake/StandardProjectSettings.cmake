@@ -14,6 +14,7 @@ set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER ${DEPENDENCY_FOLDER})
 # https://cmake.org/cmake/help/latest/module/GenerateExportHeader.html
 # used for the function generate_export_header( someLib) that will generate a header file somelib_export.h for exporting symbol from a dynamic library.
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)
+set(CMAKE_VISIBILITY_INLINES_HIDDEN YES)
 
 include(FetchContent)
 include(ProcessorCount)
@@ -39,6 +40,7 @@ endif()
 
 if(MSVC)
   add_compile_options("/std:c++latest")
+  #add_compile_options("/dynamicdeopt")
   add_compile_options($<$<CXX_COMPILER_ID:MSVC>:/MP>)
   add_compile_options($<$<CXX_COMPILER_ID:MSVC>:/utf-8>)
 endif()

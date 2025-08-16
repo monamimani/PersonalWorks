@@ -72,7 +72,6 @@ endforeach()
 target_link_libraries(${targetNameTests}
   PRIVATE
   ${${TARGETNAME}Libraires}
-  fmt::fmt
   TestUtilities
   $<$<NOT:$<BOOL:${ARG_MAINFILE}>>:GTest::gtest_main>
 )
@@ -148,7 +147,6 @@ endforeach()
 target_link_libraries(${targetNameBenchmark}
   PRIVATE
   ${${targetName}Libraires}
-  fmt::fmt
   TestUtilities
   $<$<NOT:$<BOOL:${ARG_MAINFILE}>>:benchmark::benchmark_main>
 )

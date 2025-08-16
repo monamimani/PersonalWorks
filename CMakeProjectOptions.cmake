@@ -34,6 +34,8 @@ macro(PersonalWorks_declare_options)
 
     cmake_dependent_option(PersonalWorks_ENABLE_TARGET_CODE_HARDENING "Enable interface target code hardening" ON "NOT PersonalWorks_BASIC_BUILD_MODE" OFF)
     cmake_dependent_option(PersonalWorks_ENABLE_GLOBAL_CODE_HARDENING "Enable global code hardening" ON "PersonalWorks_ENABLE_TARGET_CODE_HARDENING" OFF)
+
+    set(PersonalWorks_ENABLE_IPO OFF)
   endif()
 
   if(PersonalWorks_BASIC_BUILD_MODE)
@@ -52,7 +54,7 @@ macro(PersonalWorks_declare_options)
     endif()
 
     include(CMake/CodeHardening.cmake)
-    configure_code_hardening(${ENABLE_UBSAN_MIN_RUNTIME})
+    #configure_code_hardening(${ENABLE_UBSAN_MIN_RUNTIME})
   endif()
 
   check_libfuzzer_support(LIBFUZZER_SUPPORTED)

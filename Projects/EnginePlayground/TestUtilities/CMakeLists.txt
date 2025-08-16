@@ -32,11 +32,10 @@ list(APPEND benchamrksSources
 )
 
 list(APPEND interfaceLibraries )
-list(APPEND publicLibraries )
+list(APPEND publicLibraries   GTest::gtest)
 list(APPEND privateLibraries
   PersonalWorks::Config
-  GTest::gtest
-  #GTest::gmock 
+  #GTest::gmock
   benchmark::benchmark
   PersonalWorks::PersonalWorks_options
   PersonalWorks::PersonalWorks_warnings
@@ -101,7 +100,6 @@ if(PersonalWorks_BUILD_TESTS AND GTest_FOUND AND testsSources)
     PUBLIC ${publicLibraries}
     PRIVATE
       ${privateLibraries}
-      fmt::fmt
       GTest::gtest_main
   )
   gtest_discover_tests(${targetNameTest})
@@ -142,7 +140,6 @@ if(PersonalWorks_BUILD_TESTS AND benchmark_FOUND AND benchamrksSources)
     PUBLIC ${publicLibraries}
     PRIVATE
       ${privateLibraries}
-      fmt::fmt
       benchmark::benchmark_main
   )
 endif()

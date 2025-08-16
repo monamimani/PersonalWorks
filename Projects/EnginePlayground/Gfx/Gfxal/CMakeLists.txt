@@ -44,7 +44,6 @@ list(APPEND privateLibraries
   PersonalWorks::Core
   PersonalWorks::TestUtilities
   VulkanHppModule
-  fmt::fmt
 )
 
 add_library(${targetName})
@@ -102,7 +101,6 @@ target_link_libraries(${targetName}
 #    PRIVATE
 #      ${privateLibraries}
 #      PersonalWorks::TestUtilities
-#      fmt::fmt
 #      GTest::gtest_main
 #  )
 #  gtest_discover_tests(${targetNameTest})
@@ -143,7 +141,6 @@ target_link_libraries(${targetName}
 #    PRIVATE
 #      ${privateLibraries}
 #      PersonalWorks::TestUtilities
-#      fmt::fmt
 #      benchmark::benchmark_main
 #  )
 #endif()

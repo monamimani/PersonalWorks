@@ -6,13 +6,13 @@ module;
 #include <source_location>
 #include <stacktrace>
 #include <string>
+#include <format>
 
 #include "Core/Exception.h"
 #include "Gfxal/Vkal/Vk.h"
-#include "fmt/core.h"
-#include "fmt/format.h"
 
-export module Vkal.Utilities;
+
+export module VkalUtilities;
 
 namespace VkHal
 {
@@ -203,26 +203,26 @@ struct Size
 } // namespace VkHal
 
 template<>
-struct fmt::formatter<vk::ArrayWrapper1D<char, VK_MAX_EXTENSION_NAME_SIZE>>: fmt::formatter<std::string_view>
+struct std::formatter<vk::ArrayWrapper1D<char, VK_MAX_EXTENSION_NAME_SIZE>>: std::formatter<std::string_view>
 {
   auto format(const vk::ArrayWrapper1D<char, VK_MAX_EXTENSION_NAME_SIZE>& arrayChar, format_context& ctx) const
   {
-    return fmt::format_to(ctx.out(), "{}", static_cast<std::string_view>(arrayChar));
+    return std::format_to(ctx.out(), "{}", static_cast<std::string_view>(arrayChar));
   }
 };
 
 template<>
-struct fmt::formatter<VkHal::Version>: fmt::formatter<std::string>
+struct std::formatter<VkHal::Version>: std::formatter<std::string>
 {
   auto format(const VkHal::Version& version, format_context& ctx) const
   {
-    return fmt::format_to(
+    return std::format_to(
         ctx.out(), "{}.{}.{}", VK_API_VERSION_MAJOR(version.m_value), VK_API_VERSION_MINOR(version.m_value), VK_API_VERSION_PATCH(version.m_value));
   }
 };
 
 template<>
-struct fmt::formatter<VkHal::Size>: fmt::formatter<std::string>
+struct std::formatter<VkHal::Size>: std::formatter<std::string>
 {
   auto format(const VkHal::Size byteSize, format_context& ctx) const -> decltype(ctx.out())
   {
@@ -233,15 +233,15 @@ struct fmt::formatter<VkHal::Size>: fmt::formatter<std::string>
 
     if (size >= gib)
     {
-      return fmt::format_to(ctx.out(), "{:.2f} GiB", float(size) / gib);
+      return std::format_to(ctx.out(), "{:.2f} GiB", float(size) / gib);
     }
     else if (size >= mib)
     {
-      return fmt::format_to(ctx.out(), "{:.2f} MiB", float(size) / mib);
+      return std::format_to(ctx.out(), "{:.2f} MiB", float(size) / mib);
     }
     else
     {
-      return fmt::format_to(ctx.out(), "{} B", size);
+      return std::format_to(ctx.out(), "{} B", size);
     }
   }
 };
@@ -255,16 +255,16 @@ concept HasVkToString = requires(T t) {
 
 template<typename T>
 requires(HasVkToString<T>)
-struct fmt::formatter<T>: fmt::formatter<std::string>
+struct std::formatter<T>: std::formatter<std::string>
 {
   auto format(const T value, format_context& ctx) const -> decltype(ctx.out())
   {
-    return fmt::format_to(ctx.out(), "{}", vk::to_string(value));
+    return std::format_to(ctx.out(), "{}", vk::to_string(value));
   }
 };
 
 // template<>
-// struct fmt::formatter<vk::Extent2D>: std::formatter<std::string>
+// struct std::formatter<vk::Extent2D>: std::formatter<std::string>
 //{
 //   auto format(const vk::Extent2D extent, format_context& ctx) const -> decltype(ctx.out())
 //   {
@@ -273,7 +273,7 @@ struct fmt::formatter<T>: fmt::formatter<std::string>
 // };
 //
 // template<>
-// struct fmt::formatter<vk::Extent3D>: std::formatter<std::string>
+// struct std::formatter<vk::Extent3D>: std::formatter<std::string>
 //{
 //   auto format(const vk::Extent3D extent, format_context& ctx) const -> decltype(ctx.out())
 //   {

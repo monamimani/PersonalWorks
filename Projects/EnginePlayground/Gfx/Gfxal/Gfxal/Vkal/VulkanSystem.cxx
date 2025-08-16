@@ -5,7 +5,8 @@ module;
 #include <ranges>
 #include <stdexcept>
 
-#include "fmt/format.h"
+#include <format>
+#include <print>
 
 #include "Config/Config.h"
 #include "Gfxal/Vkal/Vk.h"
@@ -13,7 +14,7 @@ module;
 
 module Vkal.VulkanSystem;
 
-import Vkal.Utilities;
+import VkalUtilities;
 
 //VULKAN_HPP_DEFAULT_DISPATCH_LOADER_DYNAMIC_STORAGE
 
@@ -38,19 +39,34 @@ VulkanSystem::VulkanSystem(VulkanSystemDesc desc)
   if (const auto vulkanVersion = vk::enumerateInstanceVersion(); vulkanVersion < m_targetVulkanVersion)
   {
     throw std::runtime_error(
-        fmt::format("System does not support required version. Required version: {}, System version: {}", m_targetVulkanVersion, vulkanVersion));
+        std::format("System does not support required version. Required version: {}, System version: {}", m_targetVulkanVersion, vulkanVersion));
   }
 
   auto requestedLayers = getLayers(desc.m_enableValidation);
   if (const auto result = areLayersSupported(requestedLayers); not result)
   {
-    throw std::runtime_error(fmt::format("Requested Vulkan layers not suported: {}", result.error()));
+    auto errors = result.error();
+    std::string errorStr;
+    for(const auto& error: errors)
+    {
+      errorStr.append(error);
+      errorStr.append(", ");
+    }
+
+    throw std::runtime_error(std::format("Requested Vulkan layers not suported: {}", errorStr));
   }
 
   auto requestedInstanceExtensions = getInstanceExtensions(desc.m_enableDebugUtils);
   if (const auto result = areInstanceExtensionsSupported(requestedInstanceExtensions); not result)
   {
-    throw std::runtime_error(fmt::format("Requested Vulkan instanceExtensions not suported: {}", result.error()));
+    auto errors = result.error();
+    std::string errorStr;
+    for(const auto& error: errors)
+    {
+      errorStr.append(error);
+      errorStr.append(", ");
+    }
+    throw std::runtime_error(std::format("Requested Vulkan instanceExtensions not suported: {}", errorStr));
   }
 
   createInstance(desc, requestedInstanceExtensions, requestedLayers);
@@ -141,7 +157,7 @@ void VulkanSystem::createDevice(std::span<std::string_view> requestedExtensions)
   auto selectedPhysicalDevices = m_physicalDevices | std::views::filter(filterLambda) | std::ranges::to<std::vector<PhysicalDevice>>();
   if (selectedPhysicalDevices.empty())
   {
-    throw std::runtime_error(fmt::format("Can't find a supported Vulkan physical device."));
+    throw std::runtime_error(std::format("Can't find a supported Vulkan physical device."));
   }
 
   m_physicalDevice = selectedPhysicalDevices[0];
@@ -209,52 +225,52 @@ void VulkanSystem::createDevice(std::span<std::string_view> requestedExtensions)
 
 void VulkanSystem::printInstanceInfo()
 {
-  fmt::println("=======================================");
-  fmt::println("===== Vulkan Instance Information =====");
-  fmt::println("=======================================");
+  std::println("=======================================");
+  std::println("===== Vulkan Instance Information =====");
+  std::println("=======================================");
 
   const Version instanceVersion = vk::enumerateInstanceVersion();
-  fmt::println("Vulkan supported instance version: {}", instanceVersion);
-  fmt::println("");
+  std::println("Vulkan supported instance version: {}", instanceVersion);
+  std::println("");
 
   const auto instanceExtensions = vk::enumerateInstanceExtensionProperties();
-  fmt::println("Instance Extensions:");
+  std::println("Instance Extensions:");
   std::ranges::for_each(instanceExtensions, [](const vk::ExtensionProperties& props) {
-    fmt::println("- {} v{}", props.extensionName, props.specVersion);
+    std::println("- {} v{}", props.extensionName, props.specVersion);
   });
-  fmt::println("");
+  std::println("");
 
   auto instanceLayers = vk::enumerateInstanceLayerProperties();
   std::ranges::sort(instanceLayers, std::ranges::less{}, &vk::LayerProperties::layerName);
-  fmt::println("Instance Layers({}): ", instanceLayers.size());
+  std::println("Instance Layers({}): ", instanceLayers.size());
   std::ranges::for_each(instanceLayers, [](const vk::LayerProperties& props) {
-    fmt::println("- {} v{} (Vulkan {}) - {}", props.layerName, props.implementationVersion, Version(props.specVersion), props.description);
+    std::println("- {} v{} (Vulkan {}) - {}", props.layerName, props.implementationVersion, Version(props.specVersion), props.description);
 
     auto layerExtensions = vk::enumerateInstanceExtensionProperties(std::string{props.layerName.data()});
     std::ranges::for_each(layerExtensions, [](const vk::ExtensionProperties& props) {
-      fmt::println("  - {} v{}", props.extensionName, props.specVersion);
+      std::println("  - {} v{}", props.extensionName, props.specVersion);
     });
   });
-  fmt::println("");
-  fmt::println("===========================================");
-  fmt::println("===== End Vulkan Instance Information =====");
-  fmt::println("===========================================");
+  std::println("");
+  std::println("===========================================");
+  std::println("===== End Vulkan Instance Information =====");
+  std::println("===========================================");
 }
 
 void VulkanSystem::printDevicesInfo() const
 {
-  fmt::println("=====================================");
-  fmt::println("===== Vulkan Device Information =====");
-  fmt::println("=====================================");
+  std::println("=====================================");
+  std::println("===== Vulkan Device Information =====");
+  std::println("=====================================");
 
   for (const auto& physicalDevice : m_physicalDevices)
   {
     physicalDevice.printDeviceInfo();
-    fmt::println("");
+    std::println("");
   }
 
-  fmt::println("=========================================");
-  fmt::println("===== End Vulkan Device Information =====");
-  fmt::println("=========================================");
+  std::println("=========================================");
+  std::println("===== End Vulkan Device Information =====");
+  std::println("=========================================");
 }
 } // namespace VkHal

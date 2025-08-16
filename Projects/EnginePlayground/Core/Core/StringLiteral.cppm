@@ -92,10 +92,7 @@ template<typename CharT, std::size_t LhsSize, std::size_t RhsSize>
 
 template<typename CharT, std::size_t N>
 BasicStringLiteral(const std::array<CharT, N>) -> BasicStringLiteral<CharT, N>;
-} // namespace Core
 
-export namespace Core
-{
 template<std::size_t N>
 using StringLiteral = BasicStringLiteral<char, N>;
-}
+} // namespace Core

@@ -2,9 +2,9 @@
 #include "Core/Exception.h"
 
 #include <string>
+#include <format>
 
 #include "TestUtilities/GoogleTest.h"
-#include "fmt/format.h"
 
 // NOLINTBEGIN(*-magic-numbers,readability-identifier-length)
 
@@ -33,7 +33,7 @@ TEST(ExceptionType, DataException)
   const auto* const suffix = " Bar";
   error.what() += suffix;
 
-  const auto errorMsg = fmt::format("{}{}", msg, suffix);
+  const auto errorMsg = std::format("{}{}", msg, suffix);
   ASSERT_STRCASEEQ(error.what().c_str(), errorMsg.c_str());
 }
 
@@ -49,7 +49,7 @@ TEST(ExceptionType, VoidException)
   const auto* const suffix = " Bar";
   error.what() += suffix;
 
-  const auto errorMsg = fmt::format("{}{}", msg, suffix);
+  const auto errorMsg = std::format("{}{}", msg, suffix);
   ASSERT_STRCASEEQ(error.what().c_str(), errorMsg.c_str());
 }
 } // namespace CoreTests

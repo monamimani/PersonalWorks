@@ -107,7 +107,6 @@ list(APPEND privateLibraries
   PersonalWorks::PersonalWorks_sanitizers
   PersonalWorks::Config
   # PersonalWorks::TestUtilities
-  fmt::fmt
 )
 
 add_library(${targetName})
@@ -166,7 +165,6 @@ if(PersonalWorks_BUILD_TESTS AND GTest_FOUND AND testsSources)
     PRIVATE
     ${privateLibraries}
     PersonalWorks::TestUtilities
-    fmt::fmt
   )
   gtest_discover_tests(${targetNameTest})
 
@@ -206,6 +204,5 @@ if(PersonalWorks_BUILD_TESTS AND benchmark_FOUND AND benchamrksSources AND FALSE
     PRIVATE
     ${privateLibraries}
     PersonalWorks::TestUtilities
-    fmt::fmt
   )
 endif()

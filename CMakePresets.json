@@ -1,5 +1,5 @@
 {
-  "$schema": "https://cmake.org/cmake/help/v3.30/_downloads/3e2d73bff478d88a7de0de736ba5e361/schema.json",
+  "$schema": "https://cmake.org/cmake/help/v3.28/_downloads/3e2d73bff478d88a7de0de736ba5e361/schema.json",
   "version": 9,
   "cmakeMinimumRequired": {
     "major": 3,
@@ -23,54 +23,6 @@
       "name": "dummy",
       "hidden": true
     }
-    //  {
-    //    "name": "test-base",
-    //    "hidden": true,
-    //    "output": {
-    //      "outputOnFailure": true,
-    //      "outputLogFile": "Ctest-${presetName}.log"
-    //    },
-    //    "execution": {
-    //      "noTestsAction": "error",
-    //      "stopOnFailure": true
-    //    }
-    //  },
-    //  {
-    //    "name": "windows-vs2022-x64-checkers-debug",
-    //    "inherits": "test-base",
-    //    "configurePreset": "windows-vs2022-checkers",
-    //    "configuration": "Debug"
-    //  },
-    //  {
-    //    "name": "windows-vs2022-x64-checkers-release",
-    //    "inherits": "test-base",
-    //    "configurePreset": "windows-vs2022-checkers",
-    //    "configuration": "RelWithDebInfo"
-    //  },
-    //  {
-    //    "name": "windows-vs2022-x64-checkers-shipping",
-    //    "inherits": "test-base",
-    //    "configurePreset": "windows-vs2022-checkers",
-    //    "configuration": "Release"
-    //  },
-    //  {
-    //    "name": "linux-ninja-multi-config-x64-debug",
-    //    "inherits": "test-base",
-    //    "configurePreset": "linux-ninja-multi-config",
-    //    "configuration": "Debug"
-    //  },
-    //  {
-    //    "name": "linux-ninja-multi-config-x64-release",
-    //    "inherits": "test-base",
-    //    "configurePreset": "linux-ninja-multi-config",
-    //    "configuration": "RelWithDebInfo"
-    //  },
-    //  {
-    //    "name": "linux-ninja-multi-config-x64-shipping",
-    //    "inherits": "test-base",
-    //    "configurePreset": "linux-ninja-multi-config",
-    //    "configuration": "Release"
-    //  }
   ],
   "packagePresets": [],
   "workflowPresets": []

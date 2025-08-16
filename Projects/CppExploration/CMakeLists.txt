@@ -64,7 +64,6 @@ target_link_libraries(${targetNameTest}
   PRIVATE
     ${privateLibraries}
     Catch2::Catch2WithMain
-    fmt::fmt
 )
 catch_discover_tests(${targetNameTest})
 endif()
@@ -104,7 +103,6 @@ endif()
 #    PUBLIC ${publicLibraries}
 #    PRIVATE
 #      ${privateLibraries}
-#      fmt::fmt
 #      Catch2::Catch2WithMain
 #  )
 #endif()

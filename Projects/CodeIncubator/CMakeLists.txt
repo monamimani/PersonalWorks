@@ -80,7 +80,6 @@ target_link_libraries(${targetNameTest}
   PUBLIC ${publicLibraries}
   PRIVATE
     ${privateLibraries}
-    fmt::fmt
     Catch2::Catch2
 )
 catch_discover_tests(${targetNameTest})
@@ -121,6 +120,5 @@ endif()
 #  PUBLIC ${publicLibraries}
 #  PRIVATE
 #    ${privateLibraries}
-#    fmt::fmt
 #    benchmark::benchmark_main
 #)

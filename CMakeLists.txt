@@ -1,14 +1,18 @@
 cmake_minimum_required(VERSION 3.28 FATAL_ERROR)
 
+include(CMakePrintHelpers)
+
 set(VCPKG_INSTALLED_DIR ${CMAKE_BINARY_DIR}/../../vcpkg_installed)
 
 if(NOT DEFINED CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD 23)
+  set(CMAKE_CXX_STANDARD_REQUIRED ON)
+  set(CMAKE_CXX_EXTENSIONS OFF)
 endif()
 
 include(CheckCXXCompilerFlag)
 
-include(CMakePrintHelpers)
+
 include(CMake/PreventInSourceBuilds.cmake)
 include(CMake/ValidateVcpkgToolchain.cmake)
 include(CMake/GetCPM.cmake)
@@ -37,8 +41,6 @@ PersonalWorks_target_options()
 
 include(CMake/VulkanDependencies.cmake)
 
-find_package(fmt CONFIG REQUIRED)
-
 # If this project is consumed by another, don't setup tests.
 if(PROJECT_IS_TOP_LEVEL AND PersonalWorks_BUILD_TESTS)
   enable_testing()
@@ -50,10 +52,11 @@ if(PROJECT_IS_TOP_LEVEL AND PersonalWorks_BUILD_TESTS)
   endif()
 endif()
 
-add_subdirectory(Projects/Config)
-add_subdirectory(Projects/EnginePlayground)
 add_subdirectory(Projects/CodeIncubator)
 add_subdirectory(Projects/CppExploration)
+#add_subdirectory(Projects/CodeExercises)
+add_subdirectory(Projects/Config)
+add_subdirectory(Projects/EnginePlayground)
 
 
 # set the startup project for the "play" button in MSVC

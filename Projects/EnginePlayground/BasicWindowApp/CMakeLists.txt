@@ -1,11 +1,10 @@
 
 get_filename_component(targetName ${CMAKE_CURRENT_LIST_DIR} NAME)
 
-if(NOT MSVC)
+if(NOT CMAKE_SYSTEM_NAME STREQUAL "Windows")
   message(WARNING "BasicWindowApp need to be ported for Linux.")
   return()
-endif(NOT MSVC)
-return()
+endif()
 
 list(APPEND interfaceSources
 )
@@ -84,7 +83,6 @@ if(PersonalWorks_BUILD_TESTS AND GTest_FOUND AND testsSources)
     PRIVATE
     ${privateLibraries}
     PersonalWorks::TestUtilities
-    fmt::fmt
   )
   gtest_discover_tests(${targetNameTest})
 
@@ -124,7 +122,6 @@ if(PersonalWorks_BUILD_TESTS AND benchmark_FOUND AND benchamrksSources)
     PRIVATE
     ${privateLibraries}
     PersonalWorks::TestUtilities
-    fmt::fmt
     benchmark::benchmark_main
   )
 endif()

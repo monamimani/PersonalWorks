@@ -1,5 +1,5 @@
 #pragma once
 
-import Vkal.Utilities;
+import VkalUtilities;
 
 #define VkCheck(vkResult) VkHal::vkResultCheck(vkResult)

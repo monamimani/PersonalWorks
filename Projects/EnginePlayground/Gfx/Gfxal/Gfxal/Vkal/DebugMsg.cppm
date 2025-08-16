@@ -1,11 +1,10 @@
 module;
 
-#include <format>
 #include <ranges>
 #include <string>
 
 #include "Gfxal/Vkal/Vk.h"
-#include "fmt/format.h"
+#include <print>
 
 export module Vkal.DebugMsg;
 
@@ -22,27 +21,27 @@ VKAPI_ATTR vk::Bool32 VKAPI_CALL debugMsgCallback(vk::DebugUtilsMessageSeverityF
   auto msgServerity = vk::to_string(messageSeverity);
   auto msgType = vk::to_string(messageType);
 
-  fmt::println("VULKAN_DEBUG_MSG[{}: {}] MessageId: {:#x}, Name: {}",
+  std::println("VULKAN_DEBUG_MSG[{}: {}] MessageId: {:#x}, Name: {}",
                msgServerity,
                msgType,
                static_cast<uint32_t>(callbackData->messageIdNumber),
                callbackData->pMessageIdName);
-  fmt::println("{}", callbackData->pMessage);
+  std::println("{}", callbackData->pMessage);
 
   constexpr auto labelPrinter = [](const vk::DebugUtilsLabelEXT& debugUtilsLabel) {
-    fmt::println("        labelName = <{}>", debugUtilsLabel.pLabelName);
+    std::println("        labelName = <{}>", debugUtilsLabel.pLabelName);
   };
 
   if (callbackData->queueLabelCount > 0)
   {
-    fmt::println("    Queue Labels:");
+    std::println("    Queue Labels:");
     auto queueLabelSpan = std::span{callbackData->pQueueLabels, callbackData->queueLabelCount};
     ranges::for_each(queueLabelSpan, labelPrinter);
   }
 
   if (callbackData->cmdBufLabelCount > 0)
   {
-    fmt::println("    CommandBuffer Labels:");
+    std::println("    CommandBuffer Labels:");
     auto cmdBufLabelSpan = std::span{callbackData->pCmdBufLabels, callbackData->cmdBufLabelCount};
     ranges::for_each(cmdBufLabelSpan, labelPrinter);
   }
@@ -50,12 +49,12 @@ VKAPI_ATTR vk::Bool32 VKAPI_CALL debugMsgCallback(vk::DebugUtilsMessageSeverityF
   auto objectSpan = std::span{callbackData->pObjects, callbackData->objectCount};
   ranges::for_each(ranges::views::enumerate(objectSpan), [](auto&& tuple) {
     const auto& [i, objectNameInfo] = tuple;
-    fmt::println("    Object {}", i);
-    fmt::println("        objectType   = {}", vk::to_string(static_cast<vk::ObjectType>(objectNameInfo.objectType)));
-    fmt::println("        objectHandle = {:#x}", objectNameInfo.objectHandle);
+    std::println("    Object {}", i);
+    std::println("        objectType   = {}", vk::to_string(static_cast<vk::ObjectType>(objectNameInfo.objectType)));
+    std::println("        objectHandle = {:#x}", objectNameInfo.objectHandle);
 
     auto objName = objectNameInfo.pObjectName ? objectNameInfo.pObjectName : "Unknown";
-    fmt::println("        objectName   = {}", objName);
+    std::println("        objectName   = {}", objName);
   });
 
   return VK_FALSE;

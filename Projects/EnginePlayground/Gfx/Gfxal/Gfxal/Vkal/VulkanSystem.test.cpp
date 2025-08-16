@@ -2,7 +2,7 @@
 #include "TestUtilities/GoogleTest.h"
 
 import Vkal.VulkanSystem;
-import Vkal.Utilities;
+import VkalUtilities;
 
 namespace VkHalTest
 {

@@ -13,16 +13,17 @@ module;
 #include <span>
 #include <tuple>
 #include <unordered_map>
+#include <format>
 
 #include "Core/EnumClassFlags.h"
 #include "Core/Exception.h"
 #include "Gfxal/Vkal/Vk.h"
-#include "fmt/format.h"
+#include <print>
 
 export module Vkal.PhysicalDevice;
 
 import Core;
-import Vkal.Utilities;
+import VkalUtilities;
 
 namespace VkHal
 {}
@@ -62,7 +63,7 @@ struct QueueProperties
 
   void printQueuePropertiesInfo() const
   {
-    fmt::println("{:>2}:  Count: {}, Operations {}, Timestamp {} bits, {}x{}x{} Transfer Granularity",
+    std::println("{:>2}:  Count: {}, Operations {}, Timestamp {} bits, {}x{}x{} Transfer Granularity",
                  m_index,
                  m_queueCount,
                  m_queueFlags,
@@ -218,7 +219,7 @@ struct QueueFamilies
 
       if (nbQueuesToAcquire > 0)
       {
-        throw Core::Exception{result, fmt::format("Failed to Acquire all the queues.")};
+        throw Core::Exception{result, std::format("Failed to Acquire all the queues.")};
       }
     }
 
@@ -232,7 +233,7 @@ struct QueueFamilies
 
   void printQueFamiliesInfo() const
   {
-    fmt::println("Queue Families ({}):", m_queuePropertiesList.size());
+    std::println("Queue Families ({}):", m_queuePropertiesList.size());
     for (auto element : m_queuePropertiesList)
     {
       element.printQueuePropertiesInfo();
@@ -385,37 +386,37 @@ void PhysicalDevice::printDeviceInfo() const
   const auto& props = getProperties();
   const auto& limits = getLimits();
 
-  fmt::println("Device Name: {}", props.deviceName);
-  fmt::println("Device Type: {}", props.deviceType);
-  fmt::println("Supported Vulkan version: {}", Version(props.apiVersion));
-  fmt::println("");
+  std::println("Device Name: {}", props.deviceName);
+  std::println("Device Type: {}", props.deviceType);
+  std::println("Supported Vulkan version: {}", Version(props.apiVersion));
+  std::println("");
 
-  fmt::println("Max Push Constant Size: {} B", limits.maxPushConstantsSize);
-  fmt::println("Max Sampler Anisotropy: {:.1f}", limits.maxSamplerAnisotropy);
-  fmt::println("Line Width: [{:.1f}, {:.1f}]", limits.lineWidthRange[0], limits.lineWidthRange[1]);
-  fmt::println("");
+  std::println("Max Push Constant Size: {} B", limits.maxPushConstantsSize);
+  std::println("Max Sampler Anisotropy: {:.1f}", limits.maxSamplerAnisotropy);
+  std::println("Line Width: [{:.1f}, {:.1f}]", limits.lineWidthRange[0], limits.lineWidthRange[1]);
+  std::println("");
 
-  fmt::println("Device Extensions ({}):", m_extensions.size());
+  std::println("Device Extensions ({}):", m_extensions.size());
   std::ranges::for_each(m_extensions, [](const vk::ExtensionProperties& props) {
-    fmt::println("- {} v{}", props.extensionName, props.specVersion);
+    std::println("- {} v{}", props.extensionName, props.specVersion);
   });
-  fmt::println("");
+  std::println("");
 
   const auto& memoryHeaps = getMemoryHeaps();
-  fmt::println("Memory Heaps ({}):", memoryHeaps.size());
+  std::println("Memory Heaps ({}):", memoryHeaps.size());
   std::ranges::for_each(memoryHeaps | std::ranges::views::enumerate, [](const std::tuple<ptrdiff_t, vk::MemoryHeap>& tuple) {
     const auto& [i, memoryHeap] = tuple;
-    fmt::println("{:>2}: {} {}", i, Size(memoryHeap.size), memoryHeap.flags);
+    std::println("{:>2}: {} {}", i, Size(memoryHeap.size), memoryHeap.flags);
   });
-  fmt::println("");
+  std::println("");
 
   const auto& memoryTypes = getMemoryTypes();
-  fmt::println("Memory Types ({}):", memoryTypes.size());
+  std::println("Memory Types ({}):", memoryTypes.size());
   std::ranges::for_each(memoryTypes | std::ranges::views::enumerate, [](const std::tuple<ptrdiff_t, vk::MemoryType>& tuple) {
     const auto& [i, memoryType] = tuple;
-    fmt::println("{:>2}: Heap index {} {}", i, memoryType.heapIndex, memoryType.propertyFlags);
+    std::println("{:>2}: Heap index {} {}", i, memoryType.heapIndex, memoryType.propertyFlags);
   });
-  fmt::println("");
+  std::println("");
 
   m_queueFamilies.printQueFamiliesInfo();
 }

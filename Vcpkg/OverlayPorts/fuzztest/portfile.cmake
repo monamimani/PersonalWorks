@@ -5,30 +5,39 @@
 vcpkg_from_github(
   OUT_SOURCE_PATH SOURCE_PATH
   REPO google/fuzztest
-  REF "6f4caf7abdd19a7f3b611789fa92a6be05b6c8f9"
-  SHA512 1d8185278d3526c763ba7f102b4bdd773db03bc42a196f8fff0b5026f03057e878b835477ef70e937607b4016c513cc6d423533de640e49194abab1597058ac6
+  REF "2025-02-14"
+  SHA512 d4e8b36d5a681f0a3bb252db58c1608dcb2441f5073cba88aa919ef168ecd4fd51d40f53ddcab8a56e08191f8a73766f619d539699dab495c0e1918402ee78f4
   HEAD_REF main
+  PATCHES "conditionnally-add-gtest.patch"
 )
+
+# vcpkg_cmake_get_vars(cmake_vars_file)
+# include("${cmake_vars_file}")
+
+# message(STATUS "VCPKG_DETECTED_CMAKE_C_COMPILER=${VCPKG_DETECTED_CMAKE_C_COMPILER}")
+# message(STATUS "VCPKG_DETECTED_CMAKE_CXX_COMPILER=${VCPKG_DETECTED_CMAKE_CXX_COMPILER}")
+
+string(APPEND VCPKG_C_FLAGS "") # both must be set
+string(APPEND VCPKG_CXX_FLAGS " -stdlib=libc++")
 
 vcpkg_cmake_configure(
   SOURCE_PATH "${SOURCE_PATH}"
   OPTIONS
+  "-DCMAKE_C_COMPILER=clang"
+  "-DCMAKE_CXX_COMPILER=clang++"
   "-DFETCHCONTENT_FULLY_DISCONNECTED=OFF"
 
   # "-DFETCHCONTENT_FULLY_DISCONNECTED=ON"
-  # "-DFETCHCONTENT_SOURCE_DIR_ABSEIL-CPPLIB=${SOURCE_PATH_ABSEIL}"
-  # MAYBE_UNUSED_VARIABLES
-  # "FETCHCONTENT_SOURCE_DIR_ABSEIL-CPPLIB"
+  #"-DFETCHCONTENT_SOURCE_DIR_ABSEIL-CPPLIB=${SOURCE_PATH_ABSEIL}"
 )
 
 vcpkg_cmake_install()
+vcpkg_copy_pdbs()
+vcpkg_cmake_config_fixup(CONFIG_PATH "lib/cmake")
 
-vcpkg_cmake_config_fixup(CONFIG_PATH "lib/cmake/${PORT}")
-
-# vcpkg_fixup_pkgconfig()
+vcpkg_fixup_pkgconfig()
 file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug/include")
 file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug/share")
 
-# vcpkg_copy_pdbs()
 vcpkg_install_copyright(FILE_LIST "${SOURCE_PATH}/LICENSE")
 configure_file("${CMAKE_CURRENT_LIST_DIR}/usage" "${CURRENT_PACKAGES_DIR}/share/${PORT}/usage" COPYONLY)

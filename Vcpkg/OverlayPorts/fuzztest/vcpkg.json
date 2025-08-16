@@ -1,6 +1,6 @@
 {
   "name": "fuzztest",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "homepage": "https://github.com/google/fuzztest",
   "description": "FuzzTest is a C++ testing framework for writing and executing fuzz tests, which are property-based tests executed using coverage-guided fuzzing under the hood.",
   "license": "BSD-3-Clause",
@@ -12,6 +12,7 @@
     {
       "name": "vcpkg-cmake-config",
       "host": true
-    }
+    },
+    "gtest"
   ]
 }

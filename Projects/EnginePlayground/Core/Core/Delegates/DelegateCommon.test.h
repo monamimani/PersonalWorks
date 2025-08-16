@@ -2,11 +2,11 @@
 
 #include <algorithm>
 #include <array>
-// #include <format>
+#include <string>
+#include <format>
 
 #include "TestUtilities/GoogleTest.h"
 #include "TestUtilities/TestStruct.test.h"
-#include "fmt/format.h"
 using namespace TestUtilities;
 
 import StaticFunction;
@@ -245,7 +245,7 @@ public:
     auto isLValueStr = isLValue ? "LVal" : "RVal";
     auto isConstStr = isFctConst ? "Const" : "";
     auto bindkindStr = (result != bindkindTuples.end()) ? std::get<1>(*result) : "Unknown";
-    return fmt::format("{}{}{}", isLValueStr, bindkindStr, isConstStr);
+    return std::format("{}{}{}", isLValueStr, bindkindStr, isConstStr);
   }
 
   static auto makeDelegateBindKindParamSet()
@@ -363,8 +363,11 @@ public:
 
     auto delegateTypeAName = getTestNamePart(isLValueA, isFctConstA, delegateBinderA);
     auto delegateTypeBName = getTestNamePart(isLValueB, isFctConstB, delegateBinderB);
-
-    return fmt::format("{}_{}", delegateTypeAName, delegateTypeBName);
+    auto string = std::string{};
+    string.append(delegateTypeAName);
+    string.append("_");
+    string.append(delegateTypeBName);
+    return string; //std::format("{}_{}", delegateTypeAName, delegateTypeBName);
   };
 
 protected:

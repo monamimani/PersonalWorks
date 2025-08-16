@@ -3,9 +3,7 @@
 #include <ostream>
 #include <source_location>
 #include <stacktrace>
-
-#include "fmt/format.h"
-#include "fmt/ranges.h"
+#include <format>
 
 namespace Core
 {
@@ -92,39 +90,39 @@ Exception(std::string) -> Exception<void>;
 } // namespace Core
 
 template<>
-struct fmt::formatter<std::source_location>: fmt::formatter<std::string_view>
+struct std::formatter<std::source_location>: std::formatter<std::string_view>
 {
-  auto format(const std::source_location& location, format_context& ctx) const
+  auto format(const std::source_location& location, std::format_context& ctx) const
   {
-    return fmt::format_to(ctx.out(), "{}({},{}), function `{}`\n", location.file_name(), location.line(), location.column(), location.function_name());
+    return std::format_to(ctx.out(), "{}({},{}), function `{}`\n", location.file_name(), location.line(), location.column(), location.function_name());
   }
 };
 
-template<>
-struct fmt::formatter<std::stacktrace_entry>: fmt::formatter<std::string_view>
-{
-  auto format(const std::stacktrace_entry& entry, format_context& ctx) const
-  {
-    return fmt::format_to(ctx.out(), "{}({}): {}\n", entry.source_file(), entry.source_line(), entry.description());
-  }
-};
+// template<>
+// struct std::formatter<std::stacktrace_entry>: std::formatter<std::string_view>
+// {
+//   auto format(const std::stacktrace_entry& entry, std::format_context& ctx) const
+//   {
+//     return std::format_to(ctx.out(), "{}(!): \n", entry.source_file(), entry.source_line(), entry.description());
+//   }
+// };
 
 inline std::ostream& operator<<(std::ostream& os, const std::source_location& location)
 {
 
-  os << fmt::format("{}\n", location);
-  // os << fmt::format("{}({},{}), function `{}`\n", location.file_name(), location.line(), location.column(), location.function_name());
+  os << std::format("{}\n", location);
+  // os << std::format("{}({},{}), function `{}`\n", location.file_name(), location.line(), location.column(), location.function_name());
   return os;
 }
 
 inline std::ostream& operator<<(std::ostream& os, const std::stacktrace& backtrace)
 {
-  os << fmt::format("{}\n", backtrace);
+  os << std::format("{}\n", backtrace);
 
-  for (auto iter = backtrace.begin(); iter != backtrace.end(); ++iter)
+  for (const auto& entry : backtrace)
   {
-    os << fmt::format("{}\n", *iter);
-    // os << fmt::format("{}({}): {}\n", iter->source_file(), iter->source_line(), iter->description());
+    os << std::format("{}\n", entry);
+    // os << std::format("{}({}): {}\n", iter->source_file(), iter->source_line(), iter->description());
   }
   return os;
 }

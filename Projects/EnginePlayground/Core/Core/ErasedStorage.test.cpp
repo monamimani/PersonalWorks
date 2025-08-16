@@ -2,12 +2,12 @@
 #include <array>
 #include <source_location>
 #include <span>
+#include <format>
 
 #include "TestUtilities/BasicTestsGenerator.h"
 #include "TestUtilities/GoogleTest.h"
 #include "TestUtilities/TestStruct.test.h"
 #include "TestUtilities/TestsFriend.h"
-#include "fmt/format.h"
 using namespace TestUtilities;
 
 import Core;
@@ -84,9 +84,9 @@ public:
       }
     }
 
-    // SCOPED_TRACE(fmt::format("Failed Operation: {}", GetBasicTestsObjOpsStr(basicTestsObjOp)));
+    // SCOPED_TRACE(std::format("Failed Operation: {}", GetBasicTestsObjOpsStr(basicTestsObjOp)));
     auto sl = std::source_location::current();
-    return testing::AssertionFailure() << fmt::format(
+    return testing::AssertionFailure() << std::format(
                "Failed Operation: {}, {}({}:{}) {}", GetBasicTestsObjOpsStr(basicTestsObjOp), sl.file_name(), sl.line(), sl.column(), sl.function_name());
   }
 

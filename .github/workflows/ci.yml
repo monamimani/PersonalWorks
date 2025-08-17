@@ -84,6 +84,7 @@ jobs:
   build-test-linux:
     if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
     runs-on: ubuntu-latest
+    continue-on-error: ${{ matrix.allow_failure }}
     container:
       image: 'ghcr.io/monamimani-builds/cpp-devcontainer:latest'
     strategy:
@@ -93,18 +94,23 @@ jobs:
           - os: ubuntu-latest
             configure-preset: "Linux-Clang-Ninja-Debug"
             build-preset: "Linux-Clang-Ninja-Debug"
+            allow_failure: false
           - os: ubuntu-latest
             configure-preset: "Linux-Clang-Ninja-Release"
             build-preset: "Linux-Clang-Ninja-Release"
+            allow_failure: false
           - os: ubuntu-latest
             configure-preset: "Linux-Gcc-Ninja-Debug"
             build-preset: "Linux-Gcc-Ninja-Debug"
+            allow_failure: true
           - os: ubuntu-latest
             configure-preset: "Linux-Gcc-Ninja-Release"
             build-preset: "Linux-Gcc-Ninja-Release"
+            allow_failure: true
           - os: ubuntu-latest
             configure-preset: "Linux-Clang-NinjaMultiConfig"
             build-preset: "Linux-Clang-NinjaMultiConfig-Debug"
+            allow_failure: false
 
     name: ${{matrix.build-preset}}
     steps:

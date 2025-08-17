@@ -5,8 +5,8 @@ include(CMakePrintHelpers)
 include(CheckCXXCompilerFlag)
 
 
-include(CMake/PreventInSourceBuilds.cmake)
-include(CMake/GetCPM.cmake)
+include(CMake/BuildConfig/PreventInSourceBuilds.cmake)
+include(CMake/Dependencies/GetCPM.cmake)
 
 cmake_print_variables(CMAKE_VERSION)
 
@@ -30,12 +30,12 @@ PersonalWorks_declare_options()
 PersonalWorks_global_options()
 PersonalWorks_target_options()
 
-include(CMake/VulkanDependencies.cmake)
+include(CMake/Dependencies/VulkanDependencies.cmake)
 
 # If this project is consumed by another, don't setup tests.
 if(PROJECT_IS_TOP_LEVEL AND PersonalWorks_BUILD_TESTS)
   enable_testing()
-  include(CMake/TestDependencies.cmake)
+  include(CMake/Dependencies/TestDependencies.cmake)
 
   if(NOT PROCESSOR_COUNT EQUAL 0)
     set(CTEST_BUILD_FLAGS -j${PROCESSOR_COUNT})

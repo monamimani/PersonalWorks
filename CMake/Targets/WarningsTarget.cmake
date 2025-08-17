@@ -1,0 +1,5 @@
+add_library(PersonalWorks_warnings INTERFACE)
+add_library(PersonalWorks::PersonalWorks_warnings ALIAS PersonalWorks_warnings)
+
+include(CMake/BuildConfig/CompilerWarnings.cmake)
+add_target_interface_warnings(PersonalWorks_warnings OFF)

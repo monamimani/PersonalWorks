@@ -13,6 +13,7 @@
         "deprecated": true
       },
       "cacheVariables": {
+        "VCPKG_INSTALLED_DIR": "${sourceDir}/_Out/vcpkg_installed",
         "CMAKE_VERBOSE_MAKEFILE": false
       }
     }

@@ -22,6 +22,7 @@
         "llvm-vs-code-extensions.vscode-clangd",
         "ms-vscode.cpptools-extension-pack",
         "josetr.cmake-language-support-vscode",
+        "google.geminicodeassist",
         "google.gemini-cli-vscode-ide-companion"
       ]
     }

@@ -5,9 +5,9 @@ if(NOT DEFINED PROJECT_NAME)
 endif()
 
 include(CMakeDependentOption)
-include(CMake/ProjectSettings.cmake)
-include(CMake/Sanitizers.cmake)
-include(CMake/Fuzzer.cmake)
+include(CMake/BuildConfig/ProjectSettings.cmake)
+include(CMake/BuildConfig/Sanitizers.cmake)
+include(CMake/Utilities/Fuzzer.cmake)
 
 macro(PersonalWorks_declare_options)
   # Cmake options that are likely to be different for each projects.
@@ -52,7 +52,7 @@ macro(PersonalWorks_declare_options)
       set(ENABLE_UBSAN_MIN_RUNTIME TRUE)
     endif()
 
-    include(CMake/CodeHardening.cmake)
+    include(CMake/BuildConfig/CodeHardening.cmake)
     #configure_code_hardening(${ENABLE_UBSAN_MIN_RUNTIME})
   endif()
 
@@ -71,7 +71,7 @@ endmacro()
 
 macro(PersonalWorks_global_options)
   if(PersonalWorks_ENABLE_IPO)
-    include(CMake/InterproceduralOptimization.cmake)
+    include(CMake/BuildConfig/InterproceduralOptimization.cmake)
   endif()
 
   if(PersonalWorks_ENABLE_GLOBAL_CODE_HARDENING)
@@ -79,11 +79,11 @@ macro(PersonalWorks_global_options)
   endif()
 
   if(PersonalWorks_ENABLE_CACHE)
-    include(CMake/Cache.cmake)
+    include(CMake/BuildConfig/Cache.cmake)
   endif()
 
   if(PersonalWorks_ENABLE_DOXYGEN)
-    include(CMake/Doxygen.cmake)
+    include(CMake/Utilities/Doxygen.cmake)
     PersonalWorks_enable_doxygen("")
   endif()
 
@@ -99,7 +99,7 @@ macro(PersonalWorks_target_options)
   add_library(PersonalWorks_sanitizers INTERFACE)
   add_library(PersonalWorks::PersonalWorks_sanitizers ALIAS PersonalWorks_sanitizers)
 
-  include(CMake/CompilerWarnings.cmake)
+  include(CMake/BuildConfig/CompilerWarnings.cmake)
   add_target_interface_warnings(PersonalWorks_warnings OFF)
 
   target_compile_features(PersonalWorks_options INTERFACE cxx_std_${CMAKE_CXX_STANDARD})
@@ -114,7 +114,7 @@ macro(PersonalWorks_target_options)
     ${PersonalWorks_ENABLE_SANITIZER_MEMORY}
   )
 
-  include(CMake/StaticAnalyzers.cmake)
+  include(CMake/BuildConfig/StaticAnalyzers.cmake)
 
   if(PersonalWorks_ENABLE_CPPCHECK)
     PersonalWorks_enable_cppcheck(OFF, "")

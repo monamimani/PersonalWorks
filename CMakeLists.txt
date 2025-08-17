@@ -2,19 +2,10 @@ cmake_minimum_required(VERSION 3.28 FATAL_ERROR)
 
 include(CMakePrintHelpers)
 
-set(VCPKG_INSTALLED_DIR ${CMAKE_BINARY_DIR}/../../vcpkg_installed)
-
-if(NOT DEFINED CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 23)
-  set(CMAKE_CXX_STANDARD_REQUIRED ON)
-  set(CMAKE_CXX_EXTENSIONS OFF)
-endif()
-
 include(CheckCXXCompilerFlag)
 
 
 include(CMake/PreventInSourceBuilds.cmake)
-include(CMake/ValidateVcpkgToolchain.cmake)
 include(CMake/GetCPM.cmake)
 
 cmake_print_variables(CMAKE_VERSION)

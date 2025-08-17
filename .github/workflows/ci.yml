@@ -84,6 +84,7 @@ jobs:
   build-test-linux:
     if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
     runs-on: ubuntu-latest
+    continue-on-error: ${{ matrix.allow_failure }}
     container:
       image: 'ghcr.io/monamimani-builds/cpp-devcontainer:latest'
     strategy:
@@ -149,7 +150,6 @@ jobs:
     #     generator: ${{ matrix.generator }}
 
     - name: "[Linux] CMake Configure & Build"
-      continue-on-error: ${{ matrix.allow_failure }}
       if: runner.os == 'Linux'
       run: |
 

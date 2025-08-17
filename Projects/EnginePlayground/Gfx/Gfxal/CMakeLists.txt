@@ -1,7 +1,7 @@
 
 get_filename_component(targetName ${CMAKE_CURRENT_LIST_DIR} NAME)
 
-include(${CMAKE_SOURCE_DIR}/CMake/VulkanDependencies.cmake)
+include(${CMAKE_SOURCE_DIR}/CMake/Dependencies/VulkanDependencies.cmake)
 
 list(APPEND interfaceSources
 )

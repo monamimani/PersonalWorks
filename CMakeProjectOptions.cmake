@@ -5,13 +5,12 @@ if(NOT DEFINED PROJECT_NAME)
 endif()
 
 include(CMakeDependentOption)
-include(CMake/StandardProjectSettings.cmake)
+include(CMake/ProjectSettings.cmake)
 include(CMake/Sanitizers.cmake)
 include(CMake/Fuzzer.cmake)
 
 macro(PersonalWorks_declare_options)
   # Cmake options that are likely to be different for each projects.
-  # Common options that are unlikely to be changed are defined in CMake/StandardProjectSettings.cmake.
   if(PROJECT_IS_TOP_LEVEL)
     option(BUILD_SHARED_LIBS "Build using shared libraries" OFF)
 

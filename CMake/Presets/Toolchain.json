@@ -5,7 +5,7 @@
     {
       "name": "Msvc",
       "hidden": true,
-      "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+      "toolchainFile": "${sourceDir}/CMake/toolchain/msvc-toolchain.cmake",
       "cacheVariables": {
         "CMAKE_C_COMPILER": "cl",
         "CMAKE_CXX_COMPILER": "cl"
@@ -25,15 +25,12 @@
     {
       "name": "Clang",
       "hidden": true,
-      "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
-       "environment": {
+      "toolchainFile": "${sourceDir}/CMake/toolchain/llvm-toolchain.cmake",
+      "environment": {
         "CC": "/usr/bin/clang",
         "CCX": "/usr/bin/clang++"
       },
       "cacheVariables": {
-        "CMAKE_C_COMPILER": "clang",
-        "CMAKE_CXX_COMPILER": "clang++",
-        "CMAKE_CXX_FLAGS":""
       },
       "condition": {
         "type": "equals",
@@ -49,7 +46,11 @@
     {
       "name": "ClangCl",
       "hidden": true,
-      "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+      "toolchainFile": "${sourceDir}/CMake/toolchain/llvm-toolchain.cmake",
+      "environment": {
+        "CC": "clang-cl",
+        "CCX": "clang-cl"
+      },
       "cacheVariables": {
         "CMAKE_C_COMPILER": "clang-cl",
         "CMAKE_CXX_COMPILER": "clang-cl",
@@ -70,14 +71,12 @@
     {
       "name": "Gcc",
       "hidden": true,
-      "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+      "toolchainFile": "${sourceDir}/CMake/toolchain/gnu-toolchain.cmake",
       "environment": {
-        "CC": "/usr/bin/gcc",
-        "CCX": "/usr/bin/gcc++"
+        "CC": "gcc",
+        "CCX": "gcc++"
       },
       "cacheVariables": {
-        "CMAKE_C_COMPILER": "gcc",
-        "CMAKE_CXX_COMPILER": "g++",
         "CMAKE_CXX_FLAGS": "",
         "CMAKE_C_FLAGS": ""
       },

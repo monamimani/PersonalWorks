@@ -1,10 +1,7 @@
 include_guard()
 
-include(CheckCXXCompilerFlag)
-include(CheckCCompilerFlag)
-
 function(
-  add_target_interface_warnings
+  add_target_warnings
   TARGET_NAME
   WARNINGS_AS_ERRORS)
   # MSVC_WARNINGS
@@ -107,6 +104,10 @@ function(
 
   set(PROJECT_WARNINGS_C "${PROJECT_WARNINGS_CXX}")
   set(PROJECT_WARNINGS_CUDA "${CUDA_WARNINGS}")
+
+  if(NOT TARGET ${TARGET_NAME})
+    message(FATAL_ERROR "${TARGET_NAME} target does not exist.")
+  endif()
 
   target_compile_options(
     ${TARGET_NAME}

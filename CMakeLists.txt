@@ -15,7 +15,7 @@ cmake_print_variables(CMAKE_VERSION)
 #endif()
 
 # cmake_print_variables(CMAKE_MODULE_PATH)
-# set(CMAKE_VERBOSE_MAKEFILE ON)
+#set(CMAKE_VERBOSE_MAKEFILE ON)
 
 # get_filename_component(WorkspaceName ${CMAKE_SOURCE_DIR} NAME)
 # string(REPLACE " " "_" WorkspaceName ${WorkspaceName})
@@ -29,6 +29,11 @@ include(CMakeProjectOptions.cmake)
 PersonalWorks_declare_options()
 PersonalWorks_global_options()
 PersonalWorks_target_options()
+
+add_library(PersonalWorks_warnings INTERFACE)
+add_library(PersonalWorks::PersonalWorks_warnings ALIAS PersonalWorks_warnings)
+include(CMake/Targets/AddTargetWarnings.cmake)
+add_target_warnings(PersonalWorks_warnings OFF)
 
 include(CMake/Dependencies/VulkanDependencies.cmake)
 

@@ -30,6 +30,13 @@
   // "remoteUser": "vscode",
   "features": {},
   "postStartCommand": "chmod +x .devcontainer/postStartCommand.sh && .devcontainer/postStartCommand.sh",
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
   "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/${localWorkspaceFolderBasename},type=bind,consistency=delegated",
-  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}"
+  "mounts": [
+    {
+      "source": "${localEnv:USERPROFILE}\\.gemini",
+      "target": "/root/.gemini",
+      "type": "bind"
+    }
+  ]
 }

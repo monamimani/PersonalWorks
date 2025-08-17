@@ -90,8 +90,7 @@ macro(PersonalWorks_global_options)
 endmacro()
 
 macro(PersonalWorks_target_options)
-  add_library(PersonalWorks_warnings INTERFACE)
-  add_library(PersonalWorks::PersonalWorks_warnings ALIAS PersonalWorks_warnings)
+
 
   add_library(PersonalWorks_options INTERFACE)
   add_library(PersonalWorks::PersonalWorks_options ALIAS PersonalWorks_options)
@@ -99,8 +98,6 @@ macro(PersonalWorks_target_options)
   add_library(PersonalWorks_sanitizers INTERFACE)
   add_library(PersonalWorks::PersonalWorks_sanitizers ALIAS PersonalWorks_sanitizers)
 
-  include(CMake/BuildConfig/CompilerWarnings.cmake)
-  add_target_interface_warnings(PersonalWorks_warnings OFF)
 
   target_compile_features(PersonalWorks_options INTERFACE cxx_std_${CMAKE_CXX_STANDARD})
   set_target_properties(PersonalWorks_options PROPERTIES UNITY_BUILD ${PersonalWorks_ENABLE_UNITY_BUILD})

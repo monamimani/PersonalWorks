@@ -1,5 +1,9 @@
 include_guard()
 
+include(CMakeDependentOption)
+
+cmake_dependent_option(PersonalWorks_ENABLE_DOXYGEN "Enable Doxygen generation" OFF "NOT PersonalWorks_BASIC_BUILD_MODE" OFF)
+
 function(PersonalWorks_enable_doxygen DOXYGEN_THEME)
   # If not specified, use the top readme file as the first page
   if((NOT DOXYGEN_USE_MDFILE_AS_MAINPAGE) AND EXISTS "${PROJECT_SOURCE_DIR}/README.md")
@@ -26,9 +30,7 @@ function(PersonalWorks_enable_doxygen DOXYGEN_THEME)
     set(DOXYGEN_EXCLUDE_PATTERNS "${CMAKE_CURRENT_BINARY_DIR}/vcpkg_installed/*" "${CMAKE_CURRENT_BINARY_DIR}/_deps/*")
   endif()
 
-  if("${DOXYGEN_THEME}" STREQUAL "")
-    set(DOXYGEN_THEME "awesome-sidebar")
-  endif()
+  set(DOXYGEN_THEME "awesome-sidebar") # Default theme
 
   if("${DOXYGEN_THEME}" STREQUAL "awesome" OR "${DOXYGEN_THEME}" STREQUAL "awesome-sidebar")
     # use a modern doxygen theme

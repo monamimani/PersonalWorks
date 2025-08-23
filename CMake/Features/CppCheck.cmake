@@ -1,14 +1,11 @@
 include_guard()
 
-find_program(CPPCHECK cppcheck)
-find_program(CLANGTIDY clang-tidy)
+include(CMakeDependentOption)
 
-#cmake_print_variables(SUPPRESS_EXIT_CODE_SCRIPT)
+cmake_dependent_option(PersonalWorks_ENABLE_CPPCHECK "Enable cpp-check analysis" OFF "NOT PersonalWorks_BASIC_BUILD_MODE" OFF)
 
-macro(
-  PersonalWorks_enable_cppcheck
-  WARNINGS_AS_ERRORS
-  CPPCHECK_OPTIONS)
+function(configure_cppcheck)
+  find_program(CPPCHECK cppcheck)
   if(CPPCHECK)
     if(CMAKE_GENERATOR MATCHES ".*Visual Studio.*")
       set(CPPCHECK_TEMPLATE "vs")
@@ -16,7 +13,10 @@ macro(
       set(CPPCHECK_TEMPLATE "gcc")
     endif()
 
-    if("${CPPCHECK_OPTIONS}" STREQUAL "")
+    option(PersonalWorks_CPPCHECK_WARNINGS_AS_ERRORS "Treat cppcheck warnings as errors" OFF)
+    option(PersonalWorks_CPPCHECK_OPTIONS "Additional options for cppcheck" "")
+
+    if("${PersonalWorks_CPPCHECK_OPTIONS}" STREQUAL "")
       # Enable all warnings that are actionable by the user of this toolset
       # style should enable the other 3, but we'll be explicit just in case
       set(CMAKE_CXX_CPPCHECK
@@ -41,7 +41,7 @@ macro(
         --inconclusive)
     else()
       # if the user provides a CPPCHECK_OPTIONS with a template specified, it will override this template
-      set(CMAKE_CXX_CPPCHECK ${CPPCHECK} --template=${CPPCHECK_TEMPLATE} ${CPPCHECK_OPTIONS})
+      set(CMAKE_CXX_CPPCHECK ${CPPCHECK} --template=${CPPCHECK_TEMPLATE} ${PersonalWorks_CPPCHECK_OPTIONS})
     endif()
 
     if(NOT "${CMAKE_CXX_STANDARD}" STREQUAL "")
@@ -53,52 +53,11 @@ macro(
       endif()
     endif()
 
-    if(${WARNINGS_AS_ERRORS})
+    if(PersonalWorks_CPPCHECK_WARNINGS_AS_ERRORS)
       set(CMAKE_CXX_CPPCHECK ${CMAKE_CXX_CPPCHECK} --error-exitcode=2)
     endif()
+    set(CMAKE_CXX_CPPCHECK ${CMAKE_CXX_CPPCHECK} PARENT_SCOPE)
   else()
     message(WARNING "cppcheck requested but executable not found")
   endif()
-endmacro()
-
-macro(
-  PersonalWorks_enable_clang_tidy
-  WARNINGS_AS_ERRORS)
-
-  if(CLANGTIDY)
-    set(CLANG_TIDY_OPTIONS
-      ${CLANGTIDY}
-      #--verify-config
-      # -fms-extensions
-      #-fms-compatibility
-      # -fdelayed-template-parsing
-      #--print-all-options
-      --enable-module-headers-parsing
-      -p=${CMAKE_BINARY_DIR}
-    )
-
-    # set standard
-    if(NOT "${CMAKE_CXX_STANDARD}" STREQUAL "")
-      if(CMAKE_CXX_COMPILER_ID MATCHES ".*MSVC")
-
-        set(CLANG_TIDY_OPTIONS ${CLANG_TIDY_OPTIONS}
-          --extra-arg=/EHsc
-          --extra-arg=-v
-          --extra-arg-before=-v
-        )
-
-        #set(CLANG_TIDY_OPTIONS ${CLANG_TIDY_OPTIONS} --extra-arg-before=/std:c++${CMAKE_CXX_STANDARD})
-      else()
-        #set(CLANG_TIDY_OPTIONS ${CLANG_TIDY_OPTIONS} --extra-arg=-std=c++${CMAKE_CXX_STANDARD})
-      endif()
-    endif()
-
-    if(${WARNINGS_AS_ERRORS})
-      list(APPEND CLANG_TIDY_OPTIONS -warnings-as-errors=*)
-    endif()
-
-    set(CMAKE_CXX_CLANG_TIDY ${CLANG_TIDY_OPTIONS})
-  else()
-    message(WARNING "clang-tidy requested but executable not found")
-  endif()
-endmacro()
+endfunction()

@@ -1,6 +1,10 @@
 include_guard()
 
 include(CheckCXXCompilerFlag)
+include(CMakeDependentOption)
+
+cmake_dependent_option(PersonalWorks_ENABLE_TARGET_CODE_HARDENING "Enable interface target code hardening" ON "NOT PersonalWorks_BASIC_BUILD_MODE" OFF)
+cmake_dependent_option(PersonalWorks_ENABLE_GLOBAL_CODE_HARDENING "Enable global code hardening" ON "PersonalWorks_ENABLE_TARGET_CODE_HARDENING" OFF)
 
 function(configure_code_hardening UBSAN_MIN_RUNTIME)
   message(STATUS "Enabling Code Hardening")
@@ -107,7 +111,7 @@ function(add_global_code_hardening)
   # return(PROPAGATE CMAKE_CXX_FLAGS CMAKE_EXE_LINKER_FLAGS)
 endfunction()
 
-function(add_target_interface_code_hardening TARGET_NAME)
+function(add_target_code_hardening TARGET_NAME)
   message(STATUS "Enabling Hardening (Target ${TARGET_NAME})")
 
   get_property(UBSAN_MIN_RUNTIME GLOBAL PROPERTY UBSAN_MIN_RUNTIME_PROPERTY)

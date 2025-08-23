@@ -3,7 +3,7 @@ include_guard(GLOBAL)
 
 set(CMAKE_SYSTEM_NAME Windows CACHE STRING "")
 
-include(${CMAKE_CURRENT_LIST_DIR}/common-toolchain.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/../common-toolchain.cmake)
 
 set(CMAKE_CXX_COMPILER "cl")
 set(CMAKE_C_COMPILER "cl")
@@ -19,4 +19,4 @@ if("$ENV{VSCMD_VER}" STREQUAL "")
   message(WARNING "Not in a developer environment, run cmake from a Visual Studio Developer terminal.")
 endif()
 
-include(${CMAKE_CURRENT_LIST_DIR}/vcpkg-toolchain.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/../vcpkg-toolchain.cmake)

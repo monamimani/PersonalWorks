@@ -1,13 +1,16 @@
 include_guard()
 
-function(
-  add_target_warnings
+function(add_target_warnings
   TARGET_NAME
   WARNINGS_AS_ERRORS)
   # MSVC_WARNINGS
   # CLANG_WARNINGS
   # GCC_WARNINGS
   # CUDA_WARNINGS
+
+  if(NOT TARGET ${TARGET_NAME})
+    message(FATAL_ERROR "Target ${TARGET_NAME} does not exist. Please create the target before calling this function.")
+  endif()
 
   # if("${MSVC_WARNINGS}" STREQUAL "")
   set(MSVC_WARNINGS

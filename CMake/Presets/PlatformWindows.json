@@ -62,19 +62,6 @@
       ]
     },
     {
-      "name": "Windows-ClangCl-Ninja-ReleaseWithDebugInfo",
-      "steps": [
-        {
-          "type": "configure",
-          "name": "Windows-ClangCl-Ninja-ReleaseWithDebugInfo"
-        },
-        {
-          "type": "build",
-          "name": "Windows-ClangCl-Ninja-ReleaseWithDebugInfo"
-        }
-      ]
-    },
-    {
       "name": "Windows-Msvc-NinjaMultiConfig-Debug",
       "steps": [
         {

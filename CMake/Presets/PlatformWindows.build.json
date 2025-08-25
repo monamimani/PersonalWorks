@@ -43,13 +43,6 @@
       ]
     },
     {
-      "name": "Windows-ClangCl-Ninja-ReleaseWithDebugInfo",
-      "configurePreset": "Windows-ClangCl-Ninja-ReleaseWithDebugInfo",
-      "inherits": [
-        "Windows"
-      ]
-    },
-    {
       "name": "Windows-Msvc-NinjaMultiConfig-Debug",
       "configurePreset": "Windows-Msvc-NinjaMultiConfig",
       "configuration": "Debug",

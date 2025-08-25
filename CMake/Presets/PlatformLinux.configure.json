@@ -6,7 +6,7 @@
     "./BuildVariant.json",
     "./BuildType.json",
     "./Generators.json",
-    "./Toolchain.json"
+    "./PlatformLinuxToolchain.json"
   ],
   "configurePresets": [
     {
@@ -34,7 +34,11 @@
         "Clang",
         "Ninja",
         "Debug"
-      ]
+      ],
+      "cacheVariables": {
+        "BUILD_SANITIZER_ADDRESS": "ON",
+        "BUILD_SANITIZER_UNDEFINED": "ON"
+      }
     },
     {
       "name": "Linux-Clang-Ninja-ReleaseWithDebugInfo",
@@ -44,7 +48,11 @@
         "Clang",
         "Ninja",
         "ReleaseWithDebugInfo"
-      ]
+      ],
+      "cacheVariables": {
+        "BUILD_SANITIZER_ADDRESS": "ON",
+        "BUILD_SANITIZER_UNDEFINED": "ON"
+      }
     },
     {
       "name": "Linux-Clang-Ninja-Release",
@@ -64,7 +72,11 @@
         "Gcc",
         "Ninja",
         "Debug"
-      ]
+      ],
+      "cacheVariables": {
+        "BUILD_SANITIZER_ADDRESS": "ON",
+        "BUILD_SANITIZER_UNDEFINED": "ON"
+      }
     },
     {
       "name": "Linux-Gcc-Ninja-ReleaseWithDebugInfo",
@@ -74,7 +86,11 @@
         "Gcc",
         "Ninja",
         "ReleaseWithDebugInfo"
-      ]
+      ],
+      "cacheVariables": {
+        "BUILD_SANITIZER_ADDRESS": "ON",
+        "BUILD_SANITIZER_UNDEFINED": "ON"
+      }
     },
     {
       "name": "Linux-Gcc-Ninja-Release",

@@ -6,7 +6,7 @@
     "./BuildVariant.json",
     "./BuildType.json",
     "./Generators.json",
-    "./Toolchain.json"
+    "./PlatformWindowsToolchain.json"
   ],
   "configurePresets": [
     {
@@ -29,7 +29,10 @@
         "Msvc",
         "Ninja",
         "Debug"
-      ]
+      ],
+      "cacheVariables": {
+        "BUILD_SANITIZER_ADDRESS": "ON"
+      }
     },
     {
       "name": "Windows-Msvc-Ninja-ReleaseWithDebugInfo",
@@ -39,7 +42,10 @@
         "Msvc",
         "Ninja",
         "ReleaseWithDebugInfo"
-      ]
+      ],
+      "cacheVariables": {
+        "BUILD_SANITIZER_ADDRESS": "ON"
+      }
     },
     {
       "name": "Windows-Msvc-Ninja-Release",
@@ -59,16 +65,6 @@
         "ClangCl",
         "Ninja",
         "Debug"
-      ]
-    },
-    {
-      "name": "Windows-ClangCl-Ninja-ReleaseWithDebugInfo",
-      "inherits": [
-        "Common",
-        "Windows",
-        "ClangCl",
-        "Ninja",
-        "ReleaseWithDebugInfo"
       ]
     },
     {

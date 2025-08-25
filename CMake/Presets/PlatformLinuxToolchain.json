@@ -3,26 +3,6 @@
   "version": 9,
   "configurePresets": [
     {
-      "name": "Msvc",
-      "hidden": true,
-      "toolchainFile": "${sourceDir}/CMake/Toolchain/Win32/msvc-toolchain.cmake",
-      "cacheVariables": {
-        "CMAKE_C_COMPILER": "cl",
-        "CMAKE_CXX_COMPILER": "cl"
-      },
-      "condition": {
-        "type": "equals",
-        "lhs": "${hostSystemName}",
-        "rhs": "Windows"
-      },
-      "vendor": {
-        "microsoft.com/VisualStudioSettings/CMake/1.0": {
-          "enableClangTidyCodeAnalysis": true,
-          "enableMicrosoftCodeAnalysis": true
-        }
-      }
-    },
-    {
       "name": "Clang",
       "hidden": true,
       "toolchainFile": "${sourceDir}/CMake/Toolchain/Linux/llvm-toolchain.cmake",
@@ -44,27 +24,23 @@
       }
     },
     {
-      "name": "ClangCl",
+      "name": "Clang-libc++",
       "hidden": true,
-      "toolchainFile": "${sourceDir}/CMake/Toolchain/Linux/llvm-toolchain.cmake",
+      "toolchainFile": "${sourceDir}/CMake/Toolchain/Linux/llvm-libc++-toolchain.cmake",
       "environment": {
-        "CC": "clang-cl",
-        "CCX": "clang-cl"
+        "CC": "/usr/bin/clang",
+        "CCX": "/usr/bin/clang++"
       },
       "cacheVariables": {
-        "CMAKE_C_COMPILER": "clang-cl",
-        "CMAKE_CXX_COMPILER": "clang-cl",
-        "CMAKE_CXX_FLAGS": "",
-        "CMAKE_C_FLAGS": ""
       },
       "condition": {
         "type": "equals",
         "lhs": "${hostSystemName}",
-        "rhs": "Windows"
+        "rhs": "Linux"
       },
       "vendor": {
         "microsoft.com/VisualStudioSettings/CMake/1.0": {
-          "intelliSenseMode": "windows-clang-x64"
+          "intelliSenseMode": "linux-clang-x64"
         }
       }
     },
@@ -77,8 +53,6 @@
         "CCX": "gcc++"
       },
       "cacheVariables": {
-        "CMAKE_CXX_FLAGS": "",
-        "CMAKE_C_FLAGS": ""
       },
       "condition": {
         "type": "equals",

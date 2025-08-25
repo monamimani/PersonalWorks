@@ -23,6 +23,9 @@ _Tmp
 #Fuzztest output in the source folder ignoring it for now.
 /dist
 
+# Files to never checkin
+/*.obj
+
 CPTCMakeBuild
 CompileCommands
 compile_commands.json

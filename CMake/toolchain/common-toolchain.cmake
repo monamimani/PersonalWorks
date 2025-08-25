@@ -2,9 +2,14 @@ include_guard()
 
 include(CMakePrintHelpers)
 
+
 set(CMAKE_CXX_STANDARD 23 CACHE STRING "The C++ standard to use for compilation")
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+set(DEFAULT_C_FLAGS "")
+set(DEFAULT_CXX_FLAGS "")
+set(DEFAULT_SHARED_LINKER_FLAGS "")
+set(DEFAULT_EXE_LINKER_FLAGS "")
 
 if(CMAKE_CXX_STANDARD LESS 20)
   message(FATAL_ERROR "C++20 or higher is required for modules support. Current C++ standard is ${CMAKE_CXX_STANDARD}.")
@@ -19,3 +24,9 @@ set(CMAKE_VISIBILITY_INLINES_HIDDEN YES)
 
 set(CMAKE_COLOR_DIAGNOSTICS ON)
 set(CMAKE_COLOR_MAKEFILE ON)
+
+option(BUILD_SANITIZER_ADDRESS "Enable Address Sanitizer" OFF)
+option(BUILD_SANITIZER_UNDEFINED "Enable Undefined Behavior Sanitizer" OFF)
+option(BUILD_SANITIZER_THREAD "Enable Thread Sanitizer" OFF)
+option(BUILD_SANITIZER_MEMORY "Enable Memory Sanitizer" OFF)
+option(BUILD_SANITIZER_LEAK "Enable Leak Sanitizer" OFF)

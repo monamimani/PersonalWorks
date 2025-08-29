@@ -151,10 +151,9 @@ jobs:
 
     - name: "Fetch latest vcpkg"
       if: runner.os == 'Linux'
+      working-directory: $VCPKG_ROOT
       run: |
-        pushd $VCPKG_ROOT
         git fetch
-        popd
 
     - name: "[Linux] CMake Configure & Build"
       if: runner.os == 'Linux'

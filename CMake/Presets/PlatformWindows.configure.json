@@ -30,7 +30,7 @@
         "Debug"
       ],
       "cacheVariables": {
-        "BUILD_SANITIZER": "address"
+        "BUILD_SANITIZERS": "address"
       }
     },
     {
@@ -43,7 +43,7 @@
         "ReleaseWithDebugInfo"
       ],
       "cacheVariables": {
-        "BUILD_SANITIZER": "address"
+        "BUILD_SANITIZERS": "address"
       }
     },
     {

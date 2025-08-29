@@ -1,18 +1,21 @@
 include_guard()
 
-# Allowed values are "none", "address", 
+# Allowed values are "none", "address",
 set(BUILD_SANITIZER_LIST "none" "address")
-set(BUILD_SANITIZER "none" CACHE STRING "The kind of configuration for the build.")
-set_property(CACHE BUILD_SANITIZER PROPERTY STRINGS ${BUILD_SANITIZER_LIST})
-set(ENV{BUILD_SANITIZER} "${BUILD_SANITIZER}")
+set(BUILD_SANITIZERS "none" CACHE STRING "The kind of configuration for the build.")
+set_property(CACHE BUILD_SANITIZERS PROPERTY STRINGS ${BUILD_SANITIZER_LIST})
+set(ENV{BUILD_SANITIZERS} "${BUILD_SANITIZERS}")
 
-if(NOT BUILD_SANITIZER IN_LIST BUILD_SANITIZER_LIST)
-  message(FATAL_ERROR "BUILD_SANITIZER is ${BUILD_SANITIZER} and it must be one of ${BUILD_SANITIZER_LIST}")
-endif()
+string(REPLACE "," ";" SANITIZERS_LIST "${BUILD_SANITIZERS}")
+foreach(SANITIZER ${BUILD_SANITIZERS})
+  if(NOT SANITIZER IN_LIST BUILD_SANITIZER_LIST)
+    message(FATAL_ERROR "Invalid sanitizer '${SANITIZER}' specified in BUILD_SANITIZERS. Allowed values are: ${BUILD_SANITIZER_LIST}")
+  endif()
+endforeach()
 
 set(SANITIZER_FLAGS "")
 
-if(address IN_LIST BUILD_SANITIZER)
+if("address" IN_LIST BUILD_SANITIZERS)
    string(FIND "$ENV{PATH}" "$ENV{VSINSTALLDIR}" index_of_vs_install_dir)
   if("${index_of_vs_install_dir}" STREQUAL "-1")
     message(
@@ -21,7 +24,8 @@ if(address IN_LIST BUILD_SANITIZER)
     )
   endif()
 
-  string(APPEND SANITIZER_FLAGS " /fsanitize=address /Zi")
+  set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "ProgramDatabase")
+  string(APPEND SANITIZER_FLAGS " /fsanitize=address /Zi /INCREMENTAL:NO")
 endif()
 
 #option(BUILD_SANITIZER_ADDRESS "Enable Address Sanitizer" OFF)

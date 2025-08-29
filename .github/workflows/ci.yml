@@ -153,7 +153,7 @@ jobs:
       if: runner.os == 'Linux'
       working-directory: ${{ env.VCPKG_ROOT }}
       run: |
-        git fetch
+        git fetch --unshallow
 
     - name: "[Linux] CMake Configure & Build"
       if: runner.os == 'Linux'

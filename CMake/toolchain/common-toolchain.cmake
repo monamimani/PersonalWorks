@@ -24,9 +24,3 @@ set(CMAKE_VISIBILITY_INLINES_HIDDEN YES)
 
 set(CMAKE_COLOR_DIAGNOSTICS ON)
 set(CMAKE_COLOR_MAKEFILE ON)
-
-option(BUILD_SANITIZER_ADDRESS "Enable Address Sanitizer" OFF)
-option(BUILD_SANITIZER_UNDEFINED "Enable Undefined Behavior Sanitizer" OFF)
-option(BUILD_SANITIZER_THREAD "Enable Thread Sanitizer" OFF)
-option(BUILD_SANITIZER_MEMORY "Enable Memory Sanitizer" OFF)
-option(BUILD_SANITIZER_LEAK "Enable Leak Sanitizer" OFF)

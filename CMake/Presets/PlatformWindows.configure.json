@@ -18,7 +18,6 @@
         "rhs": "Windows"
       },
       "cacheVariables": {
-        "VCPKG_TARGET_TRIPLET": "x64-windows"
       }
     },
     {
@@ -31,7 +30,7 @@
         "Debug"
       ],
       "cacheVariables": {
-        "BUILD_SANITIZER_ADDRESS": "ON"
+        "BUILD_SANITIZER": "address"
       }
     },
     {
@@ -44,7 +43,7 @@
         "ReleaseWithDebugInfo"
       ],
       "cacheVariables": {
-        "BUILD_SANITIZER_ADDRESS": "ON"
+        "BUILD_SANITIZER": "address"
       }
     },
     {

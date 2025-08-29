@@ -81,7 +81,7 @@ function(
 
       if("${index_of_vs_install_dir}" STREQUAL "-1")
         message(
-          SEND_ERROR
+          FATAL_ERROR
           "Using MSVC sanitizers requires setting the MSVC environment before building the project. Please manually open the MSVC command prompt and rebuild the project."
         )
       endif()

@@ -1,5 +1,12 @@
 include_guard()
 
+option(BUILD_SANITIZER_ADDRESS "Enable Address Sanitizer" OFF)
+option(BUILD_SANITIZER_UNDEFINED "Enable Undefined Behavior Sanitizer" OFF)
+option(BUILD_SANITIZER_THREAD "Enable Thread Sanitizer" OFF)
+option(BUILD_SANITIZER_MEMORY "Enable Memory Sanitizer" OFF)
+option(BUILD_SANITIZER_LEAK "Enable Leak Sanitizer" OFF)
+
+
 set(SANITIZERS "")
 
 if(BUILD_SANITIZER_ADDRESS)

@@ -19,6 +19,7 @@ _Out
 _Bin
 _BinIntermediate
 _Tmp
+vcpkg_installed
 
 #Fuzztest output in the source folder ignoring it for now.
 /dist

@@ -154,8 +154,7 @@ jobs:
       run: |
         cd $VCPKG_ROOT
         pwd
-        git fetch --unshallow
-        git pull --ff-only
+        git fetch
 
     - name: "[Linux] CMake Configure & Build"
       if: runner.os == 'Linux'

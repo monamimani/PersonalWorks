@@ -151,7 +151,7 @@ jobs:
 
     - name: "Fetch latest vcpkg"
       if: runner.os == 'Linux'
-      working-directory: $VCPKG_ROOT
+      working-directory: ${{ env.VCPKG_ROOT }}
       run: |
         git fetch
 

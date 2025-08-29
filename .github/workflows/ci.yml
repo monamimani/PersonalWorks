@@ -149,6 +149,13 @@ jobs:
     #     packaging_maintainer_mode: false
     #     generator: ${{ matrix.generator }}
 
+    - name: "Fetch latest vcpkg"
+      if: runner.os == 'Linux'
+      run: |
+        pushd $VCPKG_ROOT
+        git fetch
+        popd
+
     - name: "[Linux] CMake Configure & Build"
       if: runner.os == 'Linux'
       run: |

@@ -151,8 +151,8 @@ jobs:
 
     - name: "Fetch latest vcpkg"
       if: runner.os == 'Linux'
-      working-directory: ${{ env.VCPKG_ROOT }}
       run: |
+        cd $VCPKG_ROOT
         pwd
         git fetch --unshallow
         git pull --ff-only

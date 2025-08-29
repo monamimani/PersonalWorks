@@ -153,6 +153,7 @@ jobs:
       if: runner.os == 'Linux'
       working-directory: ${{ env.VCPKG_ROOT }}
       run: |
+        pwd
         git fetch --unshallow
         git pull --ff-only
 

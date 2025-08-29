@@ -15,11 +15,6 @@ link_libraries(stdc++exp)
 
 include(${CMAKE_CURRENT_LIST_DIR}/../../Features/SanitizersLinux.cmake)
 
-include(CMakePrintHelpers)
-cmake_print_variables(VCPKG_OVERLAY_TRIPLETS)
-cmake_print_variables(BUILD_SANITIZERS)
-cmake_print_variables(SANITIZER_FLAGS)
-
 set(VCPKG_TARGET_TRIPLET "x64-linux-sanitizers" CACHE STRING "Vcpkg target triplet")
 
 set(CMAKE_C_FLAGS_INIT "${DEFAULT_C_FLAGS} ${SANITIZER_FLAGS}")

@@ -27,29 +27,3 @@ if("address" IN_LIST BUILD_SANITIZERS)
   set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "ProgramDatabase")
   string(APPEND SANITIZER_FLAGS " /fsanitize=address /Zi /INCREMENTAL:NO")
 endif()
-
-#option(BUILD_SANITIZER_ADDRESS "Enable Address Sanitizer" OFF)
-#option(BUILD_SANITIZER_UNDEFINED "Enable Undefined Behavior Sanitizer" OFF)
-#option(BUILD_SANITIZER_THREAD "Enable Thread Sanitizer" OFF)
-#option(BUILD_SANITIZER_MEMORY "Enable Memory Sanitizer" OFF)
-#option(BUILD_SANITIZER_LEAK "Enable Leak Sanitizer" OFF)
-
-
-#set(SANITIZER_FLAGS "")
-
-#if(BUILD_SANITIZER)
-#  string(FIND "$ENV{PATH}" "$ENV{VSINSTALLDIR}" index_of_vs_install_dir)
-#  if("${index_of_vs_install_dir}" STREQUAL "-1")
-#    message(
-#      FATAL_ERROR
-#      "Using MSVC sanitizers requires setting the MSVC environment before building the project. Please manually open the MSVC command prompt and rebuild the project."
-#    )
-#  endif()
-#
-#  string(APPEND SANITIZER_FLAGS " /fsanitize=address /Zi")
-#
-#endif()
-#
-#if(BUILD_SANITIZER_LEAK OR BUILD_SANITIZER_UNDEFINED OR BUILD_SANITIZER_THREAD OR BUILD_SANITIZER_MEMORY)
-#  message(WARNING "MSVC only supports address sanitizer")
-#endif()

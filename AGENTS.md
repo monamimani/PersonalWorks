@@ -1,6 +1,6 @@
-# Gemini Code Assistant Context
+# Context
 
-This document provides context for the Gemini Code Assistant to understand the structure and conventions of the `PersonalWorks` repository.
+This document provides context to understand the structure and conventions of the `PersonalWorks` repository.
 
 ## Project Overview
 
@@ -66,3 +66,9 @@ Tests are enabled by default and can be run using CTest. The main testing framew
 *   **Testing:** Tests are a key part of the development process. New features should be accompanied by unit tests. The `CodeIncubator` project has examples of how tests are structured.
 *   **Dependencies:** Dependencies are managed using `vcpkg`. New dependencies should be added to the `vcpkg.json` file.
 *   **Continuous Integration:** All code is built and tested on Windows and Linux via GitHub Actions. The workflow is defined in `.github/workflows/ci.yml`.
+
+# Instructions for Google Jules
+
+To work with the `PersonalWorks` repository, you need to execute as root the script `JulesEnvSetup.sh` located in the root of the repository. This script will set up the necessary environment for you to work on the project.
+
+

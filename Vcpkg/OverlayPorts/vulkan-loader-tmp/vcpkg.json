@@ -1,6 +1,6 @@
 {
   "name": "vulkan-loader-tmp",
-  "version": "1.4.304",
+  "version": "1.4.329",
   "description": "Vulkan Development Tools",
   "homepage": "https://github.com/KhronosGroup/Vulkan-Loader",
   "license": null,
@@ -15,5 +15,19 @@
       "host": true
     },
     "vulkan-headers-tmp"
-  ]
+  ],
+  "features": {
+  "directfb": {
+    "description": "Build DirectFB WSI support"
+  },
+  "wayland": {
+    "description": "Build Wayland WSI support"
+  },
+  "xcb": {
+    "description": "Build XCB WSI support"
+  },
+  "xlib": {
+    "description": "Build Xlib WSI support"
+  }
+}
 }

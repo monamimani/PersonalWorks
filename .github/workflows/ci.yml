@@ -86,7 +86,7 @@ jobs:
     runs-on: ubuntu-latest
     continue-on-error: ${{ matrix.allow_failure }}
     container:
-      image: 'ghcr.io/monamimani-builds/cpp-devcontainer:latest'
+      image: 'ghcr.io/monamimani-builds/cpp-linux-devcontainer:latest'
     strategy:
       fail-fast: false
       matrix:

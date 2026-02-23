@@ -1,6 +1,7 @@
 include_guard()
 
 include(CheckCXXCompilerFlag)
+include(CheckCXXSymbolExists)
 include(CMakeDependentOption)
 
 cmake_dependent_option(PersonalWorks_ENABLE_TARGET_CODE_HARDENING "Enable interface target code hardening" ON "NOT PersonalWorks_BASIC_BUILD_MODE" OFF)
@@ -20,10 +21,24 @@ function(configure_code_hardening UBSAN_MIN_RUNTIME)
     list(APPEND CODE_HARDENING_CXX_DEFINITIONS "-D_MSVC_STL_DESTRUCTOR_TOMBSTONES=1" "-D_MSVC_STL_HARDENING=1")
 
   elseif(CMAKE_CXX_COMPILER_ID MATCHES ".*Clang|GNU")
-    list(APPEND CODE_HARDENING_CXX_DEFINITIONS "-D_GLIBCXX_ASSERTIONS")
-    message(STATUS "GLIBC++ Assertions (vector[], string[], ...) enabled")
-    list(APPEND CODE_HARDENING_COMPILE_OPTIONS "-U_FORTIFY_SOURCE" "-D_FORTIFY_SOURCE=3")
-    message(STATUS "g++/clang _FORTIFY_SOURCE=3 enabled")
+
+    check_cxx_symbol_exists(__GLIBCXX__ version GLIBCXX)
+    if(GLIBCXX)
+      list(APPEND CODE_HARDENING_CXX_DEFINITIONS "-D_GLIBCXX_ASSERTIONS")
+      message(STATUS "GLIBC++ Assertions (vector[], string[], ...) enabled")
+      list(APPEND CODE_HARDENING_COMPILE_OPTIONS "-U_FORTIFY_SOURCE" "-D_FORTIFY_SOURCE=3")
+      message(STATUS "g++/clang _FORTIFY_SOURCE=3 enabled")
+    endif()
+
+    check_cxx_symbol_exists(_LIBCPP_VERSION version LIBCPP)
+    if(LIBCPP)
+      #-D_LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_NONE
+      #-D_LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_FAST
+      #-D_LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_EXTENSIVE
+      #-D_LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_DEBUG
+      list(APPEND CODE_HARDENING_CXX_DEFINITIONS "-D_LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_FAST")
+      message(STATUS "LIBC++ hardening enabled")
+    endif()
 
     # check_cxx_compiler_flag(-fpie PIE)
     # if(PIE)

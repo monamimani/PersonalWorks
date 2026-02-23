@@ -6,13 +6,13 @@
   #define VK_USE_PLATFORM_WIN32_KHR
 #endif
 
-#include "vulkan/vulkan.hpp" // IWYU pragma: export
-//#include "vulkan/vulkan_raii.hpp" // IWYU pragma: export
+import vulkan;
+#include "vulkan/vulkan_core.h" // IWYU pragma: export
+#include "vulkan/vulkan_hpp_macros.hpp" // IWYU pragma: export
 
-//#include "vulkan/vulkan_hpp_macros.hpp"
-//#include "vulkan/vulkan_core.h"
-//#include "vulkan/vulkan.cppm"
-//import vulkan_hpp;
+#if defined(VK_USE_PLATFORM_WIN32_KHR)
+  #include "vulkan/vulkan_win32.h"
+#endif
 
 
 namespace GfxVk

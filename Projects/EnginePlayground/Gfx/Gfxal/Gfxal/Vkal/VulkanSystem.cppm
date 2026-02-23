@@ -4,6 +4,7 @@ module;
 #include <string_view>
 #include <unordered_map>
 #include <vector>
+#include <optional>
 
 #include "Gfxal/Vkal/Vk.h"
 
@@ -29,20 +30,20 @@ struct VulkanSystemDesc
   bool m_preferIGPU = false;
 };
 
-//enum class QueueType
-//{
-//  Graphics,
-//  Compute,
-//  Transfer
-//};
-//
-//QueueType getQueueTypeFromVkQueueFlagBits(vk::QueueFlagBits queueFlagBits)
-//{
-//  if (queueFlagBits & vk::QueueFlagBits::eGraphics)
-//  {
-//    return QueueType::Graphics;
-//  }
-//}
+enum class QueueType
+{
+  Graphics,
+  Compute,
+  Transfer
+};
+
+QueueType getQueueTypeFromVkQueueFlagBits(vk::QueueFlagBits queueFlagBits)
+{
+  if (queueFlagBits & vk::QueueFlagBits::eGraphics)
+  {
+    return QueueType::Graphics;
+  }
+}
 
 class VulkanSystem
 {

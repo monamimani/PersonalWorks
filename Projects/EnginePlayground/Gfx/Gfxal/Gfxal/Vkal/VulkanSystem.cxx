@@ -4,19 +4,18 @@ module;
 #include <unordered_map>
 #include <ranges>
 #include <stdexcept>
-
 #include <format>
 #include <print>
+#include <compare>
 
 #include "Config/Config.h"
 #include "Gfxal/Vkal/Vk.h"
-#include "vulkan/vulkan_hpp_macros.hpp"
 
 module Vkal.VulkanSystem;
 
 import VkalUtilities;
 
-//VULKAN_HPP_DEFAULT_DISPATCH_LOADER_DYNAMIC_STORAGE
+VULKAN_HPP_DEFAULT_DISPATCH_LOADER_DYNAMIC_STORAGE
 
 namespace VkHal
 {
@@ -52,7 +51,6 @@ VulkanSystem::VulkanSystem(VulkanSystemDesc desc)
       errorStr.append(error);
       errorStr.append(", ");
     }
-
     throw std::runtime_error(std::format("Requested Vulkan layers not suported: {}", errorStr));
   }
 
@@ -230,11 +228,13 @@ void VulkanSystem::printInstanceInfo()
   std::println("=======================================");
 
   const Version instanceVersion = vk::enumerateInstanceVersion();
+
   std::println("Vulkan supported instance version: {}", instanceVersion);
   std::println("");
 
   const auto instanceExtensions = vk::enumerateInstanceExtensionProperties();
   std::println("Instance Extensions:");
+
   std::ranges::for_each(instanceExtensions, [](const vk::ExtensionProperties& props) {
     std::println("- {} v{}", props.extensionName, props.specVersion);
   });
@@ -242,7 +242,9 @@ void VulkanSystem::printInstanceInfo()
 
   auto instanceLayers = vk::enumerateInstanceLayerProperties();
   std::ranges::sort(instanceLayers, std::ranges::less{}, &vk::LayerProperties::layerName);
+
   std::println("Instance Layers({}): ", instanceLayers.size());
+
   std::ranges::for_each(instanceLayers, [](const vk::LayerProperties& props) {
     std::println("- {} v{} (Vulkan {}) - {}", props.layerName, props.implementationVersion, Version(props.specVersion), props.description);
 

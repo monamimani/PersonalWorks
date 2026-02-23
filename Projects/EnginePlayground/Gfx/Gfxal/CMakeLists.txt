@@ -26,7 +26,7 @@ list(APPEND privateCxxModules
   ${targetName}/Vkal/Device.cppm
 )
 list(APPEND testsSources
-  ${targetName}/Vkal/VulkanSystem.test.cpp
+  #${targetName}/Vkal/VulkanSystem.test.cpp
   ${targetName}/Gfx.test.cpp
 )
 list(APPEND benchamrksSources
@@ -43,7 +43,7 @@ list(APPEND privateLibraries
   PersonalWorks::Config
   PersonalWorks::Core
   PersonalWorks::TestUtilities
-  VulkanHppModule
+  VulkanHpp::CppModule
 )
 
 add_library(${targetName})

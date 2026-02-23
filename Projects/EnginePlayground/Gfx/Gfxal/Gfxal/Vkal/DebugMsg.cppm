@@ -2,9 +2,9 @@ module;
 
 #include <ranges>
 #include <string>
+#include <print>
 
 #include "Gfxal/Vkal/Vk.h"
-#include <print>
 
 export module Vkal.DebugMsg;
 

@@ -14,11 +14,12 @@ module;
 #include <tuple>
 #include <unordered_map>
 #include <format>
+#include <print>
 
 #include "Core/EnumClassFlags.h"
 #include "Core/Exception.h"
 #include "Gfxal/Vkal/Vk.h"
-#include <print>
+
 
 export module Vkal.PhysicalDevice;
 
@@ -63,14 +64,14 @@ struct QueueProperties
 
   void printQueuePropertiesInfo() const
   {
-    std::println("{:>2}:  Count: {}, Operations {}, Timestamp {} bits, {}x{}x{} Transfer Granularity",
-                 m_index,
-                 m_queueCount,
-                 m_queueFlags,
-                 m_timestampNbValidBits,
-                 m_minImageTransferGranularity.width,
-                 m_minImageTransferGranularity.height,
-                 m_minImageTransferGranularity.depth);
+    //std::println("{:>2}:  Count: {}, Operations {}, Timestamp {} bits, {}x{}x{} Transfer Granularity",
+    //             m_index,
+    //             m_queueCount,
+    //             m_queueFlags,
+    //             m_timestampNbValidBits,
+    //             m_minImageTransferGranularity.width,
+    //             m_minImageTransferGranularity.height,
+    //             m_minImageTransferGranularity.depth);
   }
 
   bool operator==(const QueueProperties&) const = default;
@@ -250,7 +251,7 @@ class PhysicalDevice
 public:
   PhysicalDevice() = default;
 
-  PhysicalDevice(const vk::PhysicalDevice& physicalDevice);
+  explicit PhysicalDevice(const vk::PhysicalDevice& physicalDevice);
 
   bool isVulkanVersionSupported(uint32_t requestedVulkanVersion) const;
 

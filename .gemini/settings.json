@@ -1,10 +1,16 @@
 {
-  "preferredEditor": "vscode",
-  "hasSeenIdeIntegrationNudge": true,
-  "ideMode": true,
-  "contextFileName": [
-    "AGENTS.MD",
-    "GEMINI.MD",
-    "README.MD"
-  ]
+  "context": {
+    "fileName": [
+      "AGENTS.MD",
+      "GEMINI.MD",
+      "README.MD"
+    ]
+  },
+  "ide": {
+    "hasSeenNudge": true,
+    "enabled": true
+  },
+  "general": {
+    "preferredEditor": "vscode"
+  }
 }

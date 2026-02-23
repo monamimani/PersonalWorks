@@ -25,7 +25,7 @@ IncludeIsMainRegex: ([-_](test|unittest))?$
 PenaltyReturnTypeOnItsOwnLine: 99999
 
 FixNamespaceComments: True
-ReflowComments: True
+ReflowComments: Always
 
 QualifierAlignment: Left
 PointerAlignment: Left
@@ -60,7 +60,7 @@ AllowShortLambdasOnASingleLine: None
 AllowShortCompoundRequirementOnASingleLine: True
 
 BinPackArguments: False
-BinPackParameters: False
+BinPackParameters: BinPack
 PackConstructorInitializers : Never
 
 EmptyLineBeforeAccessModifier: LogicalBlock

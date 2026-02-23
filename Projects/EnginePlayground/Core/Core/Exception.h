@@ -107,22 +107,22 @@ struct std::formatter<std::source_location>: std::formatter<std::string_view>
 //   }
 // };
 
-inline std::ostream& operator<<(std::ostream& os, const std::source_location& location)
-{
-
-  os << std::format("{}\n", location);
-  // os << std::format("{}({},{}), function `{}`\n", location.file_name(), location.line(), location.column(), location.function_name());
-  return os;
-}
-
-inline std::ostream& operator<<(std::ostream& os, const std::stacktrace& backtrace)
-{
-  os << std::format("{}\n", backtrace);
-
-  for (const auto& entry : backtrace)
-  {
-    os << std::format("{}\n", entry);
-    // os << std::format("{}({}): {}\n", iter->source_file(), iter->source_line(), iter->description());
-  }
-  return os;
-}
+//std::ostream& operator<<(std::ostream& os, const std::source_location& location)
+//{
+//
+//  os << std::format("{}\n", location);
+//  // os << std::format("{}({},{}), function `{}`\n", location.file_name(), location.line(), location.column(), location.function_name());
+//  return os;
+//}
+//
+//std::ostream& operator<<(std::ostream& os, const std::stacktrace& backtrace)
+//{
+//  os << std::format("{}\n", backtrace);
+//
+//  for (const auto& entry : backtrace)
+//  {
+//    os << std::format("{}\n", entry);
+//    // os << std::format("{}({}): {}\n", iter->source_file(), iter->source_line(), iter->description());
+//  }
+//  return os;
+//}

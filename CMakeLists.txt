@@ -17,6 +17,8 @@ cmake_print_variables(CMAKE_VERSION)
 # cmake_print_variables(CMAKE_MODULE_PATH)
 #set(CMAKE_VERBOSE_MAKEFILE ON)
 
+set(CMAKE_EXPERIMENTAL_CXX_IMPORT_STD "d0edc3af-4c50-42ea-a356-e2862fe7a444")
+
 # get_filename_component(WorkspaceName ${CMAKE_SOURCE_DIR} NAME)
 # string(REPLACE " " "_" WorkspaceName ${WorkspaceName})
 project(PersonalWorks
@@ -25,6 +27,7 @@ project(PersonalWorks
   HOMEPAGE_URL "https://github.com/monamimani/PersonalWorks"
   LANGUAGES CXX C)
 
+set(CMAKE_CXX_MODULE_STD ON)
 include(CMake/BuildConfig/ProjectSettings.cmake)
 
 option(BUILD_SHARED_LIBS "Build using shared libraries" OFF)
@@ -89,15 +92,8 @@ endif()
 
 add_library(PersonalWorks_sanitizers INTERFACE)
 add_library(PersonalWorks::PersonalWorks_sanitizers ALIAS PersonalWorks_sanitizers)
-
-include(CMake/Features/Sanitizers.cmake)
-add_target_sanitizer(
-  PersonalWorks_sanitizers,
-  PersonalWorks_ENABLE_SANITIZER_ADDRESS,
-  PersonalWorks_ENABLE_SANITIZER_LEAK,
-  PersonalWorks_ENABLE_SANITIZER_UNDEFINED,
-  PersonalWorks_ENABLE_SANITIZER_THREAD,
-  PersonalWorks_ENABLE_SANITIZER_MEMORY)
+include(CMake/Targets/AddTargetSanitizers.cmake)
+add_target_sanitizers(PersonalWorks_sanitizers)
 
 
 add_library(PersonalWorks_options INTERFACE)

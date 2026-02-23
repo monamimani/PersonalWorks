@@ -1,5 +1,7 @@
 include_guard()
 
+return()
+
 set(SUPPORTS_UBSAN OFF)
 set(SUPPORTS_ASAN OFF)
 

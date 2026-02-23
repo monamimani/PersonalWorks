@@ -18,7 +18,6 @@
         "rhs": "Linux"
       },
       "cacheVariables": {
-        "VCPKG_TARGET_TRIPLET": "x64-linux"
       },
       "vendor": {
         "microsoft.com/VisualStudioRemoteSettings/CMake/1.0": {

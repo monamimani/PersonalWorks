@@ -38,11 +38,11 @@ function(get_sanitizers_flags_linux OUT_SANITIZER_FLAGS)
 
     if(NOT "none" IN_LIST BUILD_SANITIZERS)
       list(JOIN BUILD_SANITIZERS "," SANITIZERS_LIST)
-      string(APPEND ${OUT_SANITIZER_FLAGS} "-fsanitize=${SANITIZERS_LIST} -g -fno-omit-frame-pointer")
+      list(APPEND ${OUT_SANITIZER_FLAGS} "-fsanitize=${SANITIZERS_LIST}" "-g" "-fno-omit-frame-pointer")
 
       if(CMAKE_CXX_COMPILER_ID MATCHES ".*Clang")
         if("undefined" IN_LIST BUILD_SANITIZERS)
-        string(APPEND ${OUT_SANITIZER_FLAGS} "-fno-sanitize-merge")
+        list(APPEND ${OUT_SANITIZER_FLAGS} "-fno-sanitize-merge")
         endif()
       endif()
     endif()

@@ -22,6 +22,11 @@ get_sanitizers_flags_linux(SANITIZER_FLAGS_LIST)
 set(SANITIZER_FLAGS "")
 list(JOIN SANITIZER_FLAGS_LIST " " SANITIZER_FLAGS)
 
+# include(CMakePrintHelpers)
+# cmake_print_variables(CMAKE_CURRENT_LIST_DIR)
+# cmake_print_variables(SANITIZER_FLAGS)
+# cmake_print_variables(BUILD_SANITIZERS)
+
 set(VCPKG_TARGET_TRIPLET "x64-linux-sanitizers" CACHE STRING "Vcpkg target triplet")
 
 set(CMAKE_C_FLAGS_INIT "${DEFAULT_C_FLAGS} ${SANITIZER_FLAGS}")
@@ -29,6 +34,7 @@ set(CMAKE_CXX_FLAGS_INIT "${DEFAULT_CXX_FLAGS} ${SANITIZER_FLAGS}")
 set(CMAKE_SHARED_LINKER_FLAGS_INIT "${DEFAULT_SHARED_LINKER_FLAGS} ${SANITIZER_FLAGS}")
 set(CMAKE_EXE_LINKER_FLAGS_INIT "${DEFAULT_EXE_LINKER_FLAGS} ${SANITIZER_FLAGS}")
 
+#set(VCPKG_VERBOSE ON)
 include(${CMAKE_CURRENT_LIST_DIR}/../vcpkg-toolchain.cmake)
 
 

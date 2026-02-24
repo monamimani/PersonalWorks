@@ -6,6 +6,10 @@
   #define VK_USE_PLATFORM_WIN32_KHR
 #endif
 
+#if defined(CORE_PLATFORM_LINUX)
+  #define VK_USE_PLATFORM_WAYLAND_KHR
+#endif
+
 import vulkan;
 #include "vulkan/vulkan_core.h" // IWYU pragma: export
 #include "vulkan/vulkan_hpp_macros.hpp" // IWYU pragma: export
@@ -14,6 +18,9 @@ import vulkan;
   #include "vulkan/vulkan_win32.h"
 #endif
 
+#if defined(VK_USE_PLATFORM_WAYLAND_KHR)
+  #include "vulkan/vulkan_wayland.h"
+#endif
 
 namespace GfxVk
 {

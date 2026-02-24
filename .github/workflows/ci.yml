@@ -73,7 +73,7 @@ jobs:
         shell: pwsh
         run: |
           Write-Host "Installing VS 2026 Build Tools..."
-          choco install visualstudio2026buildtools-preview --package-parameters "--add Microsoft.VisualStudio.Workload.VCTools --add Microsoft.VisualStudio.Component.VC.Preview.Tools.x86.x64 --includeRecommended --quiet" -y --ignore-package-exit-codes=3010
+          choco install visualstudio2026buildtools-preview --pre --package-parameters "--add Microsoft.VisualStudio.Workload.VCTools --add Microsoft.VisualStudio.Component.VC.Preview.Tools.x86.x64 --includeRecommended --quiet" -y --ignore-package-exit-codes=3010
           Write-Host "VS 2026 Build Tools installation completed" 
 
       - name: "CMake Configure & Build"

@@ -19,7 +19,8 @@ runs:
       if (Test-Path "$vcpkgRoot\bootstrap-vcpkg.bat") {
         & "$vcpkgRoot\bootstrap-vcpkg.bat"
       } else {
-        Write-Warning "bootstrap-vcpkg.bat not found at $vcpkgRoot"
+        Write-Error "bootstrap-vcpkg.bat not found at $vcpkgRoot"
+        exit 1
       }
 
   - name: Bootstrap vcpkg (Linux)
@@ -31,7 +32,8 @@ runs:
       if [ -f "$vcpkg_root/bootstrap-vcpkg.sh" ]; then
         "$vcpkg_root/bootstrap-vcpkg.sh"
       else
-        echo "::warning::bootstrap-vcpkg.sh not found at $vcpkg_root"
+        echo "::error::bootstrap-vcpkg.sh not found at $vcpkg_root"
+        exit 1
       fi
 
   - name: Setup NuGet for GitHub Packages (Windows)
@@ -42,8 +44,10 @@ runs:
       $vcpkgExe = "$vcpkgRoot\vcpkg.exe"
       
       $feedUrl = "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
-      $nuget = & $vcpkgExe fetch nuget | Out-String | ForEach-Object { $_.Trim() } | Select-Object -Last 1
       
+      # Following tutorial exactly: .$($vcpkg fetch nuget)
+      Write-Host "Fetching nuget path..."
+      $nuget = & $vcpkgExe fetch nuget | Out-String | ForEach-Object { $_.Trim() } | Select-Object -Last 1
       Write-Host "Using nuget at: $nuget"
       
       # Add the NuGet source
@@ -53,7 +57,7 @@ runs:
         -Name GitHubPackages `
         -UserName "${{ github.repository_owner }}" `
         -Password "${{ inputs.token }}" `
-        -ErrorAction SilentlyContinue
+        -ErrorAction Continue
       
       # Set the API key
       & $nuget setapikey "${{ inputs.token }}" -Source "$feedUrl"
@@ -68,7 +72,6 @@ runs:
       feed_url="https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
       
       # Linux requires mono to run nuget.exe as per docs.
-      # If mono is missing, we try to use dotnet nuget as a modern fallback.
       if command -v mono &> /dev/null; then
         nuget_path=$($vcpkg_exe fetch nuget | tail -n 1)
         mono "$nuget_path" sources add \

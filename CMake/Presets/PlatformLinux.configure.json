@@ -1,6 +1,6 @@
 {
-  "$schema": "https://cmake.org/cmake/help/v3.28/_downloads/3e2d73bff478d88a7de0de736ba5e361/schema.json",
-  "version": 9,
+  "$schema": "https://cmake.org/cmake/help/v4.3/_downloads/3e2d73bff478d88a7de0de736ba5e361/schema.json",
+  "version": 10,
   "include": [
     "./Common.json",
     "./BuildVariant.json",
@@ -17,11 +17,11 @@
         "lhs": "${hostSystemName}",
         "rhs": "Linux"
       },
-      "cacheVariables": {
-      },
+      "cacheVariables": {},
       "vendor": {
         "microsoft.com/VisualStudioRemoteSettings/CMake/1.0": {
-          "sourceDir": "$env{HOME}/.vs/$ms{projectDirName}"
+          "sourceDir": "$env{HOME}/.vs/$ms{projectDirName}",
+          "hostOS": "Linux"
         }
       }
     },

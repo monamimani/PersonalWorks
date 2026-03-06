@@ -18,7 +18,7 @@ namespace Delegate
 export template<typename Signature>
 class Connection;
 
-export template<typename Ret, typename... Args>
+template<typename Ret, typename... Args>
 class [[nodiscard]] Connection<Ret(Args...)> final
 {
   using Function_Sig = Ret(Args...);
@@ -77,7 +77,7 @@ class Delegate;
  * @tparam Ret
  * @tparam ...Args
  */
-export template<typename Ret, typename... Args>
+template<typename Ret, typename... Args>
 class Delegate<Ret(Args...)> final
 {
 private:

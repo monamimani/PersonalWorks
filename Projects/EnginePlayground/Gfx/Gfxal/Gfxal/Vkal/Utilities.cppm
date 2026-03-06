@@ -14,6 +14,8 @@ module;
 
 export module VkalUtilities;
 
+import vulkan;
+
 namespace VkHal
 {
 [[nodiscard]] bool operator==(const std::string_view lhs, const vk::ArrayWrapper1D<char, VK_MAX_EXTENSION_NAME_SIZE>& rhs)

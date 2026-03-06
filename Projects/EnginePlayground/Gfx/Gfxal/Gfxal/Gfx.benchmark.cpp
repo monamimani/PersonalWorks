@@ -1,6 +1,7 @@
 #include "TestUtilities/GoogleBenchmark.h"
 
 import GfxHAL;
+import vulkan;
 
 #include "Gfxal/Vkal/Vk.h"
 #include "Gfxal/Vkal/VkDefines.h"

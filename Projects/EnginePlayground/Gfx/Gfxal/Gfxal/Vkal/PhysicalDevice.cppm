@@ -25,6 +25,7 @@ export module Vkal.PhysicalDevice;
 
 import Core;
 import VkalUtilities;
+import vulkan;
 
 namespace VkHal
 {}

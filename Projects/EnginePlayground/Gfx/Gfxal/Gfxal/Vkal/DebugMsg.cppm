@@ -8,6 +8,7 @@ module;
 
 export module Vkal.DebugMsg;
 
+import vulkan;
 
 namespace VkHal
 {

@@ -14,8 +14,7 @@ module;
 module Vkal.VulkanSystem;
 
 import VkalUtilities;
-
-VULKAN_HPP_DEFAULT_DISPATCH_LOADER_DYNAMIC_STORAGE
+import vulkan;
 
 namespace VkHal
 {

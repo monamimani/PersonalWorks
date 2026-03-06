@@ -4,6 +4,8 @@
 #include "Gfxal/Vkal/Vk.h"
 #include "TestUtilities/GoogleBenchmark.h"
 
+import vulkan;
+
 namespace GfxBenchmark
 {
 

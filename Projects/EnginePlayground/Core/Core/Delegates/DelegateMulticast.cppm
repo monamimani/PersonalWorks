@@ -26,7 +26,7 @@ private:
 export template<typename Signature>
 class DelegateMulticast;
 
-export template<typename Ret, typename... Args>
+template<typename Ret, typename... Args>
 class DelegateMulticast<Ret(Args...)> final
 {
 private:

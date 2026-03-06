@@ -10,7 +10,6 @@
   #define VK_USE_PLATFORM_WAYLAND_KHR
 #endif
 
-import vulkan;
 #include "vulkan/vulkan_core.h" // IWYU pragma: export
 #include "vulkan/vulkan_hpp_macros.hpp" // IWYU pragma: export
 

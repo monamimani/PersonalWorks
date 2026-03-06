@@ -12,4 +12,4 @@ export namespace Core
 
 }
 
-module : private;
+//module : private;

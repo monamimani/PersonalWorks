@@ -12,6 +12,7 @@ export module Vkal.VulkanSystem;
 
 import Vkal.DebugMsg;
 import Vkal.PhysicalDevice;
+import vulkan;
 
 namespace VkHal
 {}
@@ -75,3 +76,7 @@ private:
 };
 
 } // namespace VkHal
+
+module : private;
+
+VULKAN_HPP_DEFAULT_DISPATCH_LOADER_DYNAMIC_STORAGE

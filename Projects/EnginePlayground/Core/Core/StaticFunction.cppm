@@ -14,7 +14,7 @@ namespace Core
 export template<typename Signature>
 class StaticFunction;
 
-export template<typename Ret, typename... Args>
+template<typename Ret, typename... Args>
 class StaticFunction<Ret(Args...)> final
 {
 

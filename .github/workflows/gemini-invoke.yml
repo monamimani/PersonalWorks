@@ -41,8 +41,8 @@ jobs:
         uses: 'actions/checkout@v4' # ratchet:exclude
 
       - name: 'Remove User Gemini folder'
-          shell: bash
-          run: rm -rf .gemini/
+        shell: bash
+        run: rm -rf .gemini/
 
       - name: 'Run Gemini CLI'
         id: 'run_gemini'

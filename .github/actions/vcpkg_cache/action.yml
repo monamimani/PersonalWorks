@@ -10,12 +10,36 @@ inputs:
 runs:
   using: "composite"
   steps:
+  - name: Bootstrap vcpkg (Windows)
+    if: runner.os == 'Windows'
+    shell: pwsh
+    run: |
+      $vcpkgRoot = if (Test-Path env:VCPKG_INSTALLATION_ROOT) { $env:VCPKG_INSTALLATION_ROOT } else { "C:\vcpkg" }
+      Write-Host "Bootstrapping vcpkg at: $vcpkgRoot"
+      if (Test-Path "$vcpkgRoot\bootstrap-vcpkg.bat") {
+        & "$vcpkgRoot\bootstrap-vcpkg.bat"
+      } else {
+        Write-Warning "bootstrap-vcpkg.bat not found at $vcpkgRoot"
+      }
+
+  - name: Bootstrap vcpkg (Linux)
+    if: runner.os == 'Linux'
+    shell: bash
+    run: |
+      vcpkg_root=${VCPKG_INSTALLATION_ROOT:-"/usr/local/share/vcpkg"}
+      echo "Bootstrapping vcpkg at: $vcpkg_root"
+      if [ -f "$vcpkg_root/bootstrap-vcpkg.sh" ]; then
+        "$vcpkg_root/bootstrap-vcpkg.sh"
+      else
+        echo "::warning::bootstrap-vcpkg.sh not found at $vcpkg_root"
+      fi
+
   - name: Setup NuGet for GitHub Packages (Windows)
     if: runner.os == 'Windows'
     shell: pwsh
     run: |
-      $vcpkgExe = "vcpkg"
-      if (Test-Path env:VCPKG_INSTALLATION_ROOT) { $vcpkgExe = "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" }
+      $vcpkgRoot = if (Test-Path env:VCPKG_INSTALLATION_ROOT) { $env:VCPKG_INSTALLATION_ROOT } else { "C:\vcpkg" }
+      $vcpkgExe = "$vcpkgRoot\vcpkg.exe"
       
       $feedUrl = "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
       $nuget = & $vcpkgExe fetch nuget | Out-String | ForEach-Object { $_.Trim() } | Select-Object -Last 1
@@ -38,8 +62,8 @@ runs:
     if: runner.os == 'Linux'
     shell: bash
     run: |
-      vcpkg_exe="vcpkg"
-      if [ -n "$VCPKG_INSTALLATION_ROOT" ]; then vcpkg_exe="$VCPKG_INSTALLATION_ROOT/vcpkg"; fi
+      vcpkg_root=${VCPKG_INSTALLATION_ROOT:-"/usr/local/share/vcpkg"}
+      vcpkg_exe="$vcpkg_root/vcpkg"
       
       feed_url="https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
       

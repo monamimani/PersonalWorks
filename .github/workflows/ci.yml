@@ -74,7 +74,7 @@ jobs:
         run: |
           Write-Host "Installing VS 2026 Build Tools..."
           choco install visualstudio2026buildtools-preview --pre
-          choco install visualstudio2026-preview-workload-vctools --pre --package-parameters "--add Microsoft.VisualStudio.Component.VC.Preview.Tools.x86.x64"
+          choco install visualstudio2026-preview-workload-vctools --pre --package-parameters "--includeOptional"
           Write-Host "VS 2026 Build Tools installation completed" 
 
       - name: "CMake Configure & Build"

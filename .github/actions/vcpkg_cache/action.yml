@@ -10,68 +10,25 @@ inputs:
 runs:
   using: "composite"
   steps:
-  - name: Bootstrap vcpkg (Windows)
-    if: runner.os == 'Windows'
-    shell: pwsh
-    run: |
-      $vcpkgRoot = if (Test-Path env:VCPKG_INSTALLATION_ROOT) { $env:VCPKG_INSTALLATION_ROOT } else { "C:\vcpkg" }
-      Write-Host "Bootstrapping vcpkg at: $vcpkgRoot"
-      if (Test-Path "$vcpkgRoot\bootstrap-vcpkg.bat") {
-        & "$vcpkgRoot\bootstrap-vcpkg.bat"
-      } else {
-        Write-Error "bootstrap-vcpkg.bat not found at $vcpkgRoot"
-        exit 1
-      }
-
-  - name: Bootstrap vcpkg (Linux)
-    if: runner.os == 'Linux'
-    shell: bash
-    run: |
-      vcpkg_root=${VCPKG_INSTALLATION_ROOT:-"/usr/local/share/vcpkg"}
-      echo "Bootstrapping vcpkg at: $vcpkg_root"
-      if [ -f "$vcpkg_root/bootstrap-vcpkg.sh" ]; then
-        "$vcpkg_root/bootstrap-vcpkg.sh"
-      else
-        echo "::error::bootstrap-vcpkg.sh not found at $vcpkg_root"
-        exit 1
-      fi
-
   - name: Setup NuGet for GitHub Packages (Windows)
     if: runner.os == 'Windows'
     shell: pwsh
     run: |
-      $vcpkgRoot = if (Test-Path env:VCPKG_INSTALLATION_ROOT) { $env:VCPKG_INSTALLATION_ROOT } else { "C:\vcpkg" }
-      $vcpkgExe = "$vcpkgRoot\vcpkg.exe"
-      
+      $vcpkgExe = if (Test-Path env:VCPKG_INSTALLATION_ROOT) { "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" } else { "vcpkg.exe" }
       $feedUrl = "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
-      
-      # Following tutorial exactly: .$($vcpkg fetch nuget)
-      Write-Host "Fetching nuget path..."
       $nuget = & $vcpkgExe fetch nuget | Out-String | ForEach-Object { $_.Trim() } | Select-Object -Last 1
-      Write-Host "Using nuget at: $nuget"
       
-      # Add the NuGet source
-      & $nuget sources add `
-        -Source "$feedUrl" `
-        -StorePasswordInClearText `
-        -Name GitHubPackages `
-        -UserName "${{ github.repository_owner }}" `
-        -Password "${{ inputs.token }}" `
-        -ErrorAction Continue
-      
-      # Set the API key
+      & $nuget sources add -Source "$feedUrl" -StorePasswordInClearText -Name GitHubPackages -UserName "${{ github.repository_owner }}" -Password "${{ inputs.token }}" || echo "Source already exists"
       & $nuget setapikey "${{ inputs.token }}" -Source "$feedUrl"
 
   - name: Setup NuGet for GitHub Packages (Linux)
     if: runner.os == 'Linux'
     shell: bash
     run: |
-      vcpkg_root=${VCPKG_INSTALLATION_ROOT:-"/usr/local/share/vcpkg"}
-      vcpkg_exe="$vcpkg_root/vcpkg"
-      
+      vcpkg_exe=${VCPKG_INSTALLATION_ROOT:+"$VCPKG_INSTALLATION_ROOT/vcpkg"}
+      vcpkg_exe=${vcpkg_exe:-"vcpkg"}
       feed_url="https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
       
-      # Linux requires mono to run nuget.exe as per docs.
       if command -v mono &> /dev/null; then
         nuget_path=$($vcpkg_exe fetch nuget | tail -n 1)
         mono "$nuget_path" sources add \
@@ -82,7 +39,6 @@ runs:
           -Password "${{ inputs.token }}" || true
         mono "$nuget_path" setapikey "${{ inputs.token }}" -Source "$feed_url"
       else
-        echo "mono not found, falling back to dotnet nuget"
         dotnet nuget add source "$feed_url" \
           --name "GitHubPackages" \
           --username "${{ github.repository_owner }}" \
@@ -94,3 +50,4 @@ runs:
     shell: bash
     run: |
       echo "VCPKG_BINARY_SOURCES=clear;nuget,https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json,readwrite" >> $GITHUB_ENV
+    

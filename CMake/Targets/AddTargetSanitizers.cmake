@@ -18,7 +18,7 @@ function(add_target_sanitizers TARGET_NAME)
     get_sanitizers_flags_msvc(SANITIZER_FLAGS_LIST)
   endif()
 
-  cmake_print_variables(SANITIZER_FLAGS_LIST)
+  #cmake_print_variables(SANITIZER_FLAGS_LIST)
 
   if(NOT SANITIZER_FLAGS_LIST STREQUAL "")
     target_compile_options(${TARGET_NAME} INTERFACE ${SANITIZER_FLAGS_LIST})

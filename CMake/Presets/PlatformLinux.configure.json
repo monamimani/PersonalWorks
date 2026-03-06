@@ -19,9 +19,13 @@
       },
       "cacheVariables": {},
       "vendor": {
+        "microsoft.com/VisualStudioSettings/CMake/1.0": {
+          "hostOS": [
+            "Linux"
+          ]
+        },
         "microsoft.com/VisualStudioRemoteSettings/CMake/1.0": {
-          "sourceDir": "$env{HOME}/.vs/$ms{projectDirName}",
-          "hostOS": "Linux"
+          "sourceDir": "$env{HOME}/.vs/$ms{projectDirName}"
         }
       }
     },

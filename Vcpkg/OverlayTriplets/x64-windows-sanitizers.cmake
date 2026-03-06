@@ -9,8 +9,16 @@ set(VCPKG_LIBRARY_LINKAGE dynamic)
 #Valid options include Empty (Windows Desktop for legacy reasons)
 set(VCPKG_CMAKE_SYSTEM_NAME "" CACHE STRING "")
 
-set(VCPKG_ENV_PASSTHROUGH BUILD_SANITIZERS)
+set(VCPKG_ENV_PASSTHROUGH BUILD_SANITIZERS CC CXX)
 set(BUILD_SANITIZERS "$ENV{BUILD_SANITIZERS}")
+
+if(DEFINED ENV{CC})
+  set(VCPKG_C_COMPILER "$ENV{CC}")
+endif()
+if(DEFINED ENV{CXX})
+  set(VCPKG_CXX_COMPILER "$ENV{CXX}")
+endif()
+
 include("${CMAKE_CURRENT_LIST_DIR}/../../CMake/Features/SanitizersMsvc.cmake")
 set(SANITIZER_FLAGS_LIST "")
 get_sanitizers_flags_msvc(SANITIZER_FLAGS_LIST)

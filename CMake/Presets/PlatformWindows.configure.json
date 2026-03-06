@@ -19,8 +19,10 @@
       },
       "cacheVariables": {},
       "vendor": {
-        "microsoft.com/VisualStudioRemoteSettings/CMake/1.0": {
-          "hostOS": "Windows"
+        "microsoft.com/VisualStudioSettings/CMake/1.0": {
+          "hostOS": [
+            "Windows"
+          ]
         }
       }
     },

@@ -51,6 +51,8 @@ jobs:
 
       - name: Vcpkg Cache
         uses: ./.github/actions/vcpkg_cache
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: CPM Cache
         id: cache-cpm
@@ -138,6 +140,8 @@ jobs:
 
     - name: Vcpkg Cache
       uses: ./.github/actions/vcpkg_cache
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: CPM Cache
       id: cache-cpm

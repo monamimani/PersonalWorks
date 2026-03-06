@@ -2,17 +2,30 @@
 name: 'vcpkg_cache'
 description: 'Sets up the vcpkg cache'
 
-# env: 
-#     VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
+inputs:
+  token:
+    description: 'The GitHub token to use for authentication with the NuGet source'
+    required: true
 
 runs:
   using: "composite"
   steps:
+  - name: Setup NuGet for GitHub Packages
+    shell: bash
+    run: |
+      # Configure NuGet to use GitHub Packages as a binary caching provider for vcpkg
+      # The source name is 'GitHub'
+      mono nuget sources add -name "GitHub" \
+        -source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" \
+        -username "${{ github.repository_owner }}" \
+        -password "${{ inputs.token }}" || \
+      mono nuget sources update -name "GitHub" \
+        -source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" \
+        -username "${{ github.repository_owner }}" \
+        -password "${{ inputs.token }}"
+
   - name: Export GitHub Actions cache environment variables
     uses: actions/github-script@v7
     with:
       script: |
-        core.exportVariable('VCPKG_BINARY_SOURCES', "clear;x-gha,readwrite" || '');
-        core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
-        core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
-
+        core.exportVariable('VCPKG_BINARY_SOURCES', "clear;nuget,GitHub,readwrite");

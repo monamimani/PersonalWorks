@@ -1,9 +1,9 @@
 # Initial Concept
-A personal C++23 playground for developing and exploring various coding concepts.
+A personal C++ playground for developing and exploring various coding concepts.
 
 # Product Definition
 ## Vision
-To provide a modular, high-performance C++23 environment for rapid prototyping, engine development, and technical experimentation.
+To provide a modular, high-performance C++ environment for rapid prototyping, engine development, and technical experimentation using the latest C++ standards.
 
 ## Core Pillars
 - **Experimentation:** A safe space to explore new C++ standards and idioms.

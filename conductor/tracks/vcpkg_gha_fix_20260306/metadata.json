@@ -1,8 +1,0 @@
-{
-  "track_id": "vcpkg_gha_fix_20260306",
-  "type": "bug",
-  "status": "new",
-  "created_at": "2026-03-06T00:00:00Z",
-  "updated_at": "2026-03-06T00:00:00Z",
-  "description": "Fix vcpkg warning about deprecated x-gha binary caching backend in GitHub Actions."
-}

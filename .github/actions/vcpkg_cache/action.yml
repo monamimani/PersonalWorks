@@ -1,6 +1,6 @@
 
 name: 'vcpkg_cache'
-description: 'Sets up the vcpkg cache'
+description: 'Sets up the vcpkg cache using NuGet and GitHub Packages'
 
 inputs:
   token:
@@ -16,9 +16,15 @@ runs:
     run: |
       $vcpkgExe = if (Test-Path env:VCPKG_INSTALLATION_ROOT) { "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" } else { "vcpkg.exe" }
       $feedUrl = "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
+      
+      # Use vcpkg to fetch nuget.exe
       $nuget = & $vcpkgExe fetch nuget | Out-String | ForEach-Object { $_.Trim() } | Select-Object -Last 1
       
-      & $nuget sources add -Source "$feedUrl" -StorePasswordInClearText -Name GitHubPackages -UserName "${{ github.repository_owner }}" -Password "${{ inputs.token }}" || echo "Source already exists"
+      # Add the NuGet source if it doesn't exist
+      # We use 'GitHub' as the source name to match the tutorial
+      & $nuget sources add -Source "$feedUrl" -StorePasswordInClearText -Name GitHub -UserName "${{ github.repository_owner }}" -Password "${{ inputs.token }}" 2>$null || echo "Source 'GitHub' already exists"
+      
+      # Set the API key for the source
       & $nuget setapikey "${{ inputs.token }}" -Source "$feedUrl"
 
   - name: Setup NuGet for GitHub Packages (Linux)
@@ -29,25 +35,29 @@ runs:
       vcpkg_exe=${vcpkg_exe:-"vcpkg"}
       feed_url="https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
       
+      # Try to use mono if available, otherwise fallback to dotnet nuget
       if command -v mono &> /dev/null; then
         nuget_path=$($vcpkg_exe fetch nuget | tail -n 1)
         mono "$nuget_path" sources add \
           -Source "$feed_url" \
           -StorePasswordInClearText \
-          -Name GitHubPackages \
+          -Name GitHub \
           -UserName "${{ github.repository_owner }}" \
           -Password "${{ inputs.token }}" || true
         mono "$nuget_path" setapikey "${{ inputs.token }}" -Source "$feed_url"
-      else
+      elif command -v dotnet &> /dev/null; then
         dotnet nuget add source "$feed_url" \
-          --name "GitHubPackages" \
+          --name "GitHub" \
           --username "${{ github.repository_owner }}" \
           --password "${{ inputs.token }}" \
           --store-password-in-clear-text || true
+      else
+        echo "::error::Neither mono nor dotnet found. Cannot configure NuGet source for vcpkg caching."
+        exit 1
       fi
 
   - name: Export vcpkg binary sources
     shell: bash
     run: |
-      echo "VCPKG_BINARY_SOURCES=clear;nuget,https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json,readwrite" >> $GITHUB_ENV
-    
+      # Configure vcpkg to use the 'GitHub' NuGet source
+      echo "VCPKG_BINARY_SOURCES=clear;nuget,GitHub,readwrite" >> $GITHUB_ENV

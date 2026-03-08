@@ -1,6 +1,6 @@
 
 name: 'vcpkg_cache'
-description: 'Sets up the vcpkg cache using NuGet and GitHub Packages'
+description: 'Sets up the vcpkg cache using .NET and GitHub Packages'
 
 inputs:
   token:
@@ -26,35 +26,30 @@ runs:
       # Set the API key for the source
       & $nuget setapikey "${{ inputs.token }}" -Source "$feedUrl"
 
-  - name: Setup NuGet for GitHub Packages (Linux)
+  - name: Setup .NET for GitHub Packages (Linux)
     if: runner.os == 'Linux'
     shell: bash
     run: |
-      # Install leanest mono possible for running nuget.exe
-      if ! command -v mono &> /dev/null; then
-        apt-get update
-        apt-get install -y --no-install-recommends mono-runtime ca-certificates-mono
+      # Install .NET SDK (required for dotnet nuget)
+      if ! command -v dotnet &> /dev/null; then
+        echo "dotnet not found. Installing .NET SDK..."
+        # Using the official Microsoft install script for the leanest possible installation
+        curl -sSL https://dot.net/v1/dotnet-install.sh | bash /dev/stdin --channel 8.0 --install-dir /usr/share/dotnet
+        ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet
       fi
 
-      vcpkg_exe="$VCPKG_INSTALLATION_ROOT/vcpkg"
       feed_url="https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
       
-      # Use vcpkg to fetch nuget.exe
-      nuget_path=$($vcpkg_exe fetch nuget | tail -n 1)
-      
-      # Add the NuGet source
-      mono "$nuget_path" sources add \
-        -Source "$feed_url" \
-        -StorePasswordInClearText \
-        -Name GitHub \
-        -UserName "${{ github.repository_owner }}" \
-        -Password "${{ inputs.token }}" || echo "Source 'GitHub' already exists"
-      
-      # Set the API key
-      mono "$nuget_path" setapikey "${{ inputs.token }}" -Source "$feed_url"
+      # Add the NuGet source using dotnet CLI
+      dotnet nuget add source "$feed_url" \
+        --name "GitHub" \
+        --username "${{ github.repository_owner }}" \
+        --password "${{ inputs.token }}" \
+        --store-password-in-clear-text || echo "Source 'GitHub' already exists"
 
   - name: Export vcpkg binary sources
     shell: bash
     run: |
       # Configure vcpkg to use the 'GitHub' NuGet source
+      # vcpkg will automatically detect and use 'dotnet' if available
       echo "VCPKG_BINARY_SOURCES=clear;nuget,GitHub,readwrite" >> $GITHUB_ENV

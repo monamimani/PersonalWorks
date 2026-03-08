@@ -7,15 +7,18 @@ inputs:
     description: 'The GitHub token (not strictly required for filesystem cache)'
     required: false
   cache-path:
-    description: 'The path to the vcpkg binary cache folder'
-    default: '${{ github.workspace }}/.vcpkg_cache'
+    description: 'The path to the vcpkg binary cache folder (relative to workspace)'
+    default: 'vcpkg_archives'
 
 runs:
   using: "composite"
   steps:
   - name: Create vcpkg cache directory
     shell: bash
-    run: mkdir -p "${{ inputs.cache-path }}"
+    run: |
+      mkdir -p "${{ inputs.cache-path }}"
+      # Ensure the directory is not empty so the cache action always sees it
+      touch "${{ inputs.cache-path }}/.keep"
 
   - name: Set up actions/cache
     uses: actions/cache@v5
@@ -28,5 +31,7 @@ runs:
   - name: Export vcpkg binary sources
     shell: bash
     run: |
-      # Point vcpkg to the archive folder
-      echo "VCPKG_BINARY_SOURCES=clear;files,${{ inputs.cache-path }},readwrite" >> $GITHUB_ENV
+      # Point vcpkg to the archive folder using an absolute path
+      # We resolve it here to ensure vcpkg (inside the container) finds it correctly
+      ABS_CACHE_PATH=$(realpath "${{ inputs.cache-path }}")
+      echo "VCPKG_BINARY_SOURCES=clear;files,$ABS_CACHE_PATH,readwrite" >> $GITHUB_ENV

@@ -43,6 +43,12 @@ function GetVsInstallationPath {
   $vsPath = $instances | Select-VSSetupInstance -Require 'Microsoft.VisualStudio.Component.VC.14.51.x86.x64' -Latest
   
   if (-not $vsPath) {
+    # If not found, try to look for the "Visual Studio Build Tools 2026 Preview" specifically by name or ID
+    # visualstudio2026buildtools-preview package usually has ID "Microsoft.VisualStudio.Product.BuildTools" (on version 18)
+    $vsPath = $instances | Where-Object { $_.Product.Id -eq "Microsoft.VisualStudio.Product.BuildTools" } | Select-Object -First 1
+  }
+
+  if (-not $vsPath) {
     # Fallback to the latest instance with generic VC tools
     $vsPath = $instances | Select-VSSetupInstance -Require 'Microsoft.VisualStudio.Component.VC.Tools.x86.x64' -Latest
   }

@@ -35,6 +35,17 @@ function GetVsInstallationPath {
   Set-PSRepository -Name "PSGallery" -InstallationPolicy Trusted 
   Install-Module VSSetup -Scope CurrentUser
   Set-PSRepository -Name "PSGallery" -InstallationPolicy UnTrusted 
-  $vsPath = Get-VSSetupInstance | Select-VSSetupInstance -Require 'Microsoft.VisualStudio.Component.VC.Tools.x86.x64' -Latest
+
+  # Use -All to include all instances, including those that are only build tools or preview
+  $instances = Get-VSSetupInstance -All
+  
+  # Try to find an instance that explicitly has the 14.51 component first
+  $vsPath = $instances | Select-VSSetupInstance -Require 'Microsoft.VisualStudio.Component.VC.14.51.x86.x64' -Latest
+  
+  if (-not $vsPath) {
+    # Fallback to the latest instance with generic VC tools
+    $vsPath = $instances | Select-VSSetupInstance -Require 'Microsoft.VisualStudio.Component.VC.Tools.x86.x64' -Latest
+  }
+
   return $vsPath.InstallationPath
 }

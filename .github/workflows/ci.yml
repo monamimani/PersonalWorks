@@ -97,10 +97,13 @@ jobs:
       - name: Install Visual Studio Build Tools
         shell: pwsh
         run: |
-          Write-Host "Installing VS 2026 Build Tools..."
+          Write-Host "Installing VS 2026 Build Tools & MSVC 14.51..."
+          
           # Use --no-progress to keep logs clean and --limit-output to reduce noise
+          # We explicitly add the 14.51 component to the workload installation
           choco install visualstudio2026buildtools-preview --pre --no-progress --limit-output
           choco install visualstudio2026-preview-workload-vctools --pre --no-progress --limit-output --package-parameters "--add Microsoft.VisualStudio.Component.VC.14.51.x86.x64 --includeOptional"
+          
           Write-Host "VS 2026 Build Tools installation completed"
 
       - name: "CMake Configure & Build"

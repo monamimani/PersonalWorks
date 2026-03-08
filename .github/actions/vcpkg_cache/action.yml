@@ -29,9 +29,15 @@ runs:
         ${{ runner.os }}-vcpkg-
 
   - name: Export vcpkg binary sources
+    shell: pwsh
+    run: |
+      $abs_cache_path = Resolve-Path "${{ inputs.cache-path }}"
+      echo "VCPKG_BINARY_SOURCES=clear;files,$abs_cache_path,readwrite" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+    if: runner.os == 'Windows'
+
+  - name: Export vcpkg binary sources (Linux)
     shell: bash
     run: |
-      # Point vcpkg to the archive folder using an absolute path
-      # We resolve it here to ensure vcpkg (inside the container) finds it correctly
       ABS_CACHE_PATH=$(realpath "${{ inputs.cache-path }}")
       echo "VCPKG_BINARY_SOURCES=clear;files,$ABS_CACHE_PATH,readwrite" >> $GITHUB_ENV
+    if: runner.os == 'Linux'

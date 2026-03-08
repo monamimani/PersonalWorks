@@ -1,55 +1,18 @@
+
 name: 'vcpkg_cache'
-description: 'Sets up the vcpkg cache using .NET/NuGet and GitHub Packages'
+description: 'Sets up the native vcpkg GitHub Actions binary cache'
 
 inputs:
   token:
-    description: 'The GitHub token to use for authentication with the NuGet source'
-    required: true
+    description: 'The GitHub token to use for authentication (not strictly required for GHA, but kept for compatibility)'
+    required: false
+
 runs:
   using: "composite"
   steps:
-   - name: Setup NuGet for GitHub Packages (Windows)
-     if: runner.os == 'Windows'
-     shell: pwsh
-     run: |
-       $vcpkgExe = "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe"
-       $feedUrl = "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
-
-       # Use vcpkg to fetch nuget.exe
-       $nuget = & $vcpkgExe fetch nuget | Out-String | ForEach-Object { $_.Trim() } | Select-Object -Last 1
-
-       # Add the NuGet source if it doesn't exist
-       & $nuget sources add -Source "$feedUrl" -StorePasswordInClearText -Name GitHub -UserName "${{ github.repository_owner }}" -Password "${{ inputs.token }}" 2>$null || echo "Source 'GitHub' already exists"
-
-       # Set the API key for the source
-       & $nuget setapikey "${{ inputs.token }}" -Source "$feedUrl"
-
-   - name: Setup .NET SDK (Linux)
-     if: runner.os == 'Linux'
-     uses: actions/setup-dotnet@v4
-     with:
-       dotnet-version: '8.0.x'
-
-   - name: Setup NuGet for GitHub Packages (Linux)
-     if: runner.os == 'Linux'
-     shell: bash
-     run: |
-       feed_url="https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
-       # Add the NuGet source using dotnet CLI
-       dotnet nuget add source "$feed_url" \
-         --name "GitHub" \
-         --username "${{ github.repository_owner }}" \
-         --password "${{ inputs.token }}" \
-         --store-password-in-clear-text || echo "Source 'GitHub' already exists"
-
-   - name: Export vcpkg binary sources
-     shell: bash
-     run: |
-       # Force vcpkg to use the native .NET SDK instead of Mono/nuget.exe on Linux
-       if [ "${{ runner.os }}" = "Linux" ]; then
-         echo "VCPKG_USE_NUGET_DOTNET=1" >> $GITHUB_ENV
-         echo "VCPKG_FORCE_SYSTEM_BINARIES=1" >> $GITHUB_ENV
-       fi
-
-       # Configure vcpkg to use the 'GitHub' NuGet source
-       echo "VCPKG_BINARY_SOURCES=clear;nuget,GitHub,readwrite" >> $GITHUB_ENV
+  - name: Export vcpkg binary sources
+    shell: bash
+    run: |
+      # Configure vcpkg to use the native GitHub Actions cache provider (gha)
+      # The 'gha' provider is stable and faster than NuGet/Packages for CI
+      echo "VCPKG_BINARY_SOURCES=clear;gha,readwrite" >> $GITHUB_ENV

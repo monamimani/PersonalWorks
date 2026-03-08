@@ -100,11 +100,14 @@ jobs:
       - name: Install Visual Studio Build Tools
         shell: pwsh
         run: |
-          Write-Host "Installing VS 2026 Build Tools & MSVC 14.51..."
+          Write-Host "Installing VS 2026 Build Tools..."
           
           # Use -y to accept all licenses and ignore 3010 (restart required)
           choco install visualstudio2026buildtools-preview -y --pre --no-progress --limit-output --ignore-package-exit-codes=3010
-          choco install visualstudio2026-preview-workload-vctools -y --pre --no-progress --limit-output --ignore-package-exit-codes=3010 --package-parameters "--add Microsoft.VisualStudio.Component.VC.14.51.x86.x64 --includeOptional"
+          
+          Write-Host "Installing C++ Workload with latest tools..."
+          # Using the generic 'latest' ID which should point to 14.51 in the preview channel
+          choco install visualstudio2026-preview-workload-vctools -y --pre --no-progress --limit-output --ignore-package-exit-codes=3010 --package-parameters "--add Microsoft.VisualStudio.Component.VC.Tools.x86.x64 --includeOptional"
           
           Write-Host "VS 2026 Build Tools installation completed"
 
@@ -112,10 +115,11 @@ jobs:
         shell: pwsh
         run: |
           $vswhere = "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe"
-          Write-Host "Checking for VC Tools 14.51 component..."
-          & $vswhere -all -prerelease -products * -requires Microsoft.VisualStudio.Component.VC.14.51.x86.x64 -property installationPath
-          Write-Host "Listing all components for all instances..."
-          & $vswhere -all -prerelease -products * -format json
+          Write-Host "Checking for all instances..."
+          & $vswhere -all -prerelease -products * -property installationPath
+          Write-Host "Checking for specific components in Insiders instance..."
+          # List all components for the Insiders instance to see what ID 14.51 actually has
+          & $vswhere -all -prerelease -path "C:\Program Files (x86)\Microsoft Visual Studio\18\Insiders" -format json
 
       - name: "CMake Configure & Build"
         run: |

@@ -65,9 +65,11 @@ jobs:
           path: |
             ${{ env.LOCALAPPDATA }}\Temp\chocolatey
             C:\ProgramData\chocolatey\lib
-          key: ${{ runner.os }}-choco-${{ hashFiles('.github/workflows/ci.yml') }}
+            C:\ProgramData\chocolatey\bin
+            C:\ProgramData\chocolatey\config
+          key: ${{ runner.os }}-choco-v2-${{ hashFiles('.github/workflows/ci.yml') }}
           restore-keys: |
-            ${{ runner.os }}-choco-
+            ${{ runner.os }}-choco-v2-
 
       - name: CPM Cache
         id: cache-cpm
@@ -86,12 +88,19 @@ jobs:
       #     packaging_maintainer_mode: false
       #     generator: ${{ matrix.generator }}
 
+      - name: List Installed VS Components
+        shell: pwsh
+        run: |
+          & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -all -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+          & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -all -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -format json
+
       - name: Install Visual Studio Build Tools
         shell: pwsh
         run: |
           Write-Host "Installing VS 2026 Build Tools..."
-          choco install visualstudio2026buildtools-preview --pre
-          choco install visualstudio2026-preview-workload-vctools --pre --package-parameters "--includeOptional"
+          # Use --no-progress to keep logs clean and --limit-output to reduce noise
+          choco install visualstudio2026buildtools-preview --pre --no-progress --limit-output
+          choco install visualstudio2026-preview-workload-vctools --pre --no-progress --limit-output --package-parameters "--add Microsoft.VisualStudio.Component.VC.14.51.x86.x64 --includeOptional"
           Write-Host "VS 2026 Build Tools installation completed"
 
       - name: "CMake Configure & Build"

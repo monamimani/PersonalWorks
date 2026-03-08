@@ -1,18 +1,32 @@
 
 name: 'vcpkg_cache'
-description: 'Sets up the native vcpkg GitHub Actions binary cache'
+description: 'Sets up vcpkg binary caching using a filesystem provider and actions/cache'
 
 inputs:
   token:
-    description: 'The GitHub token to use for authentication (not strictly required for GHA, but kept for compatibility)'
+    description: 'The GitHub token (not strictly required for filesystem cache)'
     required: false
+  cache-path:
+    description: 'The path to the vcpkg binary cache folder'
+    default: '${{ github.workspace }}/.vcpkg_cache'
 
 runs:
   using: "composite"
   steps:
+  - name: Create vcpkg cache directory
+    shell: bash
+    run: mkdir -p "${{ inputs.cache-path }}"
+
+  - name: Set up actions/cache
+    uses: actions/cache@v5
+    with:
+      path: ${{ inputs.cache-path }}
+      key: ${{ runner.os }}-vcpkg-${{ hashFiles('vcpkg.json', 'vcpkg-configuration.json') }}
+      restore-keys: |
+        ${{ runner.os }}-vcpkg-
+
   - name: Export vcpkg binary sources
     shell: bash
     run: |
-      # Configure vcpkg to use the native GitHub Actions cache provider (gha)
-      # The 'gha' provider is stable and faster than NuGet/Packages for CI
-      echo "VCPKG_BINARY_SOURCES=clear;gha,readwrite" >> $GITHUB_ENV
+      # Point vcpkg to the archive folder
+      echo "VCPKG_BINARY_SOURCES=clear;files,${{ inputs.cache-path }},readwrite" >> $GITHUB_ENV

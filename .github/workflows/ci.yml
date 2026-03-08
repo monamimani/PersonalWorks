@@ -67,9 +67,9 @@ jobs:
             C:\ProgramData\chocolatey\lib
             C:\ProgramData\chocolatey\bin
             C:\ProgramData\chocolatey\config
-          key: ${{ runner.os }}-choco-v2-${{ hashFiles('.github/workflows/ci.yml') }}
+          key: ${{ runner.os }}-choco-v4
           restore-keys: |
-            ${{ runner.os }}-choco-v2-
+            ${{ runner.os }}-choco-v4
 
       - name: CPM Cache
         id: cache-cpm
@@ -96,17 +96,15 @@ jobs:
           & $vswhere -all -prerelease -products * -property installationPath
           Write-Host "Checking for VC Tools component..."
           & $vswhere -all -prerelease -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
-          & $vswhere -all -prerelease -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -format json
 
       - name: Install Visual Studio Build Tools
         shell: pwsh
         run: |
           Write-Host "Installing VS 2026 Build Tools & MSVC 14.51..."
           
-          # Use --no-progress to keep logs clean and --limit-output to reduce noise
-          # We explicitly add the 14.51 component to the workload installation
-          choco install visualstudio2026buildtools-preview --pre --no-progress --limit-output
-          choco install visualstudio2026-preview-workload-vctools --pre --no-progress --limit-output --package-parameters "--add Microsoft.VisualStudio.Component.VC.14.51.x86.x64 --includeOptional"
+          # Use -y to accept all licenses and ignore 3010 (restart required)
+          choco install visualstudio2026buildtools-preview -y --pre --no-progress --limit-output --ignore-package-exit-codes=3010
+          choco install visualstudio2026-preview-workload-vctools -y --pre --no-progress --limit-output --ignore-package-exit-codes=3010 --package-parameters "--add Microsoft.VisualStudio.Component.VC.14.51.x86.x64 --includeOptional"
           
           Write-Host "VS 2026 Build Tools installation completed"
 
@@ -116,7 +114,8 @@ jobs:
           $vswhere = "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe"
           Write-Host "Checking for VC Tools 14.51 component..."
           & $vswhere -all -prerelease -products * -requires Microsoft.VisualStudio.Component.VC.14.51.x86.x64 -property installationPath
-          & $vswhere -all -prerelease -products * -requires Microsoft.VisualStudio.Component.VC.14.51.x86.x64 -format json
+          Write-Host "Listing all components for all instances..."
+          & $vswhere -all -prerelease -products * -format json
 
       - name: "CMake Configure & Build"
         run: |

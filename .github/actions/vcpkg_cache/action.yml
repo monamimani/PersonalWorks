@@ -32,8 +32,8 @@ runs:
     run: |
       # Install leanest mono possible for running nuget.exe
       if ! command -v mono &> /dev/null; then
-        sudo apt-get update
-        sudo apt-get install -y --no-install-recommends mono-runtime ca-certificates-mono
+        apt-get update
+        apt-get install -y --no-install-recommends mono-runtime ca-certificates-mono
       fi
 
       vcpkg_exe="$VCPKG_INSTALLATION_ROOT/vcpkg"

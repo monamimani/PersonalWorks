@@ -6,3 +6,8 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 - [x] **Track: Fix vcpkg x-gha binary caching warning in GitHub Actions**
   *Link: [./tracks/vcpkg_gha_fix_20260307/](./tracks/vcpkg_gha_fix_20260307/)*
+
+---
+
+- [ ] **Track: Fix Windows CI MSVC 14.51 & Chocolatey Caching**
+  *Link: [./tracks/fix_msvc_14_51_20260308/](./tracks/fix_msvc_14_51_20260308/)*

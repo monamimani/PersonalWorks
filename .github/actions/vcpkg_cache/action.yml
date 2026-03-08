@@ -1,4 +1,3 @@
-
 name: 'vcpkg_cache'
 description: 'Sets up the vcpkg cache using .NET/NuGet and GitHub Packages'
 
@@ -6,46 +5,45 @@ inputs:
   token:
     description: 'The GitHub token to use for authentication with the NuGet source'
     required: true
-
 runs:
   using: "composite"
   steps:
-  - name: Setup NuGet for GitHub Packages (Windows)
-    if: runner.os == 'Windows'
-    shell: pwsh
-    run: |
-      $vcpkgExe = "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe"
-      $feedUrl = "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
-      
-      # Use vcpkg to fetch nuget.exe
-      $nuget = & $vcpkgExe fetch nuget | Out-String | ForEach-Object { $_.Trim() } | Select-Object -Last 1
-      
-      # Add the NuGet source if it doesn't exist
-      & $nuget sources add -Source "$feedUrl" -StorePasswordInClearText -Name GitHub -UserName "${{ github.repository_owner }}" -Password "${{ inputs.token }}" 2>$null || echo "Source 'GitHub' already exists"
-      
-      # Set the API key for the source
-      & $nuget setapikey "${{ inputs.token }}" -Source "$feedUrl"
+   - name: Setup NuGet for GitHub Packages (Windows)
+     if: runner.os == 'Windows'
+     shell: pwsh
+     run: |
+       $vcpkgExe = "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe"
+       $feedUrl = "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
 
-  - name: Setup .NET for GitHub Packages (Linux)
-    if: runner.os == 'Linux'
-    shell: bash
-    run: |
-      # Install .NET Runtime (leanest way to get dotnet nuget)
-      if ! command -v dotnet &> /dev/null; then
-        apt-get update && apt-get install -y dotnet-runtime-8.0
-      fi
+       # Use vcpkg to fetch nuget.exe
+       $nuget = & $vcpkgExe fetch nuget | Out-String | ForEach-Object { $_.Trim() } | Select-Object -Last 1
 
-      feed_url="https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
-      
-      # Add the NuGet source using dotnet CLI
-      dotnet nuget add source "$feed_url" \
-        --name "GitHub" \
-        --username "${{ github.repository_owner }}" \
-        --password "${{ inputs.token }}" \
-        --store-password-in-clear-text || echo "Source 'GitHub' already exists"
+       # Add the NuGet source if it doesn't exist
+       & $nuget sources add -Source "$feedUrl" -StorePasswordInClearText -Name GitHub -UserName "${{ github.repository_owner }}" -Password "${{ inputs.token }}" 2>$null || echo "Source 'GitHub' already exists"
 
-  - name: Export vcpkg binary sources
-    shell: bash
-    run: |
-      # Configure vcpkg to use the 'GitHub' NuGet source
-      echo "VCPKG_BINARY_SOURCES=clear;nuget,GitHub,readwrite" >> $GITHUB_ENV
+       # Set the API key for the source
+       & $nuget setapikey "${{ inputs.token }}" -Source "$feedUrl"
+
+   - name: Setup .NET SDK (Linux)
+     if: runner.os == 'Linux'
+     uses: actions/setup-dotnet@v4
+     with:
+       dotnet-version: '8.0.x'
+
+   - name: Setup NuGet for GitHub Packages (Linux)
+     if: runner.os == 'Linux'
+     shell: bash
+     run: |
+       feed_url="https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
+       # Add the NuGet source using dotnet CLI
+       dotnet nuget add source "$feed_url" \
+         --name "GitHub" \
+         --username "${{ github.repository_owner }}" \
+         --password "${{ inputs.token }}" \
+         --store-password-in-clear-text || echo "Source 'GitHub' already exists"
+
+   - name: Export vcpkg binary sources
+     shell: bash
+     run: |
+       # Configure vcpkg to use the 'GitHub' NuGet source
+       echo "VCPKG_BINARY_SOURCES=clear;nuget,GitHub,readwrite" >> $GITHUB_ENV

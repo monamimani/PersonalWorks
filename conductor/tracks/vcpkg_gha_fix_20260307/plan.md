@@ -8,7 +8,7 @@
     - [x] Provide the `GITHUB_TOKEN` to the NuGet configuration step.
     - [x] Add `permissions: packages: write` to the relevant workflow files (e.g., `ci.yml`).
     - [x] Use `vcpkg fetch nuget` as per Microsoft documentation for both Windows and Linux.
-- [ ] Task: Verify caching functionality using `gh` CLI
+- [~] Task: Verify caching functionality using `gh` CLI
     - [ ] Trigger the CI/CD pipeline on a branch using `gh workflow run`.
     - [ ] Monitor the run status using `gh run watch`.
     - [ ] Inspect the logs using `gh run view --log` to verify no `x-gha` warnings and successful caching.

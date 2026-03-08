@@ -1,6 +1,6 @@
 
 name: 'vcpkg_cache'
-description: 'Sets up the vcpkg cache using .NET and GitHub Packages'
+description: 'Sets up the vcpkg cache using .NET/NuGet and GitHub Packages'
 
 inputs:
   token:
@@ -30,12 +30,9 @@ runs:
     if: runner.os == 'Linux'
     shell: bash
     run: |
-      # Install .NET SDK (required for dotnet nuget)
+      # Install .NET Runtime (leanest way to get dotnet nuget)
       if ! command -v dotnet &> /dev/null; then
-        echo "dotnet not found. Installing .NET SDK..."
-        # Using the official Microsoft install script for the leanest possible installation
-        curl -sSL https://dot.net/v1/dotnet-install.sh | bash /dev/stdin --channel 8.0 --install-dir /usr/share/dotnet
-        ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet
+        apt-get update && apt-get install -y dotnet-runtime-8.0
       fi
 
       feed_url="https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
@@ -51,5 +48,4 @@ runs:
     shell: bash
     run: |
       # Configure vcpkg to use the 'GitHub' NuGet source
-      # vcpkg will automatically detect and use 'dotnet' if available
       echo "VCPKG_BINARY_SOURCES=clear;nuget,GitHub,readwrite" >> $GITHUB_ENV

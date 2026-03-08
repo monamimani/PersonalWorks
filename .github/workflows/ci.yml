@@ -59,6 +59,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Chocolatey Cache
+        if: runner.os == 'Windows'
         uses: actions/cache@v5
         with:
           path: |
@@ -91,7 +92,7 @@ jobs:
           Write-Host "Installing VS 2026 Build Tools..."
           choco install visualstudio2026buildtools-preview --pre
           choco install visualstudio2026-preview-workload-vctools --pre --package-parameters "--includeOptional"
-          Write-Host "VS 2026 Build Tools installation completed" 
+          Write-Host "VS 2026 Build Tools installation completed"
 
       - name: "CMake Configure & Build"
         run: |

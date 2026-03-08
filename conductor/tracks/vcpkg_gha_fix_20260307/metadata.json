@@ -1,0 +1,8 @@
+{
+  "track_id": "vcpkg_gha_fix_20260307",
+  "type": "chore",
+  "status": "new",
+  "created_at": "2026-03-07T18:35:00Z",
+  "updated_at": "2026-03-07T18:35:00Z",
+  "description": "Fix vcpkg x-gha binary caching warning in GitHub Actions by migrating to NuGet-based GitHub Packages provider."
+}

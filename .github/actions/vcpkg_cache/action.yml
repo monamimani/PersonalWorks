@@ -1,53 +1,37 @@
 
 name: 'vcpkg_cache'
-description: 'Sets up the vcpkg cache'
+description: 'Sets up vcpkg binary caching using a filesystem provider and actions/cache'
 
 inputs:
   token:
-    description: 'The GitHub token to use for authentication with the NuGet source'
-    required: true
+    description: 'The GitHub token (not strictly required for filesystem cache)'
+    required: false
+  cache-path:
+    description: 'The path to the vcpkg binary cache folder (relative to workspace)'
+    default: 'vcpkg_archives'
 
 runs:
   using: "composite"
   steps:
-  - name: Setup NuGet for GitHub Packages (Windows)
-    if: runner.os == 'Windows'
-    shell: pwsh
-    run: |
-      $vcpkgExe = if (Test-Path env:VCPKG_INSTALLATION_ROOT) { "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" } else { "vcpkg.exe" }
-      $feedUrl = "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
-      $nuget = & $vcpkgExe fetch nuget | Out-String | ForEach-Object { $_.Trim() } | Select-Object -Last 1
-      
-      & $nuget sources add -Source "$feedUrl" -StorePasswordInClearText -Name GitHubPackages -UserName "${{ github.repository_owner }}" -Password "${{ inputs.token }}" || echo "Source already exists"
-      & $nuget setapikey "${{ inputs.token }}" -Source "$feedUrl"
-
-  - name: Setup NuGet for GitHub Packages (Linux)
-    if: runner.os == 'Linux'
+  - name: Create vcpkg cache directory
     shell: bash
     run: |
-      vcpkg_exe=${VCPKG_INSTALLATION_ROOT:+"$VCPKG_INSTALLATION_ROOT/vcpkg"}
-      vcpkg_exe=${vcpkg_exe:-"vcpkg"}
-      feed_url="https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
-      
-      if command -v mono &> /dev/null; then
-        nuget_path=$($vcpkg_exe fetch nuget | tail -n 1)
-        mono "$nuget_path" sources add \
-          -Source "$feed_url" \
-          -StorePasswordInClearText \
-          -Name GitHubPackages \
-          -UserName "${{ github.repository_owner }}" \
-          -Password "${{ inputs.token }}" || true
-        mono "$nuget_path" setapikey "${{ inputs.token }}" -Source "$feed_url"
-      else
-        dotnet nuget add source "$feed_url" \
-          --name "GitHubPackages" \
-          --username "${{ github.repository_owner }}" \
-          --password "${{ inputs.token }}" \
-          --store-password-in-clear-text || true
-      fi
+      mkdir -p "${{ inputs.cache-path }}"
+      # Ensure the directory is not empty so the cache action always sees it
+      touch "${{ inputs.cache-path }}/.keep"
+
+  - name: Set up actions/cache
+    uses: actions/cache@v5
+    with:
+      path: ${{ inputs.cache-path }}
+      key: ${{ runner.os }}-vcpkg-${{ hashFiles('vcpkg.json', 'vcpkg-configuration.json') }}
+      restore-keys: |
+        ${{ runner.os }}-vcpkg-
 
   - name: Export vcpkg binary sources
     shell: bash
     run: |
-      echo "VCPKG_BINARY_SOURCES=clear;nuget,https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json,readwrite" >> $GITHUB_ENV
-    
+      # Point vcpkg to the archive folder using an absolute path
+      # We resolve it here to ensure vcpkg (inside the container) finds it correctly
+      ABS_CACHE_PATH=$(realpath "${{ inputs.cache-path }}")
+      echo "VCPKG_BINARY_SOURCES=clear;files,$ABS_CACHE_PATH,readwrite" >> $GITHUB_ENV

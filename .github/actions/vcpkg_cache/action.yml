@@ -31,12 +31,14 @@ runs:
   - name: Export vcpkg binary sources
     shell: bash
     run: |
-      # Use cygpath -w to ensure the path is absolute and correctly formatted for vcpkg on Windows
+      # Point vcpkg to the archive folder using an absolute path
+      ABS_CACHE_PATH=$(realpath "${{ inputs.cache-path }}")
+      
+      # Use cygpath -w to ensure the path is correctly formatted for vcpkg on Windows
       if [[ "$RUNNER_OS" == "Windows" ]]; then
-        ABS_CACHE_PATH=$(cygpath -w "${{ inputs.cache-path }}")
+        ABS_CACHE_PATH=$(cygpath -w "$ABS_CACHE_PATH")
         # Double backslashes for vcpkg if needed, but cygpath -w is usually safe
         echo "VCPKG_BINARY_SOURCES=clear;files,$ABS_CACHE_PATH,readwrite" >> $GITHUB_ENV
       else
-        ABS_CACHE_PATH=$(realpath "${{ inputs.cache-path }}")
         echo "VCPKG_BINARY_SOURCES=clear;files,$ABS_CACHE_PATH,readwrite" >> $GITHUB_ENV
       fi

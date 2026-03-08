@@ -88,11 +88,15 @@ jobs:
       #     packaging_maintainer_mode: false
       #     generator: ${{ matrix.generator }}
 
-      - name: List Installed VS Components
+      - name: List Installed VS Components (Pre-Install)
         shell: pwsh
         run: |
-          & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -all -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
-          & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -all -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -format json
+          $vswhere = "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe"
+          Write-Host "Checking for VS instances (including prerelease)..."
+          & $vswhere -all -prerelease -products * -property installationPath
+          Write-Host "Checking for VC Tools component..."
+          & $vswhere -all -prerelease -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+          & $vswhere -all -prerelease -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -format json
 
       - name: Install Visual Studio Build Tools
         shell: pwsh
@@ -105,6 +109,14 @@ jobs:
           choco install visualstudio2026-preview-workload-vctools --pre --no-progress --limit-output --package-parameters "--add Microsoft.VisualStudio.Component.VC.14.51.x86.x64 --includeOptional"
           
           Write-Host "VS 2026 Build Tools installation completed"
+
+      - name: List Installed VS Components (Post-Install)
+        shell: pwsh
+        run: |
+          $vswhere = "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe"
+          Write-Host "Checking for VC Tools 14.51 component..."
+          & $vswhere -all -prerelease -products * -requires Microsoft.VisualStudio.Component.VC.14.51.x86.x64 -property installationPath
+          & $vswhere -all -prerelease -products * -requires Microsoft.VisualStudio.Component.VC.14.51.x86.x64 -format json
 
       - name: "CMake Configure & Build"
         run: |

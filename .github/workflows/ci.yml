@@ -117,9 +117,8 @@ jobs:
           $vswhere = "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe"
           Write-Host "Checking for all instances..."
           & $vswhere -all -prerelease -products * -property installationPath
-          Write-Host "Checking for specific components in Insiders instance..."
-          # List all components for the Insiders instance to see what ID 14.51 actually has
-          & $vswhere -all -prerelease -path "C:\Program Files (x86)\Microsoft Visual Studio\18\Insiders" -format json
+          Write-Host "Listing all components for all instances..."
+          & $vswhere -all -prerelease -products * -format json
 
       - name: "CMake Configure & Build"
         run: |

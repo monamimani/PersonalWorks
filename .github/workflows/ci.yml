@@ -113,7 +113,7 @@ jobs:
 
       - name: "CMake Configure & Build"
         run: |
-          & { . Scripts\Build\VsEnvironment.ps1; LaunchVsDevShell }
+          & { . Scripts\Build\VsEnvironment.ps1; InvokeVcVarsAll }
 
           cmake --preset ${{matrix.configure-preset}} -DGIT_SHA:STRING=${{ github.sha }} -DPersonalWorks_ENABLE_CLANG_TIDY=OFF
           cmake --build --preset ${{matrix.build-preset}}

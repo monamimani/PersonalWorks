@@ -6,13 +6,13 @@
     - [x] Confirm if MSVC 14.51 (v145) is already present or truly missing.
 - [x] Task: Explicitly Install MSVC 14.51
     - [x] Update the `Install Visual Studio Build Tools` step in `.github/workflows/ci.yml`.
-    - [x] Add `--add Microsoft.VisualStudio.Component.VC.14.51.x86.x64` to the installation command.
-    - [x] Evaluate replacing `choco install` with a direct `vs_installer.exe` call if Chocolatey remains slow or unreliable.
+    - [x] Add `--add Microsoft.VisualStudio.Component.VC.Preview.Tools.x86.x64` to the installation command.
+    - [x] Integrate `--ignore-package-exit-codes=3010` for Chocolatey.
 - [x] Task: Optimize Chocolatey Caching
-    - [x] Update the `Chocolatey Cache` step to include the Chocolatey download/temp directory (`${{ env.LOCALAPPDATA }}\Temp\chocolatey`).
-    - [x] Ensure the cache key includes the workflow file hash to trigger refreshes on configuration changes.
+    - [x] Update the `Chocolatey Cache` step to use `${{ env.ProgramData }}` and `${{ env.LOCALAPPDATA }}`.
+    - [x] Switch to a more stable cache key.
 - [~] Task: Verify MSVC 14.51 Usage
-    - [ ] Trigger a CI run on the `windows-2025-vs2026` runner.
+    - [~] Trigger a CI run on the `fix/msvc-14.51-caching` branch.
     - [ ] Inspect logs to confirm the compiler version detected by CMake and the execution of `Scripts\Build\VsEnvironment.ps1`.
 - [ ] Task: Conductor - User Manual Verification 'Phase 1: Update Windows CI for MSVC 14.51 and Improve Caching' (Protocol in workflow.md)
 

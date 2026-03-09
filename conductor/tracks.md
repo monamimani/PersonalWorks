@@ -9,5 +9,5 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [ ] **Track: Fix Windows CI MSVC 14.51 & Chocolatey Caching**
+- [~] **Track: Fix Windows CI MSVC 14.51 & Chocolatey Caching**
   *Link: [./tracks/fix_msvc_14_51_20260308/](./tracks/fix_msvc_14_51_20260308/)*

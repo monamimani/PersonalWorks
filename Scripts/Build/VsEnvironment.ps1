@@ -10,9 +10,9 @@ function InvokeVcVarsAll {
 
   $vsPath = GetVsInstallationPath
   $vcvarsallPath = [IO.Path]::Combine($vsPath, "VC", "Auxiliary", "Build", "vcvarsall.bat")
-    
+
   #write-output($vcvarsallPath)
-    
+
   if ($vcvarsallPath) {
     cmd /s /c """$vcvarsallPath"" $Arch && set" | where { $_ -match '(\w+)=(.*)' } | foreach {
       $null = new-item -force -path "Env:\$($Matches[1])" -value $Matches[2]
@@ -32,30 +32,17 @@ function LaunchVsDevShell {
 }
 
 function GetVsInstallationPath {
-  Set-PSRepository -Name "PSGallery" -InstallationPolicy Trusted 
+  Set-PSRepository -Name "PSGallery" -InstallationPolicy Trusted
   Install-Module VSSetup -Scope CurrentUser
-  Set-PSRepository -Name "PSGallery" -InstallationPolicy UnTrusted 
+  Set-PSRepository -Name "PSGallery" -InstallationPolicy UnTrusted
 
   # Use -All and -Prerelease to include all instances, including preview/insiders
   $instances = Get-VSSetupInstance -All -Prerelease
-  
+
   # 1. Try to find an instance that explicitly has the 14.51 component first
-  $vsPath = $instances | Select-VSSetupInstance -Require 'Microsoft.VisualStudio.Component.VC.14.51.x86.x64' -Latest
-  
+  $vsPath = $instances | Select-VSSetupInstance -Require 'Microsoft.VisualStudio.Component.VC.Preview.Tools.x86.x64' -Latest
+
   # 2. If not found, try to look for the generic toolset in an instance whose path contains "Insiders"
-  if (-not $vsPath) {
-    $vsPath = $instances | Where-Object { $_.InstallationPath -like "*Insiders*" } | Select-VSSetupInstance -Require 'Microsoft.VisualStudio.Component.VC.Tools.x86.x64' -Latest
-  }
-
-  # 3. If still not found, try to look for the "Visual Studio Build Tools 2026 Preview" specifically
-  if (-not $vsPath) {
-    $vsPath = $instances | Where-Object { 
-      $_.Product.Id -eq "Microsoft.VisualStudio.Product.BuildTools" -and 
-      $_.InstallationVersion.Major -eq 18 
-    } | Select-Object -First 1
-  }
-
-  # 4. Fallback to any latest instance with generic VC tools (might pick up Enterprise 18)
   if (-not $vsPath) {
     $vsPath = $instances | Select-VSSetupInstance -Require 'Microsoft.VisualStudio.Component.VC.Tools.x86.x64' -Latest
   }

@@ -77,12 +77,12 @@ jobs:
         with:
           path: |
             ${{ env.LOCALAPPDATA }}\Temp\chocolatey
-            C:\ProgramData\chocolatey\lib
-            C:\ProgramData\chocolatey\bin
-            C:\ProgramData\chocolatey\config
-          key: ${{ runner.os }}-choco-v4
+            ${{ env.ProgramData }}\chocolatey\lib
+            ${{ env.ProgramData }}\chocolatey\bin
+            ${{ env.ProgramData }}\chocolatey\config
+          key: ${{ runner.os }}-choco-${{ hashFiles('**/chocolatey.config') }}
           restore-keys: |
-            ${{ runner.os }}-choco-v4
+            ${{ runner.os }}-choco-
 
       - name: CPM Cache
         id: cache-cpm
@@ -93,35 +93,12 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-cpm-
 
-      # - name: Setup Cache
-      #   uses: ./.github/actions/setup_cache
-      #   with:
-      #     compiler: ${{ matrix.compiler }}
-      #     build_type: ${{ matrix.build_type }}
-      #     packaging_maintainer_mode: false
-      #     generator: ${{ matrix.generator }}
-
-      - name: List Installed VS Components (Pre-Install)
-        shell: pwsh
-        run: |
-          $vswhere = "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe"
-          Write-Host "Checking for VS instances (including prerelease)..."
-          & $vswhere -all -prerelease -products * -property installationPath
-          Write-Host "Checking for VC Tools component..."
-          & $vswhere -all -prerelease -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
-
       - name: Install Visual Studio Build Tools
         shell: pwsh
         run: |
           Write-Host "Installing VS 2026 Build Tools..."
-
-          # Use -y to accept all licenses and ignore 3010 (restart required)
           choco install visualstudio2026buildtools-preview -y --pre --no-progress --limit-output --ignore-package-exit-codes=3010
-
-          Write-Host "Installing C++ Workload with latest tools..."
-          # Using the generic 'latest' ID which should point to 14.51 in the preview channel
-          choco install visualstudio2026-preview-workload-vctools -y --pre --no-progress --limit-output --ignore-package-exit-codes=3010 --package-parameters "--add Microsoft.VisualStudio.Component.VC.Tools.x86.x64 --includeOptional"
-
+          choco install visualstudio2026-preview-workload-vctools -y --pre --no-progress --limit-output --ignore-package-exit-codes=3010 --package-parameters "--add Microsoft.VisualStudio.Component.VC.Preview.Tools.x86.x64"
           Write-Host "VS 2026 Build Tools installation completed"
 
       - name: List Installed VS Components (Post-Install)
@@ -129,11 +106,11 @@ jobs:
         run: |
           $vswhere = "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe"
           Write-Host "Checking for all instances..."
-          & $vswhere -all -prerelease -products * -property installationPath
+          & $vswhere -all -prerelease -products "*" -property installationPath
           Write-Host "Checking if any instance has VC Tools 14.51..."
-          & $vswhere -all -prerelease -products * -requires Microsoft.VisualStudio.Component.VC.14.51.x86.x64 -property installationPath
+          & $vswhere -all -prerelease -products "*" -requires Microsoft.VisualStudio.Component.VC.Preview.Tools.x86.x64 -property installationPath
           Write-Host "Checking if any instance has generic VC Tools..."
-          & $vswhere -all -prerelease -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+          & $vswhere -all -prerelease -products "*" -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
 
       - name: "CMake Configure & Build"
         run: |
@@ -207,14 +184,6 @@ jobs:
         key: ${{ runner.os }}-cpm-${{ hashFiles('_Out/cpm_sources/**/') }}
         restore-keys: |
           ${{ runner.os }}-cpm-
-
-    # - name: Setup Cache
-    #   uses: ./.github/actions/setup_cache
-    #   with:
-    #     compiler: ${{ matrix.compiler }}
-    #     build_type: ${{ matrix.build_type }}
-    #     packaging_maintainer_mode: false
-    #     generator: ${{ matrix.generator }}
 
     - name: "Fetch latest vcpkg"
       if: runner.os == 'Linux'

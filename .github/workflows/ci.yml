@@ -2,6 +2,12 @@ name: ci
 
 on:
   workflow_dispatch:
+    inputs:
+      tmate_enabled:
+        type: boolean
+        description: 'Run the build with tmate debugging enabled (https://github.com/marketplace/actions/debugging-with-tmate)'
+        required: false
+        default: false
   pull_request:
   release:
     types: [published]
@@ -38,6 +44,13 @@ jobs:
 
     name: ${{matrix.build-preset}}
     steps:
+      - uses: actions/checkout@v4
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate/detached@v3
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.tmate_enabled }}
+        with:
+          sudo: false
+
       - uses: actions/checkout@v6
 
       - name: Env variable
@@ -101,14 +114,14 @@ jobs:
         shell: pwsh
         run: |
           Write-Host "Installing VS 2026 Build Tools..."
-          
+
           # Use -y to accept all licenses and ignore 3010 (restart required)
           choco install visualstudio2026buildtools-preview -y --pre --no-progress --limit-output --ignore-package-exit-codes=3010
-          
+
           Write-Host "Installing C++ Workload with latest tools..."
           # Using the generic 'latest' ID which should point to 14.51 in the preview channel
           choco install visualstudio2026-preview-workload-vctools -y --pre --no-progress --limit-output --ignore-package-exit-codes=3010 --package-parameters "--add Microsoft.VisualStudio.Component.VC.Tools.x86.x64 --includeOptional"
-          
+
           Write-Host "VS 2026 Build Tools installation completed"
 
       - name: List Installed VS Components (Post-Install)
@@ -117,8 +130,10 @@ jobs:
           $vswhere = "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe"
           Write-Host "Checking for all instances..."
           & $vswhere -all -prerelease -products * -property installationPath
-          Write-Host "Listing all components for all instances..."
-          & $vswhere -all -prerelease -products * -format json
+          Write-Host "Checking if any instance has VC Tools 14.51..."
+          & $vswhere -all -prerelease -products * -requires Microsoft.VisualStudio.Component.VC.14.51.x86.x64 -property installationPath
+          Write-Host "Checking if any instance has generic VC Tools..."
+          & $vswhere -all -prerelease -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
 
       - name: "CMake Configure & Build"
         run: |

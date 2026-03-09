@@ -13,8 +13,7 @@ on:
     types: [published]
   push:
     branches:
-      - main
-      - dev
+      - '**'
 
 permissions:
   packages: write

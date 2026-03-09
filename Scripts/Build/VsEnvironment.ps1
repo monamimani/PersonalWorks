@@ -1,34 +1,32 @@
 
 function InvokeVcVarsAll {
-  param (
-    [Parameter()]
-    $Arch = 'x64',
-
-    [Parameter(ValueFromRemainingArguments = $true)]
-    $Arguments
-  )
 
   $vsPath = GetVsInstallationPath
-  $vcvarsallPath = [IO.Path]::Combine($vsPath, "VC", "Auxiliary", "Build", "vcvarsall.bat")
-
-  #write-output($vcvarsallPath)
-
-  if ($vcvarsallPath) {
-    cmd /s /c """$vcvarsallPath"" $Arch && set" | where { $_ -match '(\w+)=(.*)' } | foreach {
-      $null = new-item -force -path "Env:\$($Matches[1])" -value $Matches[2]
+  $vcvarsPath = [IO.Path]::Combine($vsPath, "VC", "Auxiliary", "Build", "vcvars64.bat")
+    
+  if (Test-Path $vcvarsPath) {
+    # We must capture the environment variables set by the batch file and apply them to the current PowerShell scope.
+    # The '&& set' trick lists all environment variables after the batch file runs.
+    $cmd = "`"$vcvarsPath`" -vcvars_ver=Preview && set"
+    cmd /c $cmd | ForEach-Object {
+      if ($_ -match '^([^=]+)=(.*)$') {
+        $name = $Matches[1]
+        $value = $Matches[2]
+        Set-Item -Path "Env:\$name" -Value $value
+      }
     }
+  } else {
+      Write-Error "Could not find vcvars64.bat at $vcvarsPath"
   }
-
-  #Get-ChildItem env:
 }
 
 function LaunchVsDevShell {
-  #Get-ChildItem env:
   $vsPath = GetVsInstallationPath
   $vcvarsallPath = [IO.Path]::Combine($vsPath, "Common7", "Tools", "Launch-VsDevShell.ps1")
-  #write-output($vcvarsallPath)
-  & $vcvarsallPath -Arch amd64 -SkipAutomaticLocation
-  #Get-ChildItem env:
+  
+  # Launch-VsDevShell.ps1 does not support specifying the toolset version.
+  # We use dot-sourcing so it applies to the current scope.
+  . $vcvarsallPath -Arch amd64 -SkipAutomaticLocation
 }
 
 function GetVsInstallationPath {

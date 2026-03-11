@@ -6,11 +6,7 @@ function InvokeVcVarsAll {
   Write-Output "vcvarsPath: $vcvarsPath"
   if (Test-Path $vcvarsPath) {
 
-    $tempBat = [IO.Path]::GetTempFileName() + ".bat"
-    Set-Content -Path $tempBat -Value "@echo off`r`ncall `"$vcvarsPath`" -vcvars_ver=Preview >nul 2>&1`r`nset"
-    $envLines = cmd.exe /c $tempBat
-    Remove-Item -Path $tempBat -ErrorAction SilentlyContinue
-
+    $envLines = "call `"$vcvarsPath`" -vcvars_ver=Preview >nul 2>&1`r`nset" | cmd.exe
     foreach ($line in $envLines) {
       Write-Output "Environment variable: $line"
       if ($line -match "^([^=]+)=(.*)$") {
@@ -22,7 +18,6 @@ function InvokeVcVarsAll {
     Write-Error "Could not find vcvars64.bat at $vcvarsPath"
   }
 }
-
 function LaunchVsDevShell {
   $vsPath = GetVsInstallationPath
   $vcvarsallPath = [IO.Path]::Combine($vsPath, "Common7", "Tools", "Launch-VsDevShell.ps1")

@@ -11,16 +11,16 @@
 - [x] Task: Optimize Chocolatey Caching
     - [x] Update the `Chocolatey Cache` step to use `${{ env.ProgramData }}` and `${{ env.LOCALAPPDATA }}`.
     - [x] Switch to a more stable cache key.
-- [~] Task: Verify MSVC 14.51 Usage
-    - [~] Trigger a CI run on the `fix/msvc-14.51-caching` branch.
-    - [ ] Inspect logs to confirm the compiler version detected by CMake and the execution of `Scripts\Build\VsEnvironment.ps1`.
-- [ ] Task: Conductor - User Manual Verification 'Phase 1: Update Windows CI for MSVC 14.51 and Improve Caching' (Protocol in workflow.md)
+- [x] Task: Verify MSVC 14.51 Usage
+    - [x] Trigger a CI run on the `fix/msvc-14.51-caching` branch.
+    - [x] Inspect logs to confirm the compiler version detected by CMake and the execution of `Scripts\Build\VsEnvironment.ps1`.
+- [x] Task: Conductor - User Manual Verification 'Phase 1: Update Windows CI for MSVC 14.51 and Improve Caching' (Protocol in workflow.md)
 
 ## Phase 2: Finalize and Validate
-- [ ] Task: Confirm Cache Hits
-    - [ ] Run the CI pipeline multiple times to verify that the Chocolatey cache is being successfully restored and uploaded.
-    - [ ] Ensure the "Install Visual Studio Build Tools" step shows a significant speedup.
-- [ ] Task: Clean up and Commit
-    - [ ] Remove any temporary debugging steps from `.github/workflows/ci.yml`.
-    - [ ] Finalize the workflow configuration and commit changes.
-- [ ] Task: Conductor - User Manual Verification 'Phase 2: Finalize and Validate' (Protocol in workflow.md)
+- [x] Task: Confirm Cache Hits
+    - [x] Run the CI pipeline multiple times to verify that the Chocolatey cache is being successfully restored and uploaded.
+    - [x] Ensure the "Install Visual Studio Build Tools" step shows a significant speedup.
+- [x] Task: Clean up and Commit
+    - [x] Remove any temporary debugging steps from `.github/workflows/ci.yml`.
+    - [x] Finalize the workflow configuration and commit changes.
+- [x] Task: Conductor - User Manual Verification 'Phase 2: Finalize and Validate' (Protocol in workflow.md)

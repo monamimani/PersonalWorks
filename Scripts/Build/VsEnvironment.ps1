@@ -3,12 +3,12 @@ function InvokeVcVarsAll {
 
   $vsPath = GetVsInstallationPath
   $vcvarsPath = [IO.Path]::Combine($vsPath, "VC", "Auxiliary", "Build", "vcvars64.bat")
-
+  Write-Host "vcvarsPath: $vcvarsPath"
   if (Test-Path $vcvarsPath) {
 
     $envLines = cmd.exe /c "`"$vcvarsPath`" -vcvars_ver=Preview >nul 2>&1 && set"
-
     foreach ($line in $envLines) {
+      Write-Host "Environment variable: $line"
       if ($line -match "^([^=]+)=(.*)$") {
         [Environment]::SetEnvironmentVariable($matches[1], $matches[2], [EnvironmentVariableTarget]::Process)
       }

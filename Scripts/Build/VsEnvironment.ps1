@@ -34,10 +34,11 @@ function GetVsInstallationPath {
 
   # Use -All and -Prerelease to include all instances, including preview/insiders
   $instances = Get-VSSetupInstance -All -Prerelease
-  Write-Output "Instances: $instances"
+  [Console]::WriteLine("Instances:")
+  [Console]::WriteLine(($instances | Format-List * | Out-String))
   # Try to find an instance that explicitly has the 14.51 component first
   $vsPath = $instances | Select-VSSetupInstance -Require 'Microsoft.VisualStudio.Component.VC.Preview.Tools.x86.x64' -Latest
-  Write-Output "VSPath: $vsPath"
+  [Console]::WriteLine("VSPath: $($vsPath.InstallationPath)")
   # If not found, try to look for the generic toolset in an instance whose path contains "Insiders"
   if (-not $vsPath) {
     $vsPath = $instances | Select-VSSetupInstance -Require 'Microsoft.VisualStudio.Component.VC.Tools.x86.x64' -Latest

@@ -97,7 +97,8 @@ jobs:
         run: |
           Write-Host "Installing VS 2026 Build Tools..."
           choco install visualstudio2026buildtools-preview -y --pre --no-progress --limit-output --ignore-package-exit-codes=3010
-          choco install visualstudio2026-preview-workload-vctools -y --pre --no-progress --limit-output --ignore-package-exit-codes=3010 --package-parameters "--add Microsoft.VisualStudio.Component.VC.Preview.Tools.x86.x64"
+          choco install visualstudio2026-preview-workload-nativedesktop -y --pre --ignore-package-exit-codes=3010
+          choco install visualstudio2026-preview-workload-vctools -y --pre --ignore-package-exit-codes=3010 --package-parameters "--add Microsoft.VisualStudio.Component.VC.Preview.Tools.x86.x64"
           Write-Host "VS 2026 Build Tools installation completed"
 
       - name: List Installed VS Components (Post-Install)
@@ -112,9 +113,10 @@ jobs:
           & $vswhere -all -prerelease -products "*" -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
 
       - name: "CMake Configure & Build"
+        shell: pwsh
         run: |
           . Scripts\Build\VsEnvironment.ps1; InvokeVcVarsAll
-
+          gci Env:
           cmake --preset ${{matrix.configure-preset}} -DGIT_SHA:STRING=${{ github.sha }} -DPersonalWorks_ENABLE_CLANG_TIDY=OFF
           cmake --build --preset ${{matrix.build-preset}}
 

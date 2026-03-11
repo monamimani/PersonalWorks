@@ -43,4 +43,3 @@ function GetVsInstallationPath {
 
   return $vsPath.InstallationPath
 }
-}

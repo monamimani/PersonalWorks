@@ -101,22 +101,11 @@ jobs:
           choco install visualstudio2026-preview-workload-vctools -y --pre --ignore-package-exit-codes=3010 --package-parameters "--add Microsoft.VisualStudio.Component.VC.Preview.Tools.x86.x64"
           Write-Host "VS 2026 Build Tools installation completed"
 
-      - name: List Installed VS Components (Post-Install)
-        shell: pwsh
-        run: |
-          $vswhere = "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe"
-          Write-Host "Checking for all instances..."
-          & $vswhere -all -prerelease -products "*" -property installationPath
-          Write-Host "Checking if any instance has VC Tools 14.51..."
-          & $vswhere -all -prerelease -products "*" -requires Microsoft.VisualStudio.Component.VC.Preview.Tools.x86.x64 -property installationPath
-          Write-Host "Checking if any instance has generic VC Tools..."
-          & $vswhere -all -prerelease -products "*" -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
-
       - name: "CMake Configure & Build"
         shell: pwsh
         run: |
           . Scripts\Build\VsEnvironment.ps1; InvokeVcVarsAll
-          gci Env:
+
           cmake --preset ${{matrix.configure-preset}} -DGIT_SHA:STRING=${{ github.sha }} -DPersonalWorks_ENABLE_CLANG_TIDY=OFF
           cmake --build --preset ${{matrix.build-preset}}
 

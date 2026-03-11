@@ -3,12 +3,10 @@ function InvokeVcVarsAll {
 
   $vsPath = GetVsInstallationPath
   $vcvarsPath = [IO.Path]::Combine($vsPath, "VC", "Auxiliary", "Build", "vcvars64.bat")
-  Write-Output "vcvarsPath: $vcvarsPath"
   if (Test-Path $vcvarsPath) {
 
     $envLines = "call `"$vcvarsPath`" -vcvars_ver=Preview >nul 2>&1`r`nset" | cmd.exe
     foreach ($line in $envLines) {
-      Write-Output "Environment variable: $line"
       if ($line -match "^([^=]+)=(.*)$") {
         [Environment]::SetEnvironmentVariable($matches[1], $matches[2], [EnvironmentVariableTarget]::Process)
       }
@@ -34,15 +32,15 @@ function GetVsInstallationPath {
 
   # Use -All and -Prerelease to include all instances, including preview/insiders
   $instances = Get-VSSetupInstance -All -Prerelease
-  [Console]::WriteLine("Instances:")
-  [Console]::WriteLine(($instances | Format-List * | Out-String))
+
   # Try to find an instance that explicitly has the 14.51 component first
-  $vsPath = $instances | Select-VSSetupInstance -Product * -Require 'Microsoft.VisualStudio.Component.VC.Preview.Tools.x86.x64' -Latest
-  [Console]::WriteLine("VSPath: $($vsPath.InstallationPath)")
+  $vsPath = $instances | Select-VSSetupInstance -Require 'Microsoft.VisualStudio.Component.VC.Preview.Tools.x86.x64' -Latest
+
   # If not found, try to look for the generic toolset in an instance whose path contains "Insiders"
   if (-not $vsPath) {
-    $vsPath = $instances | Select-VSSetupInstance -Product * -Require 'Microsoft.VisualStudio.Component.VC.Tools.x86.x64' -Latest
+    $vsPath = $instances | Select-VSSetupInstance -Require 'Microsoft.VisualStudio.Component.VC.Tools.x86.x64' -Latest
   }
 
   return $vsPath.InstallationPath
+}
 }

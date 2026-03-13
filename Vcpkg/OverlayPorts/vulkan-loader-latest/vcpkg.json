@@ -1,5 +1,5 @@
 {
-  "name": "vulkan-loader-tmp",
+  "name": "vulkan-loader-latest",
   "version": "1.4.329",
   "description": "Vulkan Development Tools",
   "homepage": "https://github.com/KhronosGroup/Vulkan-Loader",
@@ -14,7 +14,7 @@
       "name": "vcpkg-cmake-config",
       "host": true
     },
-    "vulkan-headers-tmp"
+    "vulkan-headers-latest"
   ],
   "features": {
   "directfb": {

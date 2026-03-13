@@ -79,4 +79,5 @@ private:
 
 module : private;
 
-VULKAN_HPP_DEFAULT_DISPATCH_LOADER_DYNAMIC_STORAGE
+// I think I don't need this becauuse Vulkan.cppm does using VULKAN_HPP_NAMESPACE::detail::defaultDispatchLoaderDynamic; and that is an equivalent.
+//VULKAN_HPP_DEFAULT_DISPATCH_LOADER_DYNAMIC_STORAGE

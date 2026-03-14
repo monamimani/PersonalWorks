@@ -40,7 +40,7 @@ set(targetNameTests ${TARGETNAME}Tests)
 add_executable(${targetNameTests})
 add_executable(PersonalWorks::${targetNameTests} ALIAS ${targetNameTests})
 set_target_properties(${targetNameTests} PROPERTIES FOLDER Tests)
-gtest_discover_tests(${targetNameTests})
+gtest_discover_tests(${targetNameTests} DISCOVERY_TIMEOUT 60)
 
 target_include_directories(${targetNameTests}
   PUBLIC

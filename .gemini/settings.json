@@ -2,15 +2,11 @@
   "context": {
     "fileName": [
       "AGENTS.MD",
-      "GEMINI.MD",
-      "README.MD"
+      "GEMINI.MD"
     ]
   },
   "ide": {
     "hasSeenNudge": true,
     "enabled": true
-  },
-  "general": {
-    "preferredEditor": "vscode"
   }
 }

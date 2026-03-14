@@ -67,8 +67,10 @@ Tests are enabled by default and can be run using CTest. The main testing framew
 *   **Dependencies:** Dependencies are managed using `vcpkg`. New dependencies should be added to the `vcpkg.json` file.
 *   **Continuous Integration:** All code is built and tested on Windows and Linux via GitHub Actions. The workflow is defined in `.github/workflows/ci.yml`.
 
-# Instructions for Google Jules
+## Instructions for Google Jules
 
 To work with the `PersonalWorks` repository, you need to execute as root the script `JulesEnvSetup.sh` located in the root of the repository. This script will set up the necessary environment for you to work on the project.
 
+## Project Readme
 
+@README.md

@@ -106,8 +106,6 @@ jobs:
         run: |
           . Scripts\Build\VsEnvironment.ps1; InvokeVcVarsAll
 
-          ninja --version
-
           cmake --preset ${{matrix.configure-preset}} -DGIT_SHA:STRING=${{ github.sha }} -DPersonalWorks_ENABLE_CLANG_TIDY=OFF
           cmake --build --preset ${{matrix.build-preset}}
 

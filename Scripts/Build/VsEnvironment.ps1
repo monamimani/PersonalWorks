@@ -16,6 +16,7 @@ function InvokeVcVarsAll {
     Write-Error "Could not find vcvars64.bat at $vcvarsPath"
   }
 }
+
 function LaunchVsDevShell {
   $vsPath = GetVsInstallationPath
   $vcvarsallPath = [IO.Path]::Combine($vsPath, "Common7", "Tools", "Launch-VsDevShell.ps1")

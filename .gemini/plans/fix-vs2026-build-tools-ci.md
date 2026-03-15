@@ -32,15 +32,32 @@ Modify the `CMake Configure & Build` step in `.github/workflows/ci.yml` to inclu
           # Workaround for CMake Visual Studio Generator bug with MSVC v14.51 Preview
           if ('${{ matrix.configure-preset }}' -eq 'Windows-Msvc-VisualStudio') {
               Write-Host "Applying workaround for MSVC v14.51 Preview MSBuild properties..."
-              $buildDir = Join-Path $env:VCINSTALLDIR "Auxiliary\Build"
-              $targetDir = Join-Path $buildDir "14.51"
               
-              if (-not (Test-Path $targetDir)) {
-                  New-Item -ItemType Directory -Path $targetDir | Out-Null
+              $vcInstallDir = $env:VCINSTALLDIR
+              if (-not $vcInstallDir -and $env:VCToolsInstallDir) {
+                  $vcInstallDir = Resolve-Path (Join-Path $env:VCToolsInstallDir "..\..\..")
               }
-              
-              Copy-Item -Path (Join-Path $buildDir "v145\Microsoft.VCToolsVersion.VC.14.51.props") -Destination (Join-Path $targetDir "Microsoft.VCToolsVersion.14.51.props") -Force
-              Copy-Item -Path (Join-Path $buildDir "v145\Microsoft.VCToolsVersion.VC.14.51.txt") -Destination (Join-Path $targetDir "Microsoft.VCToolsVersion.14.51.txt") -Force
+
+              if ($vcInstallDir) {
+                  $buildDir = Join-Path $vcInstallDir "Auxiliary\Build"
+                  $targetDir = Join-Path $buildDir "14.51"
+                  
+                  if (-not (Test-Path $targetDir)) {
+                      New-Item -ItemType Directory -Path $targetDir | Out-Null
+                  }
+                  
+                  $srcProps = Join-Path $buildDir "v145\Microsoft.VCToolsVersion.VC.14.51.props"
+                  $srcTxt = Join-Path $buildDir "v145\Microsoft.VCToolsVersion.VC.14.51.txt"
+                  
+                  if (Test-Path $srcProps) {
+                      Copy-Item -Path $srcProps -Destination (Join-Path $targetDir "Microsoft.VCToolsVersion.14.51.props") -Force
+                  }
+                  if (Test-Path $srcTxt) {
+                      Copy-Item -Path $srcTxt -Destination (Join-Path $targetDir "Microsoft.VCToolsVersion.14.51.txt") -Force
+                  }
+              } else {
+                  Write-Warning "Could not find VCINSTALLDIR or VCToolsInstallDir. Workaround skipped."
+              }
           }
 
           cmake --preset ${{matrix.configure-preset}} -DGIT_SHA:STRING=${{ github.sha }} -DPersonalWorks_ENABLE_CLANG_TIDY=OFF

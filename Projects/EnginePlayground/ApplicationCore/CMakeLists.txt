@@ -152,7 +152,7 @@ if(PersonalWorks_BUILD_TESTS AND GTest_FOUND AND testsSources)
       PersonalWorks::TestUtilities
       GTest::gtest_main
   )
-  gtest_discover_tests(${targetNameTest})
+  gtest_discover_tests(${targetNameTest} DISCOVERY_TIMEOUT 600)
 
   #set_target_properties(${targetName}Tests PROPERTIES VS_DEBUGGER_COMMAND_ARGUMENTS "--gtest_filter=ErasedStorageTestStructF*")
 

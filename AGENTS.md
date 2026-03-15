@@ -15,7 +15,7 @@ The main sub-projects are:
 *   **Config:** A utility project for configuration management.
 *   **OnnxInferenceApp & OnnxRT:** Projects related to ONNX model inference.
 
-The project is built using C++23 and is intended to be cross-platform, with CI/CD pipelines for both Windows and Linux.
+The project is built using C++23 and latest C++ and is intended to be cross-platform, with CI/CD pipelines for both Windows and Linux.
 
 ## Building and Running
 
@@ -37,6 +37,7 @@ The project uses CMake presets for configuration and building. The following are
 *   **Windows (MSVC):**
     ```bash
     # Configure
+    . Scripts\Build\VsEnvironment.ps1; InvokeVcVarsAll
     cmake --preset Windows-Msvc-Ninja-Debug-NoTidy
     # Build
     cmake --build --preset Windows-Msvc-Ninja-Debug-NoTidy
@@ -58,7 +59,7 @@ The project uses CMake presets for configuration and building. The following are
 
 **Testing:**
 
-Tests are enabled by default and can be run using CTest. The main testing frameworks are `gtest` and `catch2`.
+Tests are enabled by default. The main testing frameworks are `gtest` and `catch2`.
 
 ## Development Conventions
 
@@ -70,6 +71,8 @@ Tests are enabled by default and can be run using CTest. The main testing framew
 ## Instructions for Google Jules
 
 To work with the `PersonalWorks` repository, you need to execute as root the script `JulesEnvSetup.sh` located in the root of the repository. This script will set up the necessary environment for you to work on the project.
+
+
 
 ## Project Readme
 

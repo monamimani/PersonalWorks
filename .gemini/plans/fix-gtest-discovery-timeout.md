@@ -1,30 +1,30 @@
-# Objective
-Fix the CI failure in the `Windows-Msvc-Ninja-Debug` preset caused by a timeout during GoogleTest discovery.
+# Plan - Fix GTest Discovery Timeout in CI
 
-# Background & Motivation
-The log shows that the build fails during the linking/post-build phase of `CoreTests.exe`. The specific error originates from `GoogleTestAddTests.cmake`, which is executing `CoreTests.exe` to discover the tests available in the executable:
+The CI job `Windows-Msvc-Ninja-Debug` is failing during test discovery for `CoreTests.exe` because the default 5-second timeout is insufficient for the ASan build. Although `DISCOVERY_TIMEOUT 600` is defined in `CMake/Targets/TestTarget.cmake`, this file is not included in the build, and most tests call `gtest_discover_tests` directly without a timeout.
+
+## Objective
+Increase the test discovery timeout to 600 seconds for all GTest targets to prevent CI failures.
+
+## Key Files & Context
+- `Projects/EnginePlayground/*/CMakeLists.txt`: Individual project files calling `gtest_discover_tests`.
+
+## Implementation Steps
+
+### 1. Update manual gtest_discover_tests calls
+Add `DISCOVERY_TIMEOUT 600` to all manual calls of `gtest_discover_tests` in the following files:
+- `Projects/EnginePlayground/TestUtilities/CMakeLists.txt`
+- `Projects/EnginePlayground/Core/CMakeLists.txt`
+- `Projects/EnginePlayground/ApplicationCore/CMakeLists.txt`
+- `Projects/EnginePlayground/BasicWindowApp/CMakeLists.txt`
+
+## Verification & Testing
+
+### 1. Local Configuration Check
+Run CMake configuration locally:
+```pwsh
+.\Scripts\Build\BuildWindowsMsvcNinjaDebugNoTidy.ps1
 ```
-Result: Process terminated due to timeout
-```
-By default, CMake's `gtest_discover_tests` function has a hardcoded `DISCOVERY_TIMEOUT` of 5 seconds. When building with MSVC in Debug mode on a CI runner, especially with Address Sanitizers enabled (`x64-windows-sanitizers` was resolved by vcpkg), the executable can take longer than 5 seconds just to load DLLs and initialize before it can even print the test list. This triggers the CMake timeout and fails the build.
+Then check the generated test discovery files in the build directory (e.g., `_Out/build/Windows-Msvc-Ninja-Debug/Projects/EnginePlayground/Core/CoreTests[1]_tests.cmake`) to verify that `TEST_DISCOVERY_TIMEOUT` is set to `600`.
 
-# Scope & Impact
-- **Impacted Files**: `CMake/Targets/TestTarget.cmake`
-- The change is minimal and only affects the CMake configuration for test generation. It extends the timeout window allowing the test executable enough time to report its tests.
-
-# Proposed Solution
-Modify `CMake/Targets/TestTarget.cmake` where `gtest_discover_tests` is called. Add the `DISCOVERY_TIMEOUT` argument with a higher value, such as 60 seconds, to prevent timeouts on slower CI runners.
-
-# Implementation Steps
-1. Modify `CMake/Targets/TestTarget.cmake`.
-2. Change the following line:
-   ```cmake
-   gtest_discover_tests(${targetNameTests})
-   ```
-   to:
-   ```cmake
-   gtest_discover_tests(${targetNameTests} DISCOVERY_TIMEOUT 60)
-   ```
-
-# Verification
-After making this change, the post-build test discovery step will have 60 seconds to complete, which is more than enough time for `CoreTests.exe` to initialize and list its tests on the CI runner. We will verify the build locally and the CI pipeline will confirm the fix globally.
+### 2. CI Validation
+The primary validation will be the successful completion of the `Windows-Msvc-Ninja-Debug` job in CI.

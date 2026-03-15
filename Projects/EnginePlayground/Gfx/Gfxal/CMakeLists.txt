@@ -103,7 +103,7 @@ target_link_libraries(${targetName}
 #      PersonalWorks::TestUtilities
 #      GTest::gtest_main
 #  )
-#  gtest_discover_tests(${targetNameTest})
+#  gtest_discover_tests(${targetNameTest} DISCOVERY_TIMEOUT 600)
 #
 #  # Provide a simple smoke test to make sure that the CLI works and can display a --help message
 #  # add_test(NAME cli.has_help COMMAND SampleApp --help)

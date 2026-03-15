@@ -23,7 +23,15 @@
     {
       "name": "NinjaMultiConfig",
       "hidden": true,
-      "generator": "Ninja Multi-Config"
+      "generator": "Ninja Multi-Config",
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
+      },
+      "toolset": {
+        "value": "x64",
+        "strategy": "external"
+      }
     },
     {
       "name": "Ninja",

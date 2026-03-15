@@ -59,24 +59,24 @@
       ]
     },
     {
-      "name": "Windows-Msvc-Vs2022-Debug",
-      "configurePreset": "Windows-Msvc-Vs2022",
+      "name": "Windows-Msvc-VisualStudio-Debug",
+      "configurePreset": "Windows-Msvc-VisualStudio",
       "configuration": "Debug",
       "inherits": [
         "Windows"
       ]
     },
     {
-      "name": "Windows-Msvc-Vs2022-ReleaseWithDebugInfo",
-      "configurePreset": "Windows-Msvc-Vs2022",
+      "name": "Windows-Msvc-VisualStudio-ReleaseWithDebugInfo",
+      "configurePreset": "Windows-Msvc-VisualStudio",
       "configuration": "RelWithDebInfo",
       "inherits": [
         "Windows"
       ]
     },
     {
-      "name": "Windows-Msvc-Vs2022-Release",
-      "configurePreset": "Windows-Msvc-Vs2022",
+      "name": "Windows-Msvc-VisualStudio-Release",
+      "configurePreset": "Windows-Msvc-VisualStudio",
       "configuration": "Release",
       "inherits": [
         "Windows"

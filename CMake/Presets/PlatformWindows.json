@@ -88,28 +88,28 @@
       ]
     },
     {
-      "name": "Windows-Msvc-Vs2022-Debug",
+      "name": "Windows-Msvc-VisualStudio-Debug",
       "steps": [
         {
           "type": "configure",
-          "name": "Windows-Msvc-Vs2022"
+          "name": "Windows-Msvc-VisualStudio"
         },
         {
           "type": "build",
-          "name": "Windows-Msvc-Vs2022-Debug"
+          "name": "Windows-Msvc-VisualStudio-Debug"
         }
       ]
     },
     {
-      "name": "Windows-Msvc-Vs2022-ReleaseWithDebugInfo",
+      "name": "Windows-Msvc-VisualStudio-ReleaseWithDebugInfo",
       "steps": [
         {
           "type": "configure",
-          "name": "Windows-Msvc-Vs2022"
+          "name": "Windows-Msvc-VisualStudio"
         },
         {
           "type": "build",
-          "name": "Windows-Msvc-Vs2022-ReleaseWithDebugInfo"
+          "name": "Windows-Msvc-VisualStudio-ReleaseWithDebugInfo"
         }
       ]
     }

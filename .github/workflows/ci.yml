@@ -38,8 +38,8 @@ jobs:
             configure-preset: "Windows-Msvc-NinjaMultiConfig"
             build-preset: "Windows-Msvc-NinjaMultiConfig-Debug"
           - os: windows-latest
-            configure-preset: "Windows-Msvc-Vs2022"
-            build-preset: "Windows-Msvc-Vs2022-Debug"
+            configure-preset: "Windows-Msvc-VisualStudio"
+            build-preset: "Windows-Msvc-VisualStudio-Debug"
 
     name: ${{matrix.build-preset}}
     steps:

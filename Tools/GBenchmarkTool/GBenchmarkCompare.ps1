@@ -23,7 +23,7 @@ py -m pip install -r requirements.txt
 
 $BuildDin = "$PSScriptRoot\..\..\_Out\build"
 
-&py compare.py filters "$BuildDin\windows-vs2022-checkers\_bin\RelWithDebInfo\CoreBenchmarks.exe" DelegateCompare DelegateCompare
+&py compare.py filters "$BuildDin\windows-VisualStudio-checkers\_bin\RelWithDebInfo\CoreBenchmarks.exe" DelegateCompare DelegateCompare
 
 &deactivate
 

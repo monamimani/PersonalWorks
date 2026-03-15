@@ -8,7 +8,7 @@
       "generator": "Visual Studio 18 2026",
       "architecture": {
         "value": "x64",
-        "strategy": "set"
+        "strategy": "external"
       },
       "toolset": {
         "value": "host=x64",

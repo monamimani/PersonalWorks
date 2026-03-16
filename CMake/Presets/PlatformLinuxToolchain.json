@@ -6,13 +6,28 @@
       "name": "Clang",
       "hidden": true,
       "toolchainFile": "${sourceDir}/CMake/Toolchain/Linux/llvm-toolchain.cmake",
-      "environment": {
-        "CC": "/usr/bin/clang",
-        "CXX": "/usr/bin/clang++",
-        "AR": "/usr/bin/llvm-ar",
-        "RANLIB": "/usr/bin/llvm-ranlib"
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": {
+          "type": "FILEPATH",
+          "value": "/usr/bin/clang"
+        },
+        "CMAKE_CXX_COMPILER": {
+          "type": "FILEPATH",
+          "value": "/usr/bin/clang++"
+        },
+        "CMAKE_AR": {
+          "type": "FILEPATH",
+          "value": "/usr/bin/llvm-ar"
+        },
+        "CMAKE_RANLIB": {
+          "type": "FILEPATH",
+          "value": "/usr/bin/llvm-ranlib"
+        },
+        "CMAKE_LINKER": {
+          "type": "FILEPATH",
+          "value": "/usr/bin/ld.lld"
+        }
       },
-      "cacheVariables": {},
       "condition": {
         "type": "equals",
         "lhs": "${hostSystemName}",
@@ -27,13 +42,28 @@
       "name": "Clang-libc++",
       "hidden": true,
       "toolchainFile": "${sourceDir}/CMake/Toolchain/Linux/llvm-libc++-toolchain.cmake",
-      "environment": {
-        "CC": "/usr/bin/clang",
-        "CXX": "/usr/bin/clang++",
-        "AR": "/usr/bin/llvm-ar",
-        "RANLIB": "/usr/bin/llvm-ranlib"
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": {
+          "type": "FILEPATH",
+          "value": "/usr/bin/clang"
+        },
+        "CMAKE_CXX_COMPILER": {
+          "type": "FILEPATH",
+          "value": "/usr/bin/clang++"
+        },
+        "CMAKE_AR": {
+          "type": "FILEPATH",
+          "value": "/usr/bin/llvm-ar"
+        },
+        "CMAKE_RANLIB": {
+          "type": "FILEPATH",
+          "value": "/usr/bin/llvm-ranlib"
+        },
+        "CMAKE_LINKER": {
+          "type": "FILEPATH",
+          "value": "/usr/bin/ld.lld"
+        }
       },
-      "cacheVariables": {},
       "condition": {
         "type": "equals",
         "lhs": "${hostSystemName}",

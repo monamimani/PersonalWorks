@@ -26,8 +26,14 @@ function(configure_code_hardening UBSAN_MIN_RUNTIME)
     if(GLIBCXX)
       list(APPEND CODE_HARDENING_CXX_DEFINITIONS "-D_GLIBCXX_ASSERTIONS")
       message(STATUS "GLIBC++ Assertions (vector[], string[], ...) enabled")
-      list(APPEND CODE_HARDENING_COMPILE_OPTIONS "-U_FORTIFY_SOURCE" "-D_FORTIFY_SOURCE=3")
-      message(STATUS "g++/clang _FORTIFY_SOURCE=3 enabled")
+      # Workaround for Clang + libstdc++ + C++23 modules + _FORTIFY_SOURCE
+      # See: https://github.com/llvm/llvm-project/issues/71612
+      if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND CMAKE_CXX_MODULE_STD)
+        message(STATUS "_FORTIFY_SOURCE=3 disabled due to C++23 modules compatibility issues with Clang and libstdc++")
+      else()
+        list(APPEND CODE_HARDENING_COMPILE_OPTIONS "-U_FORTIFY_SOURCE" "-D_FORTIFY_SOURCE=3")
+        message(STATUS "g++/clang _FORTIFY_SOURCE=3 enabled")
+      endif()
     endif()
 
     check_cxx_symbol_exists(_LIBCPP_VERSION version LIBCPP)

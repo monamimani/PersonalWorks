@@ -8,7 +8,9 @@
       "toolchainFile": "${sourceDir}/CMake/Toolchain/Linux/llvm-toolchain.cmake",
       "environment": {
         "CC": "/usr/bin/clang",
-        "CXX": "/usr/bin/clang++"
+        "CXX": "/usr/bin/clang++",
+        "AR": "/usr/bin/llvm-ar",
+        "RANLIB": "/usr/bin/llvm-ranlib"
       },
       "cacheVariables": {},
       "condition": {
@@ -27,7 +29,9 @@
       "toolchainFile": "${sourceDir}/CMake/Toolchain/Linux/llvm-libc++-toolchain.cmake",
       "environment": {
         "CC": "/usr/bin/clang",
-        "CXX": "/usr/bin/clang++"
+        "CXX": "/usr/bin/clang++",
+        "AR": "/usr/bin/llvm-ar",
+        "RANLIB": "/usr/bin/llvm-ranlib"
       },
       "cacheVariables": {},
       "condition": {

@@ -13,6 +13,8 @@ if(EXISTS "${CMAKE_SOURCE_DIR}/vcpkg.json")
       message(FATAL_ERROR "vcpkg.json found, but VCPKG_ROOT is not set and vcpkg submodule not found.")
     endif()
 
+    #set(VCPKG_INSTALL_OPTIONS "--debug")
+
     set(VCPKG_TOOLCHAIN_PATH "${VCPKG_PATH}/scripts/buildsystems/vcpkg.cmake")
     file(REAL_PATH ${VCPKG_TOOLCHAIN_PATH} VCPKG_TOOLCHAIN_PATH EXPAND_TILDE)
     if(NOT EXISTS "${VCPKG_TOOLCHAIN_PATH}")

@@ -9,6 +9,8 @@ include(${CMAKE_CURRENT_LIST_DIR}/../common-toolchain.cmake)
 
 set(CMAKE_C_COMPILER "clang")
 set(CMAKE_CXX_COMPILER "clang++")
+set(ENV{CC} "clang")
+set(ENV{CXX} "clang++")
 
 list(APPEND TC_BASE_C_FLAGS -Wno-builtin-macro-redefined)
 list(APPEND TC_BASE_CXX_FLAGS -Wno-builtin-macro-redefined)
@@ -34,7 +36,7 @@ list(APPEND TC_BASE_MODULE_LINKER_FLAGS ${SANITIZER_FLAGS_LIST})
 # cmake_print_variables(SANITIZER_FLAGS)
 # cmake_print_variables(BUILD_SANITIZERS)
 
-set(VCPKG_TARGET_TRIPLET "x64-linux-sanitizers" CACHE STRING "Vcpkg target triplet")
+set(VCPKG_TARGET_TRIPLET "x64-linux-clang-sanitizers" CACHE STRING "Vcpkg target triplet")
 
 list(JOIN TC_BASE_C_FLAGS " " TC_BASE_C_FLAGS_STRING)
 set(CMAKE_C_FLAGS_INIT "${CMAKE_C_FLAGS_INIT} ${TC_BASE_C_FLAGS_STRING}")

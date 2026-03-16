@@ -40,6 +40,9 @@
       ],
       "cacheVariables": {
         "BUILD_SANITIZERS": "address;undefined"
+      },
+      "environment": {
+        "BUILD_SANITIZERS": "address;undefined"
       }
     },
     {
@@ -52,6 +55,9 @@
         "ReleaseWithDebugInfo"
       ],
       "cacheVariables": {
+        "BUILD_SANITIZERS": "address;undefined"
+      },
+      "environment": {
         "BUILD_SANITIZERS": "address;undefined"
       }
     },
@@ -76,6 +82,9 @@
       ],
       "cacheVariables": {
         "BUILD_SANITIZERS": "address;undefined"
+      },
+      "environment": {
+        "BUILD_SANITIZERS": "address;undefined"
       }
     },
     {
@@ -88,6 +97,9 @@
         "ReleaseWithDebugInfo"
       ],
       "cacheVariables": {
+        "BUILD_SANITIZERS": "address;undefined"
+      },
+      "environment": {
         "BUILD_SANITIZERS": "address;undefined"
       }
     },

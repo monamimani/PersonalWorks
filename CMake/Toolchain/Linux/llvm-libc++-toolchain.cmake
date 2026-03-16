@@ -7,6 +7,8 @@ include(${CMAKE_CURRENT_LIST_DIR}/../common-toolchain.cmake)
 
 set(CMAKE_CXX_COMPILER "clang++")
 set(CMAKE_C_COMPILER "clang")
+set(ENV{CC} "clang")
+set(ENV{CXX} "clang++")
 
 list(APPEND TC_BASE_C_FLAGS -Wno-builtin-macro-redefined)
 list(APPEND TC_BASE_CXX_FLAGS -Wno-builtin-macro-redefined -stdlib=libc++)

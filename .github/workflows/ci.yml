@@ -105,16 +105,10 @@ jobs:
           
           Write-Host "Installing Microsoft.VisualStudio.Component.VC.Preview.Tools.x86.x64 in $vsInstallPath..."
           
-          $installArgs = @(
-              "modify",
-              "--installPath", "$vsInstallPath",
-              "--add", "Microsoft.VisualStudio.Component.VC.Preview.Tools.x86.x64",
-              "--passive",
-              "--norestart",
-              "--wait"
-          )
+          # Using a single string for ArgumentList prevents PowerShell from incorrectly quoting spaces for native EXEs
+          $installArgs = "modify --installPath `"$vsInstallPath`" --add Microsoft.VisualStudio.Component.VC.Preview.Tools.x86.x64 --passive --norestart --wait"
           
-          Write-Host "Running: $setupExe $($installArgs -join ' ')"
+          Write-Host "Running: $setupExe $installArgs"
           $process = Start-Process -FilePath $setupExe -ArgumentList $installArgs -Wait -PassThru
           
           if ($process.ExitCode -eq 0 -or $process.ExitCode -eq 3010) {

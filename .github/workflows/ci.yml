@@ -71,19 +71,6 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Chocolatey Cache
-        if: runner.os == 'Windows'
-        uses: actions/cache@v5
-        with:
-          path: |
-            ${{ env.LOCALAPPDATA }}\Temp\chocolatey
-            ${{ env.ProgramData }}\chocolatey\lib
-            ${{ env.ProgramData }}\chocolatey\bin
-            ${{ env.ProgramData }}\chocolatey\config
-          key: ${{ runner.os }}-choco-${{ hashFiles('**/chocolatey.config') }}
-          restore-keys: |
-            ${{ runner.os }}-choco-
-
       - name: CPM Cache
         id: cache-cpm
         uses: actions/cache@v5
@@ -93,24 +80,51 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-cpm-
 
-      - name: Install Visual Studio Build Tools
-        shell: pwsh
+      - name: Install Visual Studio Components
+        shell: powershell
         run: |
-          Write-Host "Installing VS 2026 Build Tools..."
-          choco install visualstudio2026buildtools -y --no-progress --limit-output --ignore-package-exit-codes=3010
-          choco install visualstudio2026-workload-nativedesktop -y --ignore-package-exit-codes=3010
-          choco install visualstudio2026-workload-vctools -y --ignore-package-exit-codes=3010 --package-parameters "--add Microsoft.VisualStudio.Component.VC.Preview.Tools.x86.x64"
-          Write-Host "VS 2026 Build Tools installation completed"
+          $installerPath = "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vs_installer.exe"
+          $vswhere = "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe"
+
+          if (-not (Test-Path $installerPath) -or -not (Test-Path $vswhere)) {
+              Write-Error "Could not find vs_installer.exe or vswhere.exe in standard location."
+              exit 1
+          }
+
+          $installPath = & $vswhere -latest -products * -property installationPath
+
+          if (-not $installPath) {
+              Write-Error "Could not locate Visual Studio installation path."
+              exit 1
+          }
+
+          $componentId = "Microsoft.VisualStudio.Component.VC.Preview.Tools.x86.x64"
+          
+          Write-Host "Adding VS component: $componentId to $installPath"
+          $process = Start-Process -FilePath $installerPath -ArgumentList "modify --installPath `"$installPath`" --add $componentId --quiet --norestart" -Wait -PassThru
+
+          if ($process.ExitCode -eq 0 -or $process.ExitCode -eq 3010) {
+              Write-Host "Visual Studio component installation completed successfully (Exit Code: $($process.ExitCode))."
+          } else {
+              Write-Error "Visual Studio component installation failed with Exit Code: $($process.ExitCode)."
+              $failed = $true
+          }
+
+          if ($failed) {
+              exit 1
+          }
 
       - name: "CMake Configure & Build"
         shell: pwsh
         run: |
-          . Scripts\Build\VsEnvironment.ps1; InvokeVcVarsAll
+          . Scripts\Build\VsEnvironment.ps1
+          PatchLaunchVsDevShell
+          LaunchVsDevShell
 
           # Workaround for CMake Visual Studio Generator bug with MSVC v14.51 Preview
           if ('${{ matrix.configure-preset }}' -eq 'Windows-Msvc-VisualStudio') {
               Write-Host "Applying workaround for MSVC v14.51 Preview MSBuild properties..."
-              
+
               $vcInstallDir = $env:VCINSTALLDIR
               if (-not $vcInstallDir -and $env:VCToolsInstallDir) {
                   $vcInstallDir = Resolve-Path (Join-Path $env:VCToolsInstallDir "..\..\..")
@@ -119,14 +133,14 @@ jobs:
               if ($vcInstallDir) {
                   $buildDir = Join-Path $vcInstallDir "Auxiliary\Build"
                   $targetDir = Join-Path $buildDir "14.51"
-                  
+
                   if (-not (Test-Path $targetDir)) {
                       New-Item -ItemType Directory -Path $targetDir | Out-Null
                   }
-                  
+
                   $srcProps = Join-Path $buildDir "v145\Microsoft.VCToolsVersion.VC.14.51.props"
                   $srcTxt = Join-Path $buildDir "v145\Microsoft.VCToolsVersion.VC.14.51.txt"
-                  
+
                   if (Test-Path $srcProps) {
                       Copy-Item -Path $srcProps -Destination (Join-Path $targetDir "Microsoft.VCToolsVersion.14.51.props") -Force
                   }

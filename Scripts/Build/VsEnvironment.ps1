@@ -17,6 +17,28 @@ function InvokeVcVarsAll {
   }
 }
 
+function PatchLaunchVsDevShell {
+  $vsPath = GetVsInstallationPath
+  $launchVsDevShell = [IO.Path]::Combine($vsPath, "Common7", "Tools", "Launch-VsDevShell.ps1")
+  
+  if (Test-Path $launchVsDevShell) {
+    Write-Host "Patching Launch-VsDevShell.ps1 at $launchVsDevShell..."
+    $content = Get-Content -Raw $launchVsDevShell
+    $paramRegex = 'VsInstanceId = \$instanceId'
+    $paramSubst = '$&; DevCmdArguments = "-vcvars_ver=preview";'
+    
+    if ($content -match $paramRegex -and -not ($content -match 'DevCmdArguments = "-vcvars_ver=preview"')) {
+      $newContent = $content -creplace $paramRegex, $paramSubst
+      Set-Content -Path $launchVsDevShell -Value $newContent -NoNewLine -Force
+      Write-Host "Successfully patched Launch-VsDevShell.ps1"
+    } else {
+      Write-Host "Launch-VsDevShell.ps1 already patched or regex not found."
+    }
+  } else {
+    Write-Error "Could not find Launch-VsDevShell.ps1 at $launchVsDevShell"
+  }
+}
+
 function LaunchVsDevShell {
   $vsPath = GetVsInstallationPath
   $vcvarsallPath = [IO.Path]::Combine($vsPath, "Common7", "Tools", "Launch-VsDevShell.ps1")

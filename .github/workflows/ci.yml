@@ -110,14 +110,6 @@ jobs:
               $failed = $true
           }
 
-          $msvcToolsPath = Join-Path $installPath.Trim() "VC\Tools\MSVC"
-          if (Test-Path $msvcToolsPath) {
-              Write-Host "Contents of $msvcToolsPath :"
-              Get-ChildItem -Path $msvcToolsPath | Select-Object Name, CreationTime
-          } else {
-              Write-Warning "Path not found: $msvcToolsPath"
-          }
-
           if ($failed) {
               exit 1
           }

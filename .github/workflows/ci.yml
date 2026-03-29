@@ -104,7 +104,7 @@ jobs:
           
           $installArgs = @(
               "modify",
-              "--installPath", "$vsInstallPath",
+              "--installPath", "`"$vsInstallPath`"",
               "--add", "Microsoft.VisualStudio.Component.VC.Preview.Tools.x86.x64",
               "--passive",
               "--norestart",

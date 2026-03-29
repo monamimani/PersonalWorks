@@ -2,12 +2,12 @@ name: ci
 
 on:
   workflow_dispatch:
-    inputs:
-      tmate_enabled:
-        type: boolean
-        description: 'Run the build with tmate debugging enabled (https://github.com/marketplace/actions/debugging-with-tmate)'
-        required: false
-        default: false
+#    inputs:
+#      tmate_enabled:
+#        type: boolean
+#        description: 'Run the build with tmate debugging enabled (https://github.com/marketplace/actions/debugging-with-tmate)'
+#        required: false
+#        default: false
   pull_request:
   release:
     types: [published]
@@ -45,11 +45,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate/detached@v3
-        if: ${{ github.event_name == 'workflow_dispatch' && inputs.tmate_enabled }}
-        with:
-          sudo: false
+#      - name: Setup tmate session
+#        uses: mxschmitt/action-tmate/detached@v3
+#        if: ${{ github.event_name == 'workflow_dispatch' && inputs.tmate_enabled }}
+#        with:
+#          sudo: false
 
       - uses: actions/checkout@v6
 
@@ -100,10 +100,7 @@ jobs:
 
           $componentId = "Microsoft.VisualStudio.Component.VC.Preview.Tools.x86.x64"
           
-          Write-Host "Step 1: Updating Visual Studio Installer catalog for $installPath..."
-          Start-Process -FilePath $installerPath -ArgumentList "update --installPath `"$installPath`" --quiet" -Wait
-          
-          Write-Host "Step 2: Adding VS component: $componentId to $installPath"
+          Write-Host "Adding VS component: $componentId to $installPath"
           $process = Start-Process -FilePath $installerPath -ArgumentList "modify --installPath `"$installPath`" --add $componentId --quiet --norestart" -Wait -PassThru
 
           if ($process.ExitCode -eq 0 -or $process.ExitCode -eq 3010) {

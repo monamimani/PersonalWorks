@@ -25,10 +25,11 @@ VS_INSTALL_PATH="${VS_INSTALL_PATH%\\}"
 COMPONENT_ID="Microsoft.VisualStudio.Component.VC.Preview.Tools.x86.x64"
 
 echo "Updating Visual Studio Installer catalog..."
-"$VS_INSTALLER" update --quiet --wait
+"$VS_INSTALLER" update --quiet --passive
 
 echo "Adding VS component: $COMPONENT_ID to $VS_INSTALL_PATH"
-"$VS_INSTALLER" modify --installPath "$VS_INSTALL_PATH" --add "$COMPONENT_ID" --quiet --norestart --wait
+"$VS_INSTALLER" modify --installPath "$VS_INSTALL_PATH" --add "$COMPONENT_ID" --norestart --quiet --passive
+"$VS_INSTALLER" modify --help --norestart --quiet --passive
 
 EXIT_CODE=$?
 
@@ -36,7 +37,7 @@ if [ $EXIT_CODE -eq 0 ] || [ $EXIT_CODE -eq 3010 ]; then
     echo "Visual Studio component installation completed successfully (Exit Code: $EXIT_CODE)."
 else
     echo "Visual Studio component installation failed with Exit Code: $EXIT_CODE."
-    
+
     # Dump the log if it fails
     LOG_FILE=$(ls -t $TEMP/dd_setup_*.log | head -n 1)
     if [ -f "$LOG_FILE" ]; then

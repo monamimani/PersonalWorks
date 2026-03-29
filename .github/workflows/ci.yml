@@ -81,7 +81,7 @@ jobs:
             ${{ runner.os }}-cpm-
 
       - name: Install Visual Studio Components
-        shell: pwsh
+        shell: powershell
         run: |
           $installerPath = "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vs_installer.exe"
           $vswhere = "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe"
@@ -100,8 +100,8 @@ jobs:
 
           $componentId = "Microsoft.VisualStudio.Component.VC.Preview.Tools.x86.x64"
           
-          Write-Host "Updating Visual Studio Installer catalog..."
-          & $installerPath update --quiet
+          Write-Host "Updating Visual Studio Installer catalog for $installPath..."
+          & $installerPath update --installPath "$installPath" --quiet
           
           Write-Host "Adding VS component: $componentId to $installPath"
           & $installerPath modify --installPath "$installPath" --add $componentId --quiet --norestart
@@ -113,23 +113,16 @@ jobs:
               $failed = $true
           }
 
-          # Always dump the latest dd_setup log to see what the installer actually did
-          $logFile = Get-ChildItem -Path $env:TEMP -Filter "dd_setup_*.log" | Sort-Object LastWriteTime -Descending | Select-Object -First 1
-          if ($logFile) {
-              Write-Host "--- BEGIN VS INSTALLER LOG ---"
-              Get-Content $logFile.FullName
-              Write-Host "--- END VS INSTALLER LOG ---"
-          }
-
-          if ($failed) {
-              exit 1
-          }
           $msvcToolsPath = Join-Path $installPath.Trim() "VC\Tools\MSVC"
           if (Test-Path $msvcToolsPath) {
               Write-Host "Contents of $msvcToolsPath :"
               Get-ChildItem -Path $msvcToolsPath | Select-Object Name, CreationTime
           } else {
               Write-Warning "Path not found: $msvcToolsPath"
+          }
+
+          if ($failed) {
+              exit 1
           }
 
       - name: "CMake Configure & Build"

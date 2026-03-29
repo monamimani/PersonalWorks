@@ -85,31 +85,30 @@ jobs:
         run: |
           $installerPath = "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vs_installer.exe"
           $vswhere = "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe"
-          
+
           if (-not (Test-Path $installerPath) -or -not (Test-Path $vswhere)) {
               Write-Error "Could not find vs_installer.exe or vswhere.exe in standard location."
               exit 1
           }
 
           $installPath = & $vswhere -latest -products * -property installationPath
-          
+
           if (-not $installPath) {
               Write-Error "Could not locate Visual Studio installation path."
               exit 1
           }
-          
+
           $componentId = "Microsoft.VisualStudio.Component.VC.Preview.Tools.x86.x64"
           Write-Host "Adding VS component: $componentId to $installPath"
-          
+
           & $installerPath modify --installPath "$installPath" --add $componentId --channelUri https://aka.ms/vs/insiders/channel --quiet --norestart
-          
-          if ($LASTEXITCODE -eq 0 -or $LASTEXITCODE -eq 3010) {
-              Write-Host "Visual Studio component installation completed successfully (Exit Code: $LASTEXITCODE)."
+
+          if ($LASTEXITCODE -eq 0 -or $LASTEXITCODE -eq 3010) {              Write-Host "Visual Studio component installation completed successfully (Exit Code: $LASTEXITCODE)."
           } else {
               Write-Error "Visual Studio component installation failed with Exit Code: $LASTEXITCODE."
               exit 1
           }
-          
+
           $msvcToolsPath = Join-Path $installPath.Trim() "VC\Tools\MSVC"
           if (Test-Path $msvcToolsPath) {
               Write-Host "Contents of $msvcToolsPath :"
@@ -126,7 +125,7 @@ jobs:
           # Workaround for CMake Visual Studio Generator bug with MSVC v14.51 Preview
           if ('${{ matrix.configure-preset }}' -eq 'Windows-Msvc-VisualStudio') {
               Write-Host "Applying workaround for MSVC v14.51 Preview MSBuild properties..."
-              
+
               $vcInstallDir = $env:VCINSTALLDIR
               if (-not $vcInstallDir -and $env:VCToolsInstallDir) {
                   $vcInstallDir = Resolve-Path (Join-Path $env:VCToolsInstallDir "..\..\..")
@@ -135,14 +134,14 @@ jobs:
               if ($vcInstallDir) {
                   $buildDir = Join-Path $vcInstallDir "Auxiliary\Build"
                   $targetDir = Join-Path $buildDir "14.51"
-                  
+
                   if (-not (Test-Path $targetDir)) {
                       New-Item -ItemType Directory -Path $targetDir | Out-Null
                   }
-                  
+
                   $srcProps = Join-Path $buildDir "v145\Microsoft.VCToolsVersion.VC.14.51.props"
                   $srcTxt = Join-Path $buildDir "v145\Microsoft.VCToolsVersion.VC.14.51.txt"
-                  
+
                   if (Test-Path $srcProps) {
                       Copy-Item -Path $srcProps -Destination (Join-Path $targetDir "Microsoft.VCToolsVersion.14.51.props") -Force
                   }

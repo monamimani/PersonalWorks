@@ -18,3 +18,14 @@
     - [x] Trigger the CI workflow on a test branch.
     - [x] Confirm the component installs correctly, the environment script runs successfully, and the CMake configure/build steps succeed.
 - [x] Task: Conductor - User Manual Verification 'Phase 2: Update VS Environment Script & Verification' (Protocol in workflow.md)
+
+## Phase 3: Patch and Use LaunchVsDevShell
+- [x] Task: Update `Scripts/Build/VsEnvironment.ps1`
+    - [x] Add `PatchLaunchVsDevShell` function to apply the `-vcvars_ver=preview` fix.
+    - [x] Ensure `GetVsInstallationPath` is robust and efficient.
+- [x] Task: Update `.github/workflows/ci.yml`
+    - [x] Replace `InvokeVcVarsAll` with `PatchLaunchVsDevShell` and `LaunchVsDevShell`.
+- [x] Task: Verify CI Pipeline
+    - [x] Trigger the CI workflow.
+    - [x] Confirm the environment is correctly set up using the patched `LaunchVsDevShell.ps1`.
+- [x] Task: Conductor - User Manual Verification 'Phase 3: Patch and Use LaunchVsDevShell' (Protocol in workflow.md)

@@ -9,5 +9,11 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [~] **Track: Fix Windows CI MSVC 14.51 & Chocolatey Caching**
+- [x] **Track: Fix Windows CI MSVC 14.51 & Chocolatey Caching**
   *Link: [./tracks/fix_msvc_14_51_20260308/](./tracks/fix_msvc_14_51_20260308/)*
+
+---
+
+- [ ] **Track: Simplify VS Component Installation**
+  *Link: [./tracks/simplify_vs_install_20260328/](./tracks/simplify_vs_install_20260328/)*
+

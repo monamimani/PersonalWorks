@@ -1,0 +1,8 @@
+{
+  "track_id": "simplify_vs_install_20260328",
+  "type": "chore",
+  "status": "new",
+  "created_at": "2026-03-28T12:00:00Z",
+  "updated_at": "2026-03-28T12:00:00Z",
+  "description": "Simplify the installation of the Microsoft.VisualStudio.Component.VC.Preview.Tools.x86.x64 component in the GitHub Actions CI/CD pipeline by using the native VS Installer CLI instead of Chocolatey."
+}

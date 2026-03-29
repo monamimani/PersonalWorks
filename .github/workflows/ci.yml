@@ -101,14 +101,26 @@ jobs:
           $componentId = "Microsoft.VisualStudio.Component.VC.Preview.Tools.x86.x64"
           Write-Host "Adding VS component: $componentId to $installPath"
 
-          & $installerPath modify --installPath "$installPath" --add $componentId --channelUri https://aka.ms/vs/insiders/channel --quiet --norestart
+          & $installerPath modify --installPath "$installPath" --add $componentId --quiet --norestart
 
-          if ($LASTEXITCODE -eq 0 -or $LASTEXITCODE -eq 3010) {              Write-Host "Visual Studio component installation completed successfully (Exit Code: $LASTEXITCODE)."
+          if ($LASTEXITCODE -eq 0 -or $LASTEXITCODE -eq 3010) {
+              Write-Host "Visual Studio component installation completed successfully (Exit Code: $LASTEXITCODE)."
           } else {
               Write-Error "Visual Studio component installation failed with Exit Code: $LASTEXITCODE."
-              exit 1
+              $failed = $true
           }
 
+          # Always dump the latest dd_setup log to see what the installer actually did
+          $logFile = Get-ChildItem -Path $env:TEMP -Filter "dd_setup_*.log" | Sort-Object LastWriteTime -Descending | Select-Object -First 1
+          if ($logFile) {
+              Write-Host "--- BEGIN VS INSTALLER LOG ---"
+              Get-Content $logFile.FullName
+              Write-Host "--- END VS INSTALLER LOG ---"
+          }
+
+          if ($failed) {
+              exit 1
+          }
           $msvcToolsPath = Join-Path $installPath.Trim() "VC\Tools\MSVC"
           if (Test-Path $msvcToolsPath) {
               Write-Host "Contents of $msvcToolsPath :"

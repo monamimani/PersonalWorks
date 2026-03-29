@@ -71,19 +71,6 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Chocolatey Cache
-        if: runner.os == 'Windows'
-        uses: actions/cache@v5
-        with:
-          path: |
-            ${{ env.LOCALAPPDATA }}\Temp\chocolatey
-            ${{ env.ProgramData }}\chocolatey\lib
-            ${{ env.ProgramData }}\chocolatey\bin
-            ${{ env.ProgramData }}\chocolatey\config
-          key: ${{ runner.os }}-choco-${{ hashFiles('**/chocolatey.config') }}
-          restore-keys: |
-            ${{ runner.os }}-choco-
-
       - name: CPM Cache
         id: cache-cpm
         uses: actions/cache@v5
@@ -93,14 +80,29 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-cpm-
 
-      - name: Install Visual Studio Build Tools
+      - name: Install Visual Studio Components
         shell: pwsh
         run: |
-          Write-Host "Installing VS 2026 Build Tools..."
-          choco install visualstudio2026buildtools -y --no-progress --limit-output --ignore-package-exit-codes=3010
-          choco install visualstudio2026-workload-nativedesktop -y --ignore-package-exit-codes=3010
-          choco install visualstudio2026-workload-vctools -y --ignore-package-exit-codes=3010 --package-parameters "--add Microsoft.VisualStudio.Component.VC.Preview.Tools.x86.x64"
-          Write-Host "VS 2026 Build Tools installation completed"
+          Write-Host "Locating Visual Studio Installer..."
+          $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+          $vsInstallPath = & $vswhere -latest -products * -property installationPath
+          $vsInstaller = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vs_installer.exe"
+          
+          if (-not $vsInstallPath) {
+              Write-Error "Could not locate Visual Studio installation path."
+              exit 1
+          }
+
+          Write-Host "Installing Microsoft.VisualStudio.Component.VC.Preview.Tools.x86.x64 in $vsInstallPath..."
+          
+          $process = Start-Process -FilePath $vsInstaller -ArgumentList "modify", "--installPath", "`"$vsInstallPath`"", "--add", "Microsoft.VisualStudio.Component.VC.Preview.Tools.x86.x64", "--quiet", "--norestart", "--wait" -Wait -PassThru
+          
+          if ($process.ExitCode -eq 0 -or $process.ExitCode -eq 3010) {
+              Write-Host "Visual Studio component installation completed successfully (Exit Code: $($process.ExitCode))."
+          } else {
+              Write-Error "Visual Studio component installation failed with Exit Code: $($process.ExitCode)."
+              exit 1
+          }
 
       - name: "CMake Configure & Build"
         shell: pwsh

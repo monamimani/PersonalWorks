@@ -86,12 +86,15 @@ jobs:
           Write-Host "Locating Visual Studio installation..."
           # vswhere is in the PATH on GitHub Actions runners
           $vsInstallPath = vswhere.exe -latest -products * -property installationPath
-          $vsInstaller = vswhere.exe -latest -products * -property enginePath
           
-          if (-not $vsInstallPath -or -not $vsInstaller) {
-              Write-Error "Could not locate Visual Studio installation or installer path."
+          if (-not $vsInstallPath) {
+              Write-Error "Could not locate Visual Studio installation path."
               exit 1
           }
+
+          # Resolve vs_installer.exe dynamically since it resides in the same directory as vswhere.exe
+          $vswherePath = (Get-Command vswhere.exe).Source
+          $vsInstaller = Join-Path (Split-Path $vswherePath) "vs_installer.exe"
           
           Write-Host "Installing Microsoft.VisualStudio.Component.VC.Preview.Tools.x86.x64 in $vsInstallPath..."
           

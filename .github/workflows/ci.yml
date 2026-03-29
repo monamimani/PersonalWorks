@@ -106,7 +106,7 @@ jobs:
           Write-Host "Installing Microsoft.VisualStudio.Component.VC.Preview.Tools.x86.x64 in $vsInstallPath..."
           
           # Using a single string for ArgumentList prevents PowerShell from incorrectly quoting spaces for native EXEs
-          $installArgs = "modify --installPath `"$vsInstallPath`" --add Microsoft.VisualStudio.Component.VC.Preview.Tools.x86.x64 --quiet --norestart --wait"
+          $installArgs = "modify --installPath `"$vsInstallPath`" --add Microsoft.VisualStudio.Component.VC.Tools.x86.x64 --quiet --norestart --wait"
           
           Write-Host "Running: $setupExe $installArgs"
           $process = Start-Process -FilePath $setupExe -ArgumentList $installArgs -Wait -PassThru

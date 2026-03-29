@@ -99,8 +99,11 @@ jobs:
           }
 
           $componentId = "Microsoft.VisualStudio.Component.VC.Preview.Tools.x86.x64"
+          
+          Write-Host "Updating Visual Studio Installer catalog..."
+          & $installerPath update --quiet
+          
           Write-Host "Adding VS component: $componentId to $installPath"
-
           & $installerPath modify --installPath "$installPath" --add $componentId --quiet --norestart
 
           if ($LASTEXITCODE -eq 0 -or $LASTEXITCODE -eq 3010) {

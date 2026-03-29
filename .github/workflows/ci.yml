@@ -83,38 +83,30 @@ jobs:
       - name: Install Visual Studio Components
         shell: pwsh
         run: |
-          Write-Host "Locating Visual Studio installation..."
-          $installerDir = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer"
-          $vswhere = Join-Path $installerDir "vswhere.exe"
-          $setupExe = Join-Path $installerDir "setup.exe"
+          $installerPath = "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vs_installer.exe"
+          $vswhere = "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe"
           
-          if (-not (Test-Path $vswhere) -or -not (Test-Path $setupExe)) {
-              Write-Error "Could not find vswhere.exe or setup.exe in standard location."
+          if (-not (Test-Path $installerPath) -or -not (Test-Path $vswhere)) {
+              Write-Error "Could not find vs_installer.exe or vswhere.exe in standard location."
               exit 1
           }
 
-          $vsInstallPath = & $vswhere -latest -products * -property installationPath
+          $installPath = & $vswhere -latest -products * -property installationPath
           
-          if (-not $vsInstallPath) {
+          if (-not $installPath) {
               Write-Error "Could not locate Visual Studio installation path."
               exit 1
           }
           
-          # Trim any trailing backslashes which can cause Exit Code 87 by escaping the implicit quotes
-          $vsInstallPath = $vsInstallPath.TrimEnd('\')
+          $componentId = "Microsoft.VisualStudio.Component.VC.Preview.Tools.x86.x64"
+          Write-Host "Adding VS component: $componentId to $installPath"
           
-          Write-Host "Installing Microsoft.VisualStudio.Component.VC.Preview.Tools.x86.x64 in $vsInstallPath..."
+          & $installerPath modify --installPath "$installPath" --add $componentId --quiet --norestart --wait
           
-          # Using a single string for ArgumentList prevents PowerShell from incorrectly quoting spaces for native EXEs
-          $installArgs = "modify --installPath `"$vsInstallPath`" --add Microsoft.VisualStudio.Component.VC.Preview.Tools.x86.x64 --quiet --norestart --wait"
-          
-          Write-Host "Running: $setupExe $installArgs"
-          $process = Start-Process -FilePath $setupExe -ArgumentList $installArgs -Wait -PassThru
-          
-          if ($process.ExitCode -eq 0 -or $process.ExitCode -eq 3010) {
-              Write-Host "Visual Studio component installation completed successfully (Exit Code: $($process.ExitCode))."
+          if ($LASTEXITCODE -eq 0 -or $LASTEXITCODE -eq 3010) {
+              Write-Host "Visual Studio component installation completed successfully (Exit Code: $LASTEXITCODE)."
           } else {
-              Write-Error "Visual Studio component installation failed with Exit Code: $($process.ExitCode)."
+              Write-Error "Visual Studio component installation failed with Exit Code: $LASTEXITCODE."
               exit 1
           }
 

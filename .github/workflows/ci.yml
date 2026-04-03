@@ -43,7 +43,7 @@ jobs:
 
     name: ${{matrix.build-preset}}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
 #      - name: Setup tmate session
 #        uses: mxschmitt/action-tmate/detached@v3

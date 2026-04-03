@@ -1,8 +1,0 @@
-{
-  "track_id": "fix_msvc_14_51_20260308",
-  "type": "chore",
-  "status": "completed",
-  "created_at": "2026-03-08T16:43:00Z",
-  "updated_at": "2026-03-08T16:43:00Z",
-  "description": "In me CI github action workflow for the build oon windows, I started to install the preview build tools of the latest MSVC. It install correctly but it doesn't install yet the 14.51 MSVC. I need you to look into it and fix that. Also make sure the chocolatey is cached so it doesn't take so long to build, (because the install is really long)."
-}

@@ -30,6 +30,17 @@ class StaticFunction<Ret(Args...)> final
   class ObjectMemFnBinder;
 
 public:
+  /**
+   * @brief Handle to a binding. For StaticFunction, this is a lightweight 
+   * object to maintain API consistency with Delegate.
+   */
+  class [[nodiscard]] Connection final
+  {
+  public:
+    Connection() noexcept = default;
+    void unbind() noexcept {}
+  };
+
   template<typename Instance_T>
   using MemberFunctionPtr = Ret (Instance_T::*)(Args...);
   template<typename Instance_T>
@@ -48,29 +59,32 @@ public:
   }
 
   template<Core::InvocableAndReturnC<Ret, Args...> auto function>
-  constexpr void bind()
+  constexpr Connection bind()
   {
     reset();
     m_function = [](Storage_T&, Args&&... args) -> Ret {
       return std::invoke_r<Ret>(function, std::forward<Args>(args)...);
     };
+    return Connection{};
   }
 
   template<Core::FunctorAndReturnC<Ret, Args...> Instance_T>
-  constexpr void bind(Instance_T&& functor)
+  constexpr Connection bind(Instance_T&& functor)
   {
     reset();
     constructStorage(std::forward<Instance_T>(functor));
     setTrampolineFct<Instance_T>();
+    return Connection{};
   }
 
   template<auto function, typename Instance_T>
   requires Core::InvocableAndReturnNTTPC<function, Ret, Instance_T, Args...>
-  constexpr void bind(Instance_T&& instance)
+  constexpr Connection bind(Instance_T&& instance)
   {
     reset();
     constructStorage(std::forward<Instance_T>(instance));
     setTrampolineFct<Instance_T, function>();
+    return Connection{};
   }
 
   [[nodiscard]] constexpr bool isBound() const
@@ -190,5 +204,3 @@ private:
   Trampoline_T m_function = nullptr;
 };
 } // namespace Core
-
-// module :private;

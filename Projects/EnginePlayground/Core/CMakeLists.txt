@@ -78,8 +78,7 @@ list(APPEND testsSources
   ${targetName}/BuildConfig/BuildConfig.test.cpp
   ${targetName}/StaticFunction.test.cpp
   ${targetName}/Delegates/Delegate.test.cpp
-  ${targetName}/Delegates/DelegateCommon.test.h
-  ${targetName}/Delegates/DelegateCommonTestCode.h
+  ${targetName}/Delegates/DelegateUtils.test.h
   ${targetName}/Delegates/DelegateMulticast.test.cpp
   ${targetName}/DelegateTypes/EventDispatcher.test.cpp
   ${targetName}/DelegateTypes/EventQueue.test.cpp

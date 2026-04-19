@@ -1,141 +1,205 @@
+#include "DelegateUtils.test.h"
 
-#include "DelegateCommon.test.h"
-
-import DelegateMulticast;
-
-namespace DelegateMulticastTests
+namespace DelegateTests
 {
-// The various contexts the class can be used in:
-// various function signature.
-// LValue and Rvalue.
-// Special member function 6 + swap.
-// Copy, move, assignment, from empty and from statefull and mix and match Bind functions.
-// Bind: free function, functor (const, not const, templated), member fct (const, not const, templated).
 
-// Test UnaryOp
-// Construct
-// isEmpty
-// Broadcast
-// unbindAll
-// Destroy
+template <typename T>
+class DelegateMultiLifecycle : public DelegateTest {};
 
-// Test BinaryOp (Handles to and from Empty)
-// Construct 2 delegate, A and B
-// Call bind on A (one for LValue and RValue x Type of fct)
-// Move to empty B
-// Copy B to A
-// Destruct
-// <=>
-// Swap
+TYPED_TEST_SUITE_P(DelegateMultiLifecycle);
 
-// Add delegate while calling the delegate ex:
-//  auto handleRAII = delegateList.append([&multicastDelegateList = delegateList, &i]() {
-//    if (i == 0)
-//    {
-//      auto handleRAII = multicastDelegateList.append([&i]() { i++; });
-//    }
-//    i++;
-//  });
-//  delegateList();
-//  ASSERT_EQ(i, 1);
-//
-//  delegateList();
-//  ASSERT_EQ(i, 3);
-//}
-
-// also with threads
-// TEST_F(CoreDelegateListMultithreadTest, AppendPrependInDelegate)
-//{
-//
-//  std::mt19937 generator;
-//  std::uniform_int_distribution<int> distribution(4, 32);
-//  auto threadNumber = distribution(generator);
-//
-//  std::atomic_uint32_t delegateCount = 0;
-//
-//  auto appendPrependInDelegateFunctionTest = [&multicastDelegateListA = delegateList, &delegateCount](std::stop_token stopToken) {
-//    while (!stopToken.stop_requested())
-//    {
-//      delegateCount++;
-//      auto handleRAII = multicastDelegateListA.append([&multicastDelegateListB = multicastDelegateListA, &delegateCount]() {
-//        delegateCount++;
-//        auto handleRAII = multicastDelegateListB.append([&multicastDelegateListC = multicastDelegateListB]() {});
-//      });
-//    }
-//  };
-//
-//  ASSERT_TRUE(delegateList.isEmpty());
-//  ASSERT_EQ(getDelegateList().size(), 0);
-//
-//  std::vector<std::unique_ptr<std::jthread>> threadVector;
-//  for (size_t i = 0; i < threadNumber; i++)
-//  {
-//    threadVector.push_back(std::make_unique<std::jthread>(appendPrependInDelegateFunctionTest));
-//  }
-//
-//  //using namespace std::chrono_literals;
-//  //std::this_thread::sleep_for(1ms);
-//
-//  delegateList.Broadcast();
-//  delegateList.Broadcast();
-//  delegateList.Broadcast();
-//  delegateList.Broadcast();
-//  delegateList.Broadcast();
-//  delegateList.Broadcast();
-//
-//
-//  for (auto& threadPtr : threadVector)
-//  {
-//    threadPtr->request_stop();
-//    threadPtr->join();
-//  }
-//
-//  ASSERT_FALSE(delegateList.isEmpty());
-//  ASSERT_EQ(getDelegateList().size(), delegateCount);
-//}
-
-using namespace DelegateLikeTests;
-using DelegateMulticast_T = Delegate::DelegateMulticast<FctSignature>;
-using DelegateMultiOp1F = OpArity1DelegateLikeTestF<DelegateMulticast_T, DelegateMulticast_T::Connection, false>;
-using DelegateMultiOp2F = OpArity2DelegateLikeTestF<DelegateMulticast_T, DelegateMulticast_T::Connection, false>;
-
-INSTANTIATE_TEST_SUITE_P(DelegateMultiOp1Arg, DelegateMultiOp1F, OpAr1Arg, DelegateMultiOp1F::makeTestName);
-INSTANTIATE_TEST_SUITE_P(DelegateMultiOp2Arg, DelegateMultiOp2F, OpAr2Arg, DelegateMultiOp2F::makeTestName);
-
-#define TESTSUITENAME_OP1 DelegateMultiOp1F
-#define TESTSUITENAME_OP2 DelegateMultiOp2F
-#include"Core/Delegates/DelegateCommonTestCode.h"
-
-TEST_P(DelegateMultiOp1F, isEmpty)
+TYPED_TEST_P(DelegateMultiLifecycle, DefaultConstructor)
 {
-  if (!m_isBindKindEmpty)
+  Delegate::DelegateMulticast<FctSignature> delegate;
+  EXPECT_FALSE(delegate);
+}
+
+TYPED_TEST_P(DelegateMultiLifecycle, BindAndInvoke)
+{
+  auto [delegate, connection] = this->template createBound<TypeParam, Delegate::DelegateMulticast<FctSignature>>();
+
+  if constexpr (std::is_same_v<TypeParam, EmptyPolicy>)
   {
-    ASSERT_TRUE((bool)m_delegate);
-    ASSERT_FALSE(m_delegate.isEmpty());
-    ASSERT_TRUE(m_delegate);
+    EXPECT_FALSE(delegate);
   }
   else
   {
-    ASSERT_FALSE((bool)m_delegate);
-    ASSERT_TRUE(m_delegate.isEmpty());
-    ASSERT_FALSE(m_delegate);
+    ASSERT_TRUE(delegate);
+    int value = 0;
+    delegate.invoke(value);
+    EXPECT_EQ(value, DelegateTest::getExpectedValue(TypeParam::IsConst));
   }
 }
 
-TEST_P(DelegateMultiOp1F, unbindAll)
+TYPED_TEST_P(DelegateMultiLifecycle, CopyConstructor)
 {
+  auto [delegate, connection] = this->template createBound<TypeParam, Delegate::DelegateMulticast<FctSignature>>();
 
-  if (!m_isBindKindEmpty)
+  Delegate::DelegateMulticast<FctSignature> copy(delegate);
+  EXPECT_EQ(delegate, copy);
+
+  if constexpr (!std::is_same_v<TypeParam, EmptyPolicy>)
   {
-    ASSERT_TRUE(m_delegate);
+    ASSERT_TRUE(copy);
+    int value = 0;
+    copy.invoke(value);
+    EXPECT_EQ(value, DelegateTest::getExpectedValue(TypeParam::IsConst));
+  }
+}
+
+TYPED_TEST_P(DelegateMultiLifecycle, MoveConstructor)
+{
+  auto [delegate, connection] = this->template createBound<TypeParam, Delegate::DelegateMulticast<FctSignature>>();
+
+  Delegate::DelegateMulticast<FctSignature> moved(std::move(delegate));
+  
+  if constexpr (std::is_same_v<TypeParam, EmptyPolicy>)
+  {
+    EXPECT_FALSE(moved);
   }
   else
   {
-    ASSERT_FALSE(m_delegate);
+    ASSERT_TRUE(moved);
+    int value = 0;
+    moved.invoke(value);
+    EXPECT_EQ(value, DelegateTest::getExpectedValue(TypeParam::IsConst));
   }
-
-  m_delegate.unbindAll();
-  ASSERT_TRUE(m_delegate.isEmpty());
 }
 
-} // namespace DelegateMulticastTests
+TYPED_TEST_P(DelegateMultiLifecycle, Equality)
+{
+  auto [delegate1, connection1] = this->template createBound<TypeParam, Delegate::DelegateMulticast<FctSignature>>();
+  auto [delegate2, connection2] = this->template createBound<TypeParam, Delegate::DelegateMulticast<FctSignature>>();
+
+  EXPECT_EQ(delegate1, delegate2);
+  EXPECT_FALSE(delegate1 != delegate2);
+
+  Delegate::DelegateMulticast<FctSignature> emptyDelegate;
+  if constexpr (std::is_same_v<TypeParam, EmptyPolicy>)
+  {
+    EXPECT_EQ(delegate1, emptyDelegate);
+  }
+  else
+  {
+    EXPECT_NE(delegate1, emptyDelegate);
+  }
+}
+
+TYPED_TEST_P(DelegateMultiLifecycle, Assignment)
+{
+  auto [delegate1, connection1] = this->template createBound<TypeParam, Delegate::DelegateMulticast<FctSignature>>();
+
+  Delegate::DelegateMulticast<FctSignature> delegate2;
+  delegate2 = delegate1;
+  EXPECT_EQ(delegate1, delegate2);
+
+  Delegate::DelegateMulticast<FctSignature> delegate3;
+  delegate3 = std::move(delegate1);
+  EXPECT_EQ(delegate2, delegate3);
+}
+
+TYPED_TEST_P(DelegateMultiLifecycle, Swap)
+{
+  auto [delegate1, connection1] = this->template createBound<TypeParam, Delegate::DelegateMulticast<FctSignature>>();
+  Delegate::DelegateMulticast<FctSignature> delegate2; // Empty
+
+  using std::swap;
+  swap(delegate1, delegate2);
+
+  if constexpr (std::is_same_v<TypeParam, EmptyPolicy>)
+  {
+    EXPECT_FALSE(delegate1);
+    EXPECT_FALSE(delegate2);
+  }
+  else
+  {
+    EXPECT_FALSE(delegate1);
+    EXPECT_TRUE(delegate2);
+    int value = 0;
+    delegate2.invoke(value);
+    EXPECT_EQ(value, DelegateTest::getExpectedValue(TypeParam::IsConst));
+  }
+}
+
+REGISTER_TYPED_TEST_SUITE_P(DelegateMultiLifecycle,
+  DefaultConstructor,
+  BindAndInvoke,
+  CopyConstructor,
+  MoveConstructor,
+  Equality,
+  Assignment,
+  Swap
+);
+
+INSTANTIATE_TYPED_TEST_SUITE_P(DelegateMulti, DelegateMultiLifecycle, MulticastDelegatePolicies);
+
+// --- Functional Tests ---
+
+class DelegateMulti : public DelegateTest {};
+
+TEST_F(DelegateMulti, MultipleBindings)
+{
+  auto [delegate, connection1] = createBound<FreeFunctionPolicy, Delegate::DelegateMulticast<FctSignature>>();
+  int count = 0;
+  auto connection2 = delegate.bind([&count](int&) { count++; });
+
+  int value = 0;
+  delegate.invoke(value);
+  EXPECT_EQ(count, 1);
+  EXPECT_EQ(value, TestStruct::m_staticValue);
+}
+
+TEST_F(DelegateMulti, InvocationOrder)
+{
+  auto [delegate, connection0] = createBound<EmptyPolicy, Delegate::DelegateMulticast<FctSignature>>();
+  std::vector<int> order;
+  auto connection1 = delegate.bind([&order](int&) { order.push_back(1); });
+  auto connection2 = delegate.bind([&order](int&) { order.push_back(2); });
+
+  int value = 0;
+  delegate.invoke(value);
+  ASSERT_EQ(order.size(), 2);
+  EXPECT_EQ(order[0], 1);
+  EXPECT_EQ(order[1], 2);
+}
+
+TEST_F(DelegateMulti, UnbindOne)
+{
+  auto [delegate, connection1] = createBound<FreeFunctionPolicy, Delegate::DelegateMulticast<FctSignature>>();
+  int count = 0;
+  auto connection2 = delegate.bind([&count](int&) { count++; });
+  {
+    auto connection3 = delegate.bind([&count](int&) { count++; });
+    EXPECT_TRUE(delegate);
+  } // connection3 unbinds
+
+  int value = 0;
+  delegate.invoke(value);
+  EXPECT_EQ(count, 1);
+  EXPECT_EQ(value, TestStruct::m_staticValue);
+}
+
+TEST_F(DelegateMulti, UnbindAll)
+{
+  auto [delegate, connection1] = createBound<FreeFunctionPolicy, Delegate::DelegateMulticast<FctSignature>>();
+  auto connection2 = delegate.bind([](int&) {});
+  EXPECT_TRUE(delegate);
+
+  delegate.unbindAll();
+  EXPECT_FALSE(delegate);
+}
+
+TEST_F(DelegateMulti, LambdaWithCapture)
+{
+  auto [delegate, connection0] = createBound<EmptyPolicy, Delegate::DelegateMulticast<FctSignature>>();
+  int capture1 = 10;
+  int capture2 = 20;
+  auto connection1 = delegate.bind([capture1](int& value) { value += capture1; });
+  auto connection2 = delegate.bind([capture2](int& value) { value += capture2; });
+
+  int result = 0;
+  delegate.invoke(result);
+  EXPECT_EQ(result, 30);
+}
+
+} // namespace DelegateTests

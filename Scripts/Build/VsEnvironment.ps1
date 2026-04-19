@@ -17,7 +17,7 @@ function InvokeVcVarsAll {
   }
 }
 
-function PatchLaunchVsDevShell {
+function PatchAndLaunchVsDevShell {
   $vsPath = GetVsInstallationPath
   $launchVsDevShell = [IO.Path]::Combine($vsPath, "Common7", "Tools", "Launch-VsDevShell.ps1")
   
@@ -37,6 +37,8 @@ function PatchLaunchVsDevShell {
   } else {
     Write-Error "Could not find Launch-VsDevShell.ps1 at $launchVsDevShell"
   }
+
+  . $launchVsDevShell -Arch amd64 -SkipAutomaticLocation
 }
 
 function LaunchVsDevShell {

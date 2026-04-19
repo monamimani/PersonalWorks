@@ -118,8 +118,7 @@ jobs:
         shell: pwsh
         run: |
           . Scripts\Build\VsEnvironment.ps1
-          PatchLaunchVsDevShell
-          LaunchVsDevShell
+          PatchAndLaunchVsDevShell
 
           # Workaround for CMake Visual Studio Generator bug with MSVC v14.51 Preview
           if ('${{ matrix.configure-preset }}' -eq 'Windows-Msvc-VisualStudio') {

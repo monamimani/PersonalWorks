@@ -17,6 +17,10 @@ The main sub-projects are:
 
 The project is built using C++23 and latest C++ and is intended to be cross-platform, with CI/CD pipelines for both Windows and Linux.
 
+## Shell and Environment
+
+Always use `pwsh` for shell commands. Use `LaunchVsDevShell` (from `Scripts\Build\VsEnvironment.ps1`) to initialize the environment.
+
 ## Building and Running
 
 The project is built using CMake and the provided presets. The CI/CD pipeline in `.github/workflows/ci.yml` provides the exact commands for building and testing on different platforms.
@@ -35,9 +39,9 @@ The project is built using CMake and the provided presets. The CI/CD pipeline in
 The project uses CMake presets for configuration and building. The following are examples of how to build the project:
 
 *   **Windows (MSVC):**
-    ```bash
+    ```powershell
     # Configure
-    . Scripts\Build\VsEnvironment.ps1; InvokeVcVarsAll
+    . Scripts\Build\VsEnvironment.ps1; LaunchVsDevShell
     cmake --preset Windows-Msvc-Ninja-Debug-NoTidy
     # Build
     cmake --build --preset Windows-Msvc-Ninja-Debug-NoTidy

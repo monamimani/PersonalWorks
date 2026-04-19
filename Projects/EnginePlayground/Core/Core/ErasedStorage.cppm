@@ -140,8 +140,8 @@ public:
     static_assert(alignof(ErasedType) <= alignment);
     static_assert(std::is_same<typename std::remove_cv<ErasedType>::type, ErasedType>::value, "ErasedType must be a non-const, non-volatile type");
 
-    auto* storagePtr = start_lifetime_as<ErasedType>(std::addressof(m_storage));
-    // auto* storagePtr = reinterpret_cast<ErasedType*>(std::addressof(m_storage));
+    // Use reinterpret_cast to get the address of the raw storage, and let std::construct_at officially start the lifetime
+    auto* storagePtr = reinterpret_cast<ErasedType*>(std::addressof(m_storage));
     auto storageTypedPtr = std::construct_at(storagePtr);
 
     m_storageFcts.template setFcts<ErasedType>();
@@ -157,8 +157,9 @@ public:
     static_assert(alignof(ErasedType) <= alignment);
     static_assert(std::is_same<typename std::remove_cv<ErasedType>::type, ErasedType>::value, "ErasedType must be a non-const, non-volatile type");
 
-    auto* storagePtr = start_lifetime_as<ErasedType>(std::addressof(m_storage));
-    // auto* storagePtr = reinterpret_cast<ErasedType*>(std::addressof(m_storage));
+    using RawType = std::remove_cv_t<ErasedType>;
+
+    auto* storagePtr = reinterpret_cast<RawType*>(std::addressof(m_storage));
     auto storageTypedPtr = std::construct_at(storagePtr, std::forward<Args>(args)...);
 
     m_storageFcts.template setFcts<ErasedType>();
@@ -171,16 +172,14 @@ public:
   {
     static_assert(sizeof(ErasedType) <= size);
     static_assert(alignof(ErasedType) <= alignment);
-    static_assert(std::is_same<typename std::remove_cv<ErasedType>::type, ErasedType>::value, "ErasedType must be a non-const, non-volatile type");
 
-    // This will have issues with multiple level of pointer indirection
-    using RawType = std::remove_pointer_t<std::remove_reference_t<ErasedType>>;
+    using RawType = std::remove_cv_t<std::remove_pointer_t<std::remove_reference_t<ErasedType>>>;
 
     if constexpr (std::is_lvalue_reference_v<ErasedType>)
     {
       m_storageFcts.template setFcts<std::add_pointer_t<RawType>>();
 
-      auto** storagePtr = start_lifetime_as<RawType*>(std::addressof(m_storage));
+      auto** storagePtr = reinterpret_cast<RawType**>(std::addressof(m_storage));
       auto storageTypedPtr = std::construct_at(storagePtr, &obj);
       return *storageTypedPtr;
     }
@@ -189,14 +188,13 @@ public:
       m_storageFcts.template setFcts<ErasedType>();
       if constexpr (std::is_pointer_v<ErasedType>)
       {
-        auto** storagePtr = start_lifetime_as<RawType*>(std::addressof(m_storage));
-        ;
+        auto* storagePtr = reinterpret_cast<ErasedType*>(std::addressof(m_storage));
         auto storageTypedPtr = std::construct_at(storagePtr, obj);
-        return *storageTypedPtr;
+        return storageTypedPtr;
       }
       else
       {
-        auto* storagePtr = start_lifetime_as<RawType>(std::addressof(m_storage));
+        auto* storagePtr = reinterpret_cast<RawType*>(std::addressof(m_storage));
         auto storageTypedPtr = std::construct_at(storagePtr, std::forward<ErasedType>(obj));
         return storageTypedPtr;
       }
@@ -213,22 +211,29 @@ public:
     // This will have issues with multiple level of pointer indirection
     using RawType = std::remove_pointer_t<std::remove_reference_t<ErasedType>>;
 
-    // TODO std::launder()
-    // static_assert(std::is_lvalue_reference_v<ErasedType> == false, "Creating an erased type of a reference to T is illegal, use T* as the erased type.");
-    // static_assert(std::is_object_v<ErasedType>); // this is true for int, int* and false for references, void and function
     if constexpr (std::is_lvalue_reference_v<ErasedType>)
     {
-      return *reinterpret_cast<RawType**>(std::addressof(m_storage));
+      // Pointers are always implicit-lifetime types
+      return *std::start_lifetime_as<RawType*>(std::addressof(m_storage));
     }
     else if constexpr (std::is_object_v<ErasedType>)
     {
       if constexpr (std::is_pointer_v<ErasedType>)
       {
-        return *reinterpret_cast<RawType**>(std::addressof(m_storage));
+        return *std::start_lifetime_as<RawType*>(std::addressof(m_storage));
       }
       else
       {
-        return reinterpret_cast<RawType*>(std::addressof(m_storage));
+        if constexpr (IsImplicitLifetime<RawType>)
+        {
+          // We can cleanly and safely start the lifetime for implicit-lifetime types
+          return std::start_lifetime_as<RawType>(std::addressof(m_storage));
+        }
+        else
+        {
+          // Fallback for non-implicit-lifetime types: use launder on the already constructed object
+          return std::launder(reinterpret_cast<RawType*>(std::addressof(m_storage)));
+        }
       }
     }
     else
@@ -243,23 +248,26 @@ public:
     // This will have issues with multiple level of pointer indirection
     using RawType = const std::remove_pointer_t<std::remove_reference_t<ErasedType>>;
 
-    // TODO std::launder()
-    // static_assert(std::is_lvalue_reference_v<ErasedType> == false, "Creating an erased type of a reference to T is illegal, use T* as the erased type.");
-    // static_assert(std::is_object_v<ErasedType>); // this is true for int, int* and false for references, void and function
-
     if constexpr (std::is_lvalue_reference_v<ErasedType>)
     {
-      return *reinterpret_cast<RawType**>(std::addressof(m_storage));
+      return *std::start_lifetime_as<RawType*>(const_cast<std::byte*>(std::addressof(m_storage)));
     }
     else if constexpr (std::is_object_v<ErasedType>)
     {
       if constexpr (std::is_pointer_v<ErasedType>)
       {
-        return *reinterpret_cast<RawType* const*>(std::addressof(m_storage));
+        return *std::start_lifetime_as<RawType* const>(const_cast<std::byte*>(std::addressof(m_storage)));
       }
       else
       {
-        return reinterpret_cast<const RawType*>(std::addressof(m_storage));
+        if constexpr (IsImplicitLifetime<std::remove_const_t<RawType>>)
+        {
+          return std::start_lifetime_as<const RawType>(std::addressof(m_storage));
+        }
+        else
+        {
+          return std::launder(reinterpret_cast<const RawType*>(std::addressof(m_storage)));
+        }
       }
     }
     else

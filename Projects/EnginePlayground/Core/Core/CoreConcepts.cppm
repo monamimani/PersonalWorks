@@ -78,8 +78,11 @@ template<class From, class To>
 using ConstVolatileAsT = ConstAsT< From, VolatileAsT< From, To>>;
 
 template<typename T>
-concept IsImplicitLifetime = requires {
-  std::is_scalar_v<T> || std::is_array_v<T> || (std::is_trivially_destructible_v<T> && std::is_trivially_constructible_v<T> && std::is_aggregate_v<T>);
-};
+concept IsImplicitLifetime = std::is_scalar_v<T> || std::is_array_v<T> || 
+    (std::is_trivially_destructible_v<T> && 
+     (std::is_trivially_default_constructible_v<T> || 
+      std::is_trivially_copy_constructible_v<T> || 
+      std::is_trivially_move_constructible_v<T> || 
+      std::is_aggregate_v<T>));
 
 } // namespace Core

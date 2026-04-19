@@ -4,7 +4,6 @@
 #include <span>
 #include <format>
 
-#include "TestUtilities/BasicTestsGenerator.h"
 #include "TestUtilities/GoogleTest.h"
 #include "TestUtilities/TestStruct.test.h"
 #include "TestUtilities/TestsFriend.h"
@@ -17,164 +16,56 @@ namespace CoreTests
 {
 using namespace Core;
 
-template<typename TestedType>
-class ErasedStorageF: public testing::Test
-{
-public:
-  auto getDefaultObj()
-  {
-    return TestedType{};
-  }
-
-  auto AreStorageFctsNullptr(const TestedType& obj) const
-  {
-    // using TF_T = TestUtilities::TestFriend;
-    // const auto& storageFct = TF_T::get<&TestedType::m_storageFcts>(obj);
-    // return (storageFct.m_destroy == nullptr) && (storageFct.m_copy == nullptr) && (storageFct.m_move == nullptr);
-    return obj.m_storageFcts.m_destroy == nullptr && obj.m_storageFcts.m_copy == nullptr && obj.m_storageFcts.m_move == nullptr;
-  }
-
-  auto IsStorage0Initialized(const TestedType& obj) const
-  {
-    std::array<std::byte, TestedType::SizeT> defaultStorageBytes{};
-    return std::ranges::equal(obj.m_storage, defaultStorageBytes);
-  }
-
-  template<TestUtilities::BasicTestsObjOps basicTestsObjOp>
-  testing::AssertionResult testDefaultObj(const TestedType& obj) const
-  {
-
-    if (AreStorageFctsNullptr(obj) && IsStorage0Initialized(obj))
-    {
-      return testing::AssertionSuccess();
-    }
-
-    return testing::AssertionFailure();
-  }
-
-  static const auto objAExpectedVal = 42;
-  static const auto objBExpectedVal = 151;
-
-  TestedType getObjA()
-  {
-    auto objA = TestedType{};
-    objA.construct(TestStruct{objAExpectedVal});
-    return objA;
-  }
-
-  template<TestUtilities::BasicTestsObjOps basicTestsObjOp>
-  testing::AssertionResult testObjA(const TestedType& objA) const
-  {
-    // if constexpr (basicTestsObjOp != TestUtilities::BasicTestsObjOps::Dtor)
-    //{
-
-    //}
-    // else
-    {
-      // if (AreStorageFctsNullptr(objA) && IsStorage0Initialized(objA))
-      //{
-      //   return testing::AssertionSuccess();
-      // }
-
-      auto objBytes = TestUtilities::objAsBytes(objA);
-      std::array<std::byte, sizeof(TestedType)> ObjAExpectedValAsBytes{(std::byte)objAExpectedVal};
-      if ((objBytes.size() == ObjAExpectedValAsBytes.size()) && std::ranges::equal(objBytes, ObjAExpectedValAsBytes))
-      {
-        return testing::AssertionSuccess();
-      }
-    }
-
-    // SCOPED_TRACE(std::format("Failed Operation: {}", GetBasicTestsObjOpsStr(basicTestsObjOp)));
-    auto sl = std::source_location::current();
-    return testing::AssertionFailure() << std::format(
-               "Failed Operation: {}, {}({}:{}) {}", GetBasicTestsObjOpsStr(basicTestsObjOp), sl.file_name(), sl.line(), sl.column(), sl.function_name());
-  }
-
-  // TestedType getObjB()
-  //{
-  //   return TestedType{};
-  // }
-
-  template<TestUtilities::BasicTestsObjOps basicTestsObjOp>
-  testing::AssertionResult testObjB(const TestedType& objB) const
-  {
-    // if constexpr (basicTestsObjOp != TestUtilities::BasicTestsObjOps::Dtor)
-    //{
-    //   if (!(bool)objB)
-    //   {
-    //     ADD_FAILURE();
-    //     return testing::AssertionFailure();
-    //   }
-
-    //  if (objB.a != objBExpectedVal)
-    //  {
-    //    ADD_FAILURE() << "Error here";
-    //    return testing::AssertionFailure();
-    //  }
-    //}
-    // else
-    //{
-    //  auto objBytes = TestUtilities::objAsBytes(objB);
-    //  std::array<std::byte, sizeof(TestedType)> ObjBExpectedValAsBytes{(std::byte)objBExpectedVal};
-    //  if ((objBytes.size() == ObjBExpectedValAsBytes.size()) && std::ranges::equal(objBytes, ObjBExpectedValAsBytes))
-    //  {
-    //    return testing::AssertionSuccess();
-    //  }
-    //}
-
-    // return testing::AssertionSuccess();
-
-    return testing::AssertionFailure();
-  }
-};
-
-// template<typename ErasedType>
-// using ErasedStorage_T = ErasedStorage<sizeof(ErasedType), alignof(ErasedType)>;
-// auto typedTest = TestUtilities::RegistratorCommonTests<ErasedStorageF,
-//                                                        TEST_TYPE(ErasedStorage_T<TestStruct>),
-//                                                        // TEST_TYPE(ErasedStorage_T<const TestStruct>),  // Removing because I don't think it makes sense to
-//                                                        // have a const type for Erased storage
-//                                                        TEST_TYPE(ErasedStorage_T<TestStruct&&>)>{};
-
+/**
+ * @brief Fixture for testing ErasedStorage with a TestStruct (or TestStruct&&).
+ */
 template<typename T>
 class ErasedStorageTestStructF: public testing::Test
 {
-  template<typename Compound_T>
-  using Base_T = std::remove_cv_t<std::remove_pointer_t<std::remove_cvref_t<Compound_T>>>;
-
 public:
 protected:
   using ErasedType = T;
   using BaseType = std::remove_pointer_t<std::remove_reference_t<ErasedType>>;
   using ErasedTypePtr = std::add_pointer_t<std::remove_pointer_t<ErasedType>>;
+  
   static constexpr auto isStoredAsPtr = (std::is_pointer_v<std::remove_reference_t<ErasedType>> || std::is_lvalue_reference_v<ErasedType>);
   using ErasedTypedStoredType = std::conditional_t<isStoredAsPtr, ErasedTypePtr, BaseType>;
-  using ErasedTypeByte = std::byte;
+  
   using ErasedStorage_T = ErasedStorage<sizeof(ErasedType), alignof(ErasedType)>;
 
   ErasedStorage_T m_storage;
-  SpecialFunctionCallCounter m_counters;
+  SpecialFunctionCallCounter m_expected;
 
   void SetUp() override
   {
+    TestStruct::resetStaticCounters();
+    m_expected = {};
+
     if constexpr (std::is_rvalue_reference_v<ErasedType>)
     {
       m_storage.construct(BaseType{});
+      m_expected.m_nbCallDefaultConstructor++;
+      m_expected.m_nbCallMoveConstructor++;
+      m_expected.m_nbCallDestructor++;
     }
     else
     {
       m_storage.template construct<ErasedType>();
+      m_expected.m_nbCallDefaultConstructor++;
     }
-
-    TestStruct::resetStaticCounters();
   }
 
-  void TearDown() override
+  void verifyAndCleanup()
   {
-    TestStruct::resetStaticCounters();
-  }
+    m_storage.erase();
+    m_expected.m_nbCallDestructor++;
+    
+    // Robustly verify zero-initialization after erase() using C++23 start_lifetime_as on bytes (implicit-lifetime)
+    auto* byteView = std::start_lifetime_as<const std::byte[sizeof(ErasedType)]>(m_storage.template asTypedPtr<std::byte>());
+    for (auto b : *byteView) { EXPECT_EQ(b, std::byte{0}); }
 
-private:
+    TestStruct::assertSpecialFunctionCallCounter(m_expected);
+  }
 };
 
 using ErasedTypes_T = ::testing::Types<TestStruct, TestStruct&&>;
@@ -184,535 +75,312 @@ struct ErasedTypesNameGenerator
   template<typename T>
   static std::string GetName(int i)
   {
-    static const std::array names = {"TestStruct", "TestStruct&&"};
+    static const std::array names = {"TestStruct", "TestStruct_RValRef"};
     return names[i];
   }
 };
 
 TYPED_TEST_SUITE(ErasedStorageTestStructF, ErasedTypes_T, ErasedTypesNameGenerator);
 
-TYPED_TEST(ErasedStorageTestStructF, DefaultCtor)
+TYPED_TEST(ErasedStorageTestStructF, Lifecycle_EmptyStorage)
 {
-  using ErasedStorage_T = TestFixture::ErasedStorage_T;
-  using ErasedType = TestFixture::ErasedType;
-  using ErasedTypedStoredType = TestFixture::ErasedTypedStoredType;
-  using ErasedTypeByte = TestFixture::ErasedTypeByte;
-
+  using ErasedStorage_T = typename TestFixture::ErasedStorage_T;
+  
   {
-    // Default Constructor
-    ErasedStorage_T storage;
-    const auto& typedPtr = storage.template asTypedPtr<ErasedTypedStoredType>();
+    ErasedStorage_T emptyStorage;
+    
+    // Initial state check
+    auto* byteView = std::start_lifetime_as<const std::byte[sizeof(typename TestFixture::ErasedType)]>(emptyStorage.template asTypedPtr<std::byte>());
+    for (auto b : *byteView) { EXPECT_EQ(b, std::byte{0}); }
 
-    // I think this is UB because we are accessing the storage before any object was constructed in it.
-    // Or it isn't because std::byte is special.
-    ASSERT_EQ(reinterpret_cast<const ErasedTypeByte&>(*typedPtr), std::byte{});
-
-    // Destructor
-    storage.~ErasedStorage();
-    ASSERT_EQ(reinterpret_cast<const ErasedTypeByte&>(*typedPtr), std::byte{});
+    emptyStorage.~ErasedStorage();
   }
 
-  ExpectSpecialFunctionCallCounter(this->m_counters);
-  ExpectConstructorsAndDestructorsCount(this->m_counters);
+  this->verifyAndCleanup();
 }
 
-TYPED_TEST(ErasedStorageTestStructF, CopyCtor)
+TYPED_TEST(ErasedStorageTestStructF, CopyConstruction)
 {
-  using ErasedStorage_T = TestFixture::ErasedStorage_T;
-  using ErasedType = TestFixture::ErasedType;
-  using ErasedTypedStoredType = TestFixture::ErasedTypedStoredType;
-  using ErasedTypeByte = TestFixture::ErasedTypeByte;
+  using ErasedStorage_T = typename TestFixture::ErasedStorage_T;
+  using ErasedTypedStoredType = typename TestFixture::ErasedTypedStoredType;
 
   {
-    // Copy Constructor
-    ErasedStorage_T storage{this->m_storage};
-    this->m_counters.m_nbCallCopyConstructor++;
+    ErasedStorage_T storageCopy{this->m_storage};
+    this->m_expected.m_nbCallCopyConstructor++;
 
-    const auto& typedPtr = storage.template asTypedPtr<ErasedTypedStoredType>();
-
+    const auto& typedPtr = storageCopy.template asTypedPtr<ErasedTypedStoredType>();
     ASSERT_NE(typedPtr, nullptr);
-    ASSERT_EQ((*typedPtr).m_value, TestStruct::m_staticValue);
-
-    this->m_counters.m_nbCallDestructor++;
+    EXPECT_EQ((*typedPtr).m_value, TestStruct::m_staticValue);
+    
+    this->m_expected.m_nbCallDestructor++;
   }
 
-  ExpectSpecialFunctionCallCounter(this->m_counters);
-  ExpectConstructorsAndDestructorsCount(this->m_counters);
+  this->verifyAndCleanup();
 }
 
-TYPED_TEST(ErasedStorageTestStructF, MoveCtor)
+TYPED_TEST(ErasedStorageTestStructF, MoveConstruction)
 {
-  using ErasedStorage_T = TestFixture::ErasedStorage_T;
-  using ErasedType = TestFixture::ErasedType;
-  using ErasedTypedStoredType = TestFixture::ErasedTypedStoredType;
-  using ErasedTypeByte = TestFixture::ErasedTypeByte;
+  using ErasedStorage_T = typename TestFixture::ErasedStorage_T;
+  using ErasedTypedStoredType = typename TestFixture::ErasedTypedStoredType;
 
   {
-    // Move Constructor
-    ErasedStorage_T storage{std::move(this->m_storage)};
+    ErasedStorage_T storageMoved{std::move(this->m_storage)};
 
     if constexpr (!std::is_const_v<ErasedTypedStoredType>)
     {
-      this->m_counters.m_nbCallMoveConstructor++;
+      this->m_expected.m_nbCallMoveConstructor++;
     }
     else
     {
-      // Because the compiler will generate a call to the copy constructor when trying to move out of a const object
-      this->m_counters.m_nbCallCopyConstructor++;
+      this->m_expected.m_nbCallCopyConstructor++;
     }
 
-    const auto& typedPtr = storage.template asTypedPtr<ErasedTypedStoredType>();
-
+    const auto& typedPtr = storageMoved.template asTypedPtr<ErasedTypedStoredType>();
     ASSERT_NE(typedPtr, nullptr);
-    ASSERT_EQ((*typedPtr).m_value, TestStruct::m_staticValue);
-
-    this->m_counters.m_nbCallDestructor++;
+    EXPECT_EQ((*typedPtr).m_value, TestStruct::m_staticValue);
+    
+    this->m_expected.m_nbCallDestructor++;
   }
 
-  ExpectSpecialFunctionCallCounter(this->m_counters);
-  ExpectConstructorsAndDestructorsCount(this->m_counters);
+  this->verifyAndCleanup();
 }
 
-TYPED_TEST(ErasedStorageTestStructF, CopyAssign)
+TYPED_TEST(ErasedStorageTestStructF, CopyAssignment)
 {
-  using ErasedStorage_T = TestFixture::ErasedStorage_T;
-  using ErasedType = TestFixture::ErasedType;
-  using ErasedTypedStoredType = TestFixture::ErasedTypedStoredType;
-  using ErasedTypeByte = TestFixture::ErasedTypeByte;
+  using ErasedStorage_T = typename TestFixture::ErasedStorage_T;
+  using ErasedTypedStoredType = typename TestFixture::ErasedTypedStoredType;
 
   {
-    // Copy Assignment
-    ErasedStorage_T storage;
-    storage = this->m_storage;
-    this->m_counters.m_nbCallCopyConstructor++;
+    ErasedStorage_T target;
+    
+    auto* byteView = std::start_lifetime_as<const std::byte[sizeof(typename TestFixture::ErasedType)]>(target.template asTypedPtr<std::byte>());
+    for (auto b : *byteView) { EXPECT_EQ(b, std::byte{0}); }
 
-    const auto& typedPtr = storage.template asTypedPtr<ErasedTypedStoredType>();
+    target = this->m_storage;
+    this->m_expected.m_nbCallCopyConstructor++;
 
+    const auto& typedPtr = target.template asTypedPtr<ErasedTypedStoredType>();
     ASSERT_NE(typedPtr, nullptr);
-    ASSERT_EQ((*typedPtr).m_value, TestStruct::m_staticValue);
-
-    this->m_counters.m_nbCallDestructor++;
+    EXPECT_EQ((*typedPtr).m_value, TestStruct::m_staticValue);
+    
+    this->m_expected.m_nbCallDestructor++;
   }
 
-  ExpectSpecialFunctionCallCounter(this->m_counters);
-  ExpectConstructorsAndDestructorsCount(this->m_counters);
+  this->verifyAndCleanup();
 }
 
-TYPED_TEST(ErasedStorageTestStructF, MoveAssign)
+TYPED_TEST(ErasedStorageTestStructF, MoveAssignment)
 {
-  using ErasedStorage_T = TestFixture::ErasedStorage_T;
-  using ErasedType = TestFixture::ErasedType;
-  using ErasedTypedStoredType = TestFixture::ErasedTypedStoredType;
-  using ErasedTypeByte = TestFixture::ErasedTypeByte;
+  using ErasedStorage_T = typename TestFixture::ErasedStorage_T;
+  using ErasedType = typename TestFixture::ErasedType;
+  using ErasedTypedStoredType = typename TestFixture::ErasedTypedStoredType;
 
   {
-    // Move Assignment
-    ErasedStorage_T storage;
-    storage = std::move(this->m_storage);
+    ErasedStorage_T target;
+    target = std::move(this->m_storage);
+
     if constexpr (!std::is_const_v<ErasedType>)
     {
-      this->m_counters.m_nbCallMoveConstructor++;
+      this->m_expected.m_nbCallMoveConstructor++;
     }
     else
     {
-      // Because the compiler will generate a call to the copy constructor when trying to move out of a const object
-      this->m_counters.m_nbCallCopyConstructor++;
+      this->m_expected.m_nbCallCopyConstructor++;
     }
 
-    const auto& typedPtr = storage.template asTypedPtr<ErasedTypedStoredType>();
-
+    const auto& typedPtr = target.template asTypedPtr<ErasedTypedStoredType>();
     ASSERT_NE(typedPtr, nullptr);
-    ASSERT_EQ((*typedPtr).m_value, TestStruct::m_staticValue);
-
-    this->m_counters.m_nbCallDestructor++;
+    EXPECT_EQ((*typedPtr).m_value, TestStruct::m_staticValue);
+    
+    this->m_expected.m_nbCallDestructor++;
   }
 
-  ExpectSpecialFunctionCallCounter(this->m_counters);
-  ExpectConstructorsAndDestructorsCount(this->m_counters);
+  this->verifyAndCleanup();
 }
 
 TYPED_TEST(ErasedStorageTestStructF, Swap)
 {
-  using ErasedStorage_T = TestFixture::ErasedStorage_T;
-  using ErasedType = TestFixture::ErasedType;
-  using BaseType = TestFixture::BaseType;
-  using ErasedTypedStoredType = TestFixture::ErasedTypedStoredType;
-  using ErasedTypeByte = TestFixture::ErasedTypeByte;
+  using ErasedStorage_T = typename TestFixture::ErasedStorage_T;
+  using ErasedType = typename TestFixture::ErasedType;
+  using BaseType = typename TestFixture::BaseType;
+  using ErasedTypedStoredType = typename TestFixture::ErasedTypedStoredType;
 
   {
-    const uint8_t value = 51;
-    ErasedStorage_T storage;
-    this->m_counters.m_nbCallDefaultConstructor++;
-    storage.template construct<BaseType>(value);
+    const uint8_t altValue = 51;
+    ErasedStorage_T other;
+    other.template construct<BaseType>(altValue);
+    this->m_expected.m_nbCallDefaultConstructor++;
 
     using std::swap;
-    swap(storage, this->m_storage);
+    swap(other, this->m_storage);
 
     if constexpr (!std::is_const_v<ErasedType>)
     {
-      this->m_counters.m_nbCallMoveConstructor += 3;
-      this->m_counters.m_nbCallDestructor += 3;
+      this->m_expected.m_nbCallMoveConstructor += 3;
+      this->m_expected.m_nbCallDestructor += 3;
     }
     else
     {
-      // Because the compiler will generate a call to the copy constructor when trying to move out of a const object
-      this->m_counters.m_nbCallCopyConstructor += 3;
-      this->m_counters.m_nbCallDestructor += 3;
+      this->m_expected.m_nbCallCopyConstructor += 3;
+      this->m_expected.m_nbCallDestructor += 3;
     }
 
-    const auto& typedPtrA = storage.template asTypedPtr<ErasedTypedStoredType>();
-    ASSERT_NE(typedPtrA, nullptr);
-    ASSERT_EQ((*typedPtrA).m_value, TestStruct::m_staticValue);
+    const auto& typedPtrOther = other.template asTypedPtr<ErasedTypedStoredType>();
+    ASSERT_NE(typedPtrOther, nullptr);
+    EXPECT_EQ((*typedPtrOther).m_value, TestStruct::m_staticValue);
 
-    const auto& typedPtrB = this->m_storage.template asTypedPtr<ErasedTypedStoredType>();
-    ASSERT_NE(typedPtrB, nullptr);
-    ASSERT_EQ((*typedPtrB).m_value, value);
+    const auto& typedPtrFixture = this->m_storage.template asTypedPtr<ErasedTypedStoredType>();
+    ASSERT_NE(typedPtrFixture, nullptr);
+    EXPECT_EQ((*typedPtrFixture).m_value, altValue);
 
-    this->m_counters.m_nbCallDestructor++;
+    this->m_expected.m_nbCallDestructor++;
   }
 
-  ExpectSpecialFunctionCallCounter(this->m_counters);
-  ExpectConstructorsAndDestructorsCount(this->m_counters);
+  this->verifyAndCleanup();
 }
 
-TYPED_TEST(ErasedStorageTestStructF, ConstructDefault)
+TYPED_TEST(ErasedStorageTestStructF, Construct_Default)
 {
-  using ErasedStorage_T = TestFixture::ErasedStorage_T;
-  using ErasedType = TestFixture::ErasedType;
-  using BaseType = TestFixture::BaseType;
-  using ErasedTypedStoredType = TestFixture::ErasedTypedStoredType;
-  using ErasedTypeByte = TestFixture::ErasedTypeByte;
+  using ErasedStorage_T = typename TestFixture::ErasedStorage_T;
+  using ErasedType = typename TestFixture::ErasedType;
+  using BaseType = typename TestFixture::BaseType;
+  using ErasedTypedStoredType = typename TestFixture::ErasedTypedStoredType;
 
   {
-    // Default Constructor
-    ErasedStorage_T storage;
-    const auto& typedPtr = storage.template asTypedPtr<ErasedTypedStoredType>();
+    ErasedStorage_T local;
+    
+    auto* byteView = std::start_lifetime_as<const std::byte[sizeof(ErasedType)]>(local.template asTypedPtr<std::byte>());
+    for (auto b : *byteView) { EXPECT_EQ(b, std::byte{0}); }
 
-    // I think this is UB because we are accessing the storage before any object was constructed in it.
-    // Or it isn't because std::byte is special.
-    ASSERT_EQ(reinterpret_cast<const ErasedTypeByte&>(*typedPtr), std::byte{});
+    local.template construct<BaseType>();
+    this->m_expected.m_nbCallDefaultConstructor++;
 
-    const auto* typedStorage = storage.template construct<BaseType>();
-    this->m_counters.m_nbCallDefaultConstructor++;
-
-    ASSERT_EQ(typedStorage->m_value, TestStruct::m_staticValue);
-
+    const auto& typedPtr = local.template asTypedPtr<ErasedTypedStoredType>();
     ASSERT_NE(typedPtr, nullptr);
-    ASSERT_EQ((*typedPtr).m_value, TestStruct::m_staticValue);
+    EXPECT_EQ((*typedPtr).m_value, TestStruct::m_staticValue);
 
-    // Destructor
-    storage.~ErasedStorage();
-    this->m_counters.m_nbCallDestructor++;
-    ASSERT_EQ(reinterpret_cast<const ErasedTypeByte&>(*typedPtr), std::byte{});
+    this->m_expected.m_nbCallDestructor++;
   }
 
-  ExpectSpecialFunctionCallCounter(this->m_counters);
-  ExpectConstructorsAndDestructorsCount(this->m_counters);
+  this->verifyAndCleanup();
 }
 
-TYPED_TEST(ErasedStorageTestStructF, ConstructWithArgs)
+TYPED_TEST(ErasedStorageTestStructF, Construct_WithRValue)
 {
-  using ErasedStorage_T = TestFixture::ErasedStorage_T;
-  using ErasedType = TestFixture::ErasedType;
-  using BaseType = TestFixture::BaseType;
-  using ErasedTypedStoredType = TestFixture::ErasedTypedStoredType;
-  using ErasedTypeByte = TestFixture::ErasedTypeByte;
+  using ErasedStorage_T = typename TestFixture::ErasedStorage_T;
+  using ErasedTypedStoredType = typename TestFixture::ErasedTypedStoredType;
 
   {
+    ErasedStorage_T local;
+    local.construct(TestStruct{});
+    this->m_expected.m_nbCallDefaultConstructor++;
+    this->m_expected.m_nbCallMoveConstructor++;
+    this->m_expected.m_nbCallDestructor++;
 
-    // Parametric Constructor
-    ErasedStorage_T storage;
-    const auto& typedPtr = storage.template asTypedPtr<ErasedTypedStoredType>();
-
-    // I think this is UB because we are accessing the storage before any object was constructed in it.
-    // Or it isn't because std::byte is special.
-    ASSERT_EQ(reinterpret_cast<const ErasedTypeByte&>(*typedPtr), std::byte{});
-
-    const auto* typedStorage = storage.template construct<BaseType>(TestStruct::m_staticValue);
-    this->m_counters.m_nbCallDefaultConstructor++;
-
-    ASSERT_EQ(typedStorage->m_value, TestStruct::m_staticValue);
-
+    const auto& typedPtr = local.template asTypedPtr<ErasedTypedStoredType>();
     ASSERT_NE(typedPtr, nullptr);
-    ASSERT_EQ((*typedPtr).m_value, TestStruct::m_staticValue);
+    EXPECT_EQ((*typedPtr).m_value, TestStruct::m_staticValue);
 
-    // Destructor
-    storage.~ErasedStorage();
-    this->m_counters.m_nbCallDestructor++;
-    ASSERT_EQ(reinterpret_cast<const ErasedTypeByte&>(*typedPtr), std::byte{});
+    this->m_expected.m_nbCallDestructor++;
   }
 
-  ExpectSpecialFunctionCallCounter(this->m_counters);
-  ExpectConstructorsAndDestructorsCount(this->m_counters);
+  this->verifyAndCleanup();
 }
 
-TYPED_TEST(ErasedStorageTestStructF, ConstructWithMoveCtor)
-{
-  using ErasedStorage_T = TestFixture::ErasedStorage_T;
-  using ErasedType = TestFixture::ErasedType;
-  using ErasedTypedStoredType = TestFixture::ErasedTypedStoredType;
-  using ErasedTypeByte = TestFixture::ErasedTypeByte;
-
-  {
-    ErasedStorage_T storage;
-    const auto& typedPtr = storage.template asTypedPtr<ErasedTypedStoredType>();
-
-    // I think this is UB because we are accessing the storage before any object was constructed in it.
-    // Or it isn't because std::byte is special.
-    ASSERT_EQ(reinterpret_cast<const ErasedTypeByte&>(*typedPtr), std::byte{});
-
-    // Construct with Move Constructor
-    const auto* typedStorage = storage.construct(TestStruct{});
-    this->m_counters.m_nbCallDefaultConstructor++;
-    this->m_counters.m_nbCallMoveConstructor++;
-    this->m_counters.m_nbCallDestructor++;
-
-    ASSERT_EQ(typedStorage->m_value, TestStruct::m_staticValue);
-
-    ASSERT_NE(typedPtr, nullptr);
-    ASSERT_EQ((*typedPtr).m_value, TestStruct::m_staticValue);
-
-    // Destructor
-    storage.~ErasedStorage();
-    this->m_counters.m_nbCallDestructor++;
-    ASSERT_EQ(reinterpret_cast<const ErasedTypeByte&>(*typedPtr), std::byte{});
-  }
-
-  ExpectSpecialFunctionCallCounter(this->m_counters);
-  ExpectConstructorsAndDestructorsCount(this->m_counters);
-}
-
+/**
+ * @brief Fixture for testing ErasedStorage when it stores a pointer.
+ */
 template<typename T>
 class ErasedStorageTestStructPtrF: public testing::Test
 {
-  template<typename Compound_T>
-  using Base_T = std::remove_cv_t<std::remove_pointer_t<std::remove_cvref_t<Compound_T>>>;
-
 public:
 protected:
   using ErasedType = std::conditional_t<std::is_same_v<T, void*>, TestStruct*, T>;
   using BaseType = std::remove_pointer_t<std::remove_reference_t<ErasedType>>;
-  using ErasedTypeByte = std::byte;
   using ErasedStorage_T = ErasedStorage<sizeof(ErasedType), alignof(ErasedType)>;
 
   BaseType m_testStruct;
   ErasedStorage_T m_storage;
-  SpecialFunctionCallCounter m_counters;
+  SpecialFunctionCallCounter m_expected;
 
   void SetUp() override
   {
+    TestStruct::resetStaticCounters();
+    m_expected = {};
 
     if constexpr (std::is_pointer_v<ErasedType>)
     {
       m_storage.template construct<ErasedType>(&m_testStruct);
     }
-
-    TestStruct::resetStaticCounters();
   }
 
-  void TearDown() override
+  void verifyAndCleanup()
   {
-    TestStruct::resetStaticCounters();
-  }
+    m_storage.erase();
+    auto* byteView = std::start_lifetime_as<const std::byte[sizeof(ErasedType)]>(m_storage.template asTypedPtr<std::byte>());
+    for (auto b : *byteView) { EXPECT_EQ(b, std::byte{0}); }
 
-private:
+    TestStruct::assertSpecialFunctionCallCounter(m_expected);
+  }
 };
 
-using ErasedTypesCompound_T = ::testing::Types<TestStruct*, const TestStruct* /*, TestStruct* const*/, void*>;
+using ErasedTypesCompound_T = ::testing::Types<TestStruct*, const TestStruct*, void*>;
 TYPED_TEST_SUITE(ErasedStorageTestStructPtrF, ErasedTypesCompound_T);
 
-TYPED_TEST(ErasedStorageTestStructPtrF, DefaultCtor)
+TYPED_TEST(ErasedStorageTestStructPtrF, Lifecycle_DefaultCtor)
 {
-  using ErasedStorage_T = TestFixture::ErasedStorage_T;
-  using ErasedType = TestFixture::ErasedType;
-  using ErasedTypeByte = TestFixture::ErasedTypeByte;
+  using ErasedStorage_T = typename TestFixture::ErasedStorage_T;
+  using ErasedType = typename TestFixture::ErasedType;
 
   {
-    // Default Constructor
-    ErasedStorage_T storage;
-    const auto& typedPtr = storage.template asTypedPtr<ErasedType>();
-
-    // I think this is UB because we are accessing the storage before any object was constructed in it.
-    // Or it isn't because std::byte is special.
-    ASSERT_EQ(typedPtr, nullptr);
-
-    // Destructor
-    storage.~ErasedStorage();
-    ASSERT_EQ(typedPtr, nullptr);
+    ErasedStorage_T empty;
+    auto* byteView = std::start_lifetime_as<const std::byte[sizeof(ErasedType)]>(empty.template asTypedPtr<std::byte>());
+    for (auto b : *byteView) { EXPECT_EQ(b, std::byte{0}); }
+    
+    EXPECT_EQ(empty.template asTypedPtr<ErasedType>(), nullptr);
   }
 
-  ExpectSpecialFunctionCallCounter(this->m_counters);
-  ExpectConstructorsAndDestructorsCount(this->m_counters);
+  this->verifyAndCleanup();
 }
 
-TYPED_TEST(ErasedStorageTestStructPtrF, CopyCtor)
+TYPED_TEST(ErasedStorageTestStructPtrF, Lifecycle_Copy_And_Move)
 {
-  using ErasedStorage_T = TestFixture::ErasedStorage_T;
-  using ErasedType = TestFixture::ErasedType;
-  using ErasedTypeByte = TestFixture::ErasedTypeByte;
+  using ErasedStorage_T = typename TestFixture::ErasedStorage_T;
+  using ErasedType = typename TestFixture::ErasedType;
 
   {
-    // Copy Constructor
-    ErasedStorage_T storage{this->m_storage};
+    ErasedStorage_T storageCopy{this->m_storage};
+    EXPECT_EQ(storageCopy.template asTypedPtr<ErasedType>(), &(this->m_testStruct));
 
-    const auto& typedPtr = storage.template asTypedPtr<ErasedType>();
-
-    ASSERT_NE(typedPtr, nullptr);
-    ASSERT_EQ(typedPtr, &(this->m_testStruct));
-    ASSERT_EQ((*typedPtr), this->m_testStruct);
+    ErasedStorage_T storageMove{std::move(storageCopy)};
+    EXPECT_EQ(storageMove.template asTypedPtr<ErasedType>(), &(this->m_testStruct));
   }
 
-  ExpectSpecialFunctionCallCounter(this->m_counters);
-  ExpectConstructorsAndDestructorsCount(this->m_counters);
+  this->verifyAndCleanup();
 }
 
-TYPED_TEST(ErasedStorageTestStructPtrF, MoveCtor)
+TYPED_TEST(ErasedStorageTestStructPtrF, Lifecycle_Swap)
 {
-  using ErasedStorage_T = TestFixture::ErasedStorage_T;
-  using ErasedType = TestFixture::ErasedType;
-  using ErasedTypeByte = TestFixture::ErasedTypeByte;
+  using ErasedStorage_T = typename TestFixture::ErasedStorage_T;
+  using ErasedType = typename TestFixture::ErasedType;
 
   {
-    // Move Constructor
-    ErasedStorage_T storage{std::move(this->m_storage)};
+    TestStruct altStruct(51);
+    this->m_expected.m_nbCallDefaultConstructor++;
 
-    const auto& typedPtr = storage.template asTypedPtr<ErasedType>();
-
-    ASSERT_NE(typedPtr, nullptr);
-    ASSERT_EQ(typedPtr, &(this->m_testStruct));
-    ASSERT_EQ((*typedPtr), this->m_testStruct);
-  }
-
-  ExpectSpecialFunctionCallCounter(this->m_counters);
-  ExpectConstructorsAndDestructorsCount(this->m_counters);
-}
-
-TYPED_TEST(ErasedStorageTestStructPtrF, CopyAssign)
-{
-  using ErasedStorage_T = TestFixture::ErasedStorage_T;
-  using ErasedType = TestFixture::ErasedType;
-  using ErasedTypeByte = TestFixture::ErasedTypeByte;
-
-  {
-    // Copy Assignment
-    ErasedStorage_T storage;
-    storage = this->m_storage;
-    const auto& typedPtr = storage.template asTypedPtr<ErasedType>();
-
-    ASSERT_NE(typedPtr, nullptr);
-    ASSERT_EQ(typedPtr, &(this->m_testStruct));
-    ASSERT_EQ((*typedPtr), this->m_testStruct);
-  }
-
-  ExpectSpecialFunctionCallCounter(this->m_counters);
-  ExpectConstructorsAndDestructorsCount(this->m_counters);
-}
-
-TYPED_TEST(ErasedStorageTestStructPtrF, MoveAssign)
-{
-  using ErasedStorage_T = TestFixture::ErasedStorage_T;
-  using ErasedType = TestFixture::ErasedType;
-  using ErasedTypeByte = TestFixture::ErasedTypeByte;
-
-  {
-    // Move Assignment
-    ErasedStorage_T storage;
-    storage = std::move(this->m_storage);
-    const auto& typedPtr = storage.template asTypedPtr<ErasedType>();
-
-    ASSERT_NE(typedPtr, nullptr);
-    ASSERT_EQ(typedPtr, &(this->m_testStruct));
-    ASSERT_EQ((*typedPtr), this->m_testStruct);
-  }
-
-  ExpectSpecialFunctionCallCounter(this->m_counters);
-  ExpectConstructorsAndDestructorsCount(this->m_counters);
-}
-
-TYPED_TEST(ErasedStorageTestStructPtrF, Swap)
-{
-  using ErasedStorage_T = TestFixture::ErasedStorage_T;
-  using ErasedType = TestFixture::ErasedType;
-  using BaseType = TestFixture::BaseType;
-  using ErasedTypeByte = TestFixture::ErasedTypeByte;
-
-  {
-    TestStruct value(51);
-    ErasedStorage_T storage;
-    storage.template construct<ErasedType>(&value);
-    this->m_counters.m_nbCallDefaultConstructor++;
-
+    ErasedStorage_T other;
+    other.template construct<ErasedType>(&altStruct);
+    
     using std::swap;
-    swap(storage, this->m_storage);
+    swap(other, this->m_storage);
 
-    const auto& typedPtrA = storage.template asTypedPtr<ErasedType>();
-    ASSERT_NE(typedPtrA, nullptr);
-    ASSERT_EQ((*typedPtrA), this->m_testStruct);
+    EXPECT_EQ(other.template asTypedPtr<ErasedType>(), &(this->m_testStruct));
+    EXPECT_EQ(this->m_storage.template asTypedPtr<ErasedType>(), &altStruct);
 
-    const auto& typedPtrB = this->m_storage.template asTypedPtr<ErasedType>();
-    ASSERT_NE(typedPtrB, nullptr);
-    ASSERT_EQ((typedPtrB), &value);
-    ASSERT_EQ((*typedPtrB), value);
-
-    this->m_counters.m_nbCallDestructor++;
+    this->m_expected.m_nbCallDestructor++;
   }
 
-  ExpectSpecialFunctionCallCounter(this->m_counters);
-  ExpectConstructorsAndDestructorsCount(this->m_counters);
-}
-
-TYPED_TEST(ErasedStorageTestStructPtrF, ConstructWithCopyCtor)
-{
-  using ErasedStorage_T = TestFixture::ErasedStorage_T;
-  using ErasedType = TestFixture::ErasedType;
-  using ErasedTypeByte = TestFixture::ErasedTypeByte;
-
-  {
-    ErasedStorage_T storage;
-
-    TestStruct testStruct;
-    this->m_counters.m_nbCallDefaultConstructor++;
-
-    // Construct with lvalue will store a pointer
-    const auto* typedStorage = storage.construct(testStruct);
-
-    ASSERT_EQ(typedStorage->m_value, TestStruct::m_staticValue);
-
-    const auto& typedPtr = storage.template asTypedPtr<ErasedType>();
-    ASSERT_NE(typedPtr, nullptr);
-    ASSERT_EQ((*typedPtr).m_value, TestStruct::m_staticValue);
-
-    this->m_counters.m_nbCallDestructor++;
-  }
-
-  ExpectSpecialFunctionCallCounter(this->m_counters);
-  ExpectConstructorsAndDestructorsCount(this->m_counters);
-}
-
-TEST(ErasedStorageTestStructArray, SpecialMemberFcts)
-{
-  using ErasedType = const TestStruct[4];
-  using ErasedTypeByte = const std::byte;
-  using ErasedStorage_T = ErasedStorage<sizeof(ErasedType), alignof(ErasedType)>;
-
-  TestStruct::resetStaticCounters();
-
-  {
-    GTEST_SKIP();
-  }
-}
-
-TEST(ErasedStorageTestStructArrayConst, SpecialMemberFcts)
-{
-  using ErasedType = const TestStruct[4];
-  using ErasedTypeByte = const std::byte;
-  using ErasedStorage_T = ErasedStorage<sizeof(ErasedType), alignof(ErasedType)>;
-
-  TestStruct::resetStaticCounters();
-
-  {
-    GTEST_SKIP();
-  }
+  this->verifyAndCleanup();
 }
 
 } // namespace CoreTests

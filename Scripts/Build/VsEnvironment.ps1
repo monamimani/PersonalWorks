@@ -45,13 +45,16 @@ function LaunchVsDevShell {
 
   # Launch-VsDevShell.ps1 does not support specifying the toolset version.
   # We use dot-sourcing so it applies to the current scope.
-  . $$launchVsDevShell -Arch amd64 -SkipAutomaticLocation -Preview
+  . $launchVsDevShell -Arch amd64 -SkipAutomaticLocation -Preview
 }
 
 function GetVsInstallationPath {
-  Set-PSRepository -Name "PSGallery" -InstallationPolicy Trusted
-  Install-Module VSSetup -Scope CurrentUser
-  Set-PSRepository -Name "PSGallery" -InstallationPolicy UnTrusted
+  if (-not (Get-Module -ListAvailable -Name VSSetup)) {
+    Write-Host "Installing VSSetup module..."
+    Set-PSRepository -Name "PSGallery" -InstallationPolicy Trusted
+    Install-Module VSSetup -Scope CurrentUser -Force
+    Set-PSRepository -Name "PSGallery" -InstallationPolicy UnTrusted
+  }
 
   # Use -All and -Prerelease to include all instances, including preview/insiders
   $instances = Get-VSSetupInstance -All -Prerelease

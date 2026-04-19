@@ -1,8 +1,5 @@
-#include <array>
+#include <gtest/gtest.h>
 #include <utility>
-#include <format>
-
-#include "TestUtilities/BasicTestsGenerator.h"
 
 // NOLINTBEGIN(*-magic-numbers,readability-identifier-length)
 
@@ -12,7 +9,7 @@ struct Sample
 {
   [[nodiscard]] explicit operator bool() const
   {
-    return true;
+    return m_value != 0;
   }
 
   void operator()() const
@@ -29,241 +26,94 @@ struct Sample
   }
 };
 
-template<typename TestedTypeT>
-class SampleTestF: public testing::Test
+TEST(SampleTest, DefaultConstructor)
 {
-public:
-  TestedTypeT getDefaultObj()
-  {
-    return TestedTypeT{};
-  }
+  Sample s;
+  EXPECT_EQ(s.m_value, 0);
+  EXPECT_FALSE((bool)s);
+}
 
-  template<TestUtilities::BasicTestsObjOps basicTestsObjOp>
-  testing::AssertionResult testDefaultObj(const TestedTypeT& obj) const
-  {
-    if constexpr (basicTestsObjOp != TestUtilities::BasicTestsObjOps::Dtor)
-    {
-      if ((bool)obj)
-      {
-        return testing::AssertionSuccess();
-      }
-    }
-    else
-    {
-      auto objBytes = TestUtilities::objAsBytes(obj);
-      std::array<std::byte, sizeof(TestedTypeT)> defaultObjAsBytes{};
-      if ((objBytes.size() == defaultObjAsBytes.size()) && std::ranges::equal(objBytes, defaultObjAsBytes))
-      {
-        return testing::AssertionSuccess();
-      }
-    }
-
-    return testing::AssertionFailure();
-  }
-
-  static const auto objAExpectedVal = 42;
-  static const auto objBExpectedVal = 151;
-
-  TestedTypeT getObjA()
-  {
-    return TestedTypeT{objAExpectedVal};
-  }
-
-  template<TestUtilities::BasicTestsObjOps basicTestsObjOp>
-  testing::AssertionResult testObjA(const TestedTypeT& objA) const
-  {
-    if constexpr (basicTestsObjOp != TestUtilities::BasicTestsObjOps::Dtor)
-    {
-      if (!(bool)objA)
-      {
-        ADD_FAILURE();
-        return testing::AssertionFailure();
-      }
-
-      if (objA.m_value != objAExpectedVal)
-      {
-        ADD_FAILURE() << "Error here";
-        return testing::AssertionFailure();
-      }
-    }
-    else
-    {
-      auto objBytes = TestUtilities::objAsBytes(objA);
-      std::array<std::byte, sizeof(TestedTypeT)> objAExpectedValAsBytes{(std::byte)objAExpectedVal};
-      if ((objBytes.size() == objAExpectedValAsBytes.size()) && std::ranges::equal(objBytes, objAExpectedValAsBytes))
-      {
-        return testing::AssertionSuccess();
-      }
-    }
-
-    return testing::AssertionSuccess();
-  }
-
-  TestedTypeT getObjB()
-  {
-    return TestedTypeT{objBExpectedVal};
-  }
-
-  template<TestUtilities::BasicTestsObjOps basicTestsObjOp>
-  testing::AssertionResult testObjB(const TestedTypeT& objB) const
-  {
-    if constexpr (basicTestsObjOp != TestUtilities::BasicTestsObjOps::Dtor)
-    {
-      if (!(bool)objB)
-      {
-        ADD_FAILURE();
-        return testing::AssertionFailure();
-      }
-
-      if (objB.m_value != objBExpectedVal)
-      {
-        ADD_FAILURE() << "Error here";
-        return testing::AssertionFailure();
-      }
-    }
-    else
-    {
-      auto objBytes = TestUtilities::objAsBytes(objB);
-      std::array<std::byte, sizeof(TestedTypeT)> objBExpectedValAsBytes{(std::byte)objBExpectedVal};
-      if ((objBytes.size() == objBExpectedValAsBytes.size()) && std::ranges::equal(objBytes, objBExpectedValAsBytes))
-      {
-        return testing::AssertionSuccess();
-      }
-    }
-
-    return testing::AssertionSuccess();
-  }
-};
-
-template<typename TestedTypeT>
-class SampleParamTestF: public testing::TestWithParam<std::tuple<Sample, Sample>>
+TEST(SampleTest, ValueConstructor)
 {
-public:
-  static constexpr auto makeTestName = [](const testing::TestParamInfo<ParamType>& info) {
-    auto [sampleA, sampleB] = info.param;
+  Sample s{42};
+  EXPECT_EQ(s.m_value, 42);
+  EXPECT_TRUE((bool)s);
+}
 
-    const std::string name = std::format("SampleAVal{}SampleBVal{}", sampleA.m_value, sampleB.m_value);
+TEST(SampleTest, CopyConstructor)
+{
+  Sample s1{42};
+  Sample s2{s1};
+  EXPECT_EQ(s2.m_value, 42);
+  EXPECT_EQ(s1.m_value, 42);
+  EXPECT_EQ(s1, s2);
+}
 
-    return name;
-  };
+TEST(SampleTest, MoveConstructor)
+{
+  Sample s1{42};
+  Sample s2{std::move(s1)};
+  EXPECT_EQ(s2.m_value, 42);
+  EXPECT_EQ(s1, s2); // Sample is just an int, move doesn't clear it unless we explicitly do so
+}
 
-  explicit SampleParamTestF(ParamType param)
-  {
-    std::tie(m_sampleA, m_sampleB) = param;
-  }
+TEST(SampleTest, CopyAssignment)
+{
+  Sample s1{42};
+  Sample s2;
+  s2 = s1;
+  EXPECT_EQ(s2.m_value, 42);
+  EXPECT_EQ(s1.m_value, 42);
+  EXPECT_EQ(s1, s2);
+}
 
-  TestedTypeT getDefaultObj()
-  {
-    return TestedTypeT{};
-  }
+TEST(SampleTest, MoveAssignment)
+{
+  Sample s1{42};
+  Sample s2;
+  s2 = std::move(s1);
+  EXPECT_EQ(s2.m_value, 42);
+  EXPECT_EQ(s1, s2);
+}
 
-  template<TestUtilities::BasicTestsObjOps basicTestsObjOp>
-  testing::AssertionResult testDefaultObj(const TestedTypeT& obj) const
-  {
-    if constexpr (basicTestsObjOp != TestUtilities::BasicTestsObjOps::Dtor)
-    {
-      if ((bool)obj)
-      {
-        return testing::AssertionSuccess();
-      }
-    }
-    else
-    {
-      auto objBytes = TestUtilities::objAsBytes(obj);
-      std::array<std::byte, sizeof(TestedTypeT)> defaultObjAsBytes{};
-      if ((objBytes.size() == defaultObjAsBytes.size()) && std::ranges::equal(objBytes, defaultObjAsBytes))
-      {
-        return testing::AssertionSuccess();
-      }
-    }
+TEST(SampleTest, Comparison)
+{
+  Sample s1{42};
+  Sample s2{42};
+  Sample s3{151};
 
-    return testing::AssertionFailure();
-  }
+  EXPECT_EQ(s1, s2);
+  EXPECT_NE(s1, s3);
+  EXPECT_LT(s1, s3);
+  EXPECT_GT(s3, s1);
+}
 
-  TestedTypeT getObjA()
-  {
-    return m_sampleA;
-  }
+TEST(SampleTest, Swap)
+{
+  Sample s1{42};
+  Sample s2{151};
 
-  template<TestUtilities::BasicTestsObjOps basicTestsObjOp>
-  testing::AssertionResult testObjA(const TestedTypeT& objA) const
-  {
-    if constexpr (basicTestsObjOp != TestUtilities::BasicTestsObjOps::Dtor)
-    {
-      if (!(bool)objA)
-      {
-        ADD_FAILURE();
-        return testing::AssertionFailure();
-      }
+  using std::swap;
+  swap(s1, s2);
 
-      if (objA.m_value != m_sampleA.m_value)
-      {
-        ADD_FAILURE() << "Error here";
-        return testing::AssertionFailure();
-      }
-    }
-    else
-    {
-      auto objBytes = TestUtilities::objAsBytes(objA);
-      std::array<std::byte, sizeof(TestedTypeT)> objAExpectedValAsBytes{(std::byte)m_sampleA.m_value};
-      if ((objBytes.size() == objAExpectedValAsBytes.size()) && std::ranges::equal(objBytes, objAExpectedValAsBytes))
-      {
-        return testing::AssertionSuccess();
-      }
-    }
+  EXPECT_EQ(s1.m_value, 151);
+  EXPECT_EQ(s2.m_value, 42);
+}
 
-    return testing::AssertionSuccess();
-  }
+TEST(SampleTest, OperatorBool)
+{
+  Sample s0{0};
+  Sample s1{42};
 
-  TestedTypeT getObjB()
-  {
-    return m_sampleB;
-  }
+  EXPECT_FALSE((bool)s0);
+  EXPECT_TRUE((bool)s1);
+}
 
-  template<TestUtilities::BasicTestsObjOps basicTestsObjOp>
-  testing::AssertionResult testObjB(const TestedTypeT& objB) const
-  {
-    if constexpr (basicTestsObjOp != TestUtilities::BasicTestsObjOps::Dtor)
-    {
-      if (!(bool)objB)
-      {
-        ADD_FAILURE();
-        return testing::AssertionFailure();
-      }
-
-      if (objB.m_value != m_sampleB.m_value)
-      {
-        ADD_FAILURE() << "Error here";
-        return testing::AssertionFailure();
-      }
-    }
-    else
-    {
-      auto objBytes = TestUtilities::objAsBytes(objB);
-      std::array<std::byte, sizeof(TestedTypeT)> objBExpectedValAsBytes{(std::byte)m_sampleB.m_value};
-      if ((objBytes.size() == objBExpectedValAsBytes.size()) && std::ranges::equal(objBytes, objBExpectedValAsBytes))
-      {
-        return testing::AssertionSuccess();
-      }
-    }
-    return testing::AssertionSuccess();
-  }
-
-private:
-  Sample m_sampleA;
-  Sample m_sampleB;
-};
-
-// typedef Sample Sample_T;
-// constexpr auto testDesc = TEST_TYPE(Sample);
-constexpr const char* sampleStr = "Sample";
-constexpr auto testDesc = TestUtilities::TypedTestDesc<Sample>{.m_typeName = sampleStr};
-//auto typedTest = TestUtilities::RegistratorCommonTests<SampleTestF, testDesc, testDesc>{};
-
-static const auto paramA = ::testing::Values(Sample{42}, Sample{16});
-static const auto paramB = ::testing::Values(Sample{151});
-static const auto paramGenerator = ::testing::Combine(paramA, paramB);
-//auto parametricTest = TestUtilities::RegistratorCommonTests<SampleParamTestF, testDesc>{paramGenerator, SampleParamTestF<Sample>::makeTestName};
+TEST(SampleTest, OperatorCall)
+{
+  Sample s;
+  s(); // Just verify it compiles and runs
+}
 
 } // namespace TestUtilitiesTests
 

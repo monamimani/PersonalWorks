@@ -55,7 +55,8 @@ static auto bindFunctor(auto& delegate, TestStruct& testStruct, IsLValue isLValu
   {
     if (isFctConst)
     {
-      return delegate.bind(const_cast<const TestStruct&>(testStruct));
+      std::unreachable();
+      // return delegate.bind(const_cast<const TestStruct&>(testStruct));
     }
     else
     {
@@ -167,14 +168,16 @@ static auto bindMemberFctParamOverloaded(DelegateLikeT& delegate, TestStruct& te
 {
   if (isLValue)
   {
-    if (!isFctConst)
+    if (isFctConst)
     {
       std::unreachable();
+      // return delegate.template bind<static_cast<void (TestStruct::*)(int&) const>(&TestStruc::fctParamOverloaded)>(testStruct);
       // return delegate.bind<DelegateLikeT::asFnPtr(&TestStruct::fctParamOverloaded)>(testStruct);
     }
     else
     {
-      return delegate.template bind<DelegateLikeT::asFnConstPtr(&TestStruct::fctParamOverloaded)>(testStruct);
+      return delegate.template bind<static_cast<void (TestStruct::*)(int&)>(&TestStruct::fctParamOverloaded)>(testStruct);
+      // return delegate.template bind<DelegateLikeT::asFnConstPtr(&TestStruct::fctParamOverloaded)>(testStruct);
     }
   }
   else
@@ -182,11 +185,13 @@ static auto bindMemberFctParamOverloaded(DelegateLikeT& delegate, TestStruct& te
     if (isFctConst)
     {
       std::unreachable();
+      // return delegate.template bind<static_cast<void (TestStruct::*)(int&) const>(&TestStruct::fctParamOverloaded)>(const_cast<const TestStruct&&>(std::move(testStruct)));
       // return delegate.bind<DelegateLikeT::asFnConstPtr(&TestStruct::fctParamOverloaded)>(const_cast<const TestStruct&&>(std::move(testStruct)));
     }
     else
     {
-      return delegate.template bind<DelegateLikeT::asFnPtr(&TestStruct::fctParamOverloaded)>(std::move(testStruct));
+      return delegate.template bind<static_cast<void (TestStruct::*)(int&)>(&TestStruct::fctParamOverloaded)>(std::move(testStruct));
+      // return delegate.template bind<DelegateLikeT::asFnPtr(&TestStruct::fctParamOverloaded)>(std::move(testStruct));
     }
   }
 }

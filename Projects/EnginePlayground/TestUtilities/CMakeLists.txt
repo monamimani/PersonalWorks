@@ -12,13 +12,11 @@ list(APPEND publicSources
   ${targetName}/GoogleTest.h
   ${targetName}/GoogleBenchmark.h
   ${targetName}/TestStruct.benchmark.h
-  ${targetName}/BasicTestsGenerator.h
   ${targetName}/TestsFriend.h
 )
 list(APPEND privateSources
   ${targetName}/TestStruct.test.cpp
   ${targetName}/TestStruct.benchmark.cpp
-  ${targetName}/BasicTestsGenerator.cpp
   ${targetName}/TestsFriend.cpp
 )
 list(APPEND publicCxxModules

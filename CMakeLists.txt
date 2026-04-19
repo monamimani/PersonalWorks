@@ -124,8 +124,6 @@ add_subdirectory(Projects/CppExploration)
 add_subdirectory(Projects/Config)
 add_subdirectory(Projects/EnginePlayground)
 
-
-# set the startup project for the "play" button in MSVC
 set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT CoreTests)
 
 # foreach(ITEM ${PROJECT_CONTENTS})

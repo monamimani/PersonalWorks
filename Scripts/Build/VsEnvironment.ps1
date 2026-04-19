@@ -41,11 +41,11 @@ function PatchLaunchVsDevShell {
 
 function LaunchVsDevShell {
   $vsPath = GetVsInstallationPath
-  $vcvarsallPath = [IO.Path]::Combine($vsPath, "Common7", "Tools", "Launch-VsDevShell.ps1")
+  $launchVsDevShell = [IO.Path]::Combine($vsPath, "Common7", "Tools", "Launch-VsDevShell.ps1")
 
   # Launch-VsDevShell.ps1 does not support specifying the toolset version.
   # We use dot-sourcing so it applies to the current scope.
-  . $vcvarsallPath -Arch amd64 -SkipAutomaticLocation
+  . $$launchVsDevShell -Arch amd64 -SkipAutomaticLocation -Preview
 }
 
 function GetVsInstallationPath {

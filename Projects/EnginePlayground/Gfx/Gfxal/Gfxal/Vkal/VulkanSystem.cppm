@@ -44,6 +44,16 @@ QueueType getQueueTypeFromVkQueueFlagBits(vk::QueueFlagBits queueFlagBits)
   {
     return QueueType::Graphics;
   }
+  else if (queueFlagBits & vk::QueueFlagBits::eCompute)
+  {
+    return QueueType::Compute;
+  }
+  else if (queueFlagBits & vk::QueueFlagBits::eTransfer)
+  {
+    return QueueType::Transfer;
+  }
+  
+  std::unreachable();
 }
 
 class VulkanSystem

@@ -61,7 +61,7 @@ protected:
     m_expected.m_nbCallDestructor++;
     
     // Robustly verify zero-initialization after erase() using C++23 start_lifetime_as on bytes (implicit-lifetime)
-    auto* byteView = std::start_lifetime_as<const std::byte[sizeof(ErasedType)]>(m_storage.template asTypedPtr<std::byte>());
+    auto* byteView = std::start_lifetime_as<std::byte[sizeof(ErasedType)]>(m_storage.template asTypedPtr<std::byte>());
     for (auto b : *byteView) { EXPECT_EQ(b, std::byte{0}); }
 
     TestStruct::assertSpecialFunctionCallCounter(m_expected);
@@ -76,7 +76,7 @@ struct ErasedTypesNameGenerator
   static std::string GetName(int i)
   {
     static const std::array names = {"TestStruct", "TestStruct_RValRef"};
-    return names[i];
+    return names[static_cast<std::size_t>(i)];
   }
 };
 
@@ -90,7 +90,7 @@ TYPED_TEST(ErasedStorageTestStructF, Lifecycle_EmptyStorage)
     ErasedStorage_T emptyStorage;
     
     // Initial state check
-    auto* byteView = std::start_lifetime_as<const std::byte[sizeof(typename TestFixture::ErasedType)]>(emptyStorage.template asTypedPtr<std::byte>());
+    auto* byteView = std::start_lifetime_as<std::byte[sizeof(typename TestFixture::ErasedType)]>(emptyStorage.template asTypedPtr<std::byte>());
     for (auto b : *byteView) { EXPECT_EQ(b, std::byte{0}); }
 
     emptyStorage.~ErasedStorage();
@@ -153,7 +153,7 @@ TYPED_TEST(ErasedStorageTestStructF, CopyAssignment)
   {
     ErasedStorage_T target;
     
-    auto* byteView = std::start_lifetime_as<const std::byte[sizeof(typename TestFixture::ErasedType)]>(target.template asTypedPtr<std::byte>());
+    auto* byteView = std::start_lifetime_as<std::byte[sizeof(typename TestFixture::ErasedType)]>(target.template asTypedPtr<std::byte>());
     for (auto b : *byteView) { EXPECT_EQ(b, std::byte{0}); }
 
     target = this->m_storage;
@@ -249,7 +249,7 @@ TYPED_TEST(ErasedStorageTestStructF, Construct_Default)
   {
     ErasedStorage_T local;
     
-    auto* byteView = std::start_lifetime_as<const std::byte[sizeof(ErasedType)]>(local.template asTypedPtr<std::byte>());
+    auto* byteView = std::start_lifetime_as<std::byte[sizeof(ErasedType)]>(local.template asTypedPtr<std::byte>());
     for (auto b : *byteView) { EXPECT_EQ(b, std::byte{0}); }
 
     local.template construct<BaseType>();
@@ -317,7 +317,7 @@ protected:
   void verifyAndCleanup()
   {
     m_storage.erase();
-    auto* byteView = std::start_lifetime_as<const std::byte[sizeof(ErasedType)]>(m_storage.template asTypedPtr<std::byte>());
+    auto* byteView = std::start_lifetime_as<std::byte[sizeof(ErasedType)]>(m_storage.template asTypedPtr<std::byte>());
     for (auto b : *byteView) { EXPECT_EQ(b, std::byte{0}); }
 
     TestStruct::assertSpecialFunctionCallCounter(m_expected);
@@ -334,7 +334,7 @@ TYPED_TEST(ErasedStorageTestStructPtrF, Lifecycle_DefaultCtor)
 
   {
     ErasedStorage_T empty;
-    auto* byteView = std::start_lifetime_as<const std::byte[sizeof(ErasedType)]>(empty.template asTypedPtr<std::byte>());
+    auto* byteView = std::start_lifetime_as<std::byte[sizeof(ErasedType)]>(empty.template asTypedPtr<std::byte>());
     for (auto b : *byteView) { EXPECT_EQ(b, std::byte{0}); }
     
     EXPECT_EQ(empty.template asTypedPtr<ErasedType>(), nullptr);

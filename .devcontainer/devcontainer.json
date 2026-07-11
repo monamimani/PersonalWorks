@@ -26,7 +26,6 @@
   },
   // "remoteUser": "vscode",
   "features": {},
-  "updateContentCommand": "apt-get update && apt-get install -y libicu-dev libgssapi-krb5-2 zlib1g",
   "postStartCommand": "chmod +x .devcontainer/postStartCommand.sh && .devcontainer/postStartCommand.sh",
   "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
   "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/${localWorkspaceFolderBasename},type=bind,consistency=delegated",

@@ -30,14 +30,14 @@ TEST(SampleTest, DefaultConstructor)
 {
   Sample s;
   EXPECT_EQ(s.m_value, 0);
-  EXPECT_FALSE((bool)s);
+  EXPECT_FALSE(static_cast<bool>(s));
 }
 
 TEST(SampleTest, ValueConstructor)
 {
   Sample s{42};
   EXPECT_EQ(s.m_value, 42);
-  EXPECT_TRUE((bool)s);
+  EXPECT_TRUE(static_cast<bool>(s));
 }
 
 TEST(SampleTest, CopyConstructor)
@@ -105,8 +105,8 @@ TEST(SampleTest, OperatorBool)
   Sample s0{0};
   Sample s1{42};
 
-  EXPECT_FALSE((bool)s0);
-  EXPECT_TRUE((bool)s1);
+  EXPECT_FALSE(static_cast<bool>(s0));
+  EXPECT_TRUE(static_cast<bool>(s1));
 }
 
 TEST(SampleTest, OperatorCall)

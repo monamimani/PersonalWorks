@@ -3,10 +3,10 @@
   "image": "ghcr.io/monamimani-builds/cpp-linux-devcontainer:latest",
   "runArgs": [
     "--name",
-    "personalworks-devcontainer-${devcontainerId}",
-    "--cap-add=SYS_PTRACE",
-    "--security-opt",
-    "seccomp=unconfined"
+    "personalworks-devcontainer-${devcontainerId}"//,
+    // "--cap-add=SYS_PTRACE",
+    // "--security-opt",
+    // "seccomp=unconfined"
   ],
   "customizations": {
     "vscode": {
@@ -20,15 +20,13 @@
         "ms-vscode.cmake-tools",
         "ms-vscode.cpptools",
         "llvm-vs-code-extensions.vscode-clangd",
-        "ms-vscode.cpptools-extension-pack",
-        "josetr.cmake-language-support-vscode",
-        "google.geminicodeassist",
-        "google.gemini-cli-vscode-ide-companion"
+        "ms-vscode.cpptools-extension-pack"
       ]
     }
   },
   // "remoteUser": "vscode",
   "features": {},
+  "updateContentCommand": "apt-get update && apt-get install -y libicu-dev libgssapi-krb5-2 zlib1g",
   "postStartCommand": "chmod +x .devcontainer/postStartCommand.sh && .devcontainer/postStartCommand.sh",
   "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
   "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/${localWorkspaceFolderBasename},type=bind,consistency=delegated",

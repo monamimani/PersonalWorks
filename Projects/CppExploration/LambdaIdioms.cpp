@@ -26,7 +26,7 @@ TEST_CASE("ODRUsed", "LambdaIdioms")
   // Static/Global variable are not capturable buy lambda capture. You can access them and modify them.
   // you only capture things that are ODR-used inside the lambda
   constexpr int i = 42;
-  auto f = []() {
+  [[maybe_unused]] auto f = []() {
     std::cout << i;
   }; // it is not an ODR-used because it is known at compile-time.
 }
@@ -53,7 +53,7 @@ TEST_CASE("IIFE", "LambdaIdioms")
   }();
 
   bool someCondition = true;
-  const auto foo = [someCondition] {
+  [[maybe_unused]] const auto foo = [someCondition] {
     if (someCondition)
     {
       return createFooA();
@@ -111,7 +111,7 @@ TEST_CASE("CalledOnce", "LambdaIdioms")
 
 template<typename T>
 constexpr auto cCast = [](auto x) {
-  return (T)x;
+  return static_cast<T>(x);
 };
 
 TEST_CASE("VariableTemplateLambda", "LambdaIdioms")

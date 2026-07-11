@@ -108,14 +108,14 @@ public:
   void update()
   {
     std::apply(
-      [this](auto& ...tuple) {
+      [](auto& ...tuple) {
         (updateTupleElement(tuple), ...);
       }, m_tuple
     );
   }
 
 private:
-  void updateTupleElement(auto& tupleElem)
+  static void updateTupleElement(auto& tupleElem)
   {
     for (auto& element: tupleElem)
     {

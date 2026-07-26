@@ -43,7 +43,7 @@ jobs:
 
     name: ${{matrix.build-preset}}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
 #      - name: Setup tmate session
 #        uses: mxschmitt/action-tmate/detached@v3
@@ -51,7 +51,7 @@ jobs:
 #        with:
 #          sudo: false
 
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Env variable
         shell: bash
@@ -191,7 +191,7 @@ jobs:
 
     name: ${{matrix.build-preset}}
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
 
     - name: Env variable
       shell: bash
